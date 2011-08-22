@@ -1,0 +1,8 @@
+midi.py is a small MIDI library for Python.
+
+The library uses OSS for MIDI, so it may be a little hard to use these
+days.  I may add support for PortMIDI
+(http://portmedia.sourceforge.net/) and/or Core MIDI.
+
+Author: Ole Martin Bjørndalen (ombdalen@gmail.com)
+License: MIT
