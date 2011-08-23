@@ -1,36 +1,34 @@
 """
 A simple MIDI library
 
-2006-12-21
-
 Ole Martin Bjorndalen
 ombdalen@gmail.com
 http://nerdly.info/ole/
 """
 
 # Channel messages
-NOTE_OFF =         0x80
-NOTE_ON =          0x90
-POLY_PRESSURE =    0xa0
-CONTROL_CHANGE =   0xb0
-PROGRAM_CHANGE =    0xc0
+NOTE_OFF         = 0x80
+NOTE_ON          = 0x90
+POLY_PRESSURE    = 0xa0
+CONTROL_CHANGE   = 0xb0
+PROGRAM_CHANGE   = 0xc0
 CHANNEL_PRESSURE = 0xd0
 PITCH_WHEEL      = 0xe0
 
 # System common messages
 # (Underfined messages (0xf1, ...) are not listed)
-SYSEX         = 0xf0
-SONG_POSITION = 0xf2
-SONG_SELECT   = 0xf3
-TUNE_REQUEST  = 0xf6
-END_OF_SYSEX  = 0xf7
+SYSEX            = 0xf0
+SONG_POSITION    = 0xf2
+SONG_SELECT      = 0xf3
+TUNE_REQUEST     = 0xf6
+END_OF_SYSEX     = 0xf7
 
-TIMING_CLOCK   = 0xf8
-START          = 0xfa
-CONTINUE       = 0xfb
-STOP           = 0xfc
-ACTIVE_SENSING = 0xfe
-RESET          = 0xff
+TIMING_CLOCK     = 0xf8
+START            = 0xfa
+CONTINUE         = 0xfb
+STOP             = 0xfc
+ACTIVE_SENSING   = 0xfe
+RESET            = 0xff
 
 
 # Types not listed here take no arguments
@@ -81,6 +79,7 @@ type_name = {
 CHANNEL_SYSTEM = -1
 
 class MidiMsg:
+    """A MIDI message"""
     def __init__(self, type, channel, **kw):
         self.type = type
         self.channel = channel
@@ -153,6 +152,7 @@ class MidiParser:
             return None
 
     def get_all(self):
+        """Returns all pending messages"""
         ret = self.messages
         self.messages = []
         return ret
@@ -277,12 +277,14 @@ def get_bytes(msg):
     return bytes
 
 def serialize(msg):
+    """Converts a MIDIMsg object into a byte string ready to write to the MIDI device"""
     string = ''
     for c in get_bytes(msg):
         string += chr(c)
     return string
 
 def callback(msg):
+    """A test callback"""
     print 'Got message!', msg
     print get_bytes(msg)
     print repr(serialize(msg))
@@ -293,6 +295,7 @@ class MidiIn:
         self.parser = MidiParser()
 
     def recv(self):
+        """Block until a message is available and return it"""
         while 1:
             c = self.file.read(1)
             if self.parser.feed(c):
@@ -307,6 +310,7 @@ class MidiOut:
         self.file = file
 
     def send(self, msg):
+        """Send a message"""
         self.file.write(serialize(msg))
         self.file.flush()
 
