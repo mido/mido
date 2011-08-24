@@ -26,6 +26,21 @@ play around with interesting Python data types, but if it turns out
 well, I will use it to write a patch librarian for my synths, and
 perhaps some other toys.
 
+An attempt to rewrite midi.py using named tuples (or something similar.
+
+  - DRY (midi.py is notorious here)
+  - MIDI messages should be immutable
+  - MIDI messages should be pure data objects, with no methods other than
+    __init__(), __call__(), __repr__(), __str__() and rich comparison
+    operators. Utility functions will be used instead (midi.is_chanmsg() etc.)
+  - the contructor must check if values are of the correct type and within range,
+    so they can safely be serialized
+  - serialized versions of the message is available in .bytes and .bin. One is
+    an array of byte values as integers, the other is a byte array. I may change
+    the names.
+  - the Sysex message will have its data bytes stored as a tuple of integers
+
+
 
 Todo
 -----
@@ -39,6 +54,7 @@ Todo
    - read and write MIDI files?
    - serialize messages to text files
    - reformat midi.txt to make it more useful (hex values in addition to binary)
+   - support rich comparisons (easy with self.bytes and self.bin)
 
 
 Text MIDI format
