@@ -67,7 +67,7 @@ Illegal values will be detected::
         raise ValueError('MIDI time value must be a number >= 0 (was %r)' % time)
     ValueError: MIDI time value must be a number >= 0 (was [1, 2, 3])
 
-There is no support yet for I/O, but if you still have OSS MIDI on
+There is no support for I/O yet, but if you still have OSS MIDI on
 your system, you can do this:
 
     >>> dev = open('/dev/midi', 'wb')
