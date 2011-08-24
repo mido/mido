@@ -108,26 +108,15 @@ class NoteOff(MidiMsg):
     # instead, and have just one message class, and set __call__() to
     # a function with a closure on the message object?
     #
-    def __init__(self, time=0, chan=None, note=None, vel=None):
+    def __init__(self, time=0, chan=0, note=60, vel=127):
         """Create a new MIDI message"""
 
         assert_time_value(time)
         self.time = time
 
-        if chan == None:
-            self.chan = 0
-        else:
-            self.chan = chan
-        
-        if note == None:
-            self.note = 0
-        else:
-            self.note = note
-
-        if vel == None:
-            self.vel = 127
-        else:
-            self.vel = vel
+        self.chan = chan
+        self.note = note
+        self.vel = vel
 
         # Serialize
         self.bytes = (self.opcode | self.chan, self.note, self.vel)
@@ -137,21 +126,8 @@ class NoteOff(MidiMsg):
 
         self._assert_values()
 
-    def __call__(self, time=0, chan=None, note=None, vel=None):
+    def __call__(self, time=0, chan=0, note=60, vel=127):
         """Clone message, allowing caller to override selected values."""
-        
-        if time == None:
-            time = self.time
-
-        if chan == None:
-            chan = self.chan
-
-        if note == None:
-            note = self.note
-
-        if vel == None:
-            vel = self.vel
-
         return NoteOn(time=time, chan=chan, note=note, vel=vel)
 
     def _assert_values(self):
