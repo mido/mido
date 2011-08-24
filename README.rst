@@ -1,8 +1,6 @@
 MIDI library for Python
 ========================
 
-Works in Python 2 and Python 3.
-
 MIDI messages are immutable objects::
 
     >>> import midi
