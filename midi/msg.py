@@ -330,12 +330,14 @@ class sysex(system_common_msg):
 
         assert_time(time)
         assert_data(vendor)
+        if not isinstance(data, tuple):
+            raise ValueError('data argument to sysex must be a tuple')
         for byte in data:
-            assert_data(data)
+            assert_data(byte)
 
         self.time = time
         self.vendor = vendor
-        self.data = tuple(data)
+        self.data = data
 
         # Serialize
         self.bytes = (self.opcode, self.vendor) + self.data
