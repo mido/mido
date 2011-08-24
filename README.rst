@@ -32,7 +32,7 @@ by doing::
 This may cause all sorts of problems later on, and it is easy to do
 by mistake, so I am planning to fix it.
 
-A modified clone can be created by calling ``msg.copy``::
+A modified clone can be created by calling ``msg.copy()``::
 
     >>> msg.copy(note=20)
     note_on(time=0, chan=0, note=20, vel=127)
