@@ -57,8 +57,8 @@ This is useful for debugging and MIDI scripting in any language.
     0.1   note_off 2 60 30
     0     note_on 72 2  # will get velocity=127
     0.1   note_off 2 72  # will get veloctiy=127  # (release velocity)
-    0     note_on 2 72
-    0.1   note_off 2 72
+    0     note_on 2 note=72  # perhaps use keyword arguments?
+    0.1   note_off 2 note=72
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
