@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import print_function, unicode_literals
+import sys
 
 """
 An attempt to rewrite midi.py using named tuples (or something similar.
@@ -68,6 +71,15 @@ class MidiMsg:
     """
     pass
 
+# Support Python 2
+if sys.version_info.major < 3:
+    def bytes(byte_values):
+        """Convert a list of byte values to a byte array (str)."""
+        ret = b''
+        for b in byte_values:
+            ret += chr(b)
+        return ret
+
 def legal_data_byte(value):
     """Check if data byte is and integer in the range [0, 127], and return """
 
@@ -120,8 +132,6 @@ class NoteOff(MidiMsg):
 
         # Serialize
         self.bytes = (self.opcode | self.chan, self.note, self.vel)
-
-        # Todo: This will only work in Python >= 3
         self.bin = bytes(self.bytes)
 
         self._assert_values()
@@ -155,4 +165,5 @@ if __name__ == '__main__':
 
     print(on)
     print(on(note=20))
-    print(on.bin)
+    print(repr(on.bin))
+
