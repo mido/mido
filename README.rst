@@ -16,6 +16,22 @@ MIDI messages are immutable objects::
     >>> msg.bin
     b'\x90<\x7f'
 
+The immutability is not enforced (yet), so you can screw things up
+by doing::
+
+    >>> doomed_msg = midi.note_on()
+    >>> doomed_msg.note = 'Mwuahahahaha!'
+    >>> doomed_msg
+    note_on(time=0, chan=0, note=Mwuahahahaha!, vel=127)
+    >>> del doomed_msg.bytes
+    >>> doomed_msg.bytes
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    AttributeError: note_on instance has no attribute 'bytes'
+
+This may cause all sorts of problems later on, and it is easy to do
+by mistake, so I am planning to fix it.
+
 A modified clone can be created by calling ``msg.copy``::
 
     >>> msg.copy(note=20)
