@@ -38,6 +38,7 @@ Todo
      scales and controller types
    - read and write MIDI files?
    - serialize messages to text files
+   - reformat midi.txt to make it more useful (hex values in addition to binary)
 
 
 Text MIDI format
