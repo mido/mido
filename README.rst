@@ -6,7 +6,7 @@ Works in Python 2 and Python 3.
 MIDI messages are immutable objects::
 
     >>> import midi
-    >>> msg = midi.note_on(note=60)
+    >>> msg = midi.msg.note_on(note=60)
     >>> msg
     note_on(time=0, chan=0, note=60, vel=127)
     >>> msg.note
@@ -19,7 +19,7 @@ MIDI messages are immutable objects::
 The immutability is not enforced (yet), so you can screw things up
 by doing::
 
-    >>> doomed_msg = midi.note_on()
+    >>> doomed_msg = midi.msg.note_on()
     >>> doomed_msg.note = 'Mwuahahahaha!'
     >>> doomed_msg
     note_on(time=0, chan=0, note=Mwuahahahaha!, vel=127)
@@ -39,7 +39,7 @@ A modified clone can be created by calling ``msg.copy()``::
 
 Sysex messages are supported::
 
-    >>> midi.sysex(vendor=22, data=[1, 4, 2, 5, 6, 7])
+    >>> midi.msg.sysex(vendor=22, data=[1, 4, 2, 5, 6, 7])
     sysex(time=0, vendor=22, data=(1, 4, 2, 5, 6, 7))
 
 Only note_on, note_off and sysex are implemented so far, but I plan to
@@ -47,7 +47,7 @@ implement all message types.
 
 Illegal values will be detected::
 
-    >>> midi.note_on(note='BOO!')
+    >>> midi.msg.note_on(note='BOO!')
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
       File "/home/olemb/src/git/midi/midi.py", line 86, in __init__
@@ -58,7 +58,7 @@ Illegal values will be detected::
         raise ValueError('MIDI data byte must an integer >= 0 and <= 127 (was %r)' % value)
     ValueError: MIDI data byte must an integer >= 0 and <= 127 (was 'BOO!')
     
-    >>> midi.note_on()
+    >>> midi.msg.note_on()
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
       File "/home/olemb/src/git/midi/midi.py", line 85, in __init__
@@ -71,7 +71,7 @@ There is no support for I/O yet, but if you still have OSS MIDI on
 your system, you can do this:
 
     >>> dev = open('/dev/midi', 'wb')
-    >>> dev.write(midi.note_on(note=60).bin)
+    >>> dev.write(midi.msg.note_on(note=60).bin)
 
 I will write a general purpose MIDI parser which can be used for
 parsing data from any source by feeding it bytes and fetching messages

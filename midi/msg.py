@@ -1,16 +1,55 @@
 # -*- coding: utf-8 -*-
 
+"""
+Implements MIDI messages.
+
+There is lot of boilerplate code to write to implement a message type,
+but there's not a lot of information in a message. What's the most
+compact notation that could be expanded into a working class (or
+object)?
+
+What's in a message
+
+  opcode type [chan] [data]
+
+how about this?
+
+'''
+  80 note_off    chan:4 note:7 vel:7
+  90 note_on     chan:4 note:7 vel:7
+  a0 polytouch   chan:4 note:7 value:7
+  b0 control     chan:4 number:7 value:7
+  c0 program     chan:4 program:7
+  d0 aftertouch  chan:4 value:7
+  c0 pitchwheel  chan:4 value:14-
+
+  f0 sysex       vendor:7 data:7*
+  f2 songpos     pos:14
+  f3 song        song:7
+  f6 tune_request
+  f7 sysex_end
+
+  f8 clock
+  fa start
+  fb continue
+  fc stop
+  fe active_sensing
+  ff reset
+'''
+
+The types are:
+
+  :4    4 bit unsigned int
+  :7    7 bit unsigned int
+  :14   15 bit unsigned int
+  :14-  15 bit signed int
+  :7*   0 or more 7 bit unsigned ints
+"""
+
 from __future__ import print_function, unicode_literals
 import sys
+from .types import *
 
-"""
-Ole Martin Bjørndalen
-ombdalen@gmail.com
-http://nerdly.info/ole/
-"""
-
-__author__ = 'Ole Martin Bjørndalen'
-__license__ = 'MIT'
 
 # Support Python 2 by overriding bytes() (but only in this module!)
 if sys.version_info.major < 3:
@@ -21,31 +60,6 @@ if sys.version_info.major < 3:
             ret += chr(b)
         return ret
 
-def legal_data_byte(value):
-    """Check if data byte is and integer in the range [0, 127], and return """
-
-    if not isinstance(value, int):
-        return False
-    elif not 0 <= value <= 127:
-        return False
-
-    return True
-
-def assert_data_byte(value):
-    """Check if data byte is and int in in the correct range"""
-    if not legal_data_byte(value):
-        raise ValueError('MIDI data byte must an integer >= 0 and <= 127 (was %r)' % value)
-
-def assert_time_value(time):
-    """Check if time value is a number >= 0"""
-    
-    # Todo: there must be a better way to check this
-    if not (isinstance(time, int) or (isinstance(time, float))) or time < 0:
-        raise ValueError('MIDI time value must be a number >= 0 (was %r)' % time)
-
-def is_chanmsg(msg):
-    """Returns True if message is a channel message."""
-    return msg.opcode < 0xf0
 
 # Todo: use abc? 
 class midi_msg:
@@ -55,6 +69,7 @@ class midi_msg:
     def __len__(self):
         """Returns number of bytes in the message"""
         return len(self.bytes)
+
 
 class note_off(midi_msg):
     """
@@ -79,14 +94,14 @@ class note_off(midi_msg):
     # Using shorter names 'chan' and 'vel' here. Don't know
     # if I'll stick with that.
     #
-    def __init__(self, time=0, chan=0, note=0, vel=127):
+    def __init__(self, time=0, chan=0, note=0, vel=0):
         """Create a new MIDI message"""
 
-        assert_time_value(time)
-        [assert_data_byte(b) for b in [chan, note, vel]]
+        assert_time(time)
+        assert_4bit(chan)
+        assert_7bit(note, vel)
 
         self.time = time
-
         self.chan = chan
         self.note = note
         self.vel = vel
@@ -95,16 +110,41 @@ class note_off(midi_msg):
         self.bytes = (self.opcode | self.chan, self.note, self.vel)
         self.bin = bytes(self.bytes)
 
-    def copy(self, time=0, chan=0, note=0, vel=127):
+    def copy(self, time=0, chan=0, note=0, vel=0):
         """Make a copy of the message, allowing caller to override selected values."""
         return self.__class__(time=time, chan=chan, note=note, vel=vel)
 
     def __repr__(self):
         return '%s(time=%s, chan=%s, note=%s, vel=%s)' % (self.type, self.time, self.chan, self.note, self.vel)
 
+
 class note_on(note_off):
     opcode = 0x90
     type = 'note_on'
+
+
+class aftertouch(midi_msg):
+    opcode = 0x90
+    type = 'aftertouch'
+
+    def __init__(self, time=0, chan=0, note=0, value=0):
+        
+        assert_time(time)
+        assert_4bit(chan)
+        assert_7bit(note, value)
+
+        self.time = time
+        self.chan = chan
+        self.note = note
+        self.value = value
+
+        # Serialize
+        self.bytes = (self.opcode, self.vendor) + self.data
+        self.bin = bytes(self.bytes)
+
+    def __init__(self):
+        return self.__class__(time=self.time, chan=self.chan, note=self.note, value=self.value)
+
 
 class sysex(midi_msg):
     """
@@ -116,9 +156,9 @@ class sysex(midi_msg):
 
     def __init__(self, time=0, vendor=0, data=()):
 
-        assert_time_value(time)
-        assert_data_byte(vendor)
-        [assert_data_byte(b) for b in data]
+        assert_time(time)
+        assert_7bit(vendor)
+        assert_7bit(*data)
 
         self.time = time
         self.vendor = vendor
@@ -130,26 +170,13 @@ class sysex(midi_msg):
 
     def copy(self, time=0, vendor=0, data=()):
         """Make a copy of the message, allowing caller to override selected values."""
-
-        assert_time_value(time)
-        assert_data_byte(vendor)
-        [assert_data_byte(b) for b in data]
-
         return self.__class__(time=time, data=data)
 
     def __repr__(self):
         return '%s(time=%s, vendor=%s, data=%s)' % (self.type, self.time, self.vendor, self.data)
 
-if __name__ == '__main__':
-    on = note_on(note=60)
-    off = note_off(note=60)
-    sysex = sysex(vendor=7, data=(5, 6, 7, 3, 4, 4))
-
-    print(on)
-    print(on.copy(note=20))
-    print(repr(on.bin))
-    print(sysex)
-
-# Prevent 'from midi import *' from pulluting namespace
-# Use 'import midi' instead
-__all__ = []
+# Make this splat import safe
+__all__ = [ 'note_off',
+            'note_on',
+            'aftertouch',
+            'sysex' ]
