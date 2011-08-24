@@ -26,7 +26,9 @@ play around with interesting Python data types, but if it turns out
 well, I will use it to write a patch librarian for my synths, and
 perhaps some other toys.
 
-Todo:
+
+Todo
+-----
 
    - MIDI channels are numbered 1-16 in user interfaces, but are
      numbered 0-15 in the protocol. Which version should midi.py show?
@@ -35,7 +37,15 @@ Todo:
    - include useful lookup tables and functions for common things like
      scales and controller types
    - read and write MIDI files?
-   - serialize messages to text files::
+   - serialize messages to text files
+
+
+Text MIDI format
+------------------
+
+This is useful for debugging and MIDI scripting in any language.
+
+::
 
     #
     # The first column is relative time in seconds (how long to wait before
