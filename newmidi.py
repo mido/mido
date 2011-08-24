@@ -26,6 +26,10 @@ http://nerdly.info/ole/
 # (I need to check these values.)
 #
 
+#
+# Todo:
+#   - support rich comparisons (easy with self.bytes and self.bin)
+#
 
 #
 # Channel messages
