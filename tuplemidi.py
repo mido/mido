@@ -42,7 +42,7 @@ Clearly, descriptors should be used.
 # Channel messages
 #
 channel_messages = [
-    # Fixed                     Updatable
+    # Immutable                 Updatable (through cloning)
     # opcode  name
     (0x80, 'note_off',          'note velocity'),  
     (0x90, 'note_on',           'note velocity'),
