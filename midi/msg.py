@@ -1,516 +1,256 @@
 # -*- coding: utf-8 -*-
 
 """
-Implements the following MIDI messages:
+msg.py - MIDI messages
 
+Todo:
 
-  Channel messages
+  - serialize data
+  - attach argspec and name to copy method so it can be used with pydoc
+    (perhaps it's best to dynamically generate a function which wraps
+    the real copy() and bind it to copy or __call__)
+"""
 
+from __future__ import print_function, unicode_literals
+from collections import OrderedDict
+from asserts import assert_time, assert_chan, assert_data, assert_songpos, assert_pitchwheel
+
+def to_bytes(msg):
+    """Serialize message to a list of byte values"""
+    # Todo: implement
+    return (0, 0, 0)
+
+def to_bin(msg):
+    """Serialize message to a byte array (binary string)"""
+    # Todo: implement
+    return '   '
+
+class Msg:
+
+    def __init__(self, spec):
+        """
+        Bootstrap MIDI message creation chain by creating an
+        initial message object from a spec line.
+        """
+        #
+        # Todo: Optimize - This should only need to be done once for each
+        # message type.
+        #
+
+        ns = self.__dict__
+
+        words = spec.split()
+        ns['spec'] = ' '.join(words)
+
+        # Opcode
+        ns['op'] = int(words[0], 16)
+        ns['type'] = words[1]
+
+        ns['names'] = names = ['time'] + words[2:]
+
+        # Initialize all values to zero
+        for name in names:
+            ns[name] = 0
+
+        # Initialize all data fields to 0
+        default_values = OrderedDict(zip(names,
+                                         [0]*len(names)))
+
+        if 'data' in default_values:
+            default_values['data'] = ()
+
+        self._update(default_values)
+
+        #
+        # Create 'copy' function that wraps the real _copy()
+        # and bind it to the messages name space.
+        # The purpose is for the method to have an argspec
+        # so it can be inspected.
+        #
+        
+        # Todo: finish this
+        # (This seems like a lot of work for little gain)
+
+        # args = ['{0}={1}'.format(name, value) for (name, value) in default_values.items()]
+        # args = ', '.join(args)
+        
+        # code = ''
+        # code += 'def {0}({1}):\n'.format(ns['type'], args)
+        # code += '    msg._copy()'
+
+        # print(code)
+
+        # closure = dict(msg=self)
+        # exec code in closure
+        # import pprint
+        # pprint.pprint(closure.items())
+        # print(closure)
+        # ns['copy'] = closure[ns['type']]
+
+    def _update(self, kw):
+        """
+        Update data values. This is called by copy()
+        on the new object with the keword argument from
+        the caller.
+        """
+
+        # Get shortcurt to namespace
+        ns = self.__dict__
+
+        for (name, value) in kw.items():
+            if not name in self.names:
+                msg = 'keyword argument for {} must be one of: {} (was {})'
+                valid_names = ' '.join(self.names)
+                raise TypeError(msg.format(self.type,
+                                           valid_names,
+                                           repr(name)))
+
+            if name == 'time':
+                assert_time(value)
+
+            elif name == 'chan':
+                assert_chan(value)
+
+            elif name == 'data':
+                for byte in value:
+                    assert_data(byte)
+                value = tuple(value)  # Convert to tuple
+
+            elif name == 'pos':
+                assert_songpos(value)
+
+            elif name == 'value' and type == 'pitchwheel':
+                assert_pitchwheel(value)
+
+            else:
+                assert_data(value)
+
+            ns[name] = value
+        
+        #
+        # Serialize data
+        #
+        ns['bytes'] = to_bytes(self)
+        ns['bin'] = to_bin(self)
+
+        
+    def copy(self, **kw):
+        """
+        Make a clone of the message, with 0 or more data
+        fields override.
+        """
+
+        ns = self.__dict__
+
+        new = Msg(self.spec)
+
+        # Copy our data
+        values = {}
+        for name in self.names:
+            values[name] = ns[name]
+
+        new._update(values)        
+        new._update(kw)
+
+        return new
+
+    # This may be a little obscure, but oh so fun!
+    __call__ = copy
+
+    def __repr__(self):
+        args = []
+        for name in self.names:
+            args.append('{0}={1}'.format(name,
+                                       repr(getattr(self, name))))
+        args = ', '.join(args)
+
+        return '{0}({1})'.format(self.type, args)
+
+    def __len__(self):
+        """
+        Return the length of the message. This is the
+        number of bytes the message will take up when
+        serialized.
+        """
+        return len(self.bytes)
+
+    def __setattr__(self, name, value):
+        raise ValueError('MIDI message object is immutable')
+
+    def __delattr__(self, name):
+        raise ValueError('MIDI message object is immutable')
+
+msg_spec = """
   80 note_off    chan    note vel
   90 note_on     chan    note vel
   a0 polytouch   chan    note value
   b0 control     chan    number value
   c0 program     chan    program
   d0 aftertouch  chan    value
-  c0 pitchwheel  chan    lsb msb
-
-
-  System common messages
+  e0 pitchwheel  chan    value
 
   f0 sysex          vendor data
-  f2 songpos        lsb msb
+  f1 undefined_f1
+  f2 songpos        pos
   f3 song           song
+  f4 undefined_f4
+  f5 undefined_f5
   f6 tune_request
-
-
-  System realtime messages
+  f7 sysex_end
 
   f8 clock
+  f9 undefined_f9
   fa start
-  fb continue        # This clashes with 
+  fb continue
   fc stop
+  fd undefined_fd
   fe active_sensing
   ff reset
-
 """
 
-import sys
-from .asserts import assert_time, assert_chan, assert_data, is_chanmsg
-
-
-# Todo: use abc? 
-class midi_msg:
-    """
-    MIDI message (Abstract base class)
-    """
-
-    def __len__(self):
-        """Returns number of bytes in the message"""
-        return len(self.bytes)
-
-
-class channel_msg(midi_msg):
-    """
-    Channel message (abstract base class)
-    """
-    pass
-
-
-class system_msg(midi_msg):
-    """
-    System message (abstract base class)
-    """
-    pass
-
-
-class note_msg(channel_msg):
-
-    """
-    Abstract base class for MIDI note messages.
-    """
-
-    def __init__(self, time=0, chan=0, note=0, vel=0):
-
-        assert_time(time)
-        assert_chan(chan)
-        assert_data(note)
-        assert_data(vel)
-
-        self.time = time
-        self.chan = chan
-        self.note = note
-        self.vel = vel
-
-        # Serialize
-        self.bytes = (self.opcode | chan, note, vel)
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, chan=None, note=None, vel=None):
-
-        if time is None:
-            time = self.time
-        if chan is None:
-            chan = self.chan
-        if note is None:
-            note = self.note
-        if vel is None:
-            vel = self.vel
-
-        return self.__class__(time=time, chan=chan, note=note, vel=vel)
-
-    def __repr__(self):
-        return '%s(time=%s, chan=%s, note=%s, vel=%s)' % (
-            self.type, self.time, self.chan, self.note, self.vel)
-
-
-class note_off(note_msg):
-
-    opcode = 0x80
-    type = 'note_off'
-
-
-class note_on(note_msg):
-
-    opcode = 0x90
-    type = 'note_on'
-
-
-class polytouch(channel_msg):
-
-    opcode = 0xa0
-    type = 'polytouch'
-
-    def __init__(self, time=0, chan=0, note=0, value=0):
-        
-        assert_time(time)
-        assert_chan(chan)
-        assert_data(note)
-        assert_data(value)
-
-        self.time = time
-        self.chan = chan
-        self.note = note
-        self.value = value
-
-        # Serialize
-        self.bytes = (self.opcode | chan, note, value)
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, chan=None, note=None, value=None):
-
-        if time is None:
-            time = self.time
-        if chan is None:
-            chan = self.chan
-        if note is None:
-            note = self.note
-        if value is None:
-            value = self.value
-
-        return self.__class__(time=time, chan=chan, note=note, value=value)
-    
-    def __repr__(self):
-        return '%s(time=%s, chan=%s, note=%s, value=%s)' % (
-            self.type, self.time, self.chan, self.note, self.value)
-
-
-class control(channel_msg):
-    """
-    MIDI control change message
-    """
-
-    opcode = 0xb0
-    type = 'aftertouch'
-
-    def __init__(self, time=0, chan=0, number=0, value=0):
-        
-        assert_time(time)
-        assert_chan(chan)
-        assert_data(number)
-        assert_data(value)
-
-        self.time = time
-        self.chan = chan
-        self.number = number
-        self.value = value
-
-        # Serialize
-        self.bytes = (self.opcode | chan, number, value)
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, chan=None, number=None, value=None):
-
-        if time is None:
-            time = self.time
-        if chan is None:
-            chan = self.chan
-        if note is None:
-            note = self.note
-        if value is None:
-            value = self.value
-
-        return self.__class__(time=time, chan=chan, number=number, value=value)
-    
-    def __repr__(self):
-        return '%s(time=%s, chan=%s, number=%s, value=%s)' % (
-            self.type, self.time, self.chan, self.number, self.value)
-
-
-class program(channel_msg):
-    """
-    MIDI program change message
-    """
-
-    opcode = 0xc0
-    type = 'program'
-
-    def __init__(self, time=0, chan=0, program=0):
-        
-        assert_time(time)
-        assert_chan(chan)
-        assert_data(program)
-
-        self.time = time
-        self.chan = chan
-        self.program = program
-
-        # Serialize
-        self.bytes = (self.opcode | chan, program)
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, chan=None, program=None):
-
-        if time is None:
-            time = self.time
-        if chan is None:
-            chan = self.chan
-        if program is None:
-            program = self.program
-
-        return self.__class__(time=time, chan=chan, program=program)
-    
-    def __repr__(self):
-        return '%s(time=%s, chan=%s, program=%s)' % (
-            self.type, self.time, self.chan, self.program)
-
-
-class aftertouch(channel_msg):
-    """
-    MIDI aftertouch message
-    """
-
-    opcode = 0xd0
-    type = 'aftertouch'
-
-    def __init__(self, time=0, chan=0, value=0):
-        
-        assert_time(time)
-        assert_chan(chan)
-        assert_data(value)
-
-        self.time = time
-        self.chan = chan
-        self.value = value
-
-        # Serialize
-        self.bytes = (self.opcode | chan, value)
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, chan=None, value=None):
-
-        if time is None:
-            time = self.time
-        if chan is None:
-            chan = self.chan
-        if value is None:
-            value = self.value
-
-        return self.__class__(time=time, chan=chan, value=value)
-    
-    def __repr__(self):
-        return '%s(time=%s, chan=%s, value=%s)' % (
-            self.type, self.time, self.chan, self.value)
-
-
-class pitchwheel(channel_msg):
-    """
-    MIDI pitchwheel message
-    """
-
-    opcode = 0xe0
-    type = 'pitchwheel'
-
-    def __init__(self, time=0, chan=0, value=0):
-        
-        assert_time(time)
-        assert_chan(chan)
-        assert_data(value)
-
-        self.time = time
-        self.chan = chan
-        self.value = value
-
-        # Serialize
-        self.bytes = (self.opcode | chan, value)
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, chan=None, value=None):
-
-        if time is None:
-            time = self.time
-        if chan is None:
-            chan = self.chan
-        if value is None:
-            value = self.value
-
-        return self.__class__(time=time, chan=chan, value=value)
-    
-    def __repr__(self):
-        return '%s(time=%s, chan=%s, value=%s)' % (
-            self.type, self.time, self.chan, self.value)
-
-
-#########################################################
-# System common messages
 #
-
-class system_common_msg(system_msg):
-    """
-    System common message (abstract base class)
-    """
-    pass
-
-class sysex(system_common_msg):
-    
-    type = 'sysex'
-    opcode = 0xf0
-
-    def __init__(self, time=0, vendor=0, data=()):
-
-        assert_time(time)
-        assert_data(vendor)
-        if not isinstance(data, tuple):
-            raise ValueError('data argument to sysex must be a tuple')
-        for byte in data:
-            assert_data(byte)
-
-        self.time = time
-        self.vendor = vendor
-        self.data = data
-
-        # Serialize
-        self.bytes = (self.opcode, vendor) + data
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, vendor=None, data=None):
-        
-        if time is None:
-            time = self.time
-        if vendor is None:
-            vendor = self.vendor
-        if data is None:
-            data = self.data
-
-        return self.__class__(time=time, vendor=vendor, data=data)
-
-    def __repr__(self):
-        return '%s(time=%s, vendor=%s, data=%s)' % (
-            self.type, self.time, self.vendor, self.data)
-
-
-class songpos(system_common_msg):
-    
-    type = 'songpos'
-    opcode = 0xf2
-
-    def __init__(self, time=0, lsb=0, msb=0):
-
-        assert_time(time)
-        assert_data(lsb)
-        assert_data(msb)
-
-        self.time = time
-        self.lsb = lsb
-        self.msb = msb
-
-        # Serialize
-        self.bytes = (self.opcode, lsb, msb)
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, lsb=None, msb=None):
-
-        if time is None:
-            time = self.time
-        if lsb is None:
-            lsb = self.lsb
-        if msb is None:
-            msb = self.msb
-
-        return self.__class__(time=time, lsb=lsb, msb=msb)
-
-    def __repr__(self):
-        return '%s(time=%s, lsb=%s, msb=%s)' % (
-            self.type, self.time, self.lsb, self.msb)
-
-
-class song_select(system_common_msg):
-    
-    type = 'song_select'
-    opcode = 0xf3
-
-    def __init__(self, time=0, song=0):
-
-        assert_time(time)
-        assert_data(song)
-
-        self.time = time
-        self.song = song
-
-        # Serialize
-        self.bytes = (self.opcode, song)
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None, song=None):
-
-        if time is None:
-            time = self.time
-        if song is None:
-            song = self.song
-
-        return self.__class__(time=0, song=0)
-
-    def __repr__(self):
-        return '%s(time=%s, song=%s)' % (
-            self.type, self.time, self.song)
-
-
-class tune_request(system_common_msg):
-    
-    type = 'tune_request'
-    opcode = 0xf6
-
-    def __init__(self, time=0, song=0):
-
-        assert_time(time)
-
-        self.time = time
-
-        # Serialize
-        self.bytes = (self.opcode, )
-        self.bin = bytes(self.bytes)
-
-    def copy(self, time=None):
-
-        if time is None:
-            time = self.time
-
-        return self.__class__(time=0)
-
-    def __repr__(self):
-        return '%s(time=%s)' % (self.type, self.time)
-
-
-############################################################################
-# System realtime messages
+# Maps opcode to message prototype
 #
+# Channel messages will have 16 entries each,
+# one for each MIDI channel.
+#
+# Check if the byte is an opcode with midi.assert.isopcode()
+# before you look it up here.
+#
+# Or you could use op2msg to check if a byte is an opcode.
+#
+#   if byte in op2msg:
+#       # byte is an opcode
+#
+op2msg = {}
 
-class system_realtime_msg(system_msg):
+def _make_message_prototypes(spec=msg_spec):
+
     """
-    System realtime message (abstract base class)
+    Create all MIDI message prototypes and bind them to the global
+    scope (the midi.msg module).
+
+    Also fills in op2msg.
     """
 
-    def __init__(self, time=0, song=0):
+    for line in spec.split('\n'):
+        line = line.strip()
 
-        assert_time(time)
+        # Skip blank lines
+        if not line:
+            continue
 
-        self.time = time
+        msg = Msg(line)
+        globals()[msg.type] = msg
 
-        # Serialize
-        self.bytes = (self.opcode, )
-        self.bin = bytes(self.bytes)
+        if hasattr(msg, 'chan'):
+            #
+            # Channel message need to be mapped to 16 different
+            # opcodes each, one for each channel.
+            #
+            for chan in range(16):
+                op2msg[msg.op | chan] = msg
+        else:
+            op2msg[msg.op] = msg
 
-    def copy(self, time=None):
-
-        if time is None:
-            time = self.time
-
-        return self.__class__(time=0)
-
-    def __repr__(self):
-        return '%s(time=%s)' % (self.type, self.time)
-
-
-class clock(system_realtime_msg):
-
-    opcode = 0xf8
-    type = 'clock'
-
-
-class start(system_realtime_msg):
-
-    opcode = 0xfa
-    type = 'start'
-
-
-class continue_(system_realtime_msg):
-
-    opcode = 0xfb
-    type = 'continue'
-
-
-class stop(system_realtime_msg):
-
-    opcode = 0xfc
-    type = 'stop'
-
-
-class active_sensing(system_realtime_msg):
-
-    opcode = 0xfe
-    type = 'active_sensing'
-
-
-class reset(system_realtime_msg):
-
-    opcode = 0xff
-    type = 'reset'
+_make_message_prototypes()
