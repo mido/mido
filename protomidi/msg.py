@@ -194,7 +194,6 @@ def _make_message_prototypes(spec=msg_spec):
             continue
 
         msg = Msg(line)
-        print(msg)
         globals()[msg.type] = msg
         
         #
