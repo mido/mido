@@ -82,7 +82,7 @@ class note_msg(channel_msg):
         self.vel = vel
 
         # Serialize
-        self.bytes = (self.opcode | self.chan, self.note, self.vel)
+        self.bytes = (self.opcode | chan, note, vel)
         self.bin = bytes(self.bytes)
 
     def copy(self, time=None, chan=None, note=None, vel=None):
@@ -133,7 +133,7 @@ class polytouch(channel_msg):
         self.value = value
 
         # Serialize
-        self.bytes = (self.opcode | self.chan, self.note, self.value)
+        self.bytes = (self.opcode | chan, note, value)
         self.bin = bytes(self.bytes)
 
     def copy(self, time=None, chan=None, note=None, value=None):
@@ -175,7 +175,7 @@ class control(channel_msg):
         self.value = value
 
         # Serialize
-        self.bytes = (self.opcode | self.chan, self.number, self.value)
+        self.bytes = (self.opcode | chan, number, value)
         self.bin = bytes(self.bytes)
 
     def copy(self, time=None, chan=None, number=None, value=None):
@@ -215,7 +215,7 @@ class program(channel_msg):
         self.program = program
 
         # Serialize
-        self.bytes = (self.opcode | self.chan, self.program)
+        self.bytes = (self.opcode | chan, program)
         self.bin = bytes(self.bytes)
 
     def copy(self, time=None, chan=None, program=None):
@@ -253,7 +253,7 @@ class aftertouch(channel_msg):
         self.value = value
 
         # Serialize
-        self.bytes = (self.opcode | self.chan, self.value)
+        self.bytes = (self.opcode | chan, value)
         self.bin = bytes(self.bytes)
 
     def copy(self, time=None, chan=None, value=None):
@@ -291,7 +291,7 @@ class pitchwheel(channel_msg):
         self.value = value
 
         # Serialize
-        self.bytes = (self.opcode | self.chan, self.value)
+        self.bytes = (self.opcode | chan, value)
         self.bin = bytes(self.bytes)
 
     def copy(self, time=None, chan=None, value=None):
@@ -339,7 +339,7 @@ class sysex(system_common_msg):
         self.data = data
 
         # Serialize
-        self.bytes = (self.opcode, self.vendor) + self.data
+        self.bytes = (self.opcode, vendor) + data
         self.bin = bytes(self.bytes)
 
     def copy(self, time=None, vendor=None, data=None):
@@ -374,7 +374,7 @@ class songpos(system_common_msg):
         self.msb = msb
 
         # Serialize
-        self.bytes = (self.opcode, self.lsb, self.msb)
+        self.bytes = (self.opcode, lsb, msb)
         self.bin = bytes(self.bytes)
 
     def copy(self, time=None, lsb=None, msb=None):
