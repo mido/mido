@@ -4,83 +4,53 @@ MIDI library for Python
 MIDI messages are immutable objects::
 
     >>> import midi
-    >>> msg = midi.msg.note_on(note=60)
+    >>> msg = midi.msg.note_on(note=60, vel=100)
     >>> msg
-    note_on(time=0, chan=0, note=60, vel=127)
+    note_on(time=0, chan=0, note=60, vel=100)
     >>> msg.note
     60
-    >>> msg.bytes
-    (144, 60, 127)
-    >>> msg.bin
-    b'\x90<\x7f'
-
-The immutability is not enforced (yet), so you can screw things up
-by doing::
-
-    >>> doomed_msg = midi.msg.note_on()
-    >>> doomed_msg.note = 'Mwuahahahaha!'
-    >>> doomed_msg
-    note_on(time=0, chan=0, note=Mwuahahahaha!, vel=127)
-    >>> del doomed_msg.bytes
-    >>> doomed_msg.bytes
+    >>> msg.note = 20
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
-    AttributeError: note_on instance has no attribute 'bytes'
+      File "midi/msg.py", line 184, in __setattr__
+        raise ValueError('MIDI message object is immutable')
+    ValueError: MIDI message object is immutable
 
-This may cause all sorts of problems later on, and it is easy to do
-by mistake, so I am planning to fix it.
+New messages are created by copying an existing message:
 
-A modified clone can be created by calling ``msg.copy()``::
-
-    >>> msg.copy(note=20)
-    note_on(time=0, chan=0, note=20, vel=127)
+    >>> msg.copy(chan=1)
+    note_on(time=0, chan=1, note=60, vel=100)
 
 Sysex messages are supported::
 
     >>> midi.msg.sysex(vendor=22, data=[1, 4, 2, 5, 6, 7])
     sysex(time=0, vendor=22, data=(1, 4, 2, 5, 6, 7))
 
-Only note_on, note_off and sysex are implemented so far, but I plan to
-implement all message types.
-
 Illegal values will be detected::
 
     >>> midi.msg.note_on(note='BOO!')
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
-      File "/home/olemb/src/git/midi/midi.py", line 86, in __init__
-        [assert_data_byte(b) for b in [chan, note, vel]]
-      File "/home/olemb/src/git/midi/midi.py", line 86, in <listcomp>
-        [assert_data_byte(b) for b in [chan, note, vel]]
-      File "/home/olemb/src/git/midi/midi.py", line 37, in assert_data_byte
-        raise ValueError('MIDI data byte must an integer >= 0 and <= 127 (was %r)' % value)
-    ValueError: MIDI data byte must an integer >= 0 and <= 127 (was 'BOO!')
-    
-    >>> midi.msg.note_on()
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "/home/olemb/src/git/midi/midi.py", line 85, in __init__
-        assert_time_value(time)
-      File "/home/olemb/src/git/midi/midi.py", line 44, in assert_time_value
-        raise ValueError('MIDI time value must be a number >= 0 (was %r)' % time)
-    ValueError: MIDI time value must be a number >= 0 (was [1, 2, 3])
+      File "midi/msg.py", line 159, in copy
+        new._update(kw)
+      File "midi/msg.py", line 132, in _update
+        assert_data(value)
+      File "midi/asserts.py", line 39, in assert_data
+        raise ValueError('MIDI data byte must an in range [0 .. 127] (was %s)' % repr(val))
+    ValueError: MIDI data byte must an in range [0 .. 127] (was 'BOO!')
 
-There is no support for I/O yet, but if you still have OSS MIDI on
-your system, you can do this:
 
-    >>> dev = open('/dev/midi', 'wb')
-    >>> dev.write(midi.msg.note_on(note=60).bin)
+Plans
+------
 
 I will write a general purpose MIDI parser which can be used for
 parsing data from any source by feeding it bytes and fetching messages
-as they become available. This can be plugged into any existing MIDI
-library like PortMIDI or Core MIDI, or it can be used to write a MIDI
-file class.
+as they become available.
 
-For now, this is mainly an excercise in API design and a way for me to
-play around with interesting Python data types, but if it turns out
-well, I will use it to write a patch librarian for my synths, and
-perhaps some other toys.
+I have also almost finished writing a wrapper for PortMidi, which will
+provide MIDI I/O on Linux, Mac OS X, Windows and possibly other
+platforms.
+
 
 Design goals
 -------------
@@ -102,15 +72,11 @@ Design goals
 Todo
 -----
 
-   - MIDI channels are numbered 1-16 in user interfaces, but are
-     numbered 0-15 in the protocol. Which version should midi.py show?
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)
    - include useful lookup tables and functions for common things like
      scales and controller types
    - read and write MIDI files?
-   - serialize messages to text files
-   - reformat midi.txt to make it more useful (hex values in addition to binary)
    - support rich comparisons (easy with self.bytes and self.bin)
 
 
