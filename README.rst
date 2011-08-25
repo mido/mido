@@ -1,7 +1,7 @@
 ProtoMIDI - a MIDI library for Python
 ======================================
 
-MIDI messages are immutable objects::
+::
 
     >>> from protomidi.msg import *
     >>> msg = note_on(note=60, vel=100)
@@ -9,6 +9,9 @@ MIDI messages are immutable objects::
     note_on(time=0, chan=0, note=60, vel=100)
     >>> msg.note
     60
+
+MIDI messages are immutable objects::
+
     >>> msg.note = 20
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -16,7 +19,8 @@ MIDI messages are immutable objects::
         raise ValueError('MIDI message object is immutable')
     ValueError: MIDI message object is immutable
 
-New messages are created by copying an existing message:
+New messages are created by copying an existing message, possibly
+updating some of its data values:
 
     >>> msg.copy(chan=1)
     note_on(time=0, chan=1, note=60, vel=100)
@@ -43,9 +47,23 @@ Illegal values will be detected::
 Plans
 ------
 
-I will write a general purpose MIDI parser which can be used for
-parsing data from any source by feeding it bytes and fetching messages
-as they become available.
+I will write thorough documentation on both the use of the library,
+its internals and the MIDI protocol.
+
+I will write a general purpose MIDI parser and serializer. The parser
+can be integrated with any MIDI I/O, since you just feed it one byte at
+the time and read messages as they are available::
+
+    >>> p = Parser()
+    >>> p.feed(0x90)
+    >>> p.feed(60)
+    >>> p.poll()
+    0
+    >>> p.feed(100)
+    >>> p.poll()
+    1
+    >>> p.fetchone()
+    note_on(time=0, chan=0, note=60, vel=100)
 
 I have also almost finished writing a wrapper for PortMidi, which will
 provide MIDI I/O on Linux, Mac OS X, Windows and possibly other
