@@ -3,13 +3,6 @@
 """
 msg.py - MIDI messages
 
-Todo:
-
-  - serialize data
-  - attach argspec and name to copy method so it can be used with pydoc
-    (perhaps it's best to dynamically generate a function which wraps
-    the real copy() and bind it to copy or __call__)
-
 Ole Martin Bjørndalen
 ombdalen@gmail.com
 http://nerdly.info/ole/
