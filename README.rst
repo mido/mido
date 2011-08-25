@@ -8,7 +8,7 @@ ProtoMIDI - a MIDI library for Python
     >>> msg
     note_on(time=0, chan=0, note=60, vel=100)
     >>> msg.type
-    note_on
+    'note_on'
     >>> msg.note
     60
 
