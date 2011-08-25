@@ -7,6 +7,8 @@ ProtoMIDI - a MIDI library for Python
     >>> msg = note_on(note=60, vel=100)
     >>> msg
     note_on(time=0, chan=0, note=60, vel=100)
+    >>> msg.type
+    note_on
     >>> msg.note
     60
 
@@ -19,10 +21,11 @@ MIDI messages are immutable::
         raise ValueError('MIDI message object is immutable')
     ValueError: MIDI message object is immutable
 
-New messages are created by copying an existing message, possibly
-updating some of its data values:
+New messages are created by calling an existing object as
+a function, passing keyword arguments for values you want to
+change::
 
-    >>> msg.copy(chan=1)
+    >>> msg(chan=1)
     note_on(time=0, chan=1, note=60, vel=100)
 
 Sysex messages are supported::
@@ -42,6 +45,37 @@ Illegal values will be detected::
       File "midi/asserts.py", line 39, in assert_data
         raise ValueError('MIDI data byte must an in range [0 .. 127] (was %s)' % repr(val))
     ValueError: MIDI data byte must an in range [0 .. 127] (was 'BOO!')
+
+Here is a list of all MIDI messages and their default values (subject
+to change, as the API is not completely stable yet)::
+
+    note_off(time=0, chan=0, note=0, vel=0)
+    note_on(time=0, chan=0, note=0, vel=0)
+    polytouch(time=0, chan=0, note=0, value=0)
+    control(time=0, chan=0, number=0, value=0)
+    program(time=0, chan=0, program=0)
+    aftertouch(time=0, chan=0, value=0)
+    pitchwheel(time=0, chan=0, value=0)
+    sysex(time=0, vendor=0, data=())
+    undefined_f1(time=0)
+    songpos(time=0, pos=0)
+    song(time=0, song=0)
+    undefined_f4(time=0)
+    undefined_f5(time=0)
+    tune_request(time=0)
+    sysex_end(time=0)
+    clock(time=0)
+    undefined_f9(time=0)
+    start(time=0)
+    continue_(time=0)
+    stop(time=0)
+    undefined_fd(time=0)
+    active_sensing(time=0)
+    reset(time=0)
+
+``time`` is a number that can be used to keep track of of when the
+message was received, how long to delay before sending it, and such
+things.
 
 
 Plans

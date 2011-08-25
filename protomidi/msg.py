@@ -52,7 +52,7 @@ class Msg:
 
     def _update(self, kw):
         """
-        Update data values. This is called by copy()
+        Update data values. This is called by __call__()
         on the new object with the keword argument from
         the caller.
         """
@@ -91,10 +91,11 @@ class Msg:
             ns[name] = value
 
         
-    def copy(self, **kw):
+    def __call__(self, **kw):
         """
-        Make a clone of the message, with 0 or more data
-        fields override.
+        Make a new message, using ourself as a prototype.
+        Data values can be overriden by passing them as keyword
+        arguments.
         """
 
         # No changes, just return ourselves instead
@@ -115,9 +116,6 @@ class Msg:
         new._update(kw)
 
         return new
-
-    # This may be a little obscure, but oh so fun!
-    __call__ = copy
 
     def __repr__(self):
         args = []
@@ -155,7 +153,7 @@ msg_spec = """
   f8 clock
   f9 undefined_f9
   fa start
-  fb continue
+  fb continue_
   fc stop
   fd undefined_fd
   fe active_sensing
@@ -196,6 +194,7 @@ def _make_message_prototypes(spec=msg_spec):
             continue
 
         msg = Msg(line)
+        print(msg)
         globals()[msg.type] = msg
         
         #
@@ -206,8 +205,6 @@ def _make_message_prototypes(spec=msg_spec):
         name = msg.type
         # 'continue' is a keyword in Python
         # Get around this.
-        if name == 'continue':
-            name = name + '_'
         __all__.append(msg.type)
 
         if hasattr(msg, 'chan'):
