@@ -113,9 +113,6 @@ Design goals
     operators. Utility functions will be used instead (midi.is_chanmsg() etc.)
   - the contructor must check if values are of the correct type and within range,
     so they can safely be serialized
-  - serialized versions of the message is available in .bytes and .bin. One is
-    an array of byte values as integers, the other is a byte array. I may change
-    the names.
   - the Sysex message will have its data bytes stored as a tuple of integers
 
 
