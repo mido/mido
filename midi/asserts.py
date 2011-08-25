@@ -35,7 +35,7 @@ def assert_opcode(val):
         raise ValueError('MIDI opcode must be int in range [128 .. 255] (was %s)' % repr(val))
 
 def assert_data(val):
-    if not isint(val) or not (0 <= val <= 127):
+    if not isdata():
         raise ValueError('MIDI data byte must an in range [0 .. 127] (was %s)' % repr(val))
 
 
