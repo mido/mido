@@ -73,7 +73,6 @@ platforms.
 Design goals
 -------------
 
-  - DRY
   - MIDI messages should be immutable
   - MIDI messages should be pure data objects, with no methods other than
     __init__(), __call__(), __repr__(), __str__() and rich comparison
