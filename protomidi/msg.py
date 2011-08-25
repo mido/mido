@@ -21,16 +21,6 @@ from __future__ import print_function, unicode_literals
 from collections import OrderedDict
 from asserts import assert_time, assert_chan, assert_data, assert_songpos, assert_pitchwheel
 
-def to_bytes(msg):
-    """Serialize message to a list of byte values"""
-    # Todo: implement
-    return (0, 0, 0)
-
-def to_bin(msg):
-    """Serialize message to a byte array (binary string)"""
-    # Todo: implement
-    return '   '
-
 class Msg:
 
     def __init__(self, spec):
