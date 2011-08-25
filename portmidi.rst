@@ -8,14 +8,13 @@ Status: Drafting API.
    
 
 
-Uses ctypes.
+Use ctypes.
 
 Todo: include .so files for various operating systems? (For convenience.)
 
-PortMidi:
-http://portmedia.sourceforge.net/portmidi/doxygen/portmidi_8h-source.html
+PortMidi API: http://portmedia.sourceforge.net/portmidi/doxygen/portmidi_8h-source.html
 
-Alternatives:
-http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py?spec=svn2&r=2
+
+Another implentation: http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py?spec=svn2&r=2
 
 
