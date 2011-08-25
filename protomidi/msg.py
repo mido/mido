@@ -97,6 +97,11 @@ class Msg:
         fields override.
         """
 
+        # No changes, just return ourselves instead
+        # of making a new object exacly like us.
+        if not kw:
+            return self
+
         ns = self.__dict__
 
         new = Msg(self.spec)
