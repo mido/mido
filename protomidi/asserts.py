@@ -6,7 +6,7 @@ def isint(val):
 def isnum(val):
     """Check if a value is a number"""
     # Todo: is there a better way to check this?
-    return isinstance(val, int) or isinstance(val, float) 
+    return isinstance(val, int) or isinstance(val, float) or isinstance(val, long)
 
 
 
@@ -44,8 +44,8 @@ def assert_data(val):
 #
 
 def assert_time(time):
-    if not isnum(time) or time < 0:
-        raise ValueError('MIDI time value must be number >= 0 (was %s)' % repr(time))
+    if not isnum(time):
+        raise ValueError('MIDI time value must be number (was %s)' % repr(time))
 
 def assert_chan(val):
     if not isint(val) or not (0 <= val <= 15):
