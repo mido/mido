@@ -35,7 +35,7 @@ Implements the following MIDI messages:
 """
 
 import sys
-from .types import assert_time, assert_chan, assert_data, is_chanmsg
+from .asserts import assert_time, assert_chan, assert_data, is_chanmsg
 
 
 # Todo: use abc? 
