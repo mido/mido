@@ -40,7 +40,6 @@ from .types import assert_time, assert_chan, assert_data, is_chanmsg
 
 # Todo: use abc? 
 class midi_msg:
-
     """
     MIDI message (Abstract base class)
     """
@@ -515,9 +514,3 @@ class reset(system_realtime_msg):
 
     opcode = 0xff
     type = 'reset'
-
-
-
-"""
-Todo: Fix copy
-"""
