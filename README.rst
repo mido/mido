@@ -1,10 +1,10 @@
-MIDI library for Python
-========================
+ProtoMIDI - a MIDI library for Python
+======================================
 
 MIDI messages are immutable objects::
 
-    >>> import midi
-    >>> msg = midi.msg.note_on(note=60, vel=100)
+    >>> from protomidi.msg import *
+    >>> msg = note_on(note=60, vel=100)
     >>> msg
     note_on(time=0, chan=0, note=60, vel=100)
     >>> msg.note
@@ -23,12 +23,12 @@ New messages are created by copying an existing message:
 
 Sysex messages are supported::
 
-    >>> midi.msg.sysex(vendor=22, data=[1, 4, 2, 5, 6, 7])
+    >>> sysex(vendor=22, data=[1, 4, 2, 5, 6, 7])
     sysex(time=0, vendor=22, data=(1, 4, 2, 5, 6, 7))
 
 Illegal values will be detected::
 
-    >>> midi.msg.note_on(note='BOO!')
+    >>> note_on(note='BOO!')
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
       File "midi/msg.py", line 159, in copy
@@ -68,10 +68,11 @@ Design goals
   - the Sysex message will have its data bytes stored as a tuple of integers
 
 
-
 Todo
 -----
 
+   - write docs
+   - implement serialization of messages
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)
    - include useful lookup tables and functions for common things like

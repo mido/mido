@@ -67,32 +67,6 @@ class Msg:
 
         self._update(default_values)
 
-        #
-        # Create 'copy' function that wraps the real _copy()
-        # and bind it to the messages name space.
-        # The purpose is for the method to have an argspec
-        # so it can be inspected.
-        #
-        
-        # Todo: finish this
-        # (This seems like a lot of work for little gain)
-
-        # args = ['{0}={1}'.format(name, value) for (name, value) in default_values.items()]
-        # args = ', '.join(args)
-        
-        # code = ''
-        # code += 'def {0}({1}):\n'.format(ns['type'], args)
-        # code += '    msg._copy()'
-
-        # print(code)
-
-        # closure = dict(msg=self)
-        # exec code in closure
-        # import pprint
-        # pprint.pprint(closure.items())
-        # print(closure)
-        # ns['copy'] = closure[ns['type']]
-
     def _update(self, kw):
         """
         Update data values. This is called by copy()
@@ -132,12 +106,6 @@ class Msg:
                 assert_data(value)
 
             ns[name] = value
-        
-        #
-        # Serialize data
-        #
-        ns['bytes'] = to_bytes(self)
-        ns['bin'] = to_bin(self)
 
         
     def copy(self, **kw):
@@ -171,14 +139,6 @@ class Msg:
         args = ', '.join(args)
 
         return '{0}({1})'.format(self.type, args)
-
-    def __len__(self):
-        """
-        Return the length of the message. This is the
-        number of bytes the message will take up when
-        serialized.
-        """
-        return len(self.bytes)
 
     def __setattr__(self, name, value):
         raise ValueError('MIDI message object is immutable')
@@ -229,6 +189,7 @@ msg_spec = """
 #       # byte is an opcode
 #
 op2msg = {}
+__all__ = []
 
 def _make_message_prototypes(spec=msg_spec):
 
@@ -236,7 +197,7 @@ def _make_message_prototypes(spec=msg_spec):
     Create all MIDI message prototypes and bind them to the global
     scope (the midi.msg module).
 
-    Also fills in op2msg.
+    Also fills in op2msg and __all__
     """
 
     for line in spec.split('\n'):
@@ -248,6 +209,18 @@ def _make_message_prototypes(spec=msg_spec):
 
         msg = Msg(line)
         globals()[msg.type] = msg
+        
+        #
+        # Add prototype to __all__ to
+        #     from protomidi.msg import *
+        # works
+        # 
+        name = msg.type
+        # 'continue' is a keyword in Python
+        # Get around this.
+        if name == 'continue':
+            name = name + '_'
+        __all__.append(msg.type)
 
         if hasattr(msg, 'chan'):
             #
@@ -257,6 +230,7 @@ def _make_message_prototypes(spec=msg_spec):
             for chan in range(16):
                 op2msg[msg.op | chan] = msg
         else:
+            # System message have only one entry each
             op2msg[msg.op] = msg
 
 _make_message_prototypes()
