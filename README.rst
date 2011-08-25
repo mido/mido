@@ -129,11 +129,10 @@ Todo
    - support rich comparisons (easy with self.bytes and self.bin)
    - document the implementation of messages in msg.py.
      (the prototyping object model, how attributes are made read only etc.)
-     This should be in docs/, not in in the msg.py.    
- 
+     This should be in docs/, not in in the msg.py.
    - write a short introduction on the MIDI protocol, using this library
      for examples
-
+   - support Python 3
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
