@@ -10,7 +10,7 @@ ProtoMIDI - a MIDI library for Python
     >>> msg.note
     60
 
-MIDI messages are immutable objects::
+MIDI messages are immutable::
 
     >>> msg.note = 20
     Traceback (most recent call last):
