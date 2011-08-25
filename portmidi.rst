@@ -5,8 +5,14 @@ Status: Drafting API.
 
 ::
 
-   
+    import midi
+    import time
 
+    with midi.portmidi.context():
+        out = midi.portmidi.Output()
+        out.send(midi.msg.note_on(note=60, vel=127))
+        time.sleep(0.5)
+        out.send(midi.msg.note_off(note=60)
 
 Uses ctypes.
 
