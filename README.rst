@@ -1,12 +1,14 @@
 ProtoMIDI - a MIDI library for Python
 ======================================
 
+(Todo: test examples (they could break after the last rewrite))
+
 ::
 
     >>> from protomidi.msg import *
-    >>> msg = note_on(note=60, vel=100)
+    >>> msg = note_on(note=60, velocity=100)
     >>> msg
-    note_on(time=0, chan=0, note=60, vel=100)
+    note_on(time=0, channel=0, note=60, velocity=100)
     >>> msg.type
     'note_on'
     >>> msg.note
@@ -19,14 +21,14 @@ MIDI messages are immutable::
       File "<stdin>", line 1, in <module>
       File "midi/msg.py", line 184, in __setattr__
         raise ValueError('MIDI message object is immutable')
-    ValueError: MIDI message object is immutable
+    ValueError: MIDI messages are immutable
 
 New messages are created by calling an existing object as
 a function, passing keyword arguments for values you want to
 change::
 
-    >>> msg(chan=1)
-    note_on(time=0, chan=1, note=60, vel=100)
+    >>> msg(channel=1)
+    note_on(time=0, channel=1, note=60, velocity=100)
 
 Sysex messages are supported::
 
@@ -45,6 +47,8 @@ Illegal values will be detected::
       File "midi/asserts.py", line 39, in assert_data
         raise ValueError('MIDI data byte must an in range [0 .. 127] (was %s)' % repr(val))
     ValueError: MIDI data byte must an in range [0 .. 127] (was 'BOO!')
+
+(Todo: regenerate this:)
 
 Here is a list of all MIDI messages and their default values (subject
 to change, as the API is not completely stable yet)::
@@ -81,39 +85,11 @@ things.
 Plans
 ------
 
+I have also nearly finished writing a wrapper for PortMidi, which will
+provide MIDI I/O on Linux, Mac OS X and Windows.
+
 I will write thorough documentation on both the use of the library,
 its internals and the MIDI protocol.
-
-I will write a general purpose MIDI parser and serializer. The parser
-can be integrated with any MIDI I/O, since you just feed it one byte at
-the time and read messages as they are available::
-
-    >>> p = Parser()
-    >>> p.feed(0x90)
-    >>> p.feed(60)
-    >>> p.poll()
-    0
-    >>> p.feed(100)
-    >>> p.poll()
-    1
-    >>> p.fetchone()
-    note_on(time=0, chan=0, note=60, vel=100)
-
-I have also almost finished writing a wrapper for PortMidi, which will
-provide MIDI I/O on Linux, Mac OS X, Windows and possibly other
-platforms.
-
-
-Design goals
--------------
-
-  - MIDI messages should be immutable
-  - MIDI messages should be pure data objects, with no methods other than
-    __init__(), __call__(), __repr__(), __str__() and rich comparison
-    operators. Utility functions will be used instead (midi.is_chanmsg() etc.)
-  - the contructor must check if values are of the correct type and within range,
-    so they can safely be serialized
-  - the Sysex message will have its data bytes stored as a tuple of integers
 
 
 Todo
@@ -124,9 +100,9 @@ Todo
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)
    - include useful lookup tables and functions for common things like
-     scales and controller types
+     controller types
    - read and write MIDI files?
-   - support rich comparisons (easy with self.bytes and self.bin)
+   - implement comparison (== and !=), but not < and > (they don't make sense here)
    - document the implementation of messages in msg.py.
      (the prototyping object model, how attributes are made read only etc.)
      This should be in docs/, not in in the msg.py.

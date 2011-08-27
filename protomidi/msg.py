@@ -8,13 +8,98 @@ ombdalen@gmail.com
 http://nerdly.info/ole/
 
 License: MIT
+
 """
 
 from __future__ import print_function, unicode_literals
 from collections import OrderedDict
-from asserts import assert_time, assert_chan, assert_data, assert_songpos, assert_pitchwheel
+from asserts import assert_time, assert_channel, assert_data, assert_songpos, assert_pitchwheel
 
-class Msg:
+msg_specs = """
+  #
+  # MIDI message specifications
+  #
+  # This is the authorative definition of message types.
+  #
+
+  #
+  # Channel messages
+  # 
+  note_off     0x80|channel note velocity
+  note_on      0x90|channel note velocity
+  polytouch    0xa0|channel note value     # what some call polypressure
+  control      0xb0|channel number value   # control channelge
+  program      0xc0|channel number         # program channelge
+  aftertouch   0xd0|channel value          # what some call pressure
+  pitchwheel   0xe0|channel value          # seralized as lsb msb
+
+  #
+  # The value for pitchwheel is encoded as a 14 bit signed integer.
+  # This is a pain to work with, si I convert it to a float in the
+  # range [-1 ... 1]
+  #   Todo: make conversion functions
+  #
+
+  #
+  # System common messages
+  #
+  sysex         0xf0 vendor data    # This requires special handling everywhere
+  undefined     0xf1 
+  songpos       0xf2 pos            # 14 bit unsigned, seralized as lsb msb
+  song          0xf3 song           # song select
+  undefined_f4  0xf4
+  undefined_f5  0xf5
+  tune_request  0xf6
+  sysex_end     0xf7
+
+  #
+  # System realtime messages
+  # These can interleave other messages
+  # (= cut in line), but they have no
+  # data bytes, so it's OK
+  #
+  clock           0xf8
+  undefined_f9    0xf9
+  start           0xfa
+
+  # Note: 'continue' is a keyword in python, so is
+  # is bound to protomidi.msg.continue_
+  continue        0xfb
+  stop            0xfc
+  undefined_fd    0xfd
+  active_sensing  0xfe
+  reset           0xff
+"""
+
+__doc__ += msg_specs
+
+class MIDIMessageSpec:
+    """
+    A MIDI message spec with the following attributes:
+
+      name (string)
+      opcode (int)
+      args (list of strings)
+    """
+
+    def __init__(self, specline):
+        words = specline.split()
+        self.name = words[0]
+        self.args = words[2:]
+
+        # Split opcode|channel?
+        opcode = words[1]
+        if '|' in opcode:
+            (opcode, argname) = opcode.split('|', 3)
+            self.args.insert(0, argname)  # prepend channel
+            # raise ValueError('syntax error in argspec (split opcode / channel): {}'.format(specline))
+
+        self.opcode = int(opcode, base=16)
+        
+    def __repr__(self):
+        return 'MIDIMessageSpec({})'.format(repr(self.specline))
+
+class MIDIMessage:
 
     def __init__(self, spec):
         """
@@ -26,28 +111,57 @@ class Msg:
         # message type.
         #
 
+        if isinstance(spec, basestring):
+            spec = MIDIMessageSpec(spec)
+
+        # Get shortcut to namespace
         ns = self.__dict__
 
-        words = spec.split()
-        ns['spec'] = ' '.join(words)
+        #
+        # Add metadata
+        #
+        ns['spec'] = spec
+        ns['opcode'] = spec.opcode
+        ns['type'] = spec.name
+        ns['names'] = names = ['time'] + spec.args
 
-        # Opcode
-        ns['op'] = int(words[0], 16)
-        ns['type'] = words[1]
 
-        ns['names'] = names = ['time'] + words[2:]
+        #
+        # Add default data
+        # Todo: this should only be done once per
+        # message type. But where?
+        #
 
         # Initialize all values to zero
         for name in names:
             ns[name] = 0
 
         # Initialize all data fields to 0
-        default_values = OrderedDict(zip(names,
-                                         [0]*len(names)))
+        zeroes = [0] * len(names)
+        default_values = OrderedDict(zip(names, zeroes))
 
+        # Sysex message need special care as always
         if 'data' in default_values:
-            default_values['data'] = ()
+            default_values['data'] = ns['date'] = ()
 
+        #
+        # Figure out how long we are.
+        #
+        length = 1  # we always have an opcode
+
+        if 'data' in self.names:
+            # Sysex messages require special handling,
+            # as always.
+            length += ns['data']
+            length -= 1  # the reference to 'data' doesn't count
+
+        if 'channel' in self.names:
+            # Channel is stored in the opcode.
+            length -= 1
+
+        ns['_length'] = length
+
+        # There we go
         self._update(default_values)
 
     def _update(self, kw):
@@ -71,8 +185,8 @@ class Msg:
             if name == 'time':
                 assert_time(value)
 
-            elif name == 'chan':
-                assert_chan(value)
+            elif name == 'channel':
+                assert_channel(value)
 
             elif name == 'data':
                 for byte in value:
@@ -90,6 +204,10 @@ class Msg:
 
             ns[name] = value
 
+    def __len__(self):
+        return self._length
+
+    # def __cmp__():  # Todo: this is deprecated, so what do we do?
         
     def __call__(self, **kw):
         """
@@ -98,14 +216,14 @@ class Msg:
         arguments.
         """
 
-        # No changes, just return ourselves instead
+        # No channelges, just return ourselves instead
         # of making a new object exacly like us.
         if not kw:
             return self
 
         ns = self.__dict__
 
-        new = Msg(self.spec)
+        new = MIDIMessage(self.spec)
 
         # Copy our data
         values = {}
@@ -127,44 +245,17 @@ class Msg:
         return '{0}({1})'.format(self.type, args)
 
     def __setattr__(self, name, value):
-        raise ValueError('MIDI message object is immutable')
+        raise ValueError('MIDI messages are immutable')
 
     def __delattr__(self, name):
-        raise ValueError('MIDI message object is immutable')
+        raise ValueError('MIDI messages are immutable')
 
-msg_spec = """
-  80 note_off    chan    note vel
-  90 note_on     chan    note vel
-  a0 polytouch   chan    note value
-  b0 control     chan    number value
-  c0 program     chan    program
-  d0 aftertouch  chan    value
-  e0 pitchwheel  chan    value
-
-  f0 sysex          vendor data
-  f1 undefined_f1
-  f2 songpos        pos
-  f3 song           song
-  f4 undefined_f4
-  f5 undefined_f5
-  f6 tune_request
-  f7 sysex_end
-
-  f8 clock
-  f9 undefined_f9
-  fa start
-  fb continue_
-  fc stop
-  fd undefined_fd
-  fe active_sensing
-  ff reset
-"""
 
 #
 # Maps opcode to message prototype
 #
-# Channel messages will have 16 entries each,
-# one for each MIDI channel.
+# Channelnel messages will have 16 entries each,
+# one for each MIDI channelnel.
 #
 # Check if the byte is an opcode with midi.assert.isopcode()
 # before you look it up here.
@@ -174,27 +265,43 @@ msg_spec = """
 #   if byte in op2msg:
 #       # byte is an opcode
 #
-op2msg = {}
+#    Todo: make it possible to override default message prototypes
+#    (If anyone finds a use for all the undefined_xx messages.)
+#
+prototypes = {}
 __all__ = []
 
-def _make_message_prototypes(spec=msg_spec):
+def _make_message_prototypes(specs=msg_specs):
 
     """
     Create all MIDI message prototypes and bind them to the global
     scope (the midi.msg module).
 
-    Also fills in op2msg and __all__
+    Also fills in prototypes and __all__
     """
 
-    for line in spec.split('\n'):
+    for line in specs.split('\n'):
+        # Strip comments
+        line = line.split('#')[0]
+
+        # Strip whitespace
         line = line.strip()
 
         # Skip blank lines
         if not line:
             continue
 
-        msg = Msg(line)
-        globals()[msg.type] = msg
+        specline = line
+        spec = MIDIMessageSpec(specline)
+        msg = MIDIMessage(spec)
+
+
+        bindname = msg.type
+        # 'continue' is a keyword in Python
+        # Get around this.
+        if bindname == 'continue':
+            bindname += '_'
+        globals()[bindname] = msg
         
         #
         # Add prototype to __all__ to
@@ -202,19 +309,21 @@ def _make_message_prototypes(spec=msg_spec):
         # works
         # 
         name = msg.type
-        # 'continue' is a keyword in Python
-        # Get around this.
-        __all__.append(msg.type)
+        __all__.append(bindname)
 
-        if hasattr(msg, 'chan'):
+        if hasattr(msg, 'channel'):
             #
-            # Channel message need to be mapped to 16 different
-            # opcodes each, one for each channel.
+            # Channelnel message need to be mapped to 16 different
+            # opcodes each, one for each channelnel.
             #
-            for chan in range(16):
-                op2msg[msg.op | chan] = msg
+            for channel in range(16):
+                prototypes[msg.opcode | channel] = msg
         else:
             # System message have only one entry each
-            op2msg[msg.op] = msg
+            prototypes[msg.opcode] = msg
 
-_make_message_prototypes()
+prototypes = _make_message_prototypes()
+
+if __name__ == '__main__':
+    MIDI
+

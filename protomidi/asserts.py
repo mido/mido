@@ -47,7 +47,7 @@ def assert_time(time):
     if not isnum(time):
         raise ValueError('MIDI time value must be number (was %s)' % repr(time))
 
-def assert_chan(val):
+def assert_channel(val):
     if not isint(val) or not (0 <= val <= 15):
         raise ValueError('MIDI channel must be int in range [0 .. 15] (was %s)' % repr(val))
 
