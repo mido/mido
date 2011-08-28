@@ -183,42 +183,6 @@ class MIDIMessage:
 prototypes = {}
 __all__ = []
 
-def bootstrap(opcode, type, names):
-    """
-    Bootstrap object cloning chain by creating an object scratch.
-
-    You can use this to implement previously undefined opcodes like
-    0xf4, with the limitation that they can only contain byte values,
-    since 14-bit values and systex data are handled by special cases
-    in the code.
-    """
-
-    #
-    # Create the initial object of this type.
-    #
-    msg = MIDIMessage()
-
-    # Get name space
-    ns = msg.__dict__
-
-    # Fill in metadata
-    ns['opcode'] = opcode
-    ns['type'] = type
-    ns['names'] = names  # Todo: get rid of this somehow?
-
-    if opcode < 0xf0:
-        ns['channel'] = 0
-
-    # Set data
-    for name in names:
-        if name == 'data':
-            # Sysex needs special handling, as always
-            ns[name] = ()
-        else:
-            ns[name] = 0
-
-    return msg
-
 #
 # A mapping of
 #
@@ -232,13 +196,35 @@ def _init():
     put their names in __all__ so they can be splat-imported
     without polluting the name space with all that other gruff.
     """
-
     #
     # Create initial messages
     #
     for opcode in msg_specs:
         (type, names) = msg_specs[opcode]
-        msg = bootstrap(opcode, type, ('channel',) + names)
+
+        msg = MIDIMessage()
+
+        # Get name space
+        ns = msg.__dict__
+
+        # Fill in metadata
+        ns['opcode'] = opcode
+        ns['type'] = type
+
+        if opcode < 0xf0:
+            ns['channel'] = 0
+            ns['names'] = ('channel',) + names
+        else:
+            ns['names'] = names
+
+        # Set data
+        for name in names:
+            if name == 'data':
+                # Sysex needs special handling, as always
+                ns[name] = ()
+            else:
+                ns[name] = 0
+
         if hasattr(msg, 'channel'):
             # Channel messages have 16 opcodes,
             # one for each MIDI channel.
