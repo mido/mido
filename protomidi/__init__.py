@@ -11,7 +11,9 @@ __email__ = 'ombdalen@gmail.com'
 __license__ = 'MIT'
 __version__ = '0.0.0'
 
-from .parser import Parser
+__all__ = []  # Prevent splat import
 
-__all__ = []
+from .parser import Parser
+from .serializer import serialize
+
 

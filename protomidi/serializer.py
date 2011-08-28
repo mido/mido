@@ -1,19 +1,41 @@
-"""
-For now I have a module "parser" and a module "serializer". I am wondering
-if this is a good way to organize the code.
+def serialize(msg):
+    """
+    Return a bytearray representation of the message.
+    """
 
-There is more than one way to serialize a MIDI message.
+    data = bytearray()
 
-  - bytes / bytearray:  bytearray(b'\x90<\x7f')
-  - hex dump:           90 3c 7f
-  - repr():             note_on(time=0, channel=0, note=60, velocity=127)
+    if hasattr(msg, 'channel'):
+        data.append(msg.opcode | msg.channel)
+    else:
+        data.append(msg.opcode)
 
-Perhaps the encode / decode implementation for each of these belong together.
+    for name in msg.names:
+        if name == 'channel':
+            pass  # We already did this, skip it now
+        
+        elif name == 'data':
+            for byte in msg.data:
+                data.append(byte)  # Todo: extend()?
+            
+        elif msg.type == 'pitchwheel' and name == 'value':
+            value = int((msg.value + 1) * (1 << 14))
+            print(value)
 
-There's one thing I just realized: The MIDI message itself should not know
-how long it is.
+        elif msg.type == 'songpos' and name == 'pos':
+            # Convert 14 bit value to two 7-bit values
+            # Todo: check if this is correct
+            lsb = msg.pos & 0x7f
+            data.append(lsb)
 
-I was going to have it compute its length in bytes and have it return that
-in its __len__() method. But MIDIMessage() is an abstract MIDI message. It
-is not actually a string of bytes.
-"""
+            msb = msg.pos >> 7
+            print(msb)
+            data.append(msb)
+        else:
+            # Ordinary data byte
+            data.append(getattr(msg, name))
+
+    if msg.type == 'sysex':
+        data.append(0xf7)  # sysex_end
+
+    return data

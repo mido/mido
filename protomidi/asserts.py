@@ -48,14 +48,14 @@ def assert_time(time):
         raise ValueError('MIDI time value must be number (was %s)' % repr(time))
 
 def assert_channel(val):
-    if not isint(val) or not (0 <= val <= 15):
-        raise ValueError('MIDI channel must be int in range [0 .. 15] (was %s)' % repr(val))
+    if not isint(val) or not (0 <= val < 16):
+        raise ValueError('MIDI channel must be int in range(0, 16) (was %s)' % repr(val))
 
 # Todo: fix range (should be 14 bit unsigned)
 def assert_songpos(val):
-    if not isint(val) or not (0 <= val <= 127):
-        raise ValueError('MIDI data byte must be int in range [0 .. 127] (was %s)' % repr(val))
+    if not isint(val) or not (0 <= val < 32768):
+        raise ValueError('MIDI song position must be int in range(0, 32768) (was %s)' % repr(val))
 
 def assert_pitchwheel(val):
     if not isnum(val) or not (-1 <= val <= 1):
-        raise ValueError('MIDI pitch wheel must be number in range [-1 .. 1] (was %s)' % repr(val))
+        raise ValueError('MIDI pitch wheel must be number in range(-1, 1) (was %s)' % repr(val))

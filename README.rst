@@ -35,6 +35,13 @@ Sysex messages are supported::
     >>> sysex(vendor=22, data=[1, 4, 2, 5, 6, 7])
     sysex(time=0, vendor=22, data=(1, 4, 2, 5, 6, 7))
 
+Messages can be serialized to bytearrays so they can be
+sent or written to MIDI files::
+
+    >>> from protomidi import serialize
+    >>> serialize(sysex(data=[1, 2, 3]))
+    bytearray(b'\xf0\x00\x01\x02\x03\xf7')
+
 Illegal values will be detected::
 
     >>> note_on(note='BOO!')
@@ -95,8 +102,9 @@ its internals and the MIDI protocol.
 Todo
 -----
 
+   - pitchwheel(value=-1) should work, but it hits an assert expecting
+     a data byte. What's going on here?
    - write docs
-   - implement serialization of messages
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)
    - include useful lookup tables and functions for common things like
@@ -108,7 +116,6 @@ Todo
      This should be in docs/, not in in the msg.py.
    - write a short introduction on the MIDI protocol, using this library
      for examples
-   - support Python 3
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 

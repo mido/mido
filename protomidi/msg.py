@@ -135,6 +135,8 @@ class MIDIMessage:
             if name in override:
                 value = override[name]
 
+                # print(msg.type, name, value)
+
                 if name == 'time':
                     assert_time(value)
 
@@ -146,14 +148,13 @@ class MIDIMessage:
                         assert_data(byte)
                     value = tuple(value)  # Convert to tuple
                     
-                elif name == 'pos':
-                    assert_songpos(value)
-
                 elif name == 'value' and type == 'pitchwheel':
                     assert_pitchwheel(value)
 
+                elif name == 'pos':
+                    assert_songpos(value)
+
                 else:
-                    # Todo: what?
                     assert_data(value)
 
                 ns[name] = value
