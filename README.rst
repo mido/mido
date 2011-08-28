@@ -113,3 +113,5 @@ Todo
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
 License: MIT
+
+Credits: Initialization code in portaudio.py by Grant Yoshida, borrowed from his module portmidizero.
