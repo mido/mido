@@ -1,7 +1,7 @@
 ProtoMIDI - a MIDI library for Python
 ======================================
 
-(Todo: test examples (they could break after the last rewrite))
+Works in Python 2 and 3.
 
 ::
 
