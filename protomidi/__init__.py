@@ -11,7 +11,7 @@ __email__ = 'ombdalen@gmail.com'
 __license__ = 'MIT'
 __version__ = '0.0.0'
 
-import msg
+from .parser import Parser
 
 __all__ = []
 

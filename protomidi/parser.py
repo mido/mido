@@ -13,7 +13,7 @@ Todo:
 
 import collections
 
-import msg
+from .msg import messages
 
 
 def _opcode_is_system_realtime(opcode):
