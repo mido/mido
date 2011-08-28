@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-"""
-
-from __future__ import print_function, unicode_literals
-import sys
-import string
-
-hexchars = '0123456789abcdefABCDEF'
-"""
-
 import sys
 
 
