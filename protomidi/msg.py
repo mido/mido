@@ -12,7 +12,7 @@ from .asserts import assert_time, assert_channel
 from .asserts import assert_data, assert_songpos, assert_pitchwheel
 
 
-msg_specs = [
+msg_specs = {
   #
   # MIDI message specifications
   #
@@ -22,13 +22,13 @@ msg_specs = [
   #
   # Channel messages
   # 
-  'note_off     0x80|channel note velocity',
-  'note_on      0x90|channel note velocity',
-  'polytouch    0xa0|channel note value',     # what some call polypressure
-  'control      0xb0|channel number value',   # control channelge
-  'program      0xc0|channel number',         # program channelge
-  'aftertouch   0xd0|channel value',          # what some call pressure
-  'pitchwheel   0xe0|channel value',          # seralized as lsb msb
+  0x80 : ('note_off',     ('note', 'velocity')),
+  0x90 : ('note_on',      ('note', 'velocity')),
+  0xa0 : ('polytouch',    ('note', 'value')),
+  0xb0 : ('control',      ('number', 'value')),
+  0xc0 : ('program',      ('channel', 'number')),
+  0xd0 : ('aftertouch',   ('channel', 'value')),
+  0xe0 : ('pitchwheel',   ('channel', 'value')),
 
   #
   # The value for pitchwheel is encoded as a 14 bit signed integer.
@@ -40,33 +40,38 @@ msg_specs = [
   #
   # System common messages
   #
-  'sysex         0xf0 vendor data',    # This requires special handling everywhere
-  'undefined_f1  0xf1', 
-  'songpos       0xf2 pos',            # 14 bit unsigned, seralized as lsb msb
-  'song          0xf3 song',           # song select
-  'undefined_f4  0xf4',
-  'undefined_f5  0xf5',
-  'tune_request  0xf6',
-  'sysex_end     0xf7',
+  # songpos.pos is 14 bit unsigned,
+  # seralized as lsb msb
+  #
+  # Todo: rename song to song_select?
+  # 
+  0xf0 : ('sysex',         ('vendor', 'data')),
+  0xf1 : ('undefined_f1',  ()), 
+  0xf2 : ('songpos',       ('pos', )),  
+  0xf3 : ('song',          ('song', )),
+  0xf4 : ('undefined_f4',  ()),
+  0xf5 : ('undefined_f5',  ()),
+  0xf6 : ('tune_request',  ()),
+  0xf7 : ('sysex_end',     ()),
 
   #
   # System realtime messages
   # These can interleave other messages
   # (= cut in line), but they have no
-  # data bytes, so it's OK
+  # data bytes, so that's OK
   #
-  'clock           0xf8',
-  'undefined_f9    0xf9',
-  'start           0xfa',
 
+  0xf8 : ('clock',        ()),
+  0xf9 : ('undefined_f9', ()),
+  0xfa : ('start',        ()),
   # Note: 'continue' is a keyword in python, so is
   # is bound to protomidi.msg.continue_
-  'continue        0xfb',
-  'stop            0xfc',
-  'undefined_fd    0xfd',
-  'active_sensing  0xfe',
-  'reset           0xff',
-  ]
+  0xfb : ('continue',       ()),
+  0xfc : ('stop',           ()),
+  0xfd : ('undefined_fd',   ()),
+  0xde : ('active_sensing', ()),
+  0xff : ('reset',          ()),
+  }
 
 class MIDIMessage:
     """
@@ -178,32 +183,15 @@ class MIDIMessage:
 prototypes = {}
 __all__ = []
 
-def bootstrap(specline):
+def bootstrap(opcode, type, names):
     """
-    Bootstrap object cloning chain by creating an object from
-    a specline.
+    Bootstrap object cloning chain by creating an object scratch.
 
     You can use this to implement previously undefined opcodes like
     0xf4, with the limitation that they can only contain byte values,
     since 14-bit values and systex data are handled by special cases
     in the code.
     """
-
-    # Split line
-    words = specline.split()
-    type = words[0]
-    args = words[2:]
-    
-    # Split 'opcode|channel'?
-    opcode = words[1]
-    if '|' in opcode:
-        (opcode, arg) = opcode.split('|', 1)
-
-        # prepend channel to arguments
-        args.insert(0, arg)
-
-    # Parse opcode
-    opcode = int(opcode, base=16)
 
     #
     # Create the initial object of this type.
@@ -216,15 +204,18 @@ def bootstrap(specline):
     # Fill in metadata
     ns['opcode'] = opcode
     ns['type'] = type
-    ns['names'] = args
+    ns['names'] = names  # Todo: get rid of this somehow?
+
+    if opcode < 0xf0:
+        ns['channel'] = 0
 
     # Set data
-    for arg in args:
-        if arg == 'data':
+    for name in names:
+        if name == 'data':
             # Sysex needs special handling, as always
-            ns[arg] = ()
+            ns[name] = ()
         else:
-            ns[arg] = 0
+            ns[name] = 0
 
     return msg
 
@@ -245,8 +236,9 @@ def _init():
     #
     # Create initial messages
     #
-    for specline in msg_specs:
-        msg = bootstrap(specline)
+    for opcode in msg_specs:
+        (type, names) = msg_specs[opcode]
+        msg = bootstrap(opcode, type, ('channel',) + names)
         if hasattr(msg, 'channel'):
             # Channel messages have 16 opcodes,
             # one for each MIDI channel.
