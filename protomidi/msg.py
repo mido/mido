@@ -115,15 +115,15 @@ class MIDIMessage:
         # Copy metadata
         ns['opcode'] = self.opcode
         ns['type'] = self.type
-        ns['names'] = self.names
+        ns['_names'] = self._names
         
         # Check keyword arguments to see
         # if any invalid names have been passed.
         # (Todo: rewrite that comment.)
         for name in override:
-            if name not in self.names:
+            if name not in self._names:
                 msg = 'keyword argument for {} must be one of: {} (was {})'
-                validnames = ' '.join(self.names)
+                validnames = ' '.join(self._names)
                 raise TypeError(msg.format(self.type,
                                            validnames,
                                            repr(name)))
@@ -132,7 +132,7 @@ class MIDIMessage:
         # Copy our values across,
         # letting the caller override
         # selected values.
-        for name in self.names:
+        for name in self._names:
             if name in override:
                 value = override[name]
 
@@ -167,7 +167,7 @@ class MIDIMessage:
 
     def __repr__(self):
         args = []
-        for name in self.names:
+        for name in self._names:
             args.append('{0}={1}'.format(name,
                                          repr(getattr(self, name))))
         args = ', '.join(args)
@@ -213,9 +213,9 @@ def _init():
 
         if opcode < 0xf0:
             ns['channel'] = 0
-            ns['names'] = ('channel',) + names
+            ns['_names'] = ('channel',) + names
         else:
-            ns['names'] = names
+            ns['_names'] = names
 
         # Set data
         for name in names:
