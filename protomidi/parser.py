@@ -1,28 +1,5 @@
-"""
-Todo:
-
-   - in msg.py: move msg_spec to top of file in msg.py
-   
-   - callback option?
-
-       def callback(msg):
-
-   - handle sysex
-"""
-
-
 import collections
-
-from .msg import messages
-
-
-def _opcode_is_system_realtime(opcode):
-    """
-    
-    """
-    return f8 <= opcode <= ff
-
-Message = collections.namedtuple('Message', 'opcode data')
+from .msg import messages, opcode2typeinfo
 
 
 class Parser:
@@ -30,88 +7,60 @@ class Parser:
     MIDI parser
     """
     
-    def __init__(self, callback=False):
-        self._opcode = None
-        self._data = []
-        self._pending = collections.deque()
-        self.callback = callback
+    def __init__(self):
+        self.opcode = None
+        self.info = None
+        self.bytes = bytearray()
+
+        self.pending = collections.deque()
 
     def poll(self):
         """
         Return the number of pending messages.
         """
-        return len(self._pending)
-
-    def _send(self, msg):
-        """
-        Send msg back to the caller.
-
-        Todo: rename function (_produce()?)
-        """
-        if self.callback:
-            callback(msg)
-        else:
-            self._pending.append(msg)
-
-    def put(self, byte):
-        """
-        Put on byte (an integer) into the parser.
-        """
-        if not isinstance(byte, int):
-            raise TypeError('byte must be an int')
-
-        b = bytearray()
-        b.append(byte)
-        self.feed(b)
+        return len(self.pending)
 
     def feed(self, data):
         """
         Feed bytes to the parser. bytearray or bytes.
         """
 
-        if isinstance(data, bytearray):
-            pass
-        elif isinstance(data, bytes):
-            data = bytearray(bytes)
-        else:
-            raise TypeError('data must be of type bytes or bytearray')
+        # Todo: typecheck
 
         # Convert to byte array if necessary
-        bytes = bytearray(bytes)
+        bytes = bytearray(data)
 
-        for byte in data:
+        for byte in bytes:
             if byte >= 128:
                 opcode = byte
-
-                # New opcode
-                if _opcode_is_system_realtime(opcode):
+                if 0xf8 <= opcode <= 0xff:
                     # Realtime messages have no data,
                     # so they can cut in line.
-                    self._send(byte)
+                    self.pending.append(opcode2msg[opcode])
                 else:
-                    # Set opcode, and reset data list
-                    self._opcode = byte
-                    self._data = []
+                    # Set opcode, and reset data array
+                    self.opcode = opcode
+                    self.info = opcode2info[opcode]
+                    self.bytes = bytearray()
             else:
                 # data byte
-                if self._opcode:
-                    self._data.append(byte)
+                if self.opcode:
+                    self.bytes.append(byte)
                 else:
                     pass  # Ignore data bytes outside messages
-            
-            if len(self._bytes) == len(opcode2msg[opcode]):
-                self._send_(self._opcode, self._data)
-                self._opcode = None
-                self._data = []
+
+        if self.opcode and len(self.bytes) == self.info.size:
+            if self.info.type != 'sysex':
+                pass  # Build message
 
     def __iter__(self):
-        while self._pending:
-            yield self._pending.popleft()
+        while self.pending:
+            yield self.pending.popleft()
     
     def fetchone(self):
         if not poll():
             raise ValueError('There are no pending MIDI messages in the parser')
-        return self._pending.popleft()
+        return self.pending.popleft()
 
     def fetchall(self):
         return list(self)

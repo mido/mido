@@ -10,7 +10,7 @@ def serialize(msg):
     else:
         data.append(msg.opcode)
 
-    for name in msg.names:
+    for name in msg._names:
         if name == 'channel':
             pass  # We already did this, skip it now
         
