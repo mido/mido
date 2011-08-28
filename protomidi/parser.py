@@ -1,10 +1,24 @@
 from .msg import opcode2info, opcode2msg 
 
-def parse(mididata):
+def parse(midibytes):
     """
     Parse MIDI data and yield messages as they are completed.
 
-    mididata is a bytes or bytearray object of MIDI bytes to read.
+    midibytes is a bytes or bytearray object of MIDI bytes to read.
+    (Todo: support reading from file.)
+
+    Usage:
+
+        for msg in parse(midibytes):
+             use(msg)
+
+    This parser has the limitation that it will only yield when it
+    has collected a full message. Thus it can not be used to parse
+    a live MIDI stream, as that could end up blocking the application
+    if the rest of a message never arrives.
+
+    I will write another version of the parser to be used for
+    live streams.
     """
 
     # Todo: handle sysex
@@ -13,7 +27,7 @@ def parse(mididata):
     bytes = None   # Used to data bytes
     info = None    # Message type info (name, size etc.)
 
-    for byte in mididata:
+    for byte in midibytes:
         if byte >= 128:            
             opcode = byte
 
@@ -56,3 +70,31 @@ def parse(mididata):
                 pass
             else:
                 pass  # Todo: build Message
+
+class Parser:
+    """
+    Usage:
+
+        p = Parser()
+        if p.feed(data)
+            for msg in p:
+                use(msg)
+    """
+
+    def __init__(self, stream):
+        self.stream = stream
+    
+    def feed(self, mididata):
+        """
+        Feed MIDI data to the parser.
+
+        Returns the number of pending messages.
+        """
+
+        pass
+
+
+    def __iter__(self):
+        """
+        Yield pending messages.
+        """
