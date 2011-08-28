@@ -9,7 +9,7 @@ msg.py - MIDI messages
 from __future__ import print_function, unicode_literals
 from collections import OrderedDict
 from .asserts import assert_time, assert_channel
-from .asserts import assert_data, assert_songpos, assert_pitchwheel
+from .asserts import assert_databyte, assert_songpos, assert_pitchwheel
 
 
 msg_specs = {
@@ -144,19 +144,19 @@ class MIDIMessage:
                 elif name == 'channel':
                     assert_channel(value)
 
-                elif name == 'data':
+                elif msg.type == 'sysex' and name == 'data':
                     for byte in value:
-                        assert_data(byte)
+                        assert_databyte(byte)
                     value = tuple(value)  # Convert to tuple
                     
-                elif msg.type == 'pitchwheel' == name == 'value':
+                elif msg.type == 'pitchwheel' and name == 'value':
                     assert_pitchwheel(value)
 
-                elif name == 'pos':
+                elif msg.type == 'songpos' and name == 'pos':
                     assert_songpos(value)
 
                 else:
-                    assert_data(value)
+                    assert_databyte(value)
 
                 ns[name] = value
             else:
