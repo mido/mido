@@ -1,19 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """
+
 msg.py - MIDI messages
-
-Ole Martin Bjørndalen
-ombdalen@gmail.com
-http://nerdly.info/ole/
-
-License: MIT
 
 """
 
 from __future__ import print_function, unicode_literals
 from collections import OrderedDict
-from .asserts import assert_time, assert_channel, assert_data, assert_songpos, assert_pitchwheel
+from .asserts import assert_time, assert_channel
+from .asserts import assert_data, assert_songpos, assert_pitchwheel
 
 
 msg_specs = [
