@@ -102,8 +102,6 @@ its internals and the MIDI protocol.
 Todo
 -----
 
-   - pitchwheel(value=-1) should work, but it hits an assert expecting
-     a data byte. What's going on here?
    - write docs
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)

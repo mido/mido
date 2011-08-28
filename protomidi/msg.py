@@ -149,7 +149,7 @@ class MIDIMessage:
                         assert_data(byte)
                     value = tuple(value)  # Convert to tuple
                     
-                elif name == 'value' and type == 'pitchwheel':
+                elif msg.type == 'pitchwheel' == name == 'value':
                     assert_pitchwheel(value)
 
                 elif name == 'pos':
