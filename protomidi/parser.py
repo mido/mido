@@ -1,67 +1,58 @@
-import collections
-from .msg import messages, opcode2typeinfo
+from .msg import opcode2info, opcode2msg 
 
-
-class Parser:
+def parse(mididata):
     """
-    MIDI parser
+    Parse MIDI data and yield messages as they are completed.
+
+    mididata is a bytes or bytearray object of MIDI bytes to read.
     """
-    
-    def __init__(self):
-        self.opcode = None
-        self.info = None
-        self.bytes = bytearray()
 
-        self.pending = collections.deque()
+    # Todo: handle sysex
 
-    def poll(self):
-        """
-        Return the number of pending messages.
-        """
-        return len(self.pending)
+    opcode = None  # Not currently inside a message
+    bytes = None   # Used to data bytes
+    info = None    # Message type info (name, size etc.)
 
-    def feed(self, data):
-        """
-        Feed bytes to the parser. bytearray or bytes.
-        """
+    for byte in mididata:
+        if byte >= 128:            
+            opcode = byte
 
-        # Todo: typecheck
+            if 0xf8 <= opcode <= 0xff:
+                # Realtime message. This can be
+                # interleaved in other messages.
+                # Just yield it now.
+                yield opcode2msg[opcode]
+                
+            elif opcode == 0xf7:
+                # End of sysex
+                # Crete message and yield it
+                
+                # Todo: handle case where end of sysex is reached too
+                # early.
+                vendor = bytes[0]
+                data = tuple([ord(b) for b in bytes])
+                msg = opcode2msg[opcode](vendor=vendor, data=data)
 
-        # Convert to byte array if necessary
-        bytes = bytearray(data)
+                yield msg
 
-        for byte in bytes:
-            if byte >= 128:
-                opcode = byte
-                if 0xf8 <= opcode <= 0xff:
-                    # Realtime messages have no data,
-                    # so they can cut in line.
-                    self.pending.append(opcode2msg[opcode])
-                else:
-                    # Set opcode, and reset data array
-                    self.opcode = opcode
-                    self.info = opcode2info[opcode]
-                    self.bytes = bytearray()
+                opcode = None
             else:
-                # data byte
-                if self.opcode:
-                    self.bytes.append(byte)
-                else:
-                    pass  # Ignore data bytes outside messages
+                info = opcode2info[opcode]
+                bytes = bytearray()  # Collect data bytes here
+
+        elif opcode:
+            self.bytes.append(byte)
+        
+        else:
+            # Byte found outside message, ignoring it 
+            # (Todo: warn user?)
+            pass
 
         if self.opcode and len(self.bytes) == self.info.size:
-            if self.info.type != 'sysex':
-                pass  # Build message
-
-    def __iter__(self):
-        while self.pending:
-            yield self.pending.popleft()
-    
-    def fetchone(self):
-        if not poll():
-            raise ValueError('There are no pending MIDI messages in the parser')
-        return self.pending.popleft()
-
-    def fetchall(self):
-        return list(self)
-    
+            if self.info.type == 'sysex':
+                # Sysex is longer than its 'size' field
+                # would sugges, since it also has a variable
+                # number of data bytes.
+                pass
+            else:
+                pass  # Todo: build Message
