@@ -14,7 +14,5 @@ __version__ = '0.0.0'
 
 __all__ = []  # Prevent splat import
 
-from .parser import Parser
+from .parser import Parser, parse
 from .serializer import serialize
-
-
