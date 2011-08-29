@@ -1,4 +1,4 @@
-from .msg import opcode2info, opcode2msg 
+from .msg import opcode2typeinfo, opcode2msg 
 
 def parse(midibytes):
     """
@@ -23,9 +23,9 @@ def parse(midibytes):
 
     # Todo: handle sysex
 
-    opcode = None  # Not currently inside a message
-    bytes = None   # Used to data bytes
-    info = None    # Message type info (name, size etc.)
+    opcode = None    # Not currently inside a message
+    bytes = None     # Used to data bytes
+    typeinfo = None  # Message type info (name, size etc.)
 
     for byte in midibytes:
         if byte >= 128:            
@@ -51,19 +51,19 @@ def parse(midibytes):
 
                 opcode = None
             else:
-                info = opcode2info[opcode]
+                typeinfo = opcode2typeinfo[opcode]
                 bytes = bytearray()  # Collect data bytes here
 
         elif opcode:
-            self.bytes.append(byte)
+            bytes.append(byte)
         
         else:
             # Byte found outside message, ignoring it 
             # (Todo: warn user?)
             pass
 
-        if self.opcode and len(self.bytes) == self.info.size:
-            if self.info.type == 'sysex':
+        if opcode and len(bytes) == typeinfo.size:
+            if typeinfo.type == 'sysex':
                 # Sysex is longer than its 'size' field
                 # would sugges, since it also has a variable
                 # number of data bytes.

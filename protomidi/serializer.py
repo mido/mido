@@ -1,7 +1,11 @@
+from .msg import opcode2typeinfo
+
 def serialize(msg):
     """
     Return a bytearray representation of the message.
     """
+
+    typeinfo = opcode2typeinfo[msg.opcode]
 
     data = bytearray()
 
@@ -10,7 +14,7 @@ def serialize(msg):
     else:
         data.append(msg.opcode)
 
-    for name in msg._names:
+    for name in typeinfo.names:
         if name == 'channel':
             pass  # We already did this, skip it now
         

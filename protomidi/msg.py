@@ -113,14 +113,14 @@ class MIDIMessage:
         # Copy metadata
         ns['opcode'] = self.opcode
         ns['type'] = self.type
-        
-        typeinfo = opcode2typeinfo[self.opcode]
 
+        typeinfo = opcode2typeinfo[self.opcode]
+        
         # Check keyword arguments to see
         # if any invalid names have been passed.
         # (Todo: rewrite that comment.)
         for name in override:
-            if name not in self.typeinfo.names:
+            if name not in typeinfo.names:
                 msg = 'keyword argument for {} must be one of: {} (was {})'
                 validnames = ' '.join(typeinfo.names)
                 raise TypeError(msg.format(self.type,
@@ -163,8 +163,10 @@ class MIDIMessage:
         return msg
 
     def __repr__(self):
+        typeinfo = opcode2typeinfo[self.opcode]
+
         args = []
-        for name in self._names:
+        for name in typeinfo.names:
             args.append('{0}={1}'.format(name,
                                          repr(getattr(self, name))))
         args = ', '.join(args)
@@ -181,7 +183,8 @@ class MIDIMessage:
 __all__ = []
 
 TypeInfo = namedtuple('TypeInfo', 'opcode type size names')
-opcode2info = {}
+opcode2typeinfo = {}
+opcode2msg = {}
 
 def _init():
     """
@@ -218,20 +221,20 @@ def _init():
             else:
                 ns[name] = 0
 
-        info = TypeInfo(opcode=opcode,
-                        type=type,
-                        size=size,
-                        names=names)
+        typeinfo = TypeInfo(opcode=opcode,
+                            type=type,
+                            size=size,
+                            names=names)
 
         if hasattr(msg, 'channel'):
             # Channel messages have 16 opcodes,
             # one for each MIDI channel.
             for channel in range(16):
+                opcode2typeinfo[opcode|channel] = typeinfo
                 opcode2msg[msg.opcode|channel] = msg(channel=channel)
-                opcode2info[opcode|channel] = info
         else:
+            opcode2typeinfo[opcode] = typeinfo
             opcode2msg[msg.opcode] = msg
-            opcode2info[opcode] = info
 
         #
         # Bind to global scope (top of module)
