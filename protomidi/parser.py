@@ -65,11 +65,12 @@ def parse(midibytes):
         if opcode and len(bytes) == typeinfo.size:
             if typeinfo.type == 'sysex':
                 # Sysex is longer than its 'size' field
-                # would sugges, since it also has a variable
+                # would suggest, since it also has a variable
                 # number of data bytes.
                 pass
             else:
-                pass  # Todo: build Message
+                msg = opcode2msg[opcode]
+                # Todo: implement
 
 class Parser:
     """
