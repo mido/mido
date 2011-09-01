@@ -26,16 +26,10 @@ def parse(midibytes):
     opcode = None    # Not currently inside a message
     bytes = None     # Used to data bytes
     typeinfo = None  # Message type info (name, size etc.)
-    channel = None
 
     for byte in midibytes:
         if byte >= 128:            
             opcode = byte
-
-            if opcode < 0xf0:
-                # Mask out channel
-                channel = 0x0f & opcode
-                opcode = 0xf0 & opcode
 
             if 0xf8 <= opcode <= 0xff:
                 # Realtime message. This can be
@@ -59,6 +53,7 @@ def parse(midibytes):
             else:
                 typeinfo = opcode2typeinfo[opcode]
                 bytes = bytearray()  # Collect data bytes here
+                bytes.append(opcode)
 
         elif opcode:
             bytes.append(byte)
@@ -68,27 +63,43 @@ def parse(midibytes):
             # (Todo: warn user?)
             pass
 
-        if opcode and len(bytes) == typeinfo.size-1:
-            if typeinfo.type == 'sysex':
-                # Sysex is longer than its 'size' field
-                # would suggest, since it also has a variable
-                # number of data bytes.
-                pass
-            else:
-                # Todo: this could probably be written with less repetition
-                msg = opcode2msg[opcode]
 
-                if opcode <= 0xf0:
-                    Prepend channel
-                    names = ('channel',) + typeinfo.names
-                    # olemb
-                    # Todo: start from here
+        #
+        # End of message?
+        #
+        if len(bytes) == typeinfo.size:
+            data = [b for b in bytes[1:]]
+            # This will get the right channel for us even
+            msg = opcode2msg[opcode]
+
+            print('!!!', msg.type)
+
+            names = list(typeinfo.names)
+            if opcode <= 0xf0:
+                names.remove('channel')
+
+            if len(names) == len(data):
+
+                # No conversion necessary. Only mornal data bytes
+                args = {}
+                for (name, value) in zip(names, data):
+                    args[name] = value
+
+                yield msg(**args)
+            elif msg.type == 'pitchwheel':
+                # Todo: check
+                value = (float(data[0] | data[1] << 7) * 2) / 16384
+                yield msg(value=value)
                 
+            elif msg.type == 'songpos':
+                value = data[0] | data[1] << 7
+                yield msg(pos=post)
+            else:
+                raise ValueError('Unsupported opcode %s' % opcode)
 
-                if msg.type in ('note_on', 'note_off'):
-                    yield msg(channel=channel, note=bytes[0], velocity=bytes[1])
-
-                # Todo: implement
+            opcode = None
+            bytes = None
+            typeinfo = None
 
 class Parser:
     """
