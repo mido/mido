@@ -26,10 +26,16 @@ def parse(midibytes):
     opcode = None    # Not currently inside a message
     bytes = None     # Used to data bytes
     typeinfo = None  # Message type info (name, size etc.)
+    channel = None
 
     for byte in midibytes:
         if byte >= 128:            
             opcode = byte
+
+            if opcode < 0xf0:
+                # Mask out channel
+                channel = 0x0f & opcode
+                opcode = 0xf0 & opcode
 
             if 0xf8 <= opcode <= 0xff:
                 # Realtime message. This can be
@@ -40,7 +46,7 @@ def parse(midibytes):
             elif opcode == 0xf7:
                 # End of sysex
                 # Crete message and yield it
-                
+                  
                 # Todo: handle case where end of sysex is reached too
                 # early.
                 vendor = bytes[0]
@@ -62,14 +68,18 @@ def parse(midibytes):
             # (Todo: warn user?)
             pass
 
-        if opcode and len(bytes) == typeinfo.size:
+        if opcode and len(bytes) == typeinfo.size-1:
             if typeinfo.type == 'sysex':
                 # Sysex is longer than its 'size' field
                 # would suggest, since it also has a variable
                 # number of data bytes.
                 pass
             else:
+                # Todo: this could probably be written with less repetition
                 msg = opcode2msg[opcode]
+                if msg.type in ('note_on', 'note_off'):
+                    yield msg(channel=channel, note=bytes[0], velocity=bytes[1])
+
                 # Todo: implement
 
 class Parser:

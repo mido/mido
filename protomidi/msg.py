@@ -26,9 +26,9 @@ msg_specs = {
   0x90 : ('note_on',      ('note',    'velocity'), 3),
   0xa0 : ('polytouch',    ('note',    'value'),    3),
   0xb0 : ('control',      ('number',  'value'),    3),
-  0xc0 : ('program',      ('channel', 'number'),   3),
-  0xd0 : ('aftertouch',   ('channel', 'value'),    3),
-  0xe0 : ('pitchwheel',   ('channel', 'value'),    3),
+  0xc0 : ('program',      ('number',),   3),
+  0xd0 : ('aftertouch',   ('value',),    3),
+  0xe0 : ('pitchwheel',   ('value',),    3),
 
   #
   # The value for pitchwheel is encoded as a 14 bit signed integer.
@@ -47,8 +47,8 @@ msg_specs = {
   # 
   0xf0 : ('sysex',         ('vendor', 'data'), 2),
   0xf1 : ('undefined_f1',  (),                 1), 
-  0xf2 : ('songpos',       ('pos', ),          3),  
-  0xf3 : ('song',          ('song', ),         2),
+  0xf2 : ('songpos',       ('pos',),           3),  
+  0xf3 : ('song',          ('song',),          2),
   0xf4 : ('undefined_f4',  (), 1),
   0xf5 : ('undefined_f5',  (), 1),
   0xf6 : ('tune_request',  (), 1),
