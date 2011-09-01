@@ -77,6 +77,14 @@ def parse(midibytes):
             else:
                 # Todo: this could probably be written with less repetition
                 msg = opcode2msg[opcode]
+
+                if opcode <= 0xf0:
+                    Prepend channel
+                    names = ('channel',) + typeinfo.names
+                    # olemb
+                    # Todo: start from here
+                
+
                 if msg.type in ('note_on', 'note_off'):
                     yield msg(channel=channel, note=bytes[0], velocity=bytes[1])
 
