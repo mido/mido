@@ -16,7 +16,7 @@ with context():
 
     while 1:
         # Send random programchange
-        out.send(program(number=random.randrange(128)))
+        out.send(program_change(number=random.randrange(128)))
 
         note = random.randrange(128)
         out.send(note_on(note=note, velocity=100))
