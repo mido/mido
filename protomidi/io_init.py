@@ -1,15 +1,14 @@
+"""
+ Initialize portmidi library
+
+ This part is copied straight from Grant Yoshida's portmidizero:
+
+ http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
+"""
+
 import sys
 import array
 from ctypes import *
-
-#
-# Initialize portmidi library
-#
-# This part is copied straight from Grant Yoshida's
-# portmidizero:
-#
-# http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
-#
 
 from ctypes import *
 import array

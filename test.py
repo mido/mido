@@ -1,16 +1,18 @@
 import random
+import pprint
 import protomidi
 from protomidi.msg import *
 from protomidi.io import Input, Output, context, get_devinfo_dicts
 
 import time
 
+outputs = protomidi.io.get_output_map()
+pprint.pprint(outputs)
+
 with context():
 
-    devices = get_devinfo_dicts()
-    # print(devices)
 
-    out = Output(2)
+    out = Output(0)
 
     while 1:
         # Send random programchange

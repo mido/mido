@@ -70,11 +70,11 @@ def get_device_info(i):
 def get_devinfo_dicts():
     devices = []
 
-    for i in range(count_devices()):
-        devinfo = get_device_info(i)
+    for id in range(count_devices()):
+        devinfo = get_device_info(id)
 
         dev = dict(
-            i=i,
+            id=id,
             input=devinfo.input,
             interf=devinfo.interf,
             name=devinfo.name,
@@ -86,6 +86,31 @@ def get_devinfo_dicts():
         devices.append(dev)
 
     return devices
+
+def get_device_by_name(name='', input=False, output=False):
+    devices = get_devinfo_dicts()
+    for dev in devices:
+        if dev['name'] == name:
+            if input and not dev['input']:
+                contineu
+            if output and not dev['input']:
+                contineu
+            return dev.id
+
+def get_device_names():
+    devices = get_devinfo_dicts()
+    for dev in devices:
+        yield dev['name']
+
+def get_output_map():
+    devs = {}
+
+    devices = get_devinfo_dicts()
+    for dev in devices:
+        if dev['output']:
+            devs[dev['name']] = dev['id']
+    
+    return devs
 
 def _get_time(*args):
     # Pt_time() returns the current time in milliseconds,
