@@ -18,17 +18,19 @@ msg_specs = {
   #
   # This is the authorative definition of message types.
   #
+  # Todo: clean up naming (follow some convention?)
+  #
 
   #
   # Channel messages
   # 
-  0x80 : ('note_off',     ('note',    'velocity'), 3),
-  0x90 : ('note_on',      ('note',    'velocity'), 3),
-  0xa0 : ('polytouch',    ('note',    'value'),    3),
-  0xb0 : ('control',      ('number',  'value'),    3),
-  0xc0 : ('program',      ('number',),   3),
-  0xd0 : ('aftertouch',   ('value',),    3),
-  0xe0 : ('pitchwheel',   ('value',),    3),
+  0x80 : ('note_off',        ('note',    'velocity'), 3),
+  0x90 : ('note_on',         ('note',    'velocity'), 3),
+  0xa0 : ('polytouch',       ('note',    'value'),    3),
+  0xb0 : ('control_change',  ('number',  'value'),    3),
+  0xc0 : ('program_change',  ('number',),   3),
+  0xd0 : ('aftertouch',      ('value',),    3),
+  0xe0 : ('pitchwheel',      ('value',),    3),
 
   #
   # The value for pitchwheel is encoded as a 14 bit signed integer.
