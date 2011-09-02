@@ -224,6 +224,7 @@ class Output:
         """Send a message on the output port"""
 
         bytes = [b for b in serialize(msg)]
+        bytes += [0, 0, 0, 0]  # Padding
 
         print(bytes)
 
