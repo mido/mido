@@ -6,6 +6,10 @@ and replace them with something else.
 
 http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
 http://portmedia.sourceforge.net/portmidi/doxygen/portmidi_8h-source.html
+
+Todo:
+
+  - clean up API
 """
 
 from __future__ import print_function
@@ -14,32 +18,13 @@ from contextlib import contextmanager
 from collections import OrderedDict
 # import midi
 
-from .portmidi_init import *
+from .io_init import *
 from .serializer import serialize
 
 debug = False
 
 def dbg(*args):
     print('DBG:', *args)
-
-def initialize():
-    dbg('initialize()')
-
-    lib.Pm_Initialize()
-
-    # Start timer
-    lib.Pt_Start(1, NullTimeProcPtr, null)
-
-def terminate():
-    dbg('terminate()')
-    lib.Pm_Terminate()    
-
-
-@contextmanager
-def context():
-    initialize()
-    yield
-    terminate()
 
 def get_definput():
     return lib.Pm_GetDefaulInputDeviceID()
@@ -142,7 +127,32 @@ def _check_err(err):
     if err < 0:
         raise Exception(lib.Pm_GetErrorText(err))
 
-class Input:
+
+def _initialize():
+    dbg('initialize()')
+
+    lib.Pm_Initialize()
+
+    # Start timer
+    lib.Pt_Start(1, NullTimeProcPtr, null)
+
+def _terminate():
+    dbg('terminate()')
+    lib.Pm_Terminate()
+
+class Port:
+    initialized = False
+
+    def _initialize(self):
+        if not Port.initialized:
+            initialize()
+            Port.initialized = True
+
+        # Todo:
+        #    - 
+        #    - atexit(terminate)
+
+class Input(Port):
     """
     PortMidi Input
     """
@@ -152,6 +162,8 @@ class Input:
         Create an input port. If 'device' is not passed, the default
         device is used. Todo: What exactly is 'device'? An integer?
         """
+        self._initialize()
+
         if device == None:
             device = get_definput()
 
@@ -192,7 +204,7 @@ class Input:
             else:
                 return
 
-class Output:
+class Output(Port):
     """
     PortMidi Output
     """
@@ -206,7 +218,7 @@ class Output:
         if latency > 0:
             time_proc = PmTimeProcPtr(_get_time)
         else:
-            # This doesn't work. NullTimeProcPtr() requires
+            # Todo: This doesn't work. NullTimeProcPtr() requires
             # one argument.
             time_proc = NullTimeProcPtr(_get_time)
 
