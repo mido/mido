@@ -102,6 +102,10 @@ its internals and the MIDI protocol.
 Todo
 -----
 
+   - have protomidi.Input() and Output() handle initialization
+     of portmidi, so we don't have to worry about it.
+   - give note_on and note_off a default velocity of 127?
+     (0 is an inpractical default value)
    - write docs
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)

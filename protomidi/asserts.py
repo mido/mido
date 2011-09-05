@@ -30,5 +30,5 @@ def assert_pitchwheel(val):
         raise ValueError('pitchwheel value must be number in range(-1, 1)')
 
 def assert_databyte(val):
-    if not isint(val) or not (0 <= val <= 128):
-        raise ValueError('data byte must by in range range(0, 128)')
+    if not isint(val) or not (0 <= val < 128):
+        raise ValueError('data byte must by in range(0, 128)')
