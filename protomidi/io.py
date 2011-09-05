@@ -234,29 +234,6 @@ class Output(Port):
         err = lib.Pm_Close(self.dev)
         _check_err(err)
 
-    def _send(self, data):
-        if len(data) > 1024: raise IndexError, 'maximum list length is 1024'
-
-        BufferType = PmEvent * 1024
-        buffer = BufferType()
-
-        for i, message in enumerate(data):
-            msg = message[0]
-
-            if len(msg) > 4 or len(msg) < 1:
-                raise IndexError, str(len(msg)) + ' arguments in event list'
-
-            buffer[i].message = 0
-
-            for j, data_part in enumerate(msg):
-                buffer[i].message += ((data_part & 0xFF) << (8*j))
-
-            buffer[i].timestamp = message[1]
-
-        err = lib.Pm_Write(self.stream, buffer, len(data))
-
-        check_err(err)
-
     def send(self, msg):
         """Send a message on the output port"""
 
