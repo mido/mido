@@ -18,7 +18,7 @@ from contextlib import contextmanager
 from collections import OrderedDict
 # import midi
 
-from .io_init import *
+from .portmidi_init import *
 from .serializer import serialize
 
 debug = False
@@ -239,8 +239,6 @@ class Output(Port):
 
         bytes = [b for b in serialize(msg)]
         bytes += [0, 0, 0, 0]  # Padding
-
-        print(bytes)
 
         event = PmEvent()
         event.timestamp = _get_time()
