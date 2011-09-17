@@ -74,7 +74,7 @@ class Parser:
                     # early.
                     manifacturer = self._data[0]
                     data = tuple(self._data[1:])
-                    msg = opcode2msg[opcode](manifacturer=manifacturer, data=data)
+                    msg = opcode2msg[0xf0](manifacturer=manifacturer, data=data)
 
                     self._messages.append(msg)
                     self._reset()
@@ -85,14 +85,16 @@ class Parser:
                     self._typeinfo = opcode2typeinfo[opcode]
                     self._data = bytearray()  # Collect data bytes here
 
-            elif self._opcode:
-                # Already inside a message, append data byte
-                self._data.append(byte)
-
             else:
-                # Byte found outside message, ignoring it 
-                # (Todo: warn user?)
-                pass
+                # Data byte
+
+                if self._opcode:
+                    # Already inside a message, append data byte
+                    self._data.append(byte)
+                else:
+                    # Byte found outside message, ignoring it 
+                    # (Todo: warn user?)
+                    pass
 
 
             #
@@ -107,8 +109,8 @@ class Parser:
                 msg = opcode2msg[self._opcode]
 
                 names = list(self._typeinfo.names)
-                if opcode <= 0xf0:
-                    # This was already done for us above.
+                if self._opcode <= 0xf0:
+                    # Channel was already handled above
                     names.remove('channel')
 
                 if len(names) == len(data):
@@ -139,7 +141,7 @@ class Parser:
 
         return len(self._messages)
 
-    def getall(self):
+    def fetchall(self):
         """
         Return all pending messages.
         """
@@ -148,6 +150,12 @@ class Parser:
         self._messages = []
 
         return ret
+
+    def fetchone(self):
+        if self._messages:
+            return self._messages.pop(0)
+        else:
+            return None  # Todo: exception?
     
     def __iter__(self):
         """

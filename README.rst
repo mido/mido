@@ -102,8 +102,7 @@ its internals and the MIDI protocol.
 Todo
 -----
 
-   - have protomidi.Input() and Output() handle initialization
-     of portmidi, so we don't have to worry about it.
+   - figure out where to call portmidi.initialize()
    - give note_on and note_off a default velocity of 127?
      (0 is an inpractical default value)
    - write docs
@@ -118,9 +117,14 @@ Todo
      This should be in docs/, not in in the msg.py.
    - write a short introduction on the MIDI protocol, using this library
      for examples
+   - handle devices that send note_on(velocity=0) instead of note_off() (flag
+     for portmidi.Input()?) Perhaps you can choose the one you prefer.
+   - attach some kind of time value to messages returned from Input.recv()?
+   - do we actually need to set the timer in Input() and Output()?
+
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
 License: MIT
 
-Credits: Initialization code in portaudio.py by Grant Yoshida, borrowed from his module portmidizero.
+Credits: The Portmidi wrapper is based on Portmidizero by Grant Yoshida.

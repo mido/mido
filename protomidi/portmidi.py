@@ -21,6 +21,7 @@ import atexit
 
 from .portmidi_init import *
 from .serializer import serialize
+from .parser import Parser
 
 debug = False
 
@@ -57,7 +58,7 @@ def get_device_info(i):
     else:
         return None
 
-def get_devinfo_dicts():
+def get_devinfo():
     devices = []
 
     for id in range(count_devices()):
@@ -78,7 +79,7 @@ def get_devinfo_dicts():
     return devices
 
 def get_device_by_name(name='', input=False, output=False):
-    devices = get_devinfo_dicts()
+    devices = get_devinfo()
     for dev in devices:
         if dev['name'] == name:
             if input and not dev['input']:
@@ -88,14 +89,14 @@ def get_device_by_name(name='', input=False, output=False):
             return dev.id
 
 def get_device_names():
-    devices = get_devinfo_dicts()
+    devices = get_devinfo()
     for dev in devices:
         yield dev['name']
 
 def get_output_map():
     devs = {}
 
-    devices = get_devinfo_dicts()
+    devices = get_devinfo()
     for dev in devices:
         if dev['output']:
             devs[dev['name']] = dev['id']
@@ -107,7 +108,7 @@ def get_time(*args):
     Returns the current value of the PortMidi timer in seconds.
     The timer is started when you initialize PortMidi.
     """
-    # Pt_time() returns the current time in milliseconds,
+    # Pt_Time() returns the current time in milliseconds,
     # so we ned to divide it a bit here to get seconds.
     return lib.Pt_Time() / 1000.0
 
@@ -143,14 +144,18 @@ def initialize():
     dbg('initialize()')
 
     if initialized:
+        dbg('(already initialized)')
         pass
     else:        
         lib.Pm_Initialize()        
 
+        dbg('starting timer')
         # Start timer
         lib.Pt_Start(1, NullTimeProcPtr, null)
         initialized = True
+        dbg('atexit.register()')
         atexit.register(terminate)
+        dbg('initialized')
 
 def terminate():
     global initialized
@@ -160,7 +165,7 @@ def terminate():
         lib.Pm_Terminate()
         initialized = False
     else:
-        dbg('(Already terminated)')
+        dbg('(already terminated)')
 
 
 class Port:
@@ -181,6 +186,21 @@ class Input(Port):
         if dev == None:
             dev = get_definput()
         self.dev = dev
+        self.stream = PortMidiStreamPtr()
+        
+        time_proc = PmTimeProcPtr(lib.Pt_Time())
+
+        dbg('opening input')
+        err = lib.Pm_OpenInput(byref(self.stream),
+                               self.dev, null, 100,
+                               time_proc, null)
+        _check_err(err)
+
+    def __dealloc__(self):
+        err = lib.Pm_Abort(self.stream)
+        _check_err(err)
+        err = lib.Pm_Close(self.stream)
+        _check_err(err)
 
     def set_filter(self, filters):
         """
@@ -199,13 +219,46 @@ class Input(Port):
         Returns True if there are one or more pending messages to
         read.
         """
-        return False
+        ret = lib.Pm_Poll(self.stream)
+        _check_err(ret)
+        return ret
 
-    def read(self):
+    def recv(self):
         """
         Return the next pending message, or None if there are no messages.
         """
-        return None
+
+        BufferType = PmEvent * 1
+        buffer = BufferType()
+        
+        # Third argument is length (number of messages)
+        num_events = lib.Pm_Read(self.stream, buffer, 1)
+        _check_err(num_events)
+        
+        # event.message is an integer, where the lowest bytes are the MIDI
+        # message.
+        
+        if num_events == 1:
+            event = buffer[0]
+
+            # Todo: What happens to sysex messages?
+
+            value = event.message
+            # Todo: keep the parser around, so we don't have to
+            # allocate it every time.
+            p = Parser()
+
+            while value:
+                # Pop the lowest byte
+                byte = value & 0xff
+                value = value >> 8
+                
+                # 
+                if p.feed(chr(byte)):  # Todo: wrong type?
+                    msg = p.fetchone()
+                    return msg
+
+        # Todo: what should happen here?
 
     def __iter__(self):
         """
@@ -257,7 +310,7 @@ class Output(Port):
         bytes += [0, 0, 0, 0]  # Padding
 
         event = PmEvent()
-        event.timestamp = lib.Pt_Time())
+        event.timestamp = lib.Pt_Time()
         event.message = (bytes[2] << 16) | (bytes[1] << 8) | (bytes[0])
 
         err = lib.Pm_Write(self.stream, event, 1)
