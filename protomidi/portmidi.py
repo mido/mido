@@ -130,13 +130,13 @@ def Channel(chan):
 
 
 
-class PortAudioError(Exception):
+class Error(Exception):
     pass
 
 def _check_err(err):
     # Todo: err?
     if err < 0:
-        raise Exception(pm.lib.Pm_GetErrorText(err))
+        raise Error(pm.lib.Pm_GetErrorText(err))
 
 initialized = False
 
