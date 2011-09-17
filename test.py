@@ -8,6 +8,8 @@ import protomidi
 from protomidi.msg import *
 import protomidi.portmidi as io
 
+io.debug = True
+
 pprint.pprint(io.get_devinfo())
 
 # p = protomidi.Parser()
@@ -16,7 +18,7 @@ pprint.pprint(io.get_devinfo())
 
 #print '('
 
-i = io.Input()
+i = io.Input(filters=io.FILT_NOTE)
 while 1:
     if i.poll():
         msg = i.recv()

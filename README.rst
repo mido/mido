@@ -167,6 +167,7 @@ Todo
      for portmidi.Input()?) Perhaps you can choose the one you prefer.
    - attach some kind of time value to messages returned from Input.recv()?
    - do we actually need to set the timer in Input() and Output()?
+   - find some way to keep all the constants in portmidi_init.py out of portmidi.py
 
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/

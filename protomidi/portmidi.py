@@ -19,23 +19,25 @@ from collections import OrderedDict
 import atexit
 # import midi
 
-from .portmidi_init import *
 from .serializer import serialize
 from .parser import Parser
+
+from . import portmidi_init as pm
 
 debug = False
 
 def dbg(*args):
-    print('DBG:', *args)
+    if debug:
+        print('DBG:', *args)
 
 def get_definput():
-    return lib.Pm_GetDefaultInputDeviceID()
+    return pm.lib.Pm_GetDefaultInputDeviceID()
 
 def get_defoutput():
-    return lib.Pm_GetDefaultOutputDeviceID()
+    return pm.lib.Pm_GetDefaultOutputDeviceID()
 
 def count_devices():
-    return lib.Pm_CountDevices()
+    return pm.lib.Pm_CountDevices()
 
 ##########################################################
 # Various things that need to be rewritten
@@ -50,7 +52,7 @@ def get_device_info(i):
     - TRUE iff output is available
     - TRUE iff device stream is already open
     """
-    info_ptr = lib.Pm_GetDeviceInfo(i)
+    info_ptr = pm.lib.Pm_GetDeviceInfo(i)
     if info_ptr:
         info = info_ptr.contents
         # return info.interf, info.name, info.input, info.output, info.opened
@@ -83,9 +85,9 @@ def get_device_by_name(name='', input=False, output=False):
     for dev in devices:
         if dev['name'] == name:
             if input and not dev['input']:
-                contineu
+                continue
             if output and not dev['input']:
-                contineu
+                continue
             return dev.id
 
 def get_device_names():
@@ -110,14 +112,14 @@ def get_time(*args):
     """
     # Pt_Time() returns the current time in milliseconds,
     # so we ned to divide it a bit here to get seconds.
-    return lib.Pt_Time() / 1000.0
+    return pm.lib.Pt_Time() / 1000.0
 
 def get_err():
     """Return error text"""
 
 # Todo: what does this return?
 def Channel(chan):
-    return lib.Pm_Channel(chan-1)
+    return pm.lib.Pm_Channel(chan-1)
 
 
 
@@ -134,7 +136,7 @@ class PortAudioError(Exception):
 def _check_err(err):
     # Todo: err?
     if err < 0:
-        raise Exception(lib.Pm_GetErrorText(err))
+        raise Exception(pm.lib.Pm_GetErrorText(err))
 
 initialized = False
 
@@ -147,11 +149,11 @@ def initialize():
         dbg('(already initialized)')
         pass
     else:        
-        lib.Pm_Initialize()        
+        pm.lib.Pm_Initialize()        
 
         dbg('starting timer')
         # Start timer
-        lib.Pt_Start(1, NullTimeProcPtr, null)
+        pm.lib.Pt_Start(1, pm.NullTimeProcPtr, pm.null)
         initialized = True
         dbg('atexit.register()')
         atexit.register(terminate)
@@ -162,7 +164,7 @@ def terminate():
 
     dbg('terminate()')
     if initialized:
-        lib.Pm_Terminate()
+        pm.lib.Pm_Terminate()
         initialized = False
     else:
         dbg('(already terminated)')
@@ -176,50 +178,73 @@ class Input(Port):
     PortMidi Input
     """
 
-    def __init__(self, dev=None, latency=0):
+    def __init__(self,
+                 dev=None,
+                 latency=0,
+                 channel_mask=None,
+                 filters=None):
         """
         Create an input port. If 'dev' is not passed, the default
         device is used. 'dev' is an integer >= 0.
         """
+        # Todo: add channel_mask, filters etc. to docstring
+
         initialize()
 
         if dev == None:
             dev = get_definput()
         self.dev = dev
-        self.stream = PortMidiStreamPtr()
+        self.stream = pm.PortMidiStreamPtr()
         
-        time_proc = PmTimeProcPtr(lib.Pt_Time())
+        time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
 
         dbg('opening input')
-        err = lib.Pm_OpenInput(byref(self.stream),
-                               self.dev, null, 100,
-                               time_proc, null)
+        err = pm.lib.Pm_OpenInput(pm.byref(self.stream),
+                               self.dev, pm.null, 100,
+                               time_proc, pm.null)
         _check_err(err)
 
+        if channel_mask != None:
+            self.set_channel_mask(channel_mask)
+
+        if filters != None:
+            self.set_filter(filters)
+
     def __dealloc__(self):
-        err = lib.Pm_Abort(self.stream)
+        err = pm.lib.Pm_Abort(self.stream)
         _check_err(err)
-        err = lib.Pm_Close(self.stream)
+        err = pm.lib.Pm_Close(self.stream)
         _check_err(err)
 
     def set_filter(self, filters):
         """
-        set_filter(['active', 'sysex'])
         """
-        pass
+        # Todo: write docstring
+        # Todo: do this? set_filter(['active', 'sysex'])
+
+        buffer = pm.PmEvent()
+        err = pm.lib.Pm_SetFilter(self.stream, filters)
+        _check_err(err)
+
+        while pm.lib.Pm_Poll(self.stream) != 0:
+            err = pm.lib.Pm_Read(self.stream, buffer, 1)
+            _check_err(err)
 
     def set_channel_mask(self, mask):
         """
         16-bit bitfield.
         """
-        pass
+        # Todo: improve docstring
+
+        err = pm.lib.Pm_SetChannelMask(self.stream, mask)
+        _check_err(err)
 
     def poll(self):
         """
         Returns True if there are one or more pending messages to
         read.
         """
-        ret = lib.Pm_Poll(self.stream)
+        ret = pm.lib.Pm_Poll(self.stream)
         _check_err(ret)
         return ret
 
@@ -228,11 +253,11 @@ class Input(Port):
         Return the next pending message, or None if there are no messages.
         """
 
-        BufferType = PmEvent * 1
+        BufferType = pm.PmEvent * 1
         buffer = BufferType()
         
         # Third argument is length (number of messages)
-        num_events = lib.Pm_Read(self.stream, buffer, 1)
+        num_events = pm.lib.Pm_Read(self.stream, buffer, 1)
         _check_err(num_events)
         
         # event.message is an integer, where the lowest bytes are the MIDI
@@ -282,25 +307,25 @@ class Output(Port):
             dev = get_defoutput()
         self.dev = dev
 
-        self.stream = PortMidiStreamPtr()
+        self.stream = pm.PortMidiStreamPtr()
         
         if latency > 0:
-            time_proc = PmTimeProcPtr(lib.Pt_Time())
+            time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
         else:
             # Todo: This doesn't work. NullTimeProcPtr() requires
             # one argument.
-            time_proc = NullTimeProcPtr(lib.Pt_Time())
+            time_proc = pm.NullTimeProcPtr(pm.lib.Pt_Time())
 
-        err = lib.Pm_OpenOutput(byref(self.stream),
-                                self.dev, null, 0,
-                                time_proc, null, latency)
+        err = pm.lib.Pm_OpenOutput(pm.byref(self.stream),
+                                self.dev, pm.null, 0,
+                                time_proc, pm.null, latency)
         _check_err(err)
 
     def __dealloc__(self):
-        err = lib.Pm_Abort(self.dev)
+        err = pm.lib.Pm_Abort(self.dev)
         _check_err(err)
 
-        err = lib.Pm_Close(self.dev)
+        err = pm.lib.Pm_Close(self.dev)
         _check_err(err)
 
     def send(self, msg):
@@ -309,9 +334,41 @@ class Output(Port):
         bytes = [b for b in serialize(msg)]
         bytes += [0, 0, 0, 0]  # Padding
 
-        event = PmEvent()
-        event.timestamp = lib.Pt_Time()
+        event = pm.PmEvent()
+        event.timestamp = pm.lib.Pt_Time()
         event.message = (bytes[2] << 16) | (bytes[1] << 8) | (bytes[0])
 
-        err = lib.Pm_Write(self.stream, event, 1)
+        err = pm.lib.Pm_Write(self.stream, event, 1)
         _check_err(err)
+
+#
+# Message filters for Input
+#
+# Todo: The names here should correspond with those in MIDI messages names (msg.py)
+#
+FILT_ACTIVE = (1 << 0x0E)  # filter active sensing messages (0xFE)
+FILT_SYSEX  = (1 << 0x00)  # filter system exclusive messages (0xF0)
+FILT_CLOCK  = (1 << 0x08)  # filter MIDI clock message (0xF8)
+FILT_PLAY   = ((1 << 0x0A) | (1 << 0x0C) | (1 << 0x0B))  # filter play messages (start 0xFA, stop 0xFC, continue 0xFB) 
+FILT_TICK   = (1 << 0x09)  # filter tick messages (0xF9) 
+FILT_FD     = (1 << 0x0D)  # ilter undefined FD messages
+FILT_UNDEFINED = FILT_FD  # filter undefined real-time messages 
+FILT_RESET  = (1 << 0x0F)  # filter reset messages (0xFF) 
+
+FILT_REALTIME = (FILT_ACTIVE | FILT_SYSEX | FILT_CLOCK | FILT_PLAY | FILT_UNDEFINED | FILT_RESET | FILT_TICK)  #filter all real-time messages 
+
+FILT_NOTE   = ((1 << 0x19) | (1 << 0x18))  # filter note-on and note-off (0x90-0x9F and 0x80-0x8F
+
+FILT_CHANNEL_AFTERTOUCH = (1 << 0x1D)  # filter channel aftertouch (most midi controllers use this) (0xD0-0xDF)
+FILT_POLY_AFTERTOUCH = (1 << 0x1A)  # per-note aftertouch (0xA0-0xAF) 
+FILT_AFTERTOUCH = (FILT_CHANNEL_AFTERTOUCH | FILT_POLY_AFTERTOUCH)  # filter both channel and poly aftertouch 
+
+FILT_PROGRAM = (1 << 0x1C)  # Program changes (0xC0-0xCF)
+FILT_CONTROL = (1 << 0x1B)  # Control Changes (CC's) (0xB0-0xBF)
+FILT_PITCHBEND = (1 << 0x1E)  # Pitch Bender (0xE0-0xEF) 
+
+FILT_MTC = (1 << 0x01)  # MIDI Time Code (0xF1)
+FILT_SONG_POSITION = (1 << 0x02)  # Song Position (0xF2)
+FILT_SONG_SELECT = (1 << 0x03)  # Song Select (0xF3). 
+FILT_TUNE = (1 << 0x06)  # Tuning request (0xF6) 
+FILT_SYSTEMCOMMON = (FILT_MTC | FILT_SONG_POSITION | FILT_SONG_SELECT | FILT_TUNE)  # All System Common messages (mtc, song position, song select, tune request). 
