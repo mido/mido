@@ -290,11 +290,11 @@ class Input(Port):
         Iterate through pending messages.
         """
         while 1:
-            msg = self.read()
+            msg = self.recv()
             if msg:
                 yield msg
             else:
-                return
+                break
 
 class Output(Port):
     """

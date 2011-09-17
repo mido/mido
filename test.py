@@ -12,18 +12,8 @@ io.debug = True
 
 pprint.pprint(io.get_devinfo())
 
-# p = protomidi.Parser()
-# p.feed('\x90\x01\x02')
-# print p._messages
-
-#print '('
-
-i = io.Input(filters=io.FILT_NOTE)
+input = io.Input()
 while 1:
-    if i.poll():
-        msg = i.recv()
+    for msg in input:
         print('   got:', msg)
     time.sleep(0.01)
-
-# o = io.Output()
-#print ')'
