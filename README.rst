@@ -168,6 +168,7 @@ Todo
    - attach some kind of time value to messages returned from Input.recv()?
    - do we actually need to set the timer in Input() and Output()?
    - find some way to keep all the constants in portmidi_init.py out of portmidi.py
+   - detect that there is no default input or output and raise an exception
 
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
