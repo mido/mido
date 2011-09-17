@@ -193,6 +193,7 @@ class Input(Port):
 
         if dev == None:
             dev = get_definput()
+            raise Error('No default input found')
         self.dev = dev
         self.stream = pm.PortMidiStreamPtr()
         
@@ -305,6 +306,7 @@ class Output(Port):
         
         if dev == None:
             dev = get_defoutput()
+            raise Error('No default output found')
         self.dev = dev
 
         self.stream = pm.PortMidiStreamPtr()
@@ -322,11 +324,12 @@ class Output(Port):
         _check_err(err)
 
     def __dealloc__(self):
-        err = pm.lib.Pm_Abort(self.dev)
-        _check_err(err)
-
-        err = pm.lib.Pm_Close(self.dev)
-        _check_err(err)
+        if 0:
+            err = pm.lib.Pm_Abort(self.dev)
+            _check_err(err)
+            
+            err = pm.lib.Pm_Close(self.dev)
+            _check_err(err)
 
     def send(self, msg):
         """Send a message on the output port"""

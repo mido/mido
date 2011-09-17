@@ -19,7 +19,7 @@ pm.debug = True
 
 pprint.pprint(pm.get_devinfo())
 
-pm.initialize()
+# pm.initialize()
 try:
     out = pm.Output()
 except pm.Error:
