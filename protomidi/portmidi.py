@@ -36,6 +36,10 @@ def get_defoutput():
 def count_devices():
     return lib.Pm_CountDevices()
 
+##########################################################
+# Various things that need to be rewritten
+#
+
 def get_device_info(i):
     """
     GetDeviceInfo(<device number>): returns 5 parameters
@@ -98,17 +102,11 @@ def get_output_map():
     
     return devs
 
-def _get_time(*args):
-    # Pt_time() returns the current time in milliseconds,
-    # so we ned to divide it a bit here to get seconds.
-    return lib.Pt_Time()
-
 def get_time(*args):
     """
     Returns the current value of the PortMidi timer in seconds.
     The timer is started when you initialize PortMidi.
     """
-
     # Pt_time() returns the current time in milliseconds,
     # so we ned to divide it a bit here to get seconds.
     return lib.Pt_Time() / 1000.0
@@ -119,6 +117,15 @@ def get_err():
 # Todo: what does this return?
 def Channel(chan):
     return lib.Pm_Channel(chan-1)
+
+
+
+
+
+
+
+
+
 
 class PortAudioError(Exception):
     pass
@@ -133,7 +140,7 @@ initialized = False
 def initialize():
     global initialized
 
-    dbg('_initialize()')
+    dbg('initialize()')
 
     if initialized:
         pass
@@ -225,11 +232,11 @@ class Output(Port):
         self.stream = PortMidiStreamPtr()
         
         if latency > 0:
-            time_proc = PmTimeProcPtr(_get_time)
+            time_proc = PmTimeProcPtr(lib.Pt_Time())
         else:
             # Todo: This doesn't work. NullTimeProcPtr() requires
             # one argument.
-            time_proc = NullTimeProcPtr(_get_time)
+            time_proc = NullTimeProcPtr(lib.Pt_Time())
 
         err = lib.Pm_OpenOutput(byref(self.stream),
                                 self.dev, null, 0,
@@ -250,7 +257,7 @@ class Output(Port):
         bytes += [0, 0, 0, 0]  # Padding
 
         event = PmEvent()
-        event.timestamp = _get_time()
+        event.timestamp = lib.Pt_Time())
         event.message = (bytes[2] << 16) | (bytes[1] << 8) | (bytes[0])
 
         err = lib.Pm_Write(self.stream, event, 1)
