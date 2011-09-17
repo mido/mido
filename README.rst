@@ -1,7 +1,53 @@
 ProtoMIDI - a MIDI library for Python
 ======================================
 
-Works in Python 2 and 3.
+ProtoMIDI aims to make it easy to write Python programs to manipulate
+MIDI data, such as sequencers, patch editors or just experimental
+scripts. A small example (API may change)::
+
+::
+    import time
+    import random
+    from protomidi.msg import *
+    from protomidi.portmidi import Output
+
+    # Play random notes
+    out = Output()
+    while 1:
+        note = random.randrange(128)
+
+        out.send(note_on(note=note, velocity=70))
+	time.sleep(0.25)
+	out.send(note_off(note=note))
+
+The library is under development. The code may not be stable and the
+API may change.
+
+
+Requirements
+------------
+
+ProtoMIDI will work with Python 2 and 3 (todo: be more specific).
+
+If you want to use the Input and Output classes, you will also need
+the portmidi shared library.
+
+To intall portmidi in Ubuntu (and possibly Debian)::
+
+    sudo apt-get install libportmidi0
+
+To install portmidi on OS X (using macports)::
+
+    sudo port install portmidi
+    export LD_LIBRARY_PATH=/opt/local/lib
+
+(The last line should probably be added to .profile or some other
+file. I'm not sure if this is a good way to add libraries to the path,
+but it will have to do for now.)
+
+
+MIDI messages
+-------------
 
 ::
 
