@@ -5,7 +5,6 @@ ProtoMIDI aims to make it easy to write Python programs to manipulate
 MIDI data, such as sequencers, patch editors or just experimental
 scripts. A small example (API may change)::
 
-::
     import time
     import random
     from protomidi.msg import *
