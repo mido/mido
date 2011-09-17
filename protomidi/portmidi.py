@@ -16,6 +16,7 @@ from __future__ import print_function
 import sys
 from contextlib import contextmanager
 from collections import OrderedDict
+import atexit
 # import midi
 
 from .portmidi_init import *
@@ -27,7 +28,7 @@ def dbg(*args):
     print('DBG:', *args)
 
 def get_definput():
-    return lib.Pm_GetDefaulInputDeviceID()
+    return lib.Pm_GetDefaultInputDeviceID()
 
 def get_defoutput():
     return lib.Pm_GetDefaultOutputDeviceID()
@@ -127,30 +128,36 @@ def _check_err(err):
     if err < 0:
         raise Exception(lib.Pm_GetErrorText(err))
 
+initialized = False
 
-def _initialize():
-    dbg('initialize()')
+def initialize():
+    global initialized
 
-    lib.Pm_Initialize()
+    dbg('_initialize()')
 
-    # Start timer
-    lib.Pt_Start(1, NullTimeProcPtr, null)
+    if initialized:
+        pass
+    else:        
+        lib.Pm_Initialize()        
 
-def _terminate():
+        # Start timer
+        lib.Pt_Start(1, NullTimeProcPtr, null)
+        initialized = True
+        atexit.register(terminate)
+
+def terminate():
+    global initialized
+
     dbg('terminate()')
-    lib.Pm_Terminate()
+    if initialized:
+        lib.Pm_Terminate()
+        initialized = False
+    else:
+        dbg('(Already terminated)')
+
 
 class Port:
-    initialized = False
-
-    def _initialize(self):
-        if not Port.initialized:
-            initialize()
-            Port.initialized = True
-
-        # Todo:
-        #    - 
-        #    - atexit(terminate)
+    pass
 
 class Input(Port):
     """
@@ -159,14 +166,14 @@ class Input(Port):
 
     def __init__(self, dev=None, latency=0):
         """
-        Create an input port. If 'device' is not passed, the default
-        device is used. Todo: What exactly is 'device'? An integer?
+        Create an input port. If 'dev' is not passed, the default
+        device is used. 'dev' is an integer >= 0.
         """
-        self._initialize()
+        initialize()
 
-        if device == None:
-            device = get_definput()
-
+        if dev == None:
+            dev = get_definput()
+        self.dev = dev
 
     def set_filter(self, filters):
         """
@@ -209,6 +216,8 @@ class Output(Port):
     PortMidi Output
     """
     def __init__(self, dev=None, latency=1):
+        initialize()
+        
         if dev == None:
             dev = get_defoutput()
         self.dev = dev
