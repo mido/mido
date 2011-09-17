@@ -68,13 +68,12 @@ def get_devinfo():
 
         dev = dict(
             id=id,
-            input=devinfo.input,
-            interf=devinfo.interf,
             name=devinfo.name,
-            opened=devinfo.opened,
+            interf=devinfo.interf,
+            input=devinfo.input,
             output=devinfo.output,
-            structVersion=devinfo.structVersion,
-            info=devinfo,
+            opened=devinfo.opened,
+            # info=devinfo,
             )
         devices.append(dev)
 
