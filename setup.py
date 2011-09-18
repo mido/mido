@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
@@ -12,12 +12,12 @@ except ImportError:
 
 
 
-if sys.argv[-1] == "publish":
-    os.system("python setup.py sdist upload")
-    sys.exit()
+# if sys.argv[-1] == "publish":
+#     os.system("python setup.py sdist upload")
+#     sys.exit()
 
 if sys.argv[-1] == "test":
-    os.system("python test_protomidi.py")
+    os.system("python -m pytest")
     sys.exit()
 
 required = []
