@@ -24,10 +24,10 @@ calling an existing message and overriding some of its values::
 
     >>> from protomidi.msg import *
     >>> msg1 = note_on(note=22, velocity=100)
-    >>> msg2 = msg1(note=60)
-    >>>
     >>> msg1
     note_on(channel=0, note=22, velocity=100)
+    >>>
+    >>> msg2 = msg1(note=60)
     >>> msg2
     note_on(channel=0, note=60, velocity=100)
 
@@ -78,6 +78,8 @@ Todo
      the user pass a time function?)
 
    - do we actually need to set the timer in Input() and Output()?
+
+   - show time value in __repr__()? Also, does assert_time handle time=None?
 
 
    - write docs
