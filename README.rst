@@ -52,9 +52,12 @@ API may change.
 Requirements
 ------------
 
-ProtoMIDI will work with Python 2 and 3 (todo: be more specific).
+ProtoMIDI works Python 2.7 and 3.2 (may work with older versions, but I haven't tested this.)
 
 Requires portmidi shared library if you want to use the I/O classes.
+
+I'm using Ubuntu 11.4 and Mac OS Lion, but it should run wherever
+there you have Python and a portmidi shared library.
 
 
 Todo
