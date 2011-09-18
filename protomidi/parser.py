@@ -100,44 +100,45 @@ class Parser:
             #
             # End of message?
             #
-            msgsize = (1 + len(self._data))
-            if msgsize == self._typeinfo.size:
-                data = self._data  # Just a shortcut
+            if self._opcode:
+                msgsize = (1 + len(self._data))
+                if msgsize == self._typeinfo.size:
+                    data = self._data  # Just a shortcut
 
-                # Get message prototype.
-                # This will get the right channel for us even.
-                msg = opcode2msg[self._opcode]
+                    # Get message prototype.
+                    # This will get the right channel for us even.
+                    msg = opcode2msg[self._opcode]
 
-                names = list(self._typeinfo.names)
-                if self._opcode <= 0xf0:
-                    # Channel was already handled above
-                    names.remove('channel')
+                    names = list(self._typeinfo.names)
+                    if self._opcode <= 0xf0:
+                        # Channel was already handled above
+                        names.remove('channel')
 
-                if len(names) == len(data):
+                    if len(names) == len(data):
 
-                    # No conversion necessary. Only normal data bytes
-                    args = {}
-                    for (name, value) in zip(names, data):
-                        args[name] = value
+                        # No conversion necessary. Only normal data bytes
+                        args = {}
+                        for (name, value) in zip(names, data):
+                            args[name] = value
 
-                    msg = msg(**args)
+                        msg = msg(**args)
 
-                elif msg.type == 'pitchwheel':
-                    # Todo: check if value is computed correctly
-                    value = (float(data[0] | data[1] << 7) * 2) / 16384
-                    msg = msg(value=value)
+                    elif msg.type == 'pitchwheel':
+                        # Todo: check if value is computed correctly
+                        value = (float(data[0] | data[1] << 7) * 2) / 16384
+                        msg = msg(value=value)
 
-                elif msg.type == 'songpos':
-                    value = data[0] | data[1] << 7
-                    msg = msg(pos=value)
-                else:
-                    # Unknown message. This should never happen.
-                    # Todo: How do we handle this?
-                    msg = None
-
-                if msg:
-                    self._messages.append(msg)
-                self._reset()
+                    elif msg.type == 'songpos':
+                        value = data[0] | data[1] << 7
+                        msg = msg(pos=value)
+                    else:
+                        # Unknown message. This should never happen.
+                        # Todo: How do we handle this?
+                        msg = None
+                        
+                    if msg:
+                        self._messages.append(msg)
+                    self._reset()
 
         return len(self._messages)
 
