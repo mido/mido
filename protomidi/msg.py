@@ -184,6 +184,9 @@ class MIDIMessage:
     def __delattr__(self, name):
         raise ValueError('MIDI messages are immutable')
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 
 __all__ = []
 

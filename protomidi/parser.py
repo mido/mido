@@ -19,9 +19,9 @@ class Parser:
         for msg in p:
             use(msg)
 
-    Or:
-        p.feed(data)
-        messages = p.getall()
+    To get all messages as a list:
+
+        messages = list(p)
 
     Todo:
        - refine API
@@ -141,22 +141,6 @@ class Parser:
 
         return len(self._messages)
 
-    def fetchall(self):
-        """
-        Return all pending messages.
-        """
-
-        ret = self._messages
-        self._messages = []
-
-        return ret
-
-    def fetchone(self):
-        if self._messages:
-            return self._messages.pop(0)
-        else:
-            return None  # Todo: exception?
-    
     def __iter__(self):
         """
         Yield pending messages.
@@ -171,9 +155,9 @@ def parse(mididata):
     """
     Parse MIDI data and return any messages found.
 
-    Todo: should be iterator?
+    Todo: should return a generator?
     """
 
     p = Parser()
     p.feed(mididata)
-    return p.getall()
+    return list(p)

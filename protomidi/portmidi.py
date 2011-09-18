@@ -211,8 +211,10 @@ class Input(Port):
                 
                 # 
                 if p.feed(chr(byte)):  # Todo: wrong type?
-                    msg = p.fetchone()
-                    return msg
+                    # Todo: This looks weird. The parser should perhaps
+                    # have a fetchone() or similar after all.
+                    for msg in p:
+                        return msg
 
         # Todo: what should happen here?
 
