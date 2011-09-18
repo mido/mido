@@ -134,41 +134,27 @@ message was received, how long to delay before sending it, and such
 things.
 
 
-Plans
-------
-
-I have also nearly finished writing a wrapper for PortMidi, which will
-provide MIDI I/O on Linux, Mac OS X and Windows.
-
-I will write thorough documentation on both the use of the library,
-its internals and the MIDI protocol.
-
-
 Todo
 -----
 
    - figure out where to call portmidi.initialize()
-   - give note_on and note_off a default velocity of 127?
-     (0 is an inpractical default value)
-   - write docs
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)
-   - include useful lookup tables and functions for common things like
+   - include useful lookup tables or message attributes for common things like
      controller types
-   - read and write MIDI files?
-   - implement comparison (== and !=), but not < and > (they don't make sense here)
+   - handle devices that send note_on(velocity=0) instead of note_off() (flag
+     for portmidi.Input()?) Perhaps make it an option so you can choose the one you prefer,
+     and any data will be converted to that format.
+   - attach some kind of time value to messages returned from Input.recv()? (Or should 
+     the user pass a time function?)
+   - do we actually need to set the timer in Input() and Output()?
+
+   - write docs
    - document the implementation of messages in msg.py.
      (the prototyping object model, how attributes are made read only etc.)
      This should be in docs/, not in in the msg.py.
    - write a short introduction on the MIDI protocol, using this library
      for examples
-   - handle devices that send note_on(velocity=0) instead of note_off() (flag
-     for portmidi.Input()?) Perhaps you can choose the one you prefer.
-   - attach some kind of time value to messages returned from Input.recv()?
-   - do we actually need to set the timer in Input() and Output()?
-   - how should the pitchwheel value be handled? It's convenient to have a float,
-     but should we also expose the underlying two 7-bit bytes? A 14-bit signed integer
-     is probably cleaner.
 
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
