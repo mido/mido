@@ -36,8 +36,8 @@ class Parser:
         """
         Reset parser for new message.
         """
-        self._opcode = None     # Opcode
-        self._data = None       # Data bytes
+        self._inmsg = False
+        self._bytes = None       
         self._typeinfo = None
 
     def feed(self, mididata):
@@ -72,8 +72,8 @@ class Parser:
 
                     # Todo: handle case where end of sysex is reached too
                     # early.
-                    manifacturer = self._data[0]
-                    data = tuple(self._data[1:])
+                    manifacturer = self._bytes[0]
+                    data = tuple(self._bytes[1:])
                     msg = opcode2msg[0xf0](manifacturer=manifacturer, data=data)
 
                     self._messages.append(msg)
@@ -81,36 +81,38 @@ class Parser:
                 else:
                     # Normal message.
                     # Set up parser.
-                    self._opcode = opcode
+                    self._inmsg = True
                     self._typeinfo = opcode2typeinfo[opcode]
-                    self._data = bytearray()  # Collect data bytes here
+                    self._bytes = []
+                    self._bytes.append(opcode)
 
             else:
                 # Data byte
 
-                if self._opcode:
-                    # Already inside a message, append data byte
-                    self._data.append(byte)
+                if self._inmsg:
+                    self._bytes.append(byte)
                 else:
-                    # Byte found outside message, ignoring it 
-                    # (Todo: warn user?)
+                    # Ignore stray data byte
                     pass
 
 
             #
             # End of message?
             #
-            if self._opcode:
-                msgsize = (1 + len(self._data))
-                if msgsize == self._typeinfo.size:
-                    data = self._data  # Just a shortcut
+            if self._inmsg:
+                # Todo: what happens to sysex messges here?
+
+                if len(self._bytes) == self._typeinfo.size:
+                    opcode = self._bytes[0]
+                    data = self._bytes[1:]
+                    typeinfo = self._typeinfo  # Shortcut
 
                     # Get message prototype.
                     # This will get the right channel for us even.
-                    msg = opcode2msg[self._opcode]
+                    msg = opcode2msg[opcode]
 
-                    names = list(self._typeinfo.names)
-                    if self._opcode <= 0xf0:
+                    names = list(typeinfo.names)
+                    if opcode <= 0xf0:
                         # Channel was already handled above
                         names.remove('channel')
 
