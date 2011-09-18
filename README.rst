@@ -31,6 +31,22 @@ calling an existing message and overriding some of its values::
     >>> msg2
     note_on(channel=0, note=60, velocity=100)
 
+
+Planned features
+----------------
+
+(All implemented, but with a lot of testing and fine polishing remaining.)
+
+    - abstract immutable MIDI message objects that are
+      easy to work with
+    - support for all MIDI message types (including sysex)
+    - parser / serializer (seralizes to bytearray or bytes)
+    - Input and Output classes for communicating with other MIDI programs or devices (portmidi)
+
+
+Status
+------
+
 The library is under development. The code may not be stable and the
 API may change.
 
@@ -47,21 +63,29 @@ Todo
 -----
 
    - figure out where to call portmidi.initialize()
+
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)
+
    - include useful lookup tables or message attributes for common things like
      controller types
+
    - handle devices that send note_on(velocity=0) instead of note_off() (flag
      for portmidi.Input()?) Perhaps make it an option so you can choose the one you prefer,
      and any data will be converted to that format.
+
    - attach some kind of time value to messages returned from Input.recv()? (Or should 
      the user pass a time function?)
+
    - do we actually need to set the timer in Input() and Output()?
 
+
    - write docs
+
    - document the implementation of messages in msg.py.
      (the prototyping object model, how attributes are made read only etc.)
      This should be in docs/, not in in the msg.py.
+
    - write a short introduction on the MIDI protocol, using this library
      for examples
 
