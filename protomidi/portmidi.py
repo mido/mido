@@ -39,95 +39,25 @@ def get_defoutput():
 def count_devices():
     return pm.lib.Pm_CountDevices()
 
-##########################################################
-# Various things that need to be rewritten
-#
-
-def get_device_info(i):
-    """
-    GetDeviceInfo(<device number>): returns 5 parameters
-    - underlying MIDI API
-    - device name
-    - TRUE iff input is available
-    - TRUE iff output is available
-    - TRUE iff device stream is already open
-    """
-    info_ptr = pm.lib.Pm_GetDeviceInfo(i)
-    if info_ptr:
-        info = info_ptr.contents
-        # return info.interf, info.name, info.input, info.output, info.opened
-        return info
-    else:
-        return None
-
 def get_devinfo():
     devices = []
 
     for id in range(count_devices()):
-        devinfo = get_device_info(id)
+        info_ptr = pm.lib.Pm_GetDeviceInfo(id)
+        if info_ptr:
+            devinfo = info_ptr.contents
 
-        dev = dict(
-            id=id,
-            name=devinfo.name,
-            interf=devinfo.interf,
-            input=devinfo.input,
-            output=devinfo.output,
-            opened=devinfo.opened,
-            # info=devinfo,
-            )
-        devices.append(dev)
+            dev = dict(
+                id=id,
+                name=devinfo.name,
+                interf=devinfo.interf,
+                input=devinfo.input,
+                output=devinfo.output,
+                opened=devinfo.opened,
+                )
+            devices.append(dev)
 
     return devices
-
-def get_device_by_name(name='', input=False, output=False):
-    devices = get_devinfo()
-    for dev in devices:
-        if dev['name'] == name:
-            if input and not dev['input']:
-                continue
-            if output and not dev['input']:
-                continue
-            return dev.id
-
-def get_device_names():
-    devices = get_devinfo()
-    for dev in devices:
-        yield dev['name']
-
-def get_output_map():
-    devs = {}
-
-    devices = get_devinfo()
-    for dev in devices:
-        if dev['output']:
-            devs[dev['name']] = dev['id']
-    
-    return devs
-
-def get_time(*args):
-    """
-    Returns the current value of the PortMidi timer in seconds.
-    The timer is started when you initialize PortMidi.
-    """
-    # Pt_Time() returns the current time in milliseconds,
-    # so we ned to divide it a bit here to get seconds.
-    return pm.lib.Pt_Time() / 1000.0
-
-def get_err():
-    """Return error text"""
-
-# Todo: what does this return?
-def Channel(chan):
-    return pm.lib.Pm_Channel(chan-1)
-
-
-
-
-
-
-
-
-
 
 class Error(Exception):
     pass
