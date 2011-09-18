@@ -22,7 +22,7 @@ scripts. A small example (API may change)::
 MIDI messages are immutable objects. A new message can be created by
 calling an existing message and overriding some of its values::
 
-    >>> from protomidi.msg import *
+    >>> from protomidi.msg import note_on
     >>> msg1 = note_on(note=22, velocity=100)
     >>> msg1
     note_on(channel=0, note=22, velocity=100)
@@ -30,6 +30,11 @@ calling an existing message and overriding some of its values::
     >>> msg2 = msg1(note=60)
     >>> msg2
     note_on(channel=0, note=60, velocity=100)
+
+There is nothing special about note_on. It's just a normal message object::
+
+    >>> note_on
+    note_on(channel=0, note=0, velocity=0)    
 
 
 Planned features
