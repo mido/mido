@@ -192,7 +192,8 @@ class Input(Port):
 
         if dev == None:
             dev = get_definput()
-            raise Error('No default input found')
+            if dev < 0:
+                raise Error('No default input found')
         self.dev = dev
         self.stream = pm.PortMidiStreamPtr()
         
@@ -305,7 +306,8 @@ class Output(Port):
         
         if dev == None:
             dev = get_defoutput()
-            raise Error('No default output found')
+            if dev < 0:
+                raise Error('No default output found')
         self.dev = dev
 
         self.stream = pm.PortMidiStreamPtr()
