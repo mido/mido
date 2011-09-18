@@ -23,8 +23,11 @@ def serialize(msg):
                 data.append(byte)  # Todo: extend()?
             
         elif msg.type == 'pitchwheel' and name == 'value':
-            value = int((msg.value + 1) * (1 << 14))
-            print(value)
+            value = msg.value + (2**13)
+            lsb = value & 0x7f
+            msb = value >> 7
+            data.append(lsb)
+            data.append(msb)
 
         elif msg.type == 'songpos' and name == 'pos':
             # Convert 14 bit value to two 7-bit values

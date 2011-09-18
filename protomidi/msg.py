@@ -9,8 +9,50 @@ http://www.midi.org/techspecs/midimessages.php
 
 from __future__ import print_function, unicode_literals
 from collections import OrderedDict, namedtuple
-from .asserts import assert_time, assert_channel
-from .asserts import assert_databyte, assert_songpos, assert_pitchwheel
+
+
+def isint(val):
+    """Check if a value is an integer"""
+    # Todo: is there a better way to check this?
+    return isinstance(val, int)
+
+def isnum(val):
+    """Check if a value is a number"""
+    # Todo: is there a better way to check this?
+    return isinstance(val, int) or isinstance(val, float) or isinstance(val, long)
+
+
+# Pitchwheel is a 14 bit signed integer
+pitchwheel_min = -8192
+pitchwheel_max = 8191
+
+
+#
+# Assert that data values as of correct type and size
+#
+def assert_time(time):
+    if not isnum(time):
+        raise ValueError('time must be a number')
+
+def assert_channel(val):
+    if not isint(val) or not (0 <= val < 16):
+        raise ValueError('channel must be integer in range(0, 16)')
+
+# Todo: fix range (should be 14 bit unsigned)
+def assert_songpos(val):
+    if not isint(val) or not (0 <= val < 32768):
+        raise ValueError('song position must be integer in range(0, 32768)')
+
+def assert_pitchwheel(val):
+    if not isint(val) or not (pitchwheel_min <= val <= pitchwheel_max):
+        raise ValueError('pitchwheel value must be number in range({}, {})'.format(
+                pitchwheel_min,
+                pitchwheel_max))
+
+def assert_databyte(val):
+    if not isint(val) or not (0 <= val < 128):
+        raise ValueError('data byte must by in range(0, 128)')
+
 
 
 msg_specs = {
@@ -186,7 +228,6 @@ class MIDIMessage:
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
-
 
 __all__ = []
 

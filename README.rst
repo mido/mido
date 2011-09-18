@@ -166,8 +166,9 @@ Todo
      for portmidi.Input()?) Perhaps you can choose the one you prefer.
    - attach some kind of time value to messages returned from Input.recv()?
    - do we actually need to set the timer in Input() and Output()?
-   - find some way to keep all the constants in portmidi_init.py out of portmidi.py
-   - detect that there is no default input or output and raise an exception
+   - how should the pitchwheel value be handled? It's convenient to have a float,
+     but should we also expose the underlying two 7-bit bytes? A 14-bit signed integer
+     is probably cleaner.
 
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/

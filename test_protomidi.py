@@ -36,6 +36,34 @@ def test_msg_identity():
 
     assert id(msg1) == id(msg2)
 
+def test_pitchwheel_min():
+    """
+    Check if pitchwheel with minimal value serializes correctly.
+    """
+    msg = protomidi.msg.pitchwheel(value=protomidi.msg.pitchwheel_min)
+    bytes = protomidi.serialize(msg)
+
+    assert bytes[1] == bytes[2] == 0
+
+def test_pitchwheel_max():
+    """
+    Check if pitchwheel with maximal value serializes correctly.
+    """
+    msg = protomidi.msg.pitchwheel(value=protomidi.msg.pitchwheel_max)
+    bytes = protomidi.serialize(msg)
+
+    assert bytes[1] == bytes[2] == 127
+
+def test_pitchwheel_serialize_parse():
+    """
+    Check if pitchwheel with maximal value serializes correctly.
+    """
+    msg1 = protomidi.msg.pitchwheel(value=0)
+    bytes = protomidi.serialize(msg1)
+    msg2 = protomidi.parse(bytes)[0]
+
+    assert msg1 == msg2
+
 #
 # Serialize and parse
 #

@@ -1,4 +1,4 @@
-from .msg import opcode2typeinfo, opcode2msg 
+from .msg import opcode2typeinfo, opcode2msg
 
 """
 MIDI parser
@@ -126,8 +126,10 @@ class Parser:
                         msg = msg(**args)
 
                     elif msg.type == 'pitchwheel':
-                        # Todo: check if value is computed correctly
-                        value = (float(data[0] | data[1] << 7) * 2) / 16384
+                        lsb = data[0]
+                        msb = data[1]
+                        value = data[0] | (data[1] << 7)
+                        value -= (2**13)  # Make this a signed value
                         msg = msg(value=value)
 
                     elif msg.type == 'songpos':
