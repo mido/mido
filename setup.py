@@ -3,7 +3,7 @@
 
 import os
 import sys
-import dbfparse
+import protomidi
 
 try:
     from setuptools import setup
@@ -16,22 +16,22 @@ if sys.argv[-1] == "publish":
     os.system("python setup.py sdist upload")
     sys.exit()
 
-#if sys.argv[-1] == "test":
-#    os.system("python test_dbfparse.py")
-#    sys.exit()
+if sys.argv[-1] == "test":
+    os.system("python test_protomidi.py")
+    sys.exit()
 
 required = []
 
 setup(
-    name='dbfparse',
-    version=dbfparse.__version__,
-    description='easily fetch data from dbf files',
+    name='protomidi',
+    version=protomidi.__version__,
+    description='library for writing MIDI applications',
     long_description=open('README.rst').read(),
     author=protomidi.__author__,
-    author=protomidi.__email__,
-    url=protomidi.__url__'
+    email=protomidi.__email__,
+    url=protomidi.__url__,
     packages=[
-        'dbfparse',
+        'protomidi',
     ],
     py_modules=[
     ],
