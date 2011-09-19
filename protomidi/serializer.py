@@ -18,6 +18,9 @@ def serialize(msg):
         if name == 'channel':
             pass  # We already did this, skip it now
         
+        elif name == 'time':
+            pass  # Can't serialize time
+        
         elif name == 'data':
             for byte in msg.data:
                 data.append(byte)  # Todo: extend()?

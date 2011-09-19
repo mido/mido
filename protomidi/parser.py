@@ -116,6 +116,9 @@ class Parser:
                         # Channel was already handled above
                         names.remove('channel')
 
+                    # Time can't be parsed
+                    names.remove('time')
+
                     if len(names) == len(data):
 
                         # No conversion necessary. Only normal data bytes

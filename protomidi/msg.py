@@ -31,8 +31,8 @@ pitchwheel_max = 8191
 # Assert that data values as of correct type and size
 #
 def assert_time(time):
-    if not isnum(time):
-        raise ValueError('time must be a number')
+    if not (time == None or isnum(time)):
+        raise ValueError('time must be a number or None')
 
 def assert_channel(val):
     if not isint(val) or not (0 <= val < 16):
@@ -213,7 +213,11 @@ class MIDIMessage:
         typeinfo = opcode2typeinfo[self.opcode]
 
         args = []
+
         for name in typeinfo.names:
+            if name == 'time':
+                if self.time == None:
+                    continue  # Don't show blank time values
             args.append('{0}={1}'.format(name,
                                          repr(getattr(self, name))))
         args = ', '.join(args)
@@ -261,12 +265,15 @@ def _init():
         if opcode < 0xf0:
             ns['channel'] = 0
             names = ('channel',) + names
- 
+        names = ('time',) + names
+
         # Set data
         for name in names:
             if name == 'data':
                 # Sysex needs special handling, as always
                 ns[name] = ()
+            elif name == 'time':
+                ns[name] = None
             else:
                 ns[name] = 0
 
