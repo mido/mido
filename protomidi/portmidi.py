@@ -124,7 +124,17 @@ class Input(Port):
             dev = get_definput()
             if dev < 0:
                 raise Error('No default input found')
-        self.dev = dev
+
+        if isinstance(dev, int):
+            self.dev = dev
+        else:
+            for devinfo in get_devinfo():
+                if devinfo['name'] == dev and devinfo['input']:
+                    self.dev = devinfo['id']
+                    break
+            else:
+                raise Error('Output device not found: %s' % repr(dev))
+
         self.stream = pm.PortMidiStreamPtr()
         
         time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
@@ -240,7 +250,16 @@ class Output(Port):
             dev = get_defoutput()
             if dev < 0:
                 raise Error('No default output found')
-        self.dev = dev
+
+        if isinstance(dev, int):
+            self.dev = dev
+        else:
+            for devinfo in get_devinfo():
+                if devinfo['name'] == dev and devinfo['output']:
+                    self.dev = devinfo['id']
+                    break
+            else:
+                raise Error('Input device not found: %s' % repr(dev))
 
         self.stream = pm.PortMidiStreamPtr()
         
