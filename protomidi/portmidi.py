@@ -186,11 +186,11 @@ class Input(Port):
 
         BufferType = pm.PmEvent * 1
         buffer = BufferType()
-        
+
         # Third argument is length (number of messages)
         num_events = pm.lib.Pm_Read(self.stream, buffer, 1)
         _check_err(num_events)
-        
+
         # event.message is an integer, where the lowest bytes are the MIDI
         # message.
         
