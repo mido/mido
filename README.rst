@@ -48,6 +48,8 @@ Status
 The library is under development. The code may not be stable and the
 API may change.
 
+MIDI exclusive with portmidi is currently broken.
+
 
 Requirements
 ------------
@@ -62,6 +64,11 @@ there you have Python and a portmidi shared library.
 
 Todo
 -----
+
+   - fix sysex I/O
+
+   - write function (or functions) to search for MIDI devices (get_input(), get_device(name='UM-1', input=1),
+     etc.)
 
    - figure out where to call portmidi.initialize()
 
