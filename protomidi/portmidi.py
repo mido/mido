@@ -259,7 +259,7 @@ class Output(Port):
                     self.dev = devinfo['id']
                     break
             else:
-                raise Error('Input device not found: %s' % repr(dev))
+                raise Error('Output device not found: %s' % repr(dev))
 
         self.stream = pm.PortMidiStreamPtr()
         
