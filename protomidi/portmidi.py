@@ -205,6 +205,8 @@ class Input(Port):
             # starting with lsb and ending with msb. Just shift and pop
             # them into the parser.
             value = event.message & 0xffffffff
+            if value != 0xf8:
+                print('%016x' % value)
             for i in range(4):
                 byte = value & 0xff
                 self._parser.put_byte(byte)

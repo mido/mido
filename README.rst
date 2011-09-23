@@ -74,6 +74,8 @@ there you have Python and a portmidi shared library.
 Todo
 -----
 
+   - show sysex bytes in hexadecimal? (in __repr__())
+
    - write function (or functions) to search for MIDI devices (get_input(), get_device(name='UM-1', input=1),
      etc.)
 
