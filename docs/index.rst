@@ -38,7 +38,7 @@ the portmidi shared library.
 
 To intall portmidi in Ubuntu (and possibly Debian)::
 
-    sudo apt-get install libportmidi0
+    sudo apt-get install libportmidi-dev
 
 To install portmidi on OS X (using macports)::
 
