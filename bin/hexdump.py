@@ -20,7 +20,7 @@ def lookup_port(device_name):
     return None
 
 device_name = sys.argv[1]
-port = lookup_port('UM-1 MIDI 1')
+port = lookup_port(device_name)
 if port:
     p = subprocess.call(['amidi', '-p', port, '-d'])
 else:

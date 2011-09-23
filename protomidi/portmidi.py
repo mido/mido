@@ -208,6 +208,7 @@ class Input(Port):
                     byte = value & 0xff
                     dbg_bytes.append(byte)
                     value >>= 8
+                print('%032x' % event.message)
                 print('  ' + ' '.join('%02x' % b for b in dbg_bytes))
 
             for i in range(4):
