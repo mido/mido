@@ -1,10 +1,20 @@
 """
-Wrapper for PortAudio
+This is a very thin wrapper aournd PortAudio.
+
+Since this is written specifically for ProtoMIDI, we don't use:
+
+  - timers
+  - latency
+  - filters
+  - channel masks
+
+It is better to implement these generally further up.
 
 The API still needs a lot of work. I want to get rid of get_defoutput() and count_devices()
 and replace them with something else.
 
 http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
+http://portmedia.sourceforge.net/portmidi/doxygen/main.html
 http://portmedia.sourceforge.net/portmidi/doxygen/portmidi_8h-source.html
 
 Todo:
@@ -30,43 +40,6 @@ debug = False
 def dbg(*args):
     if debug:
         print('DBG:', *args)
-
-def get_definput():
-    return pm.lib.Pm_GetDefaultInputDeviceID()
-
-def get_defoutput():
-    return pm.lib.Pm_GetDefaultOutputDeviceID()
-
-def count_devices():
-    return pm.lib.Pm_CountDevices()
-
-def get_devinfo():
-    devices = []
-
-    for id in range(count_devices()):
-        info_ptr = pm.lib.Pm_GetDeviceInfo(id)
-        if info_ptr:
-            devinfo = info_ptr.contents
-
-            dev = dict(
-                id=id,
-                name=devinfo.name,
-                interf=devinfo.interf,
-                input=devinfo.input,
-                output=devinfo.output,
-                opened=devinfo.opened,
-                )
-            devices.append(dev)
-
-    return devices
-
-class Error(Exception):
-    pass
-
-def _check_err(err):
-    # Todo: err?
-    if err < 0:
-        raise Error(pm.lib.Pm_GetErrorText(err))
 
 initialized = False
 
@@ -96,6 +69,61 @@ def terminate():
     else:
         dbg('  (already terminated)')
 
+class Device(dict):
+    """
+    General device class.
+    A dict with attributes will have to do for now.
+    """
+
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except IndexError:
+            raise AttributeError(name)        
+
+def get_devices(**query):
+    """
+    Somewhat experimental function to get device info
+    as a list of Device objects.
+    """
+
+    # Todo: raise exception on illegal query arguments
+    # Todo: explain query in docstring
+
+    devices = []
+
+    for id in range(pm.lib.Pm_CountDevices()):
+        info_ptr = pm.lib.Pm_GetDeviceInfo(id)
+        if info_ptr:
+            devinfo = info_ptr.contents
+
+            skip = False
+            for (name, value) in query.items():
+                dev_value = getattr(devinfo, name)
+                if value != dev_value:
+                    skip = True
+                    break
+
+            if not skip:
+                dev = Device(
+                    id=id,
+                    name=devinfo.name,
+                    interf=devinfo.interf,
+                    input=devinfo.input,
+                    output=devinfo.output,
+                    opened=devinfo.opened,
+                    )
+                devices.append(dev)
+
+    return devices
+
+class Error(Exception):
+    pass
+
+def _check_err(err):
+    # Todo: err?
+    if err < 0:
+        raise Error(pm.lib.Pm_GetErrorText(err))
 
 class Port:
     pass
@@ -105,79 +133,45 @@ class Input(Port):
     PortMidi Input
     """
 
-    def __init__(self,
-                 dev=None,
-                 latency=0,
-                 channel_mask=None,
-                 filters=None):
+    def __init__(self, dev=None):
         """
         Create an input port. If 'dev' is not passed, the default
         device is used. 'dev' is an integer >= 0.
         """
-        # Todo: add channel_mask, filters etc. to docstring
 
         initialize()
 
         self._parser = Parser()
  
         if dev == None:
-            dev = get_definput()
-            if dev < 0:
+            self.dev = pm.lib.Pm_GetDefaultInputDeviceID()
+            if self.dev < 0:
                 raise Error('No default input found')
-
-        if isinstance(dev, int):
+        elif isinstance(dev, int):
             self.dev = dev
         else:
-            for devinfo in get_devinfo():
-                if devinfo['name'] == dev and devinfo['input']:
-                    self.dev = devinfo['id']
-                    break
+            devices = get_devices(name=dev, input=1)
+            if len(devices) >= 1:
+                self.dev = devices[0].id
             else:
                 raise Error('Output device not found: %s' % repr(dev))
 
         self.stream = pm.PortMidiStreamPtr()
         
-        time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
-
         dbg('opening input')
         err = pm.lib.Pm_OpenInput(pm.byref(self.stream),
-                               self.dev, pm.null, 100,
-                               time_proc, pm.null)
+                                  self.dev,  # inputDevice
+                                  pm.null,   # inputDriverInfo
+                                  1000,      # bufferSize
+                                  pm.NullTimeProcPtr,   # time_proc
+                                  pm.null,   # time_info
+                                  )
         _check_err(err)
-
-        if channel_mask != None:
-            self.set_channel_mask(channel_mask)
-
-        if filters != None:
-            self.set_filter(filters)
 
     def __dealloc__(self):
         err = pm.lib.Pm_Abort(self.stream)
         _check_err(err)
         err = pm.lib.Pm_Close(self.stream)
-        _check_err(err)
-
-    def set_filter(self, filters):
-        """
-        """
-        # Todo: write docstring
-        # Todo: do this? set_filter(['active', 'sysex'])
-
-        buffer = pm.PmEvent()
-        err = pm.lib.Pm_SetFilter(self.stream, filters)
-        _check_err(err)
-
-        while pm.lib.Pm_Poll(self.stream) != 0:
-            err = pm.lib.Pm_Read(self.stream, buffer, 1)
-            _check_err(err)
-
-    def set_channel_mask(self, mask):
-        """
-        16-bit bitfield.
-        """
-        # Todo: improve docstring
-
-        err = pm.lib.Pm_SetChannelMask(self.stream, mask)
         _check_err(err)
 
     def _parse(self):
@@ -247,36 +241,32 @@ class Output(Port):
     """
     PortMidi Output
     """
-    def __init__(self, dev=None, latency=1):
+    def __init__(self, dev=None):
         initialize()
         
         if dev == None:
-            dev = get_defoutput()
-            if dev < 0:
+            self.dev = pm.lib.Pm_GetDefaultOutputDeviceID()
+            if self.dev < 0:
                 raise Error('No default output found')
-
-        if isinstance(dev, int):
+        elif isinstance(dev, int):
             self.dev = dev
         else:
-            for devinfo in get_devinfo():
-                if devinfo['name'] == dev and devinfo['output']:
-                    self.dev = devinfo['id']
-                    break
+            devices = get_devices(name=dev, output=1)
+            if len(devices) >= 1:
+                self.dev = devices[0].id
             else:
-                raise Error('Output device not found: %s' % repr(dev))
+                raise Error('Input device not found: %s' % repr(dev))
 
         self.stream = pm.PortMidiStreamPtr()
         
-        if latency > 0:
-            time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
-        else:
-            # Todo: This doesn't work. NullTimeProcPtr() requires
-            # one argument.
-            time_proc = pm.NullTimeProcPtr(pm.lib.Pt_Time())
-
         err = pm.lib.Pm_OpenOutput(pm.byref(self.stream),
-                                self.dev, pm.null, 0,
-                                time_proc, pm.null, latency)
+                                   self.dev,  # outputDevice
+                                   pm.null,   # outputDriverInfo
+                                   0,         # bufferSize (ignored when latency=0?)
+                                   pm.NullTimeProcPtr,   # time_proc (default to internal clock)
+                                   pm.null,   # time_info
+                                   0,         # latency
+                                   )
         _check_err(err)
 
     def __dealloc__(self):
@@ -290,63 +280,19 @@ class Output(Port):
     def send(self, msg):
         """Send a message on the output port"""
         
-        def send_event(bytes):
+        if msg.type == 'sysex':
+            chars = pm.c_char_p(bytes(serialize(msg)))
+            err = pm.lib.Pm_WriteSysEx(self.stream, 0, chars)
+            _check_err(err)
+        else:
             value = 0
-            for byte in reversed(bytes):
+            for byte in reversed(serialize(msg)):
                 value <<= 8
                 value |= byte
 
-            # dbg(bytes, hex(value))
+            # Todo: timestamp is ignored if latency=0,
+            # which means we don't need this.
+            now = pm.lib.Pt_Time()
 
-            event = pm.PmEvent()
-            event.timestamp = pm.lib.Pt_Time()
-            event.message = value
-
-            # Todo: this sometimes segfaults. I must fix this!
-            err = pm.lib.Pm_Write(self.stream, event, 1)
+            err = pm.lib.Pm_WriteShort(self.stream, now, value)
             _check_err(err)
-
-        if msg.type == 'sysex':
-            # Add sysex_start and sysex_end
-            bytes = (0xf0,) + msg.data + (0xf7,)
-
-            # Send 4 bytes at a time (possibly less for last event)
-            while bytes:
-                send_event(bytes[:4])
-                bytes = bytes[4:]
-        else:
-            send_event([b for b in serialize(msg)])
-
-
-
-#
-# Message filters for Input
-#
-# Todo: The names here should correspond with those in MIDI messages names (msg.py)
-#
-FILT_ACTIVE = (1 << 0x0E)  # filter active sensing messages (0xFE)
-FILT_SYSEX  = (1 << 0x00)  # filter system exclusive messages (0xF0)
-FILT_CLOCK  = (1 << 0x08)  # filter MIDI clock message (0xF8)
-FILT_PLAY   = ((1 << 0x0A) | (1 << 0x0C) | (1 << 0x0B))  # filter play messages (start 0xFA, stop 0xFC, continue 0xFB) 
-FILT_TICK   = (1 << 0x09)  # filter tick messages (0xF9) 
-FILT_FD     = (1 << 0x0D)  # ilter undefined FD messages
-FILT_UNDEFINED = FILT_FD  # filter undefined real-time messages 
-FILT_RESET  = (1 << 0x0F)  # filter reset messages (0xFF) 
-
-FILT_REALTIME = (FILT_ACTIVE | FILT_SYSEX | FILT_CLOCK | FILT_PLAY | FILT_UNDEFINED | FILT_RESET | FILT_TICK)  #filter all real-time messages 
-
-FILT_NOTE   = ((1 << 0x19) | (1 << 0x18))  # filter note-on and note-off (0x90-0x9F and 0x80-0x8F
-
-FILT_CHANNEL_AFTERTOUCH = (1 << 0x1D)  # filter channel aftertouch (most midi controllers use this) (0xD0-0xDF)
-FILT_POLY_AFTERTOUCH = (1 << 0x1A)  # per-note aftertouch (0xA0-0xAF) 
-FILT_AFTERTOUCH = (FILT_CHANNEL_AFTERTOUCH | FILT_POLY_AFTERTOUCH)  # filter both channel and poly aftertouch 
-
-FILT_PROGRAM = (1 << 0x1C)  # Program changes (0xC0-0xCF)
-FILT_CONTROL = (1 << 0x1B)  # Control Changes (CC's) (0xB0-0xBF)
-FILT_PITCHBEND = (1 << 0x1E)  # Pitch Bender (0xE0-0xEF) 
-
-FILT_MTC = (1 << 0x01)  # MIDI Time Code (0xF1)
-FILT_SONG_POSITION = (1 << 0x02)  # Song Position (0xF2)
-FILT_SONG_SELECT = (1 << 0x03)  # Song Select (0xF3). 
-FILT_TUNE = (1 << 0x06)  # Tuning request (0xF6) 
-FILT_SYSTEMCOMMON = (FILT_MTC | FILT_SONG_POSITION | FILT_SONG_SELECT | FILT_TUNE)  # All System Common messages (mtc, song position, song select, tune request). 

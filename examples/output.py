@@ -1,10 +1,10 @@
 import random
-import protomidi
 from protomidi.msg import *
+import protomidi.portmidi as pm
 
 import time
 
-out = protomidi.Output()
+out = pm.Output()
 
 #
 # Play random notes with random programs
