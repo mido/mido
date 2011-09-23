@@ -266,6 +266,8 @@ def _init():
             ns['channel'] = 0
             names = ('channel',) + names
         names = ('time',) + names
+        if type == 'sysex':
+            names += ('data',)
 
         # Set data
         for name in names:
