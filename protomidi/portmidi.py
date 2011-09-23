@@ -147,8 +147,6 @@ class Input(Port):
             self.dev = pm.lib.Pm_GetDefaultInputDeviceID()
             if self.dev < 0:
                 raise Error('No default input found')
-        elif isinstance(dev, int):
-            self.dev = dev
         else:
             devices = get_devices(name=dev, input=1)
             if len(devices) >= 1:
@@ -248,8 +246,6 @@ class Output(Port):
             self.dev = pm.lib.Pm_GetDefaultOutputDeviceID()
             if self.dev < 0:
                 raise Error('No default output found')
-        elif isinstance(dev, int):
-            self.dev = dev
         else:
             devices = get_devices(name=dev, output=1)
             if len(devices) >= 1:
