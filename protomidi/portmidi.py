@@ -21,6 +21,7 @@ import atexit
 
 from .serializer import serialize
 from .parser import Parser
+from .msg import opcode2msg
 
 from . import portmidi_init as pm
 
@@ -120,6 +121,8 @@ class Input(Port):
 
         initialize()
 
+        self._parser = Parser()
+ 
         if dev == None:
             dev = get_definput()
             if dev < 0:
@@ -180,64 +183,59 @@ class Input(Port):
         err = pm.lib.Pm_SetChannelMask(self.stream, mask)
         _check_err(err)
 
+    def _parse(self):
+        """
+        Read and parse whatever events have arrived since the last time we were called.
+        
+        Returns the number of messages ready to be received.
+        """
+
+        MAX_EVENTS = 1000
+        BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
+        buffer = BufferType()
+
+        # Third argument is length (number of messages)
+        num_events = pm.lib.Pm_Read(self.stream, buffer, MAX_EVENTS)
+        _check_err(num_events)
+
+        for i in range(num_events):
+            event = buffer[i]
+
+            # The bytes are stored in the lower 16 bit of the message,
+            # starting with lsb and ending with msb. Just shift and pop
+            # them into the parser.
+            value = event.message & 0xffffffff
+            for i in range(4):
+                byte = value & 0xff
+                self._parser.feed_byte(byte)
+                value >>= 8
+
+        # Todo: the parser needs another method
+        return len(self._parser._messages)
+    
     def poll(self):
         """
-        Returns True if there are one or more pending messages to
-        read.
+        Return the number of messages ready to be received.
         """
-        ret = pm.lib.Pm_Poll(self.stream)
-        _check_err(ret)
-        return ret
+
+        return self._parse()
 
     def recv(self):
         """
         Return the next pending message, or None if there are no messages.
         """
 
-        BufferType = pm.PmEvent * 1
-        buffer = BufferType()
-
-        # Third argument is length (number of messages)
-        num_events = pm.lib.Pm_Read(self.stream, buffer, 1)
-        _check_err(num_events)
-
-        # event.message is an integer, where the lowest bytes are the MIDI
-        # message.
-        
-        if num_events == 1:
-            event = buffer[0]
-
-            # Todo: What happens to sysex messages?
-
-            value = event.message
-            # Todo: keep the parser around, so we don't have to
-            # allocate it every time.
-            p = Parser()
-
-            while value:
-                # Pop the lowest byte
-                byte = value & 0xff
-                value = value >> 8
-                
-                # 
-                if p.feed(chr(byte)):  # Todo: wrong type?
-                    # Todo: This looks weird. The parser should perhaps
-                    # have a fetchone() or similar after all.
-                    for msg in p:
-                        return msg
-
-        # Todo: what should happen here?
+        self._parse()
+        return self._parser.get_msg()
 
     def __iter__(self):
         """
         Iterate through pending messages.
         """
-        while 1:
-            msg = self.recv()
-            if msg:
-                yield msg
-            else:
-                break
+
+        self._parse()
+        for msg in self._parser:
+            yield msg
 
 class Output(Port):
     """
@@ -259,7 +257,7 @@ class Output(Port):
                     self.dev = devinfo['id']
                     break
             else:
-                raise Error('Input device not found: %s' % repr(dev))
+                raise Error('Output device not found: %s' % repr(dev))
 
         self.stream = pm.PortMidiStreamPtr()
         

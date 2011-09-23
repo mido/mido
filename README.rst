@@ -63,6 +63,11 @@ there you have Python and a portmidi shared library.
 Todo
 -----
 
+   - test sysex output
+
+   - write function (or functions) to search for MIDI devices (get_input(), get_device(name='UM-1', input=1),
+     etc.)
+
    - figure out where to call portmidi.initialize()
 
    - include some kind of event based scheduler (perhaps based on

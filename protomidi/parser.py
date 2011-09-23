@@ -40,6 +40,10 @@ class Parser:
         self._bytes = None       
         self._typeinfo = None
 
+    def feed_byte(self, byte):
+        # Todo: this is silly. Shouldn't it be the other way around?
+        self.feed(chr(byte))
+        
     def feed(self, mididata):
         """
         Feed MIDI data to the parser. 'mididata'
@@ -72,8 +76,8 @@ class Parser:
 
                     # Todo: handle case where end of sysex is reached too
                     # early.
-                    manifacturer = self._bytes[0]
-                    data = tuple(self._bytes[1:])
+                    manifacturer = self._bytes[1]
+                    data = tuple(self._bytes[2:])
                     msg = opcode2msg[0xf0](manifacturer=manifacturer, data=data)
 
                     self._messages.append(msg)
@@ -148,6 +152,17 @@ class Parser:
                     self._reset()
 
         return len(self._messages)
+
+    def get_msg(self):
+        """
+        Get the first pending message.
+
+        Returns None if there is no message yet.
+        """
+        if self._messages:
+            return self._messages.pop(0)
+        else:
+            return None
 
     def __iter__(self):
         """
