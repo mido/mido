@@ -61,12 +61,8 @@ class Parser:
             elif opcode == 0xf7:
                 # End of sysex
                 # Crete message.
-
-                # Todo: handle case where end of sysex is reached too
-                # early.
-                manifacturer = self._bytes[1]
-                data = tuple(self._bytes[2:])
-                msg = opcode2msg[0xf0](manifacturer=manifacturer, data=data)
+                data = tuple(self._bytes[1:])
+                msg = opcode2msg[0xf0](data=data)
 
                 self._messages.append(msg)
                 self._reset()
