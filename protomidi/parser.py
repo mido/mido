@@ -59,13 +59,16 @@ class Parser:
                 self._messages.append(opcode2msg[opcode])
 
             elif opcode == 0xf7:
-                # End of sysex
-                # Crete message.
-                data = tuple(self._bytes[1:])
-                msg = opcode2msg[0xf0](data=data)
-
-                self._messages.append(msg)
-                self._reset()
+                if self._inmsg and self._bytes and self._bytes[0] == 0xf0:
+                    # End of sysex
+                    # Crete message.
+                    data = tuple(self._bytes[1:])
+                    msg = opcode2msg[0xf0](data=data)
+                    
+                    self._messages.append(msg)
+                    self._reset()
+                else:
+                    pass  # Stray sysex end byte. Ignore it.
             else:
                 # Normal message.
                 # Set up parser.
