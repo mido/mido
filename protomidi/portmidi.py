@@ -283,16 +283,35 @@ class Output(Port):
 
     def send(self, msg):
         """Send a message on the output port"""
+        
+        def send_event(bytes):
+            value = 0
+            for byte in reversed(bytes):
+                value <<= 8
+                value |= byte
 
-        bytes = [b for b in serialize(msg)]
-        bytes += [0, 0, 0, 0]  # Padding
+            # dbg(bytes, hex(value))
 
-        event = pm.PmEvent()
-        event.timestamp = pm.lib.Pt_Time()
-        event.message = (bytes[2] << 16) | (bytes[1] << 8) | (bytes[0])
+            event = pm.PmEvent()
+            event.timestamp = pm.lib.Pt_Time()
+            event.message = value
 
-        err = pm.lib.Pm_Write(self.stream, event, 1)
-        _check_err(err)
+            # Todo: this sometimes segfaults. I must fix this!
+            err = pm.lib.Pm_Write(self.stream, event, 1)
+            _check_err(err)
+
+        if msg.type == 'sysex':
+            # Add sysex_start and sysex_end
+            bytes = (0xf0,) + msg.data + (0xf7,)
+
+            # Send 4 bytes at a time (possibly less for last event)
+            while bytes:
+                send_event(bytes[:4])
+                bytes = bytes[4:]
+        else:
+            send_event([b for b in serialize(msg)])
+
+
 
 #
 # Message filters for Input
