@@ -65,6 +65,7 @@ Known bugs
   - on OS X, portmidi sometimes hangs for a couple of seconds while
     initializing.
 
+  - default input/output doesn't work in Linux.
 
 
 Requirements
