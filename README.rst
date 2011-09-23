@@ -49,6 +49,17 @@ The library is under development. The code may not be stable and the
 API may change.
 
 
+Known bugs
+----------
+
+  - Sysex input may be slightly broken. I get invalid sysex messages when I request
+    data from Roland synths. Also, I've gotten stray sysex end bytes.
+
+  - portmidi.Output.send() sometimes segfaults in Linux. Fortunately, if it doesn't
+    segfault the first time you call it, it will never segfault again. So if this happens,
+    just restard the program.
+
+
 Requirements
 ------------
 
