@@ -207,7 +207,7 @@ class Input(Port):
             value = event.message & 0xffffffff
             for i in range(4):
                 byte = value & 0xff
-                self._parser.feed_byte(byte)
+                self._parser.put_byte(byte)
                 value >>= 8
 
         # Todo: the parser needs another method
