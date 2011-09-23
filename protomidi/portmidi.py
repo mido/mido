@@ -76,18 +76,15 @@ def initialize():
     dbg('initialize()')
 
     if initialized:
-        dbg('(already initialized)')
+        dbg('  (already initialized)')
         pass
     else:        
         pm.lib.Pm_Initialize()        
 
-        dbg('starting timer')
         # Start timer
         pm.lib.Pt_Start(1, pm.NullTimeProcPtr, pm.null)
         initialized = True
-        dbg('atexit.register()')
         atexit.register(terminate)
-        dbg('initialized')
 
 def terminate():
     global initialized
@@ -97,7 +94,7 @@ def terminate():
         pm.lib.Pm_Terminate()
         initialized = False
     else:
-        dbg('(already terminated)')
+        dbg('  (already terminated)')
 
 
 class Port:
@@ -205,8 +202,8 @@ class Input(Port):
             # starting with lsb and ending with msb. Just shift and pop
             # them into the parser.
             value = event.message & 0xffffffff
-            # if value != 0xf8:
-            #     print('%016x' % value)
+            if value != 0xf8:
+                dbg('  %016x' % value)
             for i in range(4):
                 byte = value & 0xff
                 self._parser.put_byte(byte)
