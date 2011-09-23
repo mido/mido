@@ -92,7 +92,7 @@ msg_specs = {
   #
   # Sysex messages have a potentially infinite size.
   #
-  0xf0 : ('sysex',         ('manifacturer', 'data'), float('inf')),
+  0xf0 : ('sysex',         (),                 float('inf')),
   0xf1 : ('undefined_f1',  (),                 1), 
   0xf2 : ('songpos',       ('pos',),           3),  
   0xf3 : ('song',          ('song',),          2),
