@@ -52,8 +52,10 @@ API may change.
 Known bugs
 ----------
 
-  - Sysex input may be slightly broken. I get invalid sysex messages when I request
-    data from Roland synths. Also, I've gotten stray sysex end bytes.
+  - Sysex input is broken, and it seems like the fault lies in portmidi itself. (I've checked
+    the output of amidi against the raw portmidi event.message, and portmidi starts off fine
+    and then goes into periods of nonsense values.) Next step: see if it works on OS X. Then
+    off to dig deeper into portmidi to see what's going on.
 
   - portmidi.Output.send() sometimes segfaults in Linux. Fortunately, if it doesn't
     segfault the first time you call it, it will never segfault again. So if this happens,
