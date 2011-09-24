@@ -117,7 +117,7 @@ msg_specs = {
   0xfb : ('continue',       (), 1),
   0xfc : ('stop',           (), 1),
   0xfd : ('undefined_fd',   (), 1),
-  0xde : ('active_sensing', (), 1),
+  0xfe : ('active_sensing', (), 1),
   0xff : ('reset',          (), 1),
   }
 
