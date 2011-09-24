@@ -127,7 +127,7 @@ class Input(io.Input):
         _initialize()
 
         self._parser = Parser()
- 
+
         if name == None:
             self._devid = pm.lib.Pm_GetDefaultInputDeviceID()
             if self._devid < 0:
@@ -142,11 +142,14 @@ class Input(io.Input):
         self.stream = pm.PortMidiStreamPtr()
         
         dbg('opening input')
+
+        time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
+ 
         err = pm.lib.Pm_OpenInput(pm.byref(self.stream),
                                   self._devid,  # inputDevice
                                   pm.null,   # inputDriverInfo
                                   1000,      # bufferSize
-                                  pm.NullTimeProcPtr,   # time_proc
+                                  time_proc,   # time_proc
                                   pm.null,   # time_info
                                   )
         _check_err(err)
@@ -178,8 +181,8 @@ class Input(io.Input):
             # The bytes are stored in the lower 16 bit of the message,
             # starting with lsb and ending with msb. Just shift and pop
             # them into the parser.
-            value = event.message & 0xffffffff
             if debug:
+                value = event.message & 0xffffffff
                 dbg_bytes = []
                 for i in range(4):
                     byte = value & 0xff
@@ -188,14 +191,15 @@ class Input(io.Input):
                 print('%032x' % event.message)
                 print('  ' + ' '.join('%02x' % b for b in dbg_bytes))
 
+            value = event.message & 0xffffffff
             for i in range(4):
                 byte = value & 0xff
                 self._parser.put_byte(byte)
                 value >>= 8
 
         # Todo: the parser needs another method
-        return len(self._parser._messages)
-    
+        len(self._parser._messages)
+ 
 class Output(io.Output):
     """
     PortMidi Output
@@ -223,11 +227,13 @@ class Output(io.Output):
 
         self.stream = pm.PortMidiStreamPtr()
         
+        time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
+
         err = pm.lib.Pm_OpenOutput(pm.byref(self.stream),
                                    self._devid,  # outputDevice
                                    pm.null,   # outputDriverInfo
                                    0,         # bufferSize (ignored when latency=0?)
-                                   pm.NullTimeProcPtr,   # time_proc (default to internal clock)
+                                   time_proc, # time_proc (default to internal clock)
                                    pm.null,   # time_info
                                    0,         # latency
                                    )
@@ -241,8 +247,38 @@ class Output(io.Output):
             err = pm.lib.Pm_Close(self._devid)
             _check_err(err)
 
+    def _send_old(self, msg):
+        """Send a message"""
+
+        def send_event(bytes):
+            value = 0
+            for byte in reversed(bytes):
+                value <<= 8
+                value |= byte
+
+            # dbg(bytes, hex(value))
+
+            event = pm.PmEvent()
+            event.timestamp = pm.lib.Pt_Time()
+            event.message = value
+
+            # Todo: this sometimes segfaults. I must fix this!
+            err = pm.lib.Pm_Write(self.stream, event, 1)
+            _check_err(err)
+
+        if msg.type == 'sysex':
+            # Add sysex_start and sysex_end
+            bytes = (0xf0,) + msg.data + (0xf7,)
+
+            # Send 4 bytes at a time (possibly less for last event)
+            while bytes:
+                send_event(bytes[:4])
+                bytes = bytes[4:]
+        else:
+            send_event([b for b in serialize(msg)])
+
     def _send(self, msg):
-        """Send a message on the output port"""
+        """Send a message"""
         
         if msg.type == 'sysex':
             chars = pm.c_char_p(bytes(serialize(msg)))
