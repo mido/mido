@@ -154,7 +154,7 @@ class Input(Port):
             if len(devices) >= 1:
                 self._devid = devices[0].id
             else:
-                raise Error('Output device not found: %s' % repr(dev))
+                raise Error('Unknown input device %r' % name)
 
         self.stream = pm.PortMidiStreamPtr()
         
@@ -260,7 +260,7 @@ class Output(Port):
             if len(devices) >= 1:
                 self._devid = devices[0].id
             else:
-                raise Error('Input device not found: %s' % repr(dev))
+                raise Error('Unknown output device %r' % name)
 
         self.stream = pm.PortMidiStreamPtr()
         

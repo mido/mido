@@ -81,7 +81,7 @@ class Input(Port):
         if devices:
             dev = devices[0]
         else:
-            raise ValueError('Unknown input device')
+            raise ValueError('Unknown input device %r' % name)
 
         self._parser = Parser()
         self._proc = subprocess.Popen(['amidi', '-p', dev.port, '-d'],
@@ -136,7 +136,7 @@ class Output(Port):
         if devices:
             self.dev = devices[0]
         else:
-            raise ValueError('Unknown input device')
+            raise ValueError('Unknown output device %r' % name)
     
     def send(self, msg):
         """Send a message on the output port"""
