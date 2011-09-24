@@ -145,5 +145,5 @@ class Output(Port):
         # for every message.
 
         hexdata = ' '.join(['%02X' % byte for byte in serialize(msg)])
-        print(hexdata)
+        # print(hexdata)
         subprocess.check_call(['amidi', '-p', self.dev.port, '-S', hexdata])
