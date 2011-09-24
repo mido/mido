@@ -188,8 +188,7 @@ class Input(io.Input):
                     byte = value & 0xff
                     dbg_bytes.append(byte)
                     value >>= 8
-                print('%032x' % event.message)
-                print('  ' + ' '.join('%02x' % b for b in dbg_bytes))
+                print(' '.join('%02x' % b for b in dbg_bytes))
 
             value = event.message & 0xffffffff
             for i in range(4):
