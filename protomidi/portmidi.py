@@ -241,7 +241,7 @@ class Output(io.Output):
             err = pm.lib.Pm_Close(self._devid)
             _check_err(err)
 
-    def send(self, msg):
+    def _send(self, msg):
         """Send a message on the output port"""
         
         if msg.type == 'sysex':

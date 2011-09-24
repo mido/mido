@@ -95,4 +95,11 @@ class Output(Port):
     Abstract base class for MIDI Input.
     """
 
-    pass
+    def send(self, msg):
+        """Send a message on the output port"""
+
+        # For now, just send the message.
+        # This can be expanded later with a delay parameter
+        # that delays the mesage, or filtering.
+
+        self._send(msg)

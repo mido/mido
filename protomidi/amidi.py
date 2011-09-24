@@ -93,12 +93,11 @@ class Output(io.Output):
         else:
             raise ValueError('Unknown output device %r' % name)
     
-    def send(self, msg):
+    def _send(self, msg):
         """Send a message on the output port"""
 
         # This is very inefficient, since it starts amidi
         # for every message.
-
         hexdata = ' '.join(['%02X' % byte for byte in serialize(msg)])
         # print(hexdata)
         subprocess.check_call(['amidi', '-p', self.dev.port, '-S', hexdata])

@@ -10,8 +10,6 @@ import protomidi.portmidi as io
 
 io.debug = True
 
-pprint.pprint(io.get_devinfo())
-
 input = io.Input()
 while 1:
     for msg in input:
