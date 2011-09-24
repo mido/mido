@@ -1,3 +1,7 @@
+"""
+Serialize MIDI messages to bytearrays.
+"""
+
 from .msg import opcode2typeinfo
 
 def serialize(msg):

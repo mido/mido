@@ -1,5 +1,3 @@
-from .msg import opcode2typeinfo, opcode2msg
-
 """
 MIDI parser
 
@@ -31,7 +29,13 @@ Todo:
    - add method that returns the number of pending messages?
 """
 
+from .msg import opcode2typeinfo, opcode2msg
+
 class Parser:
+    """
+    MIDI Parser.
+    """
+
     def __init__(self):
         self._messages = []
         self._reset()
@@ -45,9 +49,19 @@ class Parser:
         self._typeinfo = None
 
     def num_pending(self):
+        """
+        Return the number of messages ready to be received.
+        """
         return len(self._messages)
 
     def put_byte(self, byte):
+        """
+        Put one byte into the parser. 'byte' must be an integer
+        in range(0, 256).
+        """
+
+        # Todo: enforce type and range of 'byte'
+
         #
         # Handle byte
         #
@@ -123,8 +137,6 @@ class Parser:
                     msg = msg(**args)
 
                 elif msg.type == 'pitchwheel':
-                    lsb = data[0]
-                    msb = data[1]
                     value = data[0] | (data[1] << 7)
                     value -= (2**13)  # Make this a signed value
                     msg = msg(value=value)

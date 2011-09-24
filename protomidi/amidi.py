@@ -1,13 +1,17 @@
 """
+MIDI I/O using amidi (ALSA raw MIDI).
+
+This is probably inefficient, since it uses an external program. Also,
+amidi is started for each message you send.
+
+It can still be useful for sysex dumps.
 """
 
 from __future__ import print_function
-import sys
 import subprocess
 
 from .serializer import serialize
 from .parser import Parser
-from .msg import opcode2msg
 
 class Device(dict):
     """
@@ -22,17 +26,21 @@ class Device(dict):
             raise AttributeError(name)        
 
 def _get_all_devices():
+    """
+    Return a list of all MIDI devices.
+    """
+
     devices = []
 
     p = subprocess.Popen(['amidi', '-l'], stdout=subprocess.PIPE)
     for line in p.stdout:
 
         line = line.strip()
-        dir, port, name = line.split(None, 2)
-        if dir == 'Dir':
+        dirs, port, name = line.split(None, 2)
+        if dirs == 'Dir':
             continue  # Skip heading line
 
-        for d in dir:
+        for d in dirs:
             dev = Device()
             dev['name'] = name
             dev['port'] = port
@@ -54,7 +62,7 @@ def get_devices(**query):
     for dev in _get_all_devices():
         for (name, value) in query.items():
             if name in dev and dev[name] != value:
-                    break
+                break
         else:
             devices.append(dev)
 

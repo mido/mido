@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
-
 """
 List portmidi devices.
 """
 
-import pprint
+from __future__ import print_function
+
 import protomidi.portmidi as pm
 
 def print_devices(devices):
+    """
+    Print all devices in the list.
+    """
     for dev in devices:
         if dev.opened:
             opened = '(opened)'

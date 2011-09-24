@@ -8,7 +8,7 @@ http://www.midi.org/techspecs/midimessages.php
 """
 
 from __future__ import print_function, unicode_literals
-from collections import OrderedDict, namedtuple
+from collections import namedtuple
 
 
 def isint(val):
@@ -19,7 +19,9 @@ def isint(val):
 def isnum(val):
     """Check if a value is a number"""
     # Todo: is there a better way to check this?
-    return isinstance(val, int) or isinstance(val, float) or isinstance(val, long)
+    return isinstance(val, int) \
+        or isinstance(val, float) \
+        or isinstance(val, long)
 
 
 # Pitchwheel is a 14 bit signed integer
@@ -45,7 +47,8 @@ def assert_songpos(val):
 
 def assert_pitchwheel(val):
     if not isint(val) or not (pitchwheel_min <= val <= pitchwheel_max):
-        raise ValueError('pitchwheel value must be number in range({}, {})'.format(
+        fmt = 'pitchwheel value must be number in range({}, {})'
+        raise ValueError(fmt.format(
                 pitchwheel_min,
                 pitchwheel_max))
 

@@ -10,8 +10,9 @@ Since this is written specifically for ProtoMIDI, we don't use:
 
 It is better to implement these generally further up.
 
-The API still needs a lot of work. I want to get rid of get_defoutput() and count_devices()
-and replace them with something else.
+The API still needs a lot of work. I want to get rid of
+get_defoutput() and count_devices() and replace them with something
+else.
 
 http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
 http://portmedia.sourceforge.net/portmidi/doxygen/main.html
@@ -23,15 +24,11 @@ Todo:
 """
 
 from __future__ import print_function
-import sys
-from contextlib import contextmanager
-from collections import OrderedDict
 import atexit
 # import midi
 
 from .serializer import serialize
 from .parser import Parser
-from .msg import opcode2msg
 
 from . import portmidi_init as pm
 
@@ -43,7 +40,12 @@ def dbg(*args):
 
 initialized = False
 
-def initialize():
+def _initialize():
+    """
+    Initialize PortMidi. If PortMidi is already initialized,
+    it will do nothing.
+    """
+
     global initialized
 
     dbg('initialize()')
@@ -57,9 +59,14 @@ def initialize():
         # Start timer
         pm.lib.Pt_Start(1, pm.NullTimeProcPtr, pm.null)
         initialized = True
-        atexit.register(terminate)
+        atexit.register(_terminate)
 
-def terminate():
+def _terminate():
+    """
+    Terminate PortMidi. This will be called by an atexit() handler.
+    If you call it after it has already terminated, it will do nothing.
+    """
+
     global initialized
 
     dbg('terminate()')
@@ -141,7 +148,7 @@ class Input(Port):
         the default device is used instead (which may not exists on all systems).
         """
 
-        initialize()
+        _initialize()
 
         self._parser = Parser()
  
@@ -249,7 +256,7 @@ class Output(Port):
         the default device is used instead (which may not exists on all systems).
         """
 
-        initialize()
+        _initialize()
         
         if name == None:
             self._devid = pm.lib.Pm_GetDefaultOutputDeviceID()
