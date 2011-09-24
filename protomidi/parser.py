@@ -44,6 +44,9 @@ class Parser:
         self._bytes = None       
         self._typeinfo = None
 
+    def num_pending(self):
+        return len(self._messages)
+
     def put_byte(self, byte):
         #
         # Handle byte
