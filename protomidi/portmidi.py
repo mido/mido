@@ -133,24 +133,26 @@ class Input(Port):
     PortMidi Input
     """
 
-    def __init__(self, dev=None):
+    def __init__(self, name=None):
         """
-        Create an input port. If 'dev' is not passed, the default
-        device is used. 'dev' is an integer >= 0.
+        Create an input port.
+
+        The argument 'name' is the name of the device to use. If not passed,
+        the default device is used instead (which may not exists on all systems).
         """
 
         initialize()
 
         self._parser = Parser()
  
-        if dev == None:
-            self.dev = pm.lib.Pm_GetDefaultInputDeviceID()
-            if self.dev < 0:
+        if name == None:
+            self._devid = pm.lib.Pm_GetDefaultInputDeviceID()
+            if self._devid < 0:
                 raise Error('No default input found')
         else:
-            devices = get_devices(name=dev, input=1)
+            devices = get_devices(name=name, input=1)
             if len(devices) >= 1:
-                self.dev = devices[0].id
+                self._devid = devices[0].id
             else:
                 raise Error('Output device not found: %s' % repr(dev))
 
@@ -158,7 +160,7 @@ class Input(Port):
         
         dbg('opening input')
         err = pm.lib.Pm_OpenInput(pm.byref(self.stream),
-                                  self.dev,  # inputDevice
+                                  self._devid,  # inputDevice
                                   pm.null,   # inputDriverInfo
                                   1000,      # bufferSize
                                   pm.NullTimeProcPtr,   # time_proc
@@ -239,24 +241,31 @@ class Output(Port):
     """
     PortMidi Output
     """
-    def __init__(self, dev=None):
+    def __init__(self, name=None):
+        """
+        Create an output port.
+
+        The argument 'name' is the name of the device to use. If not passed,
+        the default device is used instead (which may not exists on all systems).
+        """
+
         initialize()
         
-        if dev == None:
-            self.dev = pm.lib.Pm_GetDefaultOutputDeviceID()
-            if self.dev < 0:
+        if name == None:
+            self._devid = pm.lib.Pm_GetDefaultOutputDeviceID()
+            if self._devid < 0:
                 raise Error('No default output found')
         else:
-            devices = get_devices(name=dev, output=1)
+            devices = get_devices(name=name, output=1)
             if len(devices) >= 1:
-                self.dev = devices[0].id
+                self._devid = devices[0].id
             else:
                 raise Error('Input device not found: %s' % repr(dev))
 
         self.stream = pm.PortMidiStreamPtr()
         
         err = pm.lib.Pm_OpenOutput(pm.byref(self.stream),
-                                   self.dev,  # outputDevice
+                                   self._devid,  # outputDevice
                                    pm.null,   # outputDriverInfo
                                    0,         # bufferSize (ignored when latency=0?)
                                    pm.NullTimeProcPtr,   # time_proc (default to internal clock)
@@ -267,10 +276,10 @@ class Output(Port):
 
     def __dealloc__(self):
         if 0:
-            err = pm.lib.Pm_Abort(self.dev)
+            err = pm.lib.Pm_Abort(self._devid)
             _check_err(err)
             
-            err = pm.lib.Pm_Close(self.dev)
+            err = pm.lib.Pm_Close(self._devid)
             _check_err(err)
 
     def send(self, msg):
