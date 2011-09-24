@@ -12,18 +12,7 @@ import subprocess
 
 from .serializer import serialize
 from .parser import Parser
-
-class Device(dict):
-    """
-    General device class.
-    A dict with attributes will have to do for now.
-    """
-
-    def __getattr__(self, name):
-        try:
-            return self[name]
-        except IndexError:
-            raise AttributeError(name)        
+from . import io
 
 def _get_all_devices():
     """
@@ -41,33 +30,15 @@ def _get_all_devices():
             continue  # Skip heading line
 
         for d in dirs:
-            dev = Device()
-            dev['name'] = name
-            dev['port'] = port
-            dev['input'] = (d == 'I')
-            dev['output'] = (d == 'O')
-
+            dev = io.Device(name=name,
+                            input=(d == 'I'),
+                            output=(d == 'O'),
+                            port=port)
             devices.append(dev)
         
     return devices
 
-def get_devices(**query):
-    """
-    Somewhat experimental function to get device info
-    as a list of Device objects.
-    """
-
-    devices = []
-
-    for dev in _get_all_devices():
-        for (name, value) in query.items():
-            if name in dev and dev[name] != value:
-                break
-        else:
-            devices.append(dev)
-
-    return devices
-            
+get_devices = io.make_device_query(_get_all_devices)
 
 class Error(Exception):
     pass
@@ -77,7 +48,7 @@ class Port:
 
 hexchars = '0123456789ABCDEFabcdef'
 
-class Input(Port):
+class Input(io.Input):
     """
     PortMidi Input
     """
@@ -108,31 +79,7 @@ class Input(Port):
 
         return self._parser.num_pending()
 
-    def poll(self):
-        """
-        Return the number of messages ready to be received.
-        """
-
-        return self._parse()
-
-    def recv(self):
-        """
-        Return the next pending message, or None if there are no messages.
-        """
-
-        self._parse()
-        return self._parser.get_msg()
-
-    def __iter__(self):
-        """
-        Iterate through pending messages.
-        """
-
-        self._parse()
-        for msg in self._parser:
-            yield msg
-
-class Output(Port):
+class Output(io.Output):
     """
     PortMidi Output
     """

@@ -31,6 +31,7 @@ from .serializer import serialize
 from .parser import Parser
 
 from . import portmidi_init as pm
+from . import io
 
 debug = False
 
@@ -76,26 +77,12 @@ def _terminate():
     else:
         dbg('  (already terminated)')
 
-class Device(dict):
+def _get_all_devices(**query):
     """
-    General device class.
-    A dict with attributes will have to do for now.
-    """
-
-    def __getattr__(self, name):
-        try:
-            return self[name]
-        except IndexError:
-            raise AttributeError(name)        
-
-def get_devices(**query):
-    """
-    Somewhat experimental function to get device info
-    as a list of Device objects.
+    Get all PortMidi devices.
     """
 
-    # Todo: raise exception on illegal query arguments
-    # Todo: explain query in docstring
+    _initialize()
 
     devices = []
 
@@ -104,25 +91,17 @@ def get_devices(**query):
         if info_ptr:
             devinfo = info_ptr.contents
 
-            skip = False
-            for (name, value) in query.items():
-                dev_value = getattr(devinfo, name)
-                if value != dev_value:
-                    skip = True
-                    break
-
-            if not skip:
-                dev = Device(
-                    id=id,
-                    name=devinfo.name,
-                    interf=devinfo.interf,
-                    input=devinfo.input,
-                    output=devinfo.output,
-                    opened=devinfo.opened,
-                    )
-                devices.append(dev)
+            dev = io.Device(name=devinfo.name,
+                            input=devinfo.input,
+                            output=devinfo.output,
+                            id=id,
+                            interf=devinfo.interf,
+                            opened=devinfo.opened)
+            devices.append(dev)
 
     return devices
+
+get_devices = io.make_device_query(_get_all_devices)
 
 class Error(Exception):
     pass
@@ -132,10 +111,7 @@ def _check_err(err):
     if err < 0:
         raise Error(pm.lib.Pm_GetErrorText(err))
 
-class Port:
-    pass
-
-class Input(Port):
+class Input(io.Input):
     """
     PortMidi Input
     """
@@ -220,31 +196,7 @@ class Input(Port):
         # Todo: the parser needs another method
         return len(self._parser._messages)
     
-    def poll(self):
-        """
-        Return the number of messages ready to be received.
-        """
-
-        return self._parse()
-
-    def recv(self):
-        """
-        Return the next pending message, or None if there are no messages.
-        """
-
-        self._parse()
-        return self._parser.get_msg()
-
-    def __iter__(self):
-        """
-        Iterate through pending messages.
-        """
-
-        self._parse()
-        for msg in self._parser:
-            yield msg
-
-class Output(Port):
+class Output(io.Output):
     """
     PortMidi Output
     """
