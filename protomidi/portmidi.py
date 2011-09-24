@@ -92,11 +92,11 @@ def _get_all_devices(**query):
             devinfo = info_ptr.contents
 
             dev = io.Device(name=devinfo.name,
-                            input=devinfo.input,
-                            output=devinfo.output,
+                            input=devinfo.input != 0,
+                            output=devinfo.output != 0,
                             id=id,
                             interf=devinfo.interf,
-                            opened=devinfo.opened)
+                            opened=devinfo.opened != 0)
             devices.append(dev)
 
     return devices
