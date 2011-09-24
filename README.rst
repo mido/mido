@@ -37,9 +37,13 @@ Planned features
 
     - abstract immutable MIDI message objects that are
       easy to work with
+    
     - support for all MIDI message types (including sysex)
+    
     - parser / serializer (seralizes to bytearray or bytes)
-    - Input and Output classes for communicating with other MIDI programs or devices (portmidi)
+    
+    - Input and Output classes for communicating with other MIDI
+      programs or devices (portmidi)
 
 
 Status
@@ -52,8 +56,8 @@ API may change.
 Known bugs
 ----------
 
-  - With portmidi, note_off events are sometimes dropped, leading to
-    hung notes.
+  - With portmidi, events (both note_on and note_off, probably others)
+    are sometimes dropped, leading to hung notes.
 
   - Sysex input is broken with protomidi, and it seems like the fault
     lies in portmidi itself. (I've checked the output of amidi against
@@ -62,15 +66,15 @@ Known bugs
     works on OS X. Then off to dig deeper into portmidi to see what's
     going on.
 
-  - (Note: This bug has mysteriously vanished.) portmidi.Output.send()
-    sometimes segfaults in Linux. Fortunately, if it doesn't segfault
-    the first time you call it, it will never segfault again. So if
-    this happens, just restard the program.
+  - portmidi.Output.send() sometimes segfaults in Linux. Fortunately,
+    if it doesn't segfault the first time you call it, it will never
+    segfault again. So if this happens, just restard the program.
 
   - on OS X, portmidi sometimes hangs for a couple of seconds while
     initializing.
 
-  - default input/output doesn't work in Linux.
+  - default input/output doesn't work in Linux. Adding a default
+    input/output in the alsa config will probably help.
 
 
 Requirements
