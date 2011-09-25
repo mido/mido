@@ -215,9 +215,7 @@ class Input(io.Input):
 
             # Todo: What happens to sysex messages?
 
-            value = event.message
-            # Todo: keep the parser around, so we don't have to
-            # allocate it every time.
+            value = event.message & 0xffffffff
 
             while value:
                 # Pop the lowest byte
