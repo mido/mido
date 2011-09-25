@@ -187,8 +187,12 @@ class Input(io.Input):
             #    self._print_event(event)
 
             # The bytes are stored in the lower 16 bit of the message,
-            # starting with lsb and ending with msb. Just shift and pop
-            # them into the parser.
+            # starting with LSB and ending with MSB, for example:
+            #    0x007f4090 
+            # is a note_on message. The code below pops each byte from the
+            # right and puts them into the parser. The stray data byte 0x00
+            # will be ignored by the parser, so we can safely put all 4 bytes
+            # in no matter how short the message is.
             value = event.message & 0xffffffff
             for i in range(4):
                 byte = value & 0xff
