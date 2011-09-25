@@ -57,8 +57,6 @@ def _initialize():
     else:        
         pm.lib.Pm_Initialize()        
 
-        # Start timer
-        pm.lib.Pt_Start(1, pm.NullTimeProcPtr, pm.null)
         initialized = True
         atexit.register(_terminate)
 
@@ -143,13 +141,11 @@ class Input(io.Input):
         
         dbg('opening input')
 
-        time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
- 
         err = pm.lib.Pm_OpenInput(pm.byref(self.stream),
                                   self._devid,  # inputDevice
                                   pm.null,   # inputDriverInfo
                                   1000,      # bufferSize
-                                  time_proc,   # time_proc
+                                  pm.NullTimeProcPtr,   # time_proc
                                   pm.null,   # time_info
                                   )
         _check_err(err)
@@ -160,7 +156,7 @@ class Input(io.Input):
         err = pm.lib.Pm_Close(self.stream)
         _check_err(err)
 
-    def _parse(self):
+    def _parse_new(self):
         """
         Read and parse whatever events have arrived since the last time we were called.
         
@@ -197,7 +193,39 @@ class Input(io.Input):
                 value >>= 8
 
         # Todo: the parser needs another method
-        len(self._parser._messages)
+        return len(self._parser._messages)
+
+    def _parse(self):
+        """
+        Return the next pending message, or None if there are no messages.
+        """
+
+        BufferType = pm.PmEvent * 1
+        buffer = BufferType()
+
+        # Third argument is length (number of messages)
+        num_events = pm.lib.Pm_Read(self.stream, buffer, 1)
+        _check_err(num_events)
+
+        # event.message is an integer, where the lowest bytes are the MIDI
+        # message.
+        
+        if num_events == 1:
+            event = buffer[0]
+
+            # Todo: What happens to sysex messages?
+
+            value = event.message
+            # Todo: keep the parser around, so we don't have to
+            # allocate it every time.
+
+            while value:
+                # Pop the lowest byte
+                byte = value & 0xff
+                value = value >> 8
+                self._parser.put_byte(byte)
+
+        return len(self._parser._messages)
  
 class Output(io.Output):
     """
@@ -226,13 +254,11 @@ class Output(io.Output):
 
         self.stream = pm.PortMidiStreamPtr()
         
-        time_proc = pm.PmTimeProcPtr(pm.lib.Pt_Time())
-
         err = pm.lib.Pm_OpenOutput(pm.byref(self.stream),
                                    self._devid,  # outputDevice
                                    pm.null,   # outputDriverInfo
                                    0,         # bufferSize (ignored when latency=0?)
-                                   time_proc, # time_proc (default to internal clock)
+                                   pm.NullTimeProcPtr,   # time_proc (default to internal clock)
                                    pm.null,   # time_info
                                    0,         # latency
                                    )
@@ -245,36 +271,6 @@ class Output(io.Output):
             
             err = pm.lib.Pm_Close(self._devid)
             _check_err(err)
-
-    def _send_old(self, msg):
-        """Send a message"""
-
-        def send_event(bytes):
-            value = 0
-            for byte in reversed(bytes):
-                value <<= 8
-                value |= byte
-
-            # dbg(bytes, hex(value))
-
-            event = pm.PmEvent()
-            event.timestamp = pm.lib.Pt_Time()
-            event.message = value
-
-            # Todo: this sometimes segfaults. I must fix this!
-            err = pm.lib.Pm_Write(self.stream, event, 1)
-            _check_err(err)
-
-        if msg.type == 'sysex':
-            # Add sysex_start and sysex_end
-            bytes = (0xf0,) + msg.data + (0xf7,)
-
-            # Send 4 bytes at a time (possibly less for last event)
-            while bytes:
-                send_event(bytes[:4])
-                bytes = bytes[4:]
-        else:
-            send_event([b for b in serialize(msg)])
 
     def _send(self, msg):
         """Send a message"""
@@ -289,9 +285,7 @@ class Output(io.Output):
                 value <<= 8
                 value |= byte
 
-            # Todo: timestamp is ignored if latency=0,
-            # which means we don't need this.
-            now = pm.lib.Pt_Time()
+            timestamp = 0  # Ignored when latency=0
 
-            err = pm.lib.Pm_WriteShort(self.stream, now, value)
+            err = pm.lib.Pm_WriteShort(self.stream, timestamp, value)
             _check_err(err)
