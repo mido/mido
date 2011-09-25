@@ -156,6 +156,15 @@ class Input(io.Input):
         err = pm.lib.Pm_Close(self.stream)
         _check_err(err)
 
+    def _print_event(self, event):
+        value = event.message & 0xffffffff
+        dbg_bytes = []
+        for i in range(4):
+            byte = value & 0xff
+            dbg_bytes.append(byte)
+            value >>= 8
+        print(' '.join('%02x' % b for b in dbg_bytes))
+
     def _parse_new(self):
         """
         Read and parse whatever events have arrived since the last time we were called.
@@ -163,7 +172,7 @@ class Input(io.Input):
         Returns the number of messages ready to be received.
         """
 
-        MAX_EVENTS = 1000
+        MAX_EVENTS = 100
         BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
         buffer = BufferType()
 
@@ -174,18 +183,12 @@ class Input(io.Input):
         for i in range(num_events):
             event = buffer[i]
 
+            if debug:
+                self._print_event(event)
+
             # The bytes are stored in the lower 16 bit of the message,
             # starting with lsb and ending with msb. Just shift and pop
             # them into the parser.
-            if debug:
-                value = event.message & 0xffffffff
-                dbg_bytes = []
-                for i in range(4):
-                    byte = value & 0xff
-                    dbg_bytes.append(byte)
-                    value >>= 8
-                print(' '.join('%02x' % b for b in dbg_bytes))
-
             value = event.message & 0xffffffff
             for i in range(4):
                 byte = value & 0xff
@@ -195,7 +198,7 @@ class Input(io.Input):
         # Todo: the parser needs another method
         return len(self._parser._messages)
 
-    def _parse(self):
+    def _parse_old(self):
         """
         Return the next pending message, or None if there are no messages.
         """
@@ -225,6 +228,8 @@ class Input(io.Input):
 
         return len(self._parser._messages)
  
+    _parse = _parse_old
+
 class Output(io.Output):
     """
     PortMidi Output
