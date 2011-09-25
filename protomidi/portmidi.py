@@ -172,7 +172,7 @@ class Input(io.Input):
         Returns the number of messages ready to be received.
         """
 
-        MAX_EVENTS = 100
+        MAX_EVENTS = 1
         BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
         buffer = BufferType()
 
@@ -183,8 +183,8 @@ class Input(io.Input):
         for i in range(num_events):
             event = buffer[i]
 
-            if debug:
-                self._print_event(event)
+            #if debug:
+            #    self._print_event(event)
 
             # The bytes are stored in the lower 16 bit of the message,
             # starting with lsb and ending with msb. Just shift and pop
