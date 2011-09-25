@@ -165,7 +165,7 @@ class Input(io.Input):
             value >>= 8
         print(' '.join('%02x' % b for b in dbg_bytes))
 
-    def _parse_new(self):
+    def _parse(self):
         """
         Read and parse whatever events have arrived since the last time we were called.
         
@@ -197,38 +197,6 @@ class Input(io.Input):
 
         # Todo: the parser needs another method
         return len(self._parser._messages)
-
-    def _parse_old(self):
-        """
-        Return the next pending message, or None if there are no messages.
-        """
-
-        BufferType = pm.PmEvent * 1
-        buffer = BufferType()
-
-        # Third argument is length (number of messages)
-        num_events = pm.lib.Pm_Read(self.stream, buffer, 1)
-        _check_err(num_events)
-
-        # event.message is an integer, where the lowest bytes are the MIDI
-        # message.
-        
-        if num_events == 1:
-            event = buffer[0]
-
-            # Todo: What happens to sysex messages?
-
-            value = event.message & 0xffffffff
-
-            while value:
-                # Pop the lowest byte
-                byte = value & 0xff
-                value = value >> 8
-                self._parser.put_byte(byte)
-
-        return len(self._parser._messages)
- 
-    _parse = _parse_old
 
 class Output(io.Output):
     """

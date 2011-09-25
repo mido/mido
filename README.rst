@@ -52,8 +52,6 @@ Status
 The library is under development. The code may not be stable and the
 API may change.
 
-SysEx input doesn't work with PortMidi at the moment.
-
 
 Known bugs
 ----------
@@ -62,7 +60,8 @@ Known bugs
     initializing.
 
   - default input/output doesn't work in Linux. Adding a default
-    input/output in the alsa config will probably help.
+    input/output in the alsa config will probably help. (This is not
+    really a bug, but just how ALSA works.)
 
 
 Requirements
