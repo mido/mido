@@ -52,23 +52,11 @@ Status
 The library is under development. The code may not be stable and the
 API may change.
 
+SysEx input doesn't work with PortMidi at the moment.
+
 
 Known bugs
 ----------
-
-  - With portmidi, events (both note_on and note_off, probably others)
-    are sometimes dropped, leading to hung notes.
-
-  - Sysex input is broken with protomidi, and it seems like the fault
-    lies in portmidi itself. (I've checked the output of amidi against
-    the raw portmidi event.message, and portmidi starts off fine and
-    then goes into periods of nonsense values.) Next step: see if it
-    works on OS X. Then off to dig deeper into portmidi to see what's
-    going on.
-
-  - portmidi.Output.send() sometimes segfaults in Linux. Fortunately,
-    if it doesn't segfault the first time you call it, it will never
-    segfault again. So if this happens, just restard the program.
 
   - on OS X, portmidi sometimes hangs for a couple of seconds while
     initializing.
@@ -93,11 +81,6 @@ Todo
 
    - show sysex bytes in hexadecimal? (in __repr__())
 
-   - write function (or functions) to search for MIDI devices (get_input(), get_device(name='UM-1', input=1),
-     etc.)
-
-   - figure out where to call portmidi.initialize()
-
    - include some kind of event based scheduler (perhaps based on
      http://github/olemb/gametime)
 
@@ -110,11 +93,6 @@ Todo
 
    - attach some kind of time value to messages returned from Input.recv()? (Or should 
      the user pass a time function?)
-
-   - do we actually need to set the timer in Input() and Output()?
-
-   - show time value in __repr__()? Also, does assert_time handle time=None?
-
 
    - write docs
 
