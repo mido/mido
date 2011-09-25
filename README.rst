@@ -15,7 +15,7 @@ A small example (API may change)::
 
         out.send(note_on(note=note, velocity=70))
 	time.sleep(0.25)
-	out.send(note_off(note=note))
+	out.send(note_off(note=note, velocity=127))
 
 MIDI messages are immutable objects. A new message can be created by
 calling an existing message and overriding some of its values::
