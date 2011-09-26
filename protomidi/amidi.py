@@ -9,6 +9,7 @@ It can still be useful for sysex dumps.
 
 from __future__ import print_function
 import subprocess
+import select
 
 from .serializer import serialize
 from .parser import Parser
@@ -70,12 +71,18 @@ class Input(io.Input):
         # Todo:
         #   - make it read more than one byte at a time
         #   - make sure this doesn't block
-        a = self._proc.stdout.read(1)
-        if a in hexchars:
-            b = self._proc.stdout.read(1)
-            if b in hexchars:
-                byte = int(a+b, base=16)
-                self._parser.put_byte(byte)
+
+        while 1:
+            (rfds, wfds, efds) = select.select([self._proc.stdout.fileno()], [], [], 0)
+            if rfds:
+                a = self._proc.stdout.read(1)
+                if a in hexchars:
+                    b = self._proc.stdout.read(1)
+                    if b in hexchars:
+                        byte = int(a+b, base=16)
+                        self._parser.put_byte(byte)
+            else:
+                break
 
         return self._parser.num_pending()
 
