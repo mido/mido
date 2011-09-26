@@ -172,6 +172,7 @@ class Input(io.Input):
         Returns the number of messages ready to be received.
         """
 
+        # I get hanging notes if MAX_EVENTS > 1
         MAX_EVENTS = 1
         BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
         buffer = BufferType()
