@@ -31,7 +31,7 @@ from .serializer import serialize
 from .parser import Parser
 
 from . import portmidi_init as pm
-from . import io
+from . import iobase
 
 debug = False
 

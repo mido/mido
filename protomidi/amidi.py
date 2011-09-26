@@ -13,7 +13,7 @@ import select
 
 from .serializer import serialize
 from .parser import Parser
-from . import io
+from . import iobase
 
 def _get_all_devices():
     """
