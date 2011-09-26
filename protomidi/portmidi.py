@@ -1,5 +1,5 @@
 """
-This is a very thin wrapper aournd PortAudio.
+PortMidi I/O.
 
 Since this is written specifically for ProtoMIDI, we don't use:
 
@@ -88,18 +88,18 @@ def _get_all_devices(**query):
         info_ptr = pm.lib.Pm_GetDeviceInfo(id)
         if info_ptr:
             devinfo = info_ptr.contents
-
-            dev = io.Device(name=devinfo.name,
-                            input=devinfo.input != 0,
-                            output=devinfo.output != 0,
-                            id=id,
-                            interf=devinfo.interf,
-                            opened=devinfo.opened != 0)
+            
+            dev = iobase.Device(name=devinfo.name,
+                                input=devinfo.input != 0,
+                                output=devinfo.output != 0,
+                                id=id,
+                                interf=devinfo.interf,
+                                opened=devinfo.opened != 0)
             devices.append(dev)
 
     return devices
 
-get_devices = io.make_device_query(_get_all_devices)
+get_devices = iobase.make_device_query(_get_all_devices)
 
 class Error(Exception):
     pass
@@ -109,7 +109,7 @@ def _check_err(err):
     if err < 0:
         raise Error(pm.lib.Pm_GetErrorText(err))
 
-class Input(io.Input):
+class Input(iobase.Input):
     """
     PortMidi Input
     """
@@ -203,7 +203,7 @@ class Input(io.Input):
         # Todo: the parser needs another method
         return len(self._parser._messages)
 
-class Output(io.Output):
+class Output(iobase.Output):
     """
     PortMidi Output
     """

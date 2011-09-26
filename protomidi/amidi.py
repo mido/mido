@@ -31,15 +31,15 @@ def _get_all_devices():
             continue  # Skip heading line
 
         for d in dirs:
-            dev = io.Device(name=name,
-                            input=(d == 'I'),
-                            output=(d == 'O'),
-                            port=port)
+            dev = iobase.Device(name=name,
+                                input=(d == 'I'),
+                                output=(d == 'O'),
+                                port=port)
             devices.append(dev)
         
     return devices
 
-get_devices = io.make_device_query(_get_all_devices)
+get_devices = iobase.make_device_query(_get_all_devices)
 
 class Error(Exception):
     pass
@@ -49,7 +49,7 @@ class Port:
 
 hexchars = '0123456789ABCDEFabcdef'
 
-class Input(io.Input):
+class Input(iobase.Input):
     """
     PortMidi Input
     """
@@ -86,7 +86,7 @@ class Input(io.Input):
 
         return self._parser.num_pending()
 
-class Output(io.Output):
+class Output(iobase.Output):
     """
     PortMidi Output
     """
