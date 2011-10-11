@@ -88,18 +88,6 @@ Todo
      for portmidi.Input()?) Perhaps make it an option so you can choose the one you prefer,
      and any data will be converted to that format.
 
-   - attach some kind of time value to messages returned from Input.recv()? (Or should 
-     the user pass a time function?)
-
-   - write docs
-
-   - document the implementation of messages in msg.py.
-     (the prototyping object model, how attributes are made read only etc.)
-     This should be in docs/, not in in the msg.py.
-
-   - write a short introduction on the MIDI protocol, using this library
-     for examples
-
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
