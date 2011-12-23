@@ -28,13 +28,6 @@ calling an existing message and overriding some of its values::
     note_on(channel=0, note=60, velocity=100)
 
 
-Why?
-----
-
-I've been wanting to do MIDI scripting, but I've lacked a good data
-type for MIDI messages.
-
-
 Planned features
 ----------------
 
