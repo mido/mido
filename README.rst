@@ -61,6 +61,11 @@ Known bugs
     input/output in the alsa config will probably help. (This is not
     really a bug, but just how ALSA works.)
 
+  - in Linux, I am experiencing occational short lags, as if messages
+    are bunched up and then released again. I don't know what causes this,
+    but I suspect that another process is sometimes stealing the CPU
+    for long enough for this to happen. (Could it be garbage collection?
+    I doubt it, but I won't count it out yet.)
 
 Requirements
 ------------
