@@ -172,17 +172,25 @@ class Input(iobase.Input):
         Returns the number of messages ready to be received.
         """
 
-        # I get hanging notes if MAX_EVENTS > 1
-        MAX_EVENTS = 1
-        BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
-        buffer = BufferType()
+        # I get hanging notes if MAX_EVENTS > 1, so I'll have to resort
+        # to calling Pm_Read() in a loop until there are no more pending events.
+        while 1:
+            MAX_EVENTS = 1
+            BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
+            buffer = BufferType()
 
-        # Third argument is length (number of messages)
-        num_events = pm.lib.Pm_Read(self.stream, buffer, MAX_EVENTS)
-        _check_err(num_events)
+            # Third argument is length (number of messages)
+            num_events = pm.lib.Pm_Read(self.stream, buffer, MAX_EVENTS)
+            _check_err(num_events)
 
-        for i in range(num_events):
-            event = buffer[i]
+            if num_events == 0:
+                break
+
+            #
+            # Read the event
+            #
+
+            event = buffer[0]
 
             #if debug:
             #    self._print_event(event)
@@ -195,6 +203,7 @@ class Input(iobase.Input):
             # will be ignored by the parser, so we can safely put all 4 bytes
             # in no matter how short the message is.
             value = event.message & 0xffffffff
+
             for i in range(4):
                 byte = value & 0xff
                 self._parser.put_byte(byte)
