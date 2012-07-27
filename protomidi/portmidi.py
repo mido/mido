@@ -10,10 +10,6 @@ Since this is written specifically for ProtoMIDI, we don't use:
 
 It is better to implement these generally further up.
 
-The API still needs a lot of work. I want to get rid of
-get_defoutput() and count_devices() and replace them with something
-else.
-
 http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
 http://portmedia.sourceforge.net/portmidi/doxygen/main.html
 http://portmedia.sourceforge.net/portmidi/doxygen/portmidi_8h-source.html
@@ -174,17 +170,15 @@ class Input(iobase.Input):
 
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to resort
         # to calling Pm_Read() in a loop until there are no more pending events.
-        while 1:
-            MAX_EVENTS = 1
-            BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
-            buffer = BufferType()
 
-            # Third argument is length (number of messages)
-            num_events = pm.lib.Pm_Read(self.stream, buffer, MAX_EVENTS)
+        MAX_EVENTS = 1
+        BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
+        buffer = BufferType()
+
+        while pm.lib.Pm_Poll(self.stream):
+
+            num_events = pm.lib.Pm_Read(self.stream, buffer, 1)
             _check_err(num_events)
-
-            if num_events == 0:
-                break
 
             #
             # Read the event
