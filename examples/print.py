@@ -11,15 +11,18 @@ import pprint
 import protomidi.portmidi
 
 if sys.argv[1:]:
-    dev = int(sys.argv[1])
+    dev = sys.argv[1]
 else:
-    for devinfo in protomidi.portmidi.get_devinfo():
-        if devinfo['input']:
-            print(devinfo['id'], devinfo['name'])
-
-    sys.exit(0)
+    for devinfo in protomidi.portmidi.get_devices():
+        if devinfo.input:
+            dev = devinfo.name
+            break
+    else:
+        print("No inputs found")
+        sys.exit(0)
 
 input = protomidi.portmidi.Input(dev)
+
 while 1:
     msg = input.recv()
     if msg:
