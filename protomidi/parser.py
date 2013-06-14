@@ -189,10 +189,8 @@ class Parser:
         Yield pending messages.
         """
 
-        for msg in self._messages:
-            yield msg
-
-        self._messages = []
+        while self._messages:
+            yield self._messages.pop(0)
 
 def parse(mididata):
     """
