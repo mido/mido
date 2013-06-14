@@ -85,7 +85,13 @@ def _get_all_devices(**query):
         if info_ptr:
             devinfo = info_ptr.contents
             
-            dev = iobase.Device(name=devinfo.name,
+            if repr(devinfo.name).startswith('b'):
+                # Python 3
+                name = devinfo.name.decode('ascii')
+            else:
+                name = devinfo.name
+
+            dev = iobase.Device(name=name,
                                 input=devinfo.input != 0,
                                 output=devinfo.output != 0,
                                 id=id,
