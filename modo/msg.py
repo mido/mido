@@ -237,7 +237,7 @@ class Message():
 
         for name in self.spec.args:
             if name == 'channel':
-                contine  # We already have this
+                continue  # We already have this
 
             elif name == 'data':
                 b.extend(self.data)
