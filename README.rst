@@ -1,8 +1,6 @@
 Modo - a MIDI library for Python
 =================================
 
-*Todo:* Change name of library?
-
 Modo is a Python library for sending, receiving and processing MIDI messages.
 (There is no support for MIDI files. Maybe in the future.)
 
