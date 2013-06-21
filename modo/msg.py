@@ -187,7 +187,6 @@ class Message():
                 opcode = name_or_opcode
                 if opcode < 0xf0:
                     # Channel message. Split out channel
-                    print(hex(opcode))
                     opcode, default_channel = opcode & 0xf0, opcode & 0x0f
 
                 self._set('opcode', opcode)
