@@ -3,7 +3,7 @@
 
 import os
 import sys
-import protomidi
+import modo
 
 try:
     from setuptools import setup
@@ -23,15 +23,15 @@ if sys.argv[-1] == "test":
 required = []
 
 setup(
-    name='protomidi',
-    version=protomidi.__version__,
+    name='modo',
+    version=modo.__version__,
     description='library for writing MIDI applications',
     long_description=open('README.rst').read(),
-    author=protomidi.__author__,
-    email=protomidi.__email__,
-    url=protomidi.__url__,
+    author=modo.__author__,
+    email=modo.__email__,
+    url=modo.__url__,
     packages=[
-        'protomidi',
+        'modo',
     ],
     py_modules=[
     ],

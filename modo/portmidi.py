@@ -259,7 +259,7 @@ class Output(iobase.Output):
     def _send(self, msg):
         """Send a message"""
         
-        if msg.type == 'sysex':
+        if msg.name == 'sysex':
             chars = pm.c_char_p(bytes(msg.bin()))
             err = pm.lib.Pm_WriteSysEx(self.stream, 0, chars)
             _check_err(err)
