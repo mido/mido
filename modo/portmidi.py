@@ -209,7 +209,7 @@ class Input(iobase.Input):
                 value >>= 8
 
         # Todo: the parser needs another method
-        return len(self._parser._messages)
+        return len(self._parser.messages)
 
 class Output(iobase.Output):
     """
