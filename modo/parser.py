@@ -68,7 +68,7 @@ class Parser:
         #
         # Handle byte
         #
-        if byte >= 128:
+        if byte >= 0x80:
             # New message
             opcode = byte
 
