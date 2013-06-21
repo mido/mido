@@ -178,15 +178,19 @@ class Message():
         # Determine type and opcode of message
         #
 
+        # This will be overriden if name_or_opcode is
+        # a channel message.
+        default_channel = 0
+
         if isinstance(name_or_opcode, int):
             try:
                 opcode = name_or_opcode
                 if opcode < 0xf0:
                     # Channel message. Split out channel
-                    opcode, channel = opcode & 0xf0, opcode >> 8
-                    self._set('channel', channel)
+                    print(hex(opcode))
+                    opcode, default_channel = opcode & 0xf0, opcode & 0x0f
 
-                self._set('opcode', name_or_opcode)
+                self._set('opcode', opcode)
                 self._set('spec', opcode2spec[opcode])
                 self._set('name', self.spec.name)
             except KeyError:
@@ -203,6 +207,8 @@ class Message():
         for name in self.spec.args:
             if name == 'data':
                 self._set('data', ())
+            elif name == 'channel':
+                self._set('channel', default_channel)
             else:
                 self._set(name, 0)
         self._set('time', 0)
