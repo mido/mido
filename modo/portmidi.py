@@ -23,7 +23,6 @@ from __future__ import print_function
 import atexit
 # import midi
 
-from .serializer import serialize
 from .parser import Parser
 
 from . import portmidi_init as pm
@@ -261,12 +260,12 @@ class Output(iobase.Output):
         """Send a message"""
         
         if msg.type == 'sysex':
-            chars = pm.c_char_p(bytes(serialize(msg)))
+            chars = pm.c_char_p(bytes(msg.bin()))
             err = pm.lib.Pm_WriteSysEx(self.stream, 0, chars)
             _check_err(err)
         else:
             value = 0
-            for byte in reversed(serialize(msg)):
+            for byte in reversed(msg.bin()):
                 value <<= 8
                 value |= byte
 

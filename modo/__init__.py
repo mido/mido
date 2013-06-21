@@ -14,7 +14,7 @@ __version__ = '0.0.0'
 
 __all__ = []  # Prevent splat import
 
+from .msg import Message
 from .parser import Parser, parse
-from .serializer import serialize
 # Todo: do this only if portmidi is found
 # from .portmidi import Input, Output

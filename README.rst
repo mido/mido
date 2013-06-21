@@ -1,54 +1,124 @@
-ProtoMIDI - a MIDI library for Python
-======================================
+Modo - a MIDI library for Python
+=================================
 
-A small example (API may change)::
+*Todo:* Change name of library?
+
+Modo is a Python library for sending, receiving and processing MIDI messages.
+(There is no support for MIDI files. Maybe in the future.)
+
+Modo currently has backends for PortMIDI (tested with Linux and OSX)
+and amidi (the Linux utility program).
+
+
+Example 1: play with messages
+------------------------------
+
+(This doesn't require PortMIDI.)
+
+    >>> from modo.msg import *
+    >>> pc = program_change(channel=3, program=9)
+    >>> pc
+    Message('program_change', channel=3, program=9, time=0)
+    >>> pc.channel
+    3
+    >>> pc.channel = 6
+    >>> pc
+
+
+Example 2: send a message
+--------------------------
+
+    >>> from modo.msg import *
+    >>> from modo.portmidi import Output
+    >>> 
+    >>> output = Output()  # Default output
+    >>> pc = program_change(channel=0, program=9)
+    >>> output.send(pc)
+
+Sending to a specific output:
+
+    >>> output = Output()
+
+
+Requirements
+------------
+
+Modo works with Python 2.7 and 3.2 (may work with older versions, but
+I haven't tested this.)
+
+Requires portmidi shared library if you want to use the I/O classes.
+
+I'm using Ubuntu 11.4 and Mac OS Lion, but it should run wherever
+there you have Python and a portmidi shared library.
+
+
+Working with MIDI ports
+------------------------
+
+Print all messages received from the SH-201 synthesizer.
 
     import time
-    import random
-    from protomidi.msg import *
-    from protomidi.portmidi import Output
+    from modo.portmidi import Input, Output, get_devices
 
-    # Play random notes
-    out = Output()
+    inport = Input('SH-201 MIDI 1')
+    
     while 1:
-        note = random.randrange(128)
+        for msg in inport:
+            print(msg)
 
-        out.send(note_on(note=note, velocity=70))
-	time.sleep(0.25)
-	out.send(note_off(note=note, velocity=127))
-
-MIDI messages are immutable objects. A new message can be created by
-calling an existing message and overriding some of its values::
-
-    >>> from protomidi.msg import note_on
-    >>> msg = note_on(note=22, velocity=100)
-    >>> msg
-    note_on(channel=0, note=22, velocity=100)
-    >>> msg(note=60)
-    note_on(channel=0, note=60, velocity=100)
+        # We can't block, so unfortunately
+        # we have to do this instead.
+        time.sleep(0.01)
 
 
-Planned features
-----------------
+Message factory functions
+--------------------------
 
-(All implemented, but with a lot of testing and fine polishing remaining.)
+    note_off(channel=0, note=0, velocity=0, time=0)
 
-    - abstract immutable MIDI message objects that are
-      easy to work with
-    
-    - support for all MIDI message types (including sysex)
-    
-    - parser / serializer (seralizes to bytearray or bytes)
-    
-    - Input and Output classes for communicating with other MIDI
-      programs or devices (portmidi)
+    note_on(channel=0, note=0, velocity=0, time=0)
 
+    polytouch(channel=0, note=0, value=0, time=0)
 
-Status
-------
+    control_change(channel=0, control=0, value=0, time=0)
 
-The library is under development. The code may not be stable and the
-API may change.
+    program_change(channel=0, program=0, time=0)
+
+    aftertouch(channel=0, value=0, time=0)
+
+    pitchwheel(channel=0, value=0, time=0)
+
+    sysex(data=(), time=0)
+
+    undefined_f1(time=0)
+
+    songpos(pos=0, time=0)
+
+    song(song=0, time=0)
+
+    undefined_f4(time=0)
+
+    undefined_f5(time=0)
+
+    tune_request(time=0)
+
+    sysex_end(time=0)
+
+    clock(time=0)
+
+    undefined_f9(time=0)
+
+    start(time=0)
+
+    continue_(time=0)
+
+    stop(time=0)
+
+    undefined_fd(time=0)
+
+    active_sensing(time=0)
+
+    reset(time=0)
 
 
 Known bugs
@@ -61,21 +131,13 @@ Known bugs
     input/output in the alsa config will probably help. (This is not
     really a bug, but just how ALSA works.)
 
-  - in Linux, I am experiencing occational short lags, as if messages
+  - in Linux, I am experiencing occasional short lags, as if messages
     are bunched up and then released again. I don't know what causes this,
     but I suspect that another process is sometimes stealing the CPU
     for long enough for this to happen. (Could it be garbage collection?
-    I doubt it, but I won't count it out yet.)
+    I doubt it, but I won't rule it out yet.)
 
-Requirements
-------------
 
-ProtoMIDI works Python 2.7 and 3.2 (may work with older versions, but I haven't tested this.)
-
-Requires portmidi shared library if you want to use the I/O classes.
-
-I'm using Ubuntu 11.4 and Mac OS Lion, but it should run wherever
-there you have Python and a portmidi shared library.
 
 
 Todo

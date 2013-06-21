@@ -11,7 +11,6 @@ from __future__ import print_function
 import subprocess
 import select
 
-from .serializer import serialize
 from .parser import Parser
 from . import iobase
 
@@ -105,6 +104,4 @@ class Output(iobase.Output):
 
         # This is very inefficient, since it starts amidi
         # for every message.
-        hexdata = ' '.join(['%02X' % byte for byte in serialize(msg)])
-        # print(hexdata)
-        subprocess.check_call(['amidi', '-p', self.dev.port, '-S', hexdata])
+        subprocess.check_call(['amidi', '-p', self.dev.port, '-S', msg.hex()])
