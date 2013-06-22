@@ -53,7 +53,8 @@ def _initialize():
         pm.lib.Pm_Initialize()        
 
         initialized = True
-        atexit.register(_terminate)
+        # Todo: This screws up __del__() for ports
+        # atexit.register(_terminate)
 
 def _terminate():
     """
@@ -106,16 +107,41 @@ class Error(Exception):
     pass
 
 def _check_err(err):
-    # Todo: err?
     if err < 0:
         raise Error(pm.lib.Pm_GetErrorText(err))
 
-class Input(iobase.Input):
+class Port:
+    """
+    Abstract base class for Input and Output ports
+    """
+    def __init__(self, name=None):
+        self._init(name)
+        # atexit.register(self.close)
+        self._open = True
+
+    def close(self):
+        print('close()')
+
+        if hasattr(self, '_open') and self._open:
+            # Todo: Abort is not implemented for ALSA, so we get a warning here.
+            # But is this really needed?
+            # err = pm.lib.Pm_Abort(self.stream)
+            # _check_err(err)
+            
+            err = pm.lib.Pm_Close(self.stream)
+            _check_err(err)
+
+            self._open = False
+
+    def __del__(self):
+        self.close()
+
+class Input(Port):
     """
     PortMidi Input
     """
 
-    def __init__(self, name=None):
+    def _init(self, name=None):
         """
         Create an input port.
 
@@ -151,11 +177,7 @@ class Input(iobase.Input):
                                   )
         _check_err(err)
 
-    def __dealloc__(self):
-        err = pm.lib.Pm_Abort(self.stream)
-        _check_err(err)
-        err = pm.lib.Pm_Close(self.stream)
-        _check_err(err)
+        self._open = True
 
     def _print_event(self, event):
         value = event.message & 0xffffffff
@@ -211,11 +233,35 @@ class Input(iobase.Input):
         # Todo: the parser needs another method
         return len(self._parser.messages)
 
-class Output(iobase.Output):
+    def poll(self):
+        """
+        Return the number of messages ready to be received.
+        """
+
+        return self._parse()
+
+    def recv(self):
+        """
+        Return the next pending message, or None if there are no messages.
+        """
+
+        self._parse()
+        return self._parser.get_msg()
+
+    def __iter__(self):
+        """
+        Iterate through pending messages.
+        """
+
+        self._parse()
+        for msg in self._parser:
+            yield msg
+
+class Output(Port):
     """
     PortMidi Output
     """
-    def __init__(self, name=None):
+    def _init(self, name=None):
         """
         Create an output port.
 
@@ -248,17 +294,13 @@ class Output(iobase.Output):
                                    )
         _check_err(err)
 
-    def __dealloc__(self):
-        if 0:
-            err = pm.lib.Pm_Abort(self._devid)
-            _check_err(err)
-            
-            err = pm.lib.Pm_Close(self._devid)
-            _check_err(err)
+        self._open = True
 
-    def _send(self, msg):
-        """Send a message"""
-        
+    def send(self, msg):
+        """
+        Send a message on the output port
+        """
+
         if msg.name == 'sysex':
             chars = pm.c_char_p(bytes(msg.bin()))
             err = pm.lib.Pm_WriteSysEx(self.stream, 0, chars)
