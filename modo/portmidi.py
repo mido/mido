@@ -120,7 +120,7 @@ class Port:
         self._open = True
 
     def close(self):
-        print('close()')
+        dbg('closing port')
 
         if hasattr(self, '_open') and self._open:
             # Todo: Abort is not implemented for ALSA, so we get a warning here.
