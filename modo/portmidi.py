@@ -71,6 +71,27 @@ def _terminate():
     else:
         dbg('  (already terminated)')
 
+def _get_device(id):
+    info_ptr = pm.lib.Pm_GetDeviceInfo(id)
+    if info_ptr:
+        devinfo = info_ptr.contents
+
+        if repr(devinfo.name).startswith('b'):
+            # Python 3
+            name = devinfo.name.decode('ascii')
+        else:
+            name = devinfo.name
+
+        dev = iobase.Device(name=name,
+                            input=devinfo.input != 0,
+                            output=devinfo.output != 0,
+                            id=id,
+                            interf=devinfo.interf,
+                            opened=devinfo.opened != 0)
+
+        return dev
+    return None
+
 def _get_all_devices(**query):
     """
     Get all PortMidi devices.
@@ -81,22 +102,8 @@ def _get_all_devices(**query):
     devices = []
 
     for id in range(pm.lib.Pm_CountDevices()):
-        info_ptr = pm.lib.Pm_GetDeviceInfo(id)
-        if info_ptr:
-            devinfo = info_ptr.contents
-            
-            if repr(devinfo.name).startswith('b'):
-                # Python 3
-                name = devinfo.name.decode('ascii')
-            else:
-                name = devinfo.name
-
-            dev = iobase.Device(name=name,
-                                input=devinfo.input != 0,
-                                output=devinfo.output != 0,
-                                id=id,
-                                interf=devinfo.interf,
-                                opened=devinfo.opened != 0)
+        dev = get_device(id)
+        if dev is not None:
             devices.append(dev)
 
     return devices
@@ -118,6 +125,7 @@ class Port:
         self._init(name)
         # atexit.register(self.close)
         self._open = True
+        self.name = self.device.name
 
     def close(self):
         dbg('closing port')
@@ -135,6 +143,16 @@ class Port:
 
     def __del__(self):
         self.close()
+
+    def _get_device(self):
+        # This is done dynamically so the 'opened'
+        return _get_device(self._devid)
+
+    device = property(fget=_get_device)
+
+    def __repr__(self):
+        cl = self.__class__.__name__
+        return '%s(%r)' % (cl, self.name)
 
 class Input(Port):
     """
