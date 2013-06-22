@@ -212,6 +212,9 @@ class Input(Port):
         Returns the number of messages ready to be received.
         """
 
+        if self.closed:
+            return
+
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to resort
         # to calling Pm_Read() in a loop until there are no more pending events.
 
@@ -255,7 +258,8 @@ class Input(Port):
         Return the number of messages ready to be received.
         """
 
-        return self._parse()
+        self._parse()
+        return len(self._parser.messages)
 
     def recv(self):
         """
@@ -317,6 +321,9 @@ class Output(Port):
         """
         Send a message on the output port
         """
+
+        if self.closed:
+            raise ValueError('send() called on closed port')
 
         if msg.name == 'sysex':
             chars = pm.c_char_p(bytes(msg.bin()))
