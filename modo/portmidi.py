@@ -123,14 +123,13 @@ class Port:
     """
     def __init__(self, name=None):
         self._init(name)
-        # atexit.register(self.close)
-        self._open = True
-        self.name = self.device.name
+        self.closed = False
+        self.name = self.device.name  # (device is a property)
 
     def close(self):
         dbg('closing port')
 
-        if hasattr(self, '_open') and self._open:
+        if hasattr(self, 'closed') and not self.closed:
             # Todo: Abort is not implemented for ALSA, so we get a warning here.
             # But is this really needed?
             # err = pm.lib.Pm_Abort(self.stream)
@@ -139,7 +138,7 @@ class Port:
             err = pm.lib.Pm_Close(self.stream)
             _check_err(err)
 
-            self._open = False
+            self.closed = True
 
     def __del__(self):
         self.close()
