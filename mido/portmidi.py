@@ -20,11 +20,9 @@ Todo:
 """
 
 from __future__ import print_function
-import atexit
-# import midi
+import time
 
 from .parser import Parser
-
 from . import portmidi_init as pm
 from . import iobase
 
@@ -199,7 +197,7 @@ class Input(Port):
             value >>= 8
         print(' '.join('%02x' % b for b in dbg_bytes))
 
-    def _parse(self):
+    def poll(self):
         """
         Read and parse whatever events have arrived since the last time we were called.
         
@@ -247,30 +245,22 @@ class Input(Port):
         # Todo: the parser needs another method
         return len(self._parser.messages)
 
-    def poll(self):
-        """
-        Return the number of messages ready to be received.
-        """
-
-        self._parse()
-        return len(self._parser.messages)
-
     def recv(self):
         """
-        Return the next pending message, or None if there are no messages.
+        Return the next pending message. Blocks until a message
+        is available.
+
+        Use .poll() to see how many messages you can safely read
+        without blocking.
+        
+        NOTE: Blocking is currently implemented with polling and
+        time.sleep(). This is inefficient, but the proper way doesn't
+        work yet, so it's better than nothing.
         """
 
-        self._parse()
+        while not self.poll():
+            time.sleep(0.001)
         return self._parser.get_msg()
-
-    def __iter__(self):
-        """
-        Iterate through pending messages.
-        """
-
-        self._parse()
-        for msg in self._parser:
-            yield msg
 
 class Output(Port):
     """

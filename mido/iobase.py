@@ -1,5 +1,8 @@
 """
 Base classes for MIDI I/O.
+
+There are no base classes for ports yet. They will
+be refactored out of the portmidi module.
 """
 
 class Device(dict):
@@ -56,50 +59,3 @@ def make_device_query(get_all_devices):
         return devices
 
     return get_devices
-
-
-class Port:
-    pass
-
-class Input(Port):
-    """
-    Abstract base class for MIDI Input.
-    """
-
-    def poll(self):
-        """
-        Return the number of messages ready to be received.
-        """
-
-        return self._parse()
-
-    def recv(self):
-        """
-        Return the next pending message, or None if there are no messages.
-        """
-
-        self._parse()
-        return self._parser.get_msg()
-
-    def __iter__(self):
-        """
-        Iterate through pending messages.
-        """
-
-        self._parse()
-        for msg in self._parser:
-            yield msg
-
-class Output(Port):
-    """
-    Abstract base class for MIDI Input.
-    """
-
-    def send(self, msg):
-        """Send a message on the output port"""
-
-        # For now, just send the message.
-        # This can be expanded later with a delay parameter
-        # that delays the mesage, or filtering.
-
-        self._send(msg)

@@ -30,6 +30,17 @@ Copying a message:
     mido.Message('note_on', channel=7, note=23, velocity=64, time=22)
 
 
+Planned API changes
+--------------------
+
+   - an __iter__() method may be added to the Input class so
+     you can do 'for msg in port:', but it is not clear whether
+     it should block or not.
+   - some method names will be changed in the parser class.
+   - base classes for input and output ports to make it easier to
+     implement new backends
+
+
 License
 --------
 
