@@ -33,6 +33,7 @@ Copying a message:
 Planned API changes
 --------------------
 
+   - get_devices() may be changed to something with 'ports'
    - an __iter__() method may be added to the Input class so
      you can do 'for msg in port:', but it is not clear whether
      it should block or not.
