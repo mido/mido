@@ -9,6 +9,17 @@ utility program).
 Mido works with Python 2 and 3. The PortMIDI backend is written in
 Python and requires no compilation.
 
+License: MIT
+
+
+Installing
+------------
+
+One of these::
+
+    $ sudo python2 setup.py install
+    $ sudo python3 setup.py install
+
 
 Examples
 ---------
