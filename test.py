@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from modo import parse
-from modo.msg import *
+from mido import parse
+from mido.msg import *
 
 msg = Message('note_on', channel=1, note=2, velocity=3)
 msg = Message('note_on')

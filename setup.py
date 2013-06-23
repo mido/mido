@@ -3,7 +3,7 @@
 
 import os
 import sys
-import modo
+import mido
 
 try:
     from setuptools import setup
@@ -23,15 +23,15 @@ if sys.argv[-1] == "test":
 required = []
 
 setup(
-    name='modo',
-    version=modo.__version__,
+    name='mido',
+    version=mido.__version__,
     description='library for writing MIDI applications',
     long_description=open('README.rst').read(),
-    author=modo.__author__,
-    email=modo.__email__,
-    url=modo.__url__,
+    author=mido.__author__,
+    email=mido.__email__,
+    url=mido.__url__,
     packages=[
-        'modo',
+        'mido',
     ],
     py_modules=[
     ],

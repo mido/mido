@@ -1,12 +1,12 @@
 Modo - a MIDI library for Python
 =================================
 
-Modo is a Python library for sending, receiving and processing MIDI
+Mido is a Python library for sending, receiving and processing MIDI
 messages. There are currently backends for PortMIDI (tested with Linux
 and Mac OS X, but may also work on Windows) and amidi (the Linux
 utility program).
 
-Modo works with Python 2 and 3. The PortMIDI backend is written in
+Mido works with Python 2 and 3. The PortMIDI backend is written in
 Python and requires no compilation.
 
 
@@ -15,8 +15,8 @@ Examples
 
 Creating and modifying a message::
 
-    >>> import modo
-    >>> msg = modo.Message('note_on', note=60, velocity=64)
+    >>> import mido
+    >>> msg = mido.Message('note_on', note=60, velocity=64)
     >>> msg
     Message('note_on', channel=0, note=60, velocity=64, time=0)
     >>> msg.channel = 7
@@ -24,7 +24,7 @@ Creating and modifying a message::
 
 Sending a message via PortMIDI::
 
-    >>> from modo.portmidi import Output
+    >>> from mido.portmidi import Output
     >>> out = Output('SH-201')
     >>> out.send(msg)
 
@@ -44,14 +44,14 @@ Encoding the message::
 
 Default values for everything is 0 (and () for sysex data)::
 
-    >>> modo.Message('note_on')
+    >>> mido.Message('note_on')
     Message('note_on', channel=0, note=0, velocity=0, time=0)
-    >>> modo.Message('sysex')
+    >>> mido.Message('sysex')
     Message('sysex', data=(), time=0)
 
 Sysex messages::
 
-    >>> s = modo.Message('sysex', data=[1, 2])
+    >>> s = mido.Message('sysex', data=[1, 2])
     >>> s.hex()
     'F0 01 02 F7'
     >>> s.data = (i for i in range(5))
@@ -67,7 +67,7 @@ separate 'sysex_end' message is not necessary.)
 Time
 -----
 
-The time attribute can be used for time annotations. Modo doesn't care
+The time attribute can be used for time annotations. Mido doesn't care
 what you use it for, as long as it's a valid number. Examples::
 
     >>> msg.time = 183
@@ -83,7 +83,7 @@ The time attribute will not affect comparisons::
 Requirements
 ------------
 
-Modo works with Python 2.7 and 3.2 (may work with older versions, but
+Mido works with Python 2.7 and 3.2 (may work with older versions, but
 I haven't tested this.)
 
 Requires portmidi shared library if you want to use the I/O classes.
@@ -127,7 +127,7 @@ Message wrapper functions
 These small wrapper functions provide a more convenient way of
 creating messages::
 
-    >>> from modo.msg import *
+    >>> from mido.msg import *
     >>> note_on(channel=7, note=30, velocity=35)
 
 The wrappers are::
