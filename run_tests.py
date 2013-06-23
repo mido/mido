@@ -8,8 +8,8 @@ class TestMessages(unittest.TestCase):
         """
         Two messages created with same parameters should be equal.
         """
-        msg1 = mido.msg.note_on(channel=1, note=2, velocity=3)
-        msg2 = mido.msg.note_on(channel=1, note=2, velocity=3)
+        msg1 = mido.new('note_on', channel=1, note=2, velocity=3)
+        msg2 = mido.new('note_on', channel=1, note=2, velocity=3)
 
         self.assertEqual(msg1, msg2)
 
@@ -17,7 +17,7 @@ class TestMessages(unittest.TestCase):
         """
         Check if pitchwheel with minimal value encodes correctly.
         """
-        msg = mido.msg.pitchwheel(value=mido.msg.pitchwheel_min)
+        msg = mido.new('pitchwheel', value=mido.msg.pitchwheel_min)
         bytes = msg.bytes()
 
         self.assertTrue(bytes[1] == bytes[2] == 0)
@@ -26,7 +26,7 @@ class TestMessages(unittest.TestCase):
         """
         Check if pitchwheel with maximal value encodes correctly.
         """
-        msg = mido.msg.pitchwheel(value=mido.msg.pitchwheel_max)
+        msg = mido.new('pitchwheel', value=mido.msg.pitchwheel_max)
         bytes = msg.bytes()
 
         self.assertTrue(bytes[1] == bytes[2] == 127)
@@ -35,7 +35,7 @@ class TestMessages(unittest.TestCase):
         """
         Check if pitchwheel with maximal value encodes correctly.
         """
-        msg1 = mido.msg.pitchwheel(value=0)
+        msg1 = mido.new('pitchwheel', value=0)
         msg2 = mido.parse(msg1.bytes())
         
         self.assertEqual(msg1, msg2)
@@ -47,7 +47,7 @@ class TestParser(unittest.TestCase):
         Parse a note_on msg.
         """
         parsed = mido.parse(b'\x90\x4c\x20')
-        other = mido.msg.note_on(channel=0, note=76, velocity=32)
+        other = mido.new('note_on', channel=0, note=76, velocity=32)
         self.assertEqual(parsed, other)
 
     def test_parse_stray_data(self):
@@ -71,7 +71,7 @@ class TestParser(unittest.TestCase):
         """
         Encode a message and parse it. Should return the same message.
         """
-        msg1 = mido.msg.note_on()
+        msg1 = mido.new('note_on')
         msg2 = mido.parse(msg1.bytes())
         self.assertEqual(msg1, msg2)
 
