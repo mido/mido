@@ -102,7 +102,7 @@ def _get_all_devices(**query):
     devices = []
 
     for id in range(pm.lib.Pm_CountDevices()):
-        dev = get_device(id)
+        dev = _get_device(id)
         if dev is not None:
             devices.append(dev)
 
