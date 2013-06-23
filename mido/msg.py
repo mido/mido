@@ -236,7 +236,7 @@ class Message():
                 b.extend(self.data)
 
             elif self.type == 'pitchwheel' and name == 'value':
-                value = msg.value + (2**13)
+                value = self.value + (2**13)
                 lsb = value & 0x7f
                 msb = value >> 7
                 data.append(lsb)
