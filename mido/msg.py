@@ -268,20 +268,14 @@ class Message():
         # Todo: bytearray() or bytes()
         return bytearray(self.bytes())
 
-    def hex(self, spaces=True):
+    def hex(self, sep=' '):
         """
-        Encode message and return as a string of hex numbers.
-
-        Passing spaces=False turns off spaces between characters.
+        Encode message and return as a string of hex numbers,
+        separated by the string sep. The default separator is
+        a single space.
         """
 
-        if spaces:
-            joinchar = ' '
-        else:
-            joinchar = ''
-
-        # Todo: Upper or lowercase hex characters?
-        return joinchar.join(['%02X' % byte for byte in self.bytes()])
+        return sep.join(['%02X' % byte for byte in self.bytes()])
 
     def __eq__(self, other):
         # The time attribute is not compared.
