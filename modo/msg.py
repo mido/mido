@@ -289,6 +289,14 @@ class Message():
         # Todo: Upper or lowercase hex characters?
         return joinchar.join(['%02X' % byte for byte in self.bytes()])
 
+    def __cmp__(self, other):
+        # Todo: should this include time?
+        def key(msg):
+            k = tuple([msg.name] + [getattr(msg, a) for a in msg.spec.args])
+            return k
+            
+        return cmp(key(self), key(other))
+
 def build_signature(spec):
     if spec.name == 'continue':
         # continue is a keyword in Python, so add _
