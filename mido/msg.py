@@ -155,7 +155,7 @@ class Message():
         for name, value in kw.items():
             setattr(self, name, value)
 
-        self._set('is_chanmsg', (self.opcode < 0xf0))
+        # self._set('is_chanmsg', (self.opcode < 0xf0))
 
     def copy(self, **override):
         """
