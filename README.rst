@@ -26,6 +26,12 @@ Copying a message::
     mido.Message('note_on', channel=7, note=23, velocity=64, time=22)
 
 
+License
+--------
+
+Released under the MIT license.
+
+
 Requirements
 -------------
 
