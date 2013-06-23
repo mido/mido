@@ -20,7 +20,7 @@ Creating and modifying a message::
     >>> msg
     Message('note_on', channel=0, note=60, velocity=64, time=0)
     >>> msg.channel = 7
-    Message('note_on', channel=7, note=60, velocity=64, time=0)
+    >>> msg.note=127
 
 Copying a message::
 
