@@ -11,16 +11,7 @@ class TestMessages(unittest.TestCase):
         msg1 = mido.msg.note_on(channel=1, note=2, velocity=3)
         msg2 = mido.msg.note_on(channel=1, note=2, velocity=3)
 
-        self.assertTrue(msg1 == msg2)
-
-    def test_msg_order(self):
-        """
-        Messages should sort according to their parameters.
-        """
-        msg1 = mido.msg.note_on(channel=1, note=2, velocity=3)
-        msg2 = mido.msg.note_on(channel=1, note=2, velocity=4)
-
-        self.assertTrue(msg1 < msg2)
+        self.assertEqual(msg1, msg2)
 
     def test_pitchwheel_min(self):
         """

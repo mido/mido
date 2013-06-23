@@ -283,13 +283,13 @@ class Message():
         # Todo: Upper or lowercase hex characters?
         return joinchar.join(['%02X' % byte for byte in self.bytes()])
 
-    def __cmp__(self, other):
-        # Todo: should this include time?
+    def __eq__(self, other):
+        # The time attribute is not compared.
         def key(msg):
             k = tuple([msg.type] + [getattr(msg, a) for a in msg.spec.args])
             return k
             
-        return cmp(key(self), key(other))
+        return key(self) == key(other)
 
 def build_signature(spec):
     if spec.type == 'continue':
