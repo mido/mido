@@ -10,15 +10,12 @@
     type ENTER...
   - blocking read?
   - add backened attr to ports? (port.backend == 'portmidi')
-  - study unipath/README.rst
   - add comparison for messages (should time be compared?)
-  - .type or .name?
   - Message or Msg?
   - AttributeError / SomethingError for msg.tuba = 1 vs. msg.copy(tuba=1)
   - __enter__ / __exit__ for ports? (with Output() as port: port.send(msg))
   - opcode => status byte?
   - put examples in root: example_output.py, example_processing.py, example_enconding.py etc.
-  - mido.new() as alias for mido.Message()? (  mido.new('note_on', note=60, velocity=64)  )
   - pitchwheel or pitch_wheel?
   - fix extras/joystick.py
   - add doc strings to Message class and __init__()
