@@ -5,8 +5,20 @@ Prints message as they arrive on the input port.
 how many messages you can safely read without blocking, so you can
 implement nonblocking read with:
 
-    while input.poll():
-        print(input.recv())
+    while 1:
+        while input.poll():
+            msg = input.recv()
+            print(msg)
+
+        # ... do something else
+
+or the equivalent:
+
+    while 1:
+        for msg in input:
+            print(msg) 
+
+        # ... do something else
 """
 
 from __future__ import print_function

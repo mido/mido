@@ -262,6 +262,14 @@ class Input(Port):
             time.sleep(0.001)
         return self._parser.get_msg()
 
+    def __iter__(self):
+        """
+        Iterate through all available messages.
+        """
+
+        while self.poll():
+            yield self.recv()
+
 class Output(Port):
     """
     PortMidi Output
