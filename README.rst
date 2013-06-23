@@ -3,7 +3,9 @@ Mido - object oriented MIDI for Python
 
 Most Python MIDI libraries are thin wrappers around the underlying C
 libraries. This usually means that you have to work directly with the
-MIDI bytes. In Mido, you can instead use Python objects::
+MIDI bytes. In Mido, you can instead use Python objects:
+
+.. code:: python
 
     >>> import mido
     >>> msg = mido.new('note_on', note=60, velocity=64)
@@ -12,13 +14,17 @@ MIDI bytes. In Mido, you can instead use Python objects::
     >>> msg
     mido.Message('note_on', channel=7, note=127, velocity=64, time=0)
 
-Sending a message via PortMIDI::
+Sending a message via PortMIDI:
+
+.. code:: python
 
     >>> from mido.portmidi import Output
     >>> out = Output()
     >>> out.send(msg)
 
-Copying a message::
+Copying a message:
+
+.. code:: python
 
     >>> msg.copy(note=23, time=22)
     mido.Message('note_on', channel=7, note=23, velocity=64, time=22)
@@ -98,14 +104,18 @@ One of these::
     $ sudo python3 setup.py install
 
 
-Default values for everything is 0 (and () for sysex data)::
+Default values for everything is 0 (and () for sysex data):
+
+.. code:: python
 
     >>> mido.new('note_on')
     mido.Message('note_on', channel=0, note=0, velocity=0, time=0)
     >>> mido.new('sysex')
     mido.Message('sysex', data=(), time=0)
 
-Encoding a message::
+Encoding a message:
+
+.. code:: python
 
     >>> msg.bytes()
     [151, 60, 64]
@@ -114,7 +124,9 @@ Encoding a message::
     >>> msg.bin()
     bytearray(b'\x97<@')
 
-Sysex messages::
+Sysex messages:
+
+.. code:: python
 
     >>> s = mido.new('sysex', data=[1, 2])
     >>> s.hex()
@@ -133,12 +145,16 @@ Time
 -----
 
 The time attribute can be used for time annotations. Mido doesn't care
-what you use it for, as long as it's a valid number. Examples::
+what you use it for, as long as it's a valid number. Examples:
+
+.. code:: python
 
     >>> msg.time = 183
     >>> msg.time = 220.84
 
-The time attribute will not affect comparisons::
+The time attribute will not affect comparisons:
+
+.. code:: python
 
     >>> msg2 = msg.copy(time=20000)
     >>> msg == msg2
@@ -151,4 +167,4 @@ Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
 License: MIT
 
-: The Portmidi wrapper is based on Portmidizero by Grant Yoshida.
+The Portmidi wrapper is based on Portmidizero by Grant Yoshida.
