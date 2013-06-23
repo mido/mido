@@ -21,4 +21,4 @@
   - mido.new() as alias for mido.Message()? (  mido.new('note_on', note=60, velocity=64)  )
   - pitchwheel or pitch_wheel?
   - fix extras/joystick.py
-
+  - add doc strings to Message class and __init__()
