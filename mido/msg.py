@@ -216,7 +216,7 @@ class Message():
         args = [repr(self.type)] 
         args += ['%s=%r' % (name, getattr(self, name)) for name in list(self.spec.args) + ['time']]
         args = ', '.join(args)
-        return 'Message(%s)' % args
+        return 'mido.Message(%s)' % args
 
     def bytes(self):
         """
