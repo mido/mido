@@ -116,56 +116,6 @@ def assert_databyte(val):
 
 
 class Message():
-    def _set(self, name, value):
-        """
-        Set an attribute, bypassing all name and type checks.
-        """
-        self.__dict__[name] = value
-
-    def __setattr__(self, name, value):
-        # Todo: validation
-
-        if name in self.spec.args or name == 'time':
-            if name == 'time':
-                assert_time(value)
-            elif name == 'channel':
-                assert_channel(value)
-            elif name == 'pos':
-                assert_songpos(value)
-            elif name == 'pitchwheel':
-                assert_pichwheel(value)
-            elif name == 'data':
-                value = tuple(value)  # Make the data bytes immutable
-                for byte in value:
-                    assert_databyte(byte)
-
-            self.__dict__[name] = value
-        else:
-            raise ValueError('Invalid argument for MIDI message: %r (must be one of: %s)' % (
-                    name, ' '.join(self.spec.args)))
-                    
-    def __delattr__(self, name):
-        raise ValueError('MIDI message attributes can\'t be deleted')
-
-    def copy(self, **override):
-        """
-        Return a copy of the message. Attributes can
-        be overriden by passing keyword arguments.
-
-        msg = Message('note_on', note=20, velocity=64)  # Create a note_on
-        msg2 = msg.copy(velocity=32)  # New note_on with softer velocity
-        """
-
-        # Get values from this object
-        kw = {'time' : self.time}
-        for name in self.spec.args:
-            kw[name] = getattr(self, name)
-
-        # Override
-        kw.update(override)
-
-        return Message(self.type, **kw)
-
     def __init__(self, type_or_opcode, **kw):
         # This will be overriden if type_or_opcode is
         # a channel message.
@@ -207,11 +157,55 @@ class Message():
 
         self._set('is_chanmsg', (self.opcode < 0xf0))
 
-    def __repr__(self):
-        args = [repr(self.type)] 
-        args += ['%s=%r' % (name, getattr(self, name)) for name in list(self.spec.args) + ['time']]
-        args = ', '.join(args)
-        return 'mido.Message(%s)' % args
+    def copy(self, **override):
+        """
+        Return a copy of the message. Attributes can
+        be overriden by passing keyword arguments.
+
+        msg = Message('note_on', note=20, velocity=64)  # Create a note_on
+        msg2 = msg.copy(velocity=32)  # New note_on with softer velocity
+        """
+
+        # Get values from this object
+        kw = {'time' : self.time}
+        for name in self.spec.args:
+            kw[name] = getattr(self, name)
+
+        # Override
+        kw.update(override)
+
+        return Message(self.type, **kw)
+
+    def _set(self, name, value):
+        """
+        Set an attribute, bypassing all name and type checks.
+        """
+        self.__dict__[name] = value
+
+    def __setattr__(self, name, value):
+        # Todo: validation
+
+        if name in self.spec.args or name == 'time':
+            if name == 'time':
+                assert_time(value)
+            elif name == 'channel':
+                assert_channel(value)
+            elif name == 'pos':
+                assert_songpos(value)
+            elif name == 'pitchwheel':
+                assert_pichwheel(value)
+            elif name == 'data':
+                value = tuple(value)  # Make the data bytes immutable
+                for byte in value:
+                    assert_databyte(byte)
+
+            self.__dict__[name] = value
+        else:
+            raise ValueError('Invalid argument for MIDI message: %r (must be one of: %s)' % (
+                    name, ' '.join(self.spec.args)))
+                    
+    def __delattr__(self, name):
+        raise ValueError('MIDI message attributes can\'t be deleted')
 
     def bytes(self):
         """
@@ -271,6 +265,12 @@ class Message():
         """
 
         return sep.join(['%02X' % byte for byte in self.bytes()])
+
+    def __repr__(self):
+        args = [repr(self.type)] 
+        args += ['%s=%r' % (name, getattr(self, name)) for name in list(self.spec.args) + ['time']]
+        args = ', '.join(args)
+        return 'mido.Message(%s)' % args
 
     def __eq__(self, other):
         # The time attribute is not compared.
