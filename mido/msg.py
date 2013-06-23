@@ -291,64 +291,35 @@ class Message():
             
         return key(self) == key(other)
 
-def build_signature(spec):
-    if spec.type == 'continue':
-        # continue is a keyword in Python, so add _
-        funcname = 'continue_'
+def build_signature(spec, include_type=True):
+    """
+    Builds a contructor signature for a message.
+
+    This is used to create documentation.
+    """
+
+    if include_type:
+        parts = [repr(spec.type)]
     else:
-        funcname = spec.type
+        parts = []
 
-    #
-    # Build function signature 
-    #
-    sig = ''
     for name in spec.args + ('time',):
-        if sig:
-            sig += ', '
-
         if name == 'data':
-            sig += 'data=()'
+            parts.append('data=()')
         else:
-            sig += (name + '=0')
+            parts.append(name + '=0')
 
-    return funcname + '(' + sig + ')'
+    sig = '(' + ', '.join(parts) + ')'
 
+    return sig
 
-def _build_factories():
-    #
-    # Build factory functions to more easily create new Message objects.
-    #
+def _print_signatures():
+    """
+    Print arguments for mido.new() for all supported message types.
 
-    functions = {}
-
+    This will be used to generate documentation.
+    """
+    
     for spec in msg_specs:
-        if spec.type == 'continue':
-            funcname = 'continue_'
-        else:
-            funcname = spec.type
-
         sig = build_signature(spec)
-
-        #
-        # Build arguments to Message()
-        #
-        args = ''
-        for name in spec.args + ('time',):
-            if args:
-                args += ', '
-            args += (name + '=' + name)
-
-        code =  'def %s:\n' % sig
-        code += '    """Return a new Message object of type %s."""\n' % spec.type
-        code += '    return Message(%r, %s)\n' % (spec.type, args)
-
-        exec(code)
-
-        f = locals()[funcname]
-        functions[funcname] = f
-
-    return functions
-
-factories = _build_factories()
-globals().update(factories)
-__all__ = list(factories.keys()) + ['Message']
+        print('mido.new' + sig)

@@ -1,0 +1,28 @@
+mido.new() (and mido.Message()) parameters for all supported message
+types.
+
+This will be moved to docs/ and mido/msg.py
+
+mido.new('note_off', channel=0, note=0, velocity=0, time=0)
+mido.new('note_on', channel=0, note=0, velocity=0, time=0)
+mido.new('polytouch', channel=0, note=0, value=0, time=0)
+mido.new('control_change', channel=0, control=0, value=0, time=0)
+mido.new('program_change', channel=0, program=0, time=0)
+mido.new('aftertouch', channel=0, value=0, time=0)
+mido.new('pitchwheel', channel=0, value=0, time=0)
+mido.new('sysex', data=(), time=0)
+mido.new('undefined_f1', time=0)
+mido.new('songpos', pos=0, time=0)
+mido.new('song', song=0, time=0)
+mido.new('undefined_f4', time=0)
+mido.new('undefined_f5', time=0)
+mido.new('tune_request', time=0)
+mido.new('sysex_end', time=0)
+mido.new('clock', time=0)
+mido.new('undefined_f9', time=0)
+mido.new('start', time=0)
+mido.new('continue', time=0)
+mido.new('stop', time=0)
+mido.new('undefined_fd', time=0)
+mido.new('active_sensing', time=0)
+mido.new('reset', time=0)
