@@ -124,7 +124,7 @@ class Port:
     def __init__(self, name=None):
         self._init(name)
         self.closed = False
-        self.name = self.device.name  # (device is a property)
+        self.name = _get_device(self._devid).name
 
     def close(self):
         dbg('closing port')
@@ -142,12 +142,6 @@ class Port:
 
     def __del__(self):
         self.close()
-
-    def _get_device(self):
-        # This is done dynamically so the 'opened'
-        return _get_device(self._devid)
-
-    device = property(fget=_get_device)
 
     def __repr__(self):
         cl = self.__class__.__name__
