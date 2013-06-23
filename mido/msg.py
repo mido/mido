@@ -178,7 +178,7 @@ class Message():
 
         if isinstance(type_or_opcode, int):
             try:
-                opcode = name_or_opcode
+                opcode = type_or_opcode
                 if opcode < 0xf0:
                     # Channel message. Split out channel
                     opcode, default_channel = opcode & 0xf0, opcode & 0x0f
