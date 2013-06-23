@@ -12,26 +12,17 @@ Python and requires no compilation.
 License: MIT
 
 
-Installing
-------------
-
-One of these::
-
-    $ sudo python2 setup.py install
-    $ sudo python3 setup.py install
-
-
 Examples
 ---------
 
 Creating and modifying a message::
 
     >>> import mido
-    >>> msg = mido.Message('note_on', note=60, velocity=64)
-    >>> msg
-    Message('note_on', channel=0, note=60, velocity=64, time=0)
+    >>> msg = mido.new('note_on', note=60, velocity=64)
     >>> msg.channel = 7
     >>> msg.note=127
+    >>> msg
+    mido.Message('note_on', channel=7, note=127, velocity=64, time=0)
 
 Sending a message via PortMIDI::
 
@@ -41,54 +32,10 @@ Sending a message via PortMIDI::
 
 Copying a message::
 
-    >>> msg.copy(note=23)
-    Message('note_on', channel=7, note=23, velocity=64, time=0)
+    >>> msg.copy(note=23, time=22)
+    mido.Message('note_on', channel=7, note=23, velocity=64, time=22)
 
-Encoding the message::
-
-    >>> msg.bytes()
-    [151, 60, 64]
-    >>> msg.hex()
-    '97 3C 40'
-    >>> msg.bin()
-    bytearray(b'\x97<@')
-
-Default values for everything is 0 (and () for sysex data)::
-
-    >>> mido.Message('note_on')
-    Message('note_on', channel=0, note=0, velocity=0, time=0)
-    >>> mido.Message('sysex')
-    Message('sysex', data=(), time=0)
-
-Sysex messages::
-
-    >>> s = mido.Message('sysex', data=[1, 2])
-    >>> s.hex()
-    'F0 01 02 F7'
-    >>> s.data = (i for i in range(5))
-    >>> s.data
-    (0, 1, 2, 3, 4)
-    >>> s.hex()
-    'F0 00 01 02 03 04 F7'
-
-(Note that sysex messages contain the sysex_end byte (0xF7), so a
-separate 'sysex_end' message is not necessary.)
-
-
-Time
------
-
-The time attribute can be used for time annotations. Mido doesn't care
-what you use it for, as long as it's a valid number. Examples::
-
-    >>> msg.time = 183
-    >>> msg.time = 220.84
-
-The time attribute will not affect comparisons::
-
-    >>> msg2 = msg.copy(time=20000)
-    >>> msg == msg2
-    True
+More examples at the bottom.
 
 
 Requirements
@@ -131,64 +78,63 @@ Todo
      so you can choose the one you prefer, and any data will be
      converted to that format.
 
+More in the TODO file.
 
-Message wrapper functions
---------------------------
 
-These small wrapper functions provide a more convenient way of
-creating messages::
+More examples
+--------------
 
-    >>> from mido.msg import *
-    >>> note_on(channel=7, note=30, velocity=35)
+One of these::
 
-The wrappers are::
+    $ sudo python2 setup.py install
+    $ sudo python3 setup.py install
 
-    note_off(channel=0, note=0, velocity=0, time=0)
 
-    note_on(channel=0, note=0, velocity=0, time=0)
+Default values for everything is 0 (and () for sysex data)::
 
-    polytouch(channel=0, note=0, value=0, time=0)
+    >>> mido.new('note_on')
+    mido.Message('note_on', channel=0, note=0, velocity=0, time=0)
+    >>> mido.new('sysex')
+    mido.Message('sysex', data=(), time=0)
 
-    control_change(channel=0, control=0, value=0, time=0)
+Encoding a message::
 
-    program_change(channel=0, program=0, time=0)
+    >>> msg.bytes()
+    [151, 60, 64]
+    >>> msg.hex()
+    '97 3C 40'
+    >>> msg.bin()
+    bytearray(b'\x97<@')
 
-    aftertouch(channel=0, value=0, time=0)
+Sysex messages::
 
-    pitchwheel(channel=0, value=0, time=0)
+    >>> s = mido.new('sysex', data=[1, 2])
+    >>> s.hex()
+    'F0 01 02 F7'
+    >>> s.data = (i for i in range(5))
+    >>> s.data
+    (0, 1, 2, 3, 4)
+    >>> s.hex()
+    'F0 00 01 02 03 04 F7'
 
-    sysex(data=(), time=0)
+(Note that sysex messages contain the sysex_end byte (0xF7), so a
+separate 'sysex_end' message is not necessary.)
 
-    undefined_f1(time=0)
 
-    songpos(pos=0, time=0)
+Time
+-----
 
-    song(song=0, time=0)
+The time attribute can be used for time annotations. Mido doesn't care
+what you use it for, as long as it's a valid number. Examples::
 
-    undefined_f4(time=0)
+    >>> msg.time = 183
+    >>> msg.time = 220.84
 
-    undefined_f5(time=0)
+The time attribute will not affect comparisons::
 
-    tune_request(time=0)
-
-    sysex_end(time=0)
-
-    clock(time=0)
-
-    undefined_f9(time=0)
-
-    start(time=0)
-
-    continue_(time=0)
-
-    stop(time=0)
-
-    undefined_fd(time=0)
-
-    active_sensing(time=0)
-
-    reset(time=0)
-
+    >>> msg2 = msg.copy(time=20000)
+    >>> msg == msg2
+    True
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
