@@ -1,41 +1,79 @@
 Modo - a MIDI library for Python
 =================================
 
-Modo is a Python library for sending, receiving and processing MIDI messages.
-(There is no support for MIDI files. Maybe in the future.)
+Modo is a Python library for sending, receiving and processing MIDI
+messages. There are currently backends for PortMIDI (tested with Linux
+and OSX, but may also work on Windows) and amidi (the Linux utility
+program).
 
-Modo currently has backends for PortMIDI (tested with Linux and OSX)
-and amidi (the Linux utility program).
-
-
-Example 1: play with messages
-------------------------------
-
-(This doesn't require PortMIDI.)
-
-    >>> from modo.msg import *
-    >>> pc = program_change(channel=3, program=9)
-    >>> pc
-    Message('program_change', channel=3, program=9, time=0)
-    >>> pc.channel
-    3
-    >>> pc.channel = 6
-    >>> pc
+Modo works with Python 3 and 2. The PortMIDI backend is written in
+Python and requires no compilation.
 
 
-Example 2: send a message
---------------------------
+Examples
+---------
 
-    >>> from modo.msg import *
+Creating and modifying a message::
+
+    >>> import modo
+    >>> msg = modo.Message('note_on', note=60, velocity=64)
+    >>> msg
+    Message('note_on', channel=0, note=60, velocity=64, time=0)
+    >>> msg.channel = 7
+    Message('note_on', channel=7, note=60, velocity=64, time=0)
+
+Copying a message::
+
+    >>> msg.copy(note=23)
+    Message('note_on', channel=7, note=23, velocity=64, time=0)
+
+Sending a message via PortMIDI::
+
     >>> from modo.portmidi import Output
-    >>> 
-    >>> output = Output()  # Default output
-    >>> pc = program_change(channel=0, program=9)
-    >>> output.send(pc)
+    >>> out = Output('SH-201')
+    >>> out.send(msg)
 
-Sending to a specific output:
+Encoding the message::
 
-    >>> output = Output()
+    >>> msg.bytes()
+    [151, 60, 64]
+    >>> msg.hex()
+    '97 3C 40'
+    >>> msg.bin()
+    bytearray(b'\x97<@')
+
+Default values for everything is 0 (and () for sysex data)::
+
+    >>> modo.Message('note_on')
+    Message('note_on', channel=0, note=0, velocity=0, time=0)
+    >>> modo.Message('sysex')
+    Message('sysex', data=(), time=0)
+
+Sysex messages::
+
+    >>> s = modo.Message('sysex', data=[1, 2])
+    >>> s.hex()
+    'F0 01 02 F7'
+    >>> s.data = (i for i in range(5))
+    >>> s.data
+    (0, 1, 2, 3, 4)
+    >>> s.hex()
+    'F0 00 01 02 03 04 F7'
+
+Note that sysex messages contain the sysex_end byte (0xF7), so a
+separate 'sysex_end' message is not necessary.
+
+The time attribute is can be used for time annotations. Modo doesn't
+care what you use it for, as long as it is a valid number. Examples::
+
+    >>> msg.time = 183
+    >>> msg.time = 220.84
+
+The time attribute will not affect comparisons::
+
+    >>> msg2 = msg.copy(time=20000)
+    >>> msg == msg2
+    True
 
 
 Requirements
@@ -46,31 +84,49 @@ I haven't tested this.)
 
 Requires portmidi shared library if you want to use the I/O classes.
 
-I'm using Ubuntu 11.4 and Mac OS Lion, but it should run wherever
+I'm using Ubuntu 13.04 and Mac OS Lion, but it should run wherever
 there you have Python and a portmidi shared library.
 
 
-Working with MIDI ports
-------------------------
+Known bugs
+----------
 
-Print all messages received from the SH-201 synthesizer.
+  - on OS X, portmidi sometimes hangs for a couple of seconds while
+    initializing.
 
-    import time
-    from modo.portmidi import Input, Output, get_devices
-
-    inport = Input('SH-201 MIDI 1')
-    
-    while 1:
-        for msg in inport:
-            print(msg)
-
-        # We can't block, so unfortunately
-        # we have to do this instead.
-        time.sleep(0.01)
+  - in Linux, I sometimes experience short lags, as if messages
+    are bunched up and then released again. I don't know what causes this,
+    but I suspect that another process is sometimes stealing the CPU
+    for long enough for this to happen. (Could it be garbage collection?
+    I doubt it, but I won't rule it out yet.)
 
 
-Message factory functions
+Todo
+-----
+
+   - implement blocking or callbacks for Input ports
+
+   - include some kind of event based scheduler?
+
+   - include useful lookup tables or message attributes for common
+     things like controller types
+
+   - handle devices that send note_on(velocity=0) instead of
+     note_off() (flag for portmidi.Input()?) Perhaps make it an option
+     so you can choose the one you prefer, and any data will be
+     converted to that format.
+
+
+Message wrapper functions
 --------------------------
+
+These small wrapper functions provide a more convenient way of
+creating messages::
+
+    >>> from modo.msg import *
+    >>> note_on(channel=7, note=30, velocity=35)
+
+The wrappers are::
 
     note_off(channel=0, note=0, velocity=0, time=0)
 
@@ -119,43 +175,8 @@ Message factory functions
     reset(time=0)
 
 
-Known bugs
-----------
-
-  - on OS X, portmidi sometimes hangs for a couple of seconds while
-    initializing.
-
-  - default input/output doesn't work in Linux. Adding a default
-    input/output in the alsa config will probably help. (This is not
-    really a bug, but just how ALSA works.)
-
-  - in Linux, I am experiencing occasional short lags, as if messages
-    are bunched up and then released again. I don't know what causes this,
-    but I suspect that another process is sometimes stealing the CPU
-    for long enough for this to happen. (Could it be garbage collection?
-    I doubt it, but I won't rule it out yet.)
-
-
-
-
-Todo
------
-
-   - show sysex bytes in hexadecimal? (in __repr__())
-
-   - include some kind of event based scheduler (perhaps based on
-     http://github/olemb/gametime)
-
-   - include useful lookup tables or message attributes for common things like
-     controller types
-
-   - handle devices that send note_on(velocity=0) instead of note_off() (flag
-     for portmidi.Input()?) Perhaps make it an option so you can choose the one you prefer,
-     and any data will be converted to that format.
-
-
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
 License: MIT
 
-Credits: The Portmidi wrapper is based on Portmidizero by Grant Yoshida.
+: The Portmidi wrapper is based on Portmidizero by Grant Yoshida.
