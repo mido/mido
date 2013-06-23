@@ -185,12 +185,12 @@ class Message():
 
                 self._set('opcode', opcode)
                 self._set('spec', opcode2spec[opcode])
-                self._set('name', self.spec.type)
+                self._set('type', self.spec.type)
             except KeyError:
                 raise ValueError('Invalid MIDI message opcode: %s', hex(name_or_opcode))
         else:
             try:
-                self._set('name', type_or_opcode)
+                self._set('type', type_or_opcode)
                 self._set('spec', type2spec[self.type])
                 self._set('opcode', self.spec.opcode)
             except KeyError:
