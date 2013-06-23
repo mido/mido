@@ -3,6 +3,8 @@
 """
 This segfaults. Start Midi Keys, then run this script with 'python -i', wait for 2 seconds and
 play something on Midi Keys. Boom, segfault.
+
+NOTE: not tested with recent versions.
 """
 
 from __future__ import print_function

@@ -7,7 +7,7 @@ from __future__ import print_function
 
 import time
 import random
-from protomidi.msg import *
+from mido.msg import note_on, note_off
 
 def off(msg):
     if msg.type != 'note_on':
