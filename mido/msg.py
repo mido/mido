@@ -239,17 +239,17 @@ class Message():
                 value = self.value + (2**13)
                 lsb = value & 0x7f
                 msb = value >> 7
-                data.append(lsb)
-                data.append(msb)
+                b.append(lsb)
+                b.append(msb)
 
             elif self.type == 'songpos' and name == 'pos':
                 # Convert 14 bit value to two 7-bit values
                 # Todo: check if this is correct
                 lsb = msg.pos & 0x7f
-                data.append(lsb)
+                b.append(lsb)
 
                 msb = msg.pos >> 7
-                data.append(msb)
+                b.append(msb)
             else:
                 # Ordinary data byte
                 b.append(getattr(self, name))
