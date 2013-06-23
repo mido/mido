@@ -22,16 +22,16 @@ Creating and modifying a message::
     >>> msg.channel = 7
     >>> msg.note=127
 
-Copying a message::
-
-    >>> msg.copy(note=23)
-    Message('note_on', channel=7, note=23, velocity=64, time=0)
-
 Sending a message via PortMIDI::
 
     >>> from modo.portmidi import Output
     >>> out = Output('SH-201')
     >>> out.send(msg)
+
+Copying a message::
+
+    >>> msg.copy(note=23)
+    Message('note_on', channel=7, note=23, velocity=64, time=0)
 
 Encoding the message::
 
@@ -60,11 +60,15 @@ Sysex messages::
     >>> s.hex()
     'F0 00 01 02 03 04 F7'
 
-Note that sysex messages contain the sysex_end byte (0xF7), so a
-separate 'sysex_end' message is not necessary.
+(Note that sysex messages contain the sysex_end byte (0xF7), so a
+separate 'sysex_end' message is not necessary.)
 
-The time attribute is can be used for time annotations. Modo doesn't
-care what you use it for, as long as it is a valid number. Examples::
+
+Time
+-----
+
+The time attribute can be used for time annotations. Modo doesn't care
+what you use it for, as long as it's a valid number. Examples::
 
     >>> msg.time = 183
     >>> msg.time = 220.84
