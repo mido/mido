@@ -1,8 +1,6 @@
 Mido - an object oriented MIDI library for Python
 ==================================================
 
-Mido is an object oriented MIDI library for Python 2 and 3.
-
 Most Python MIDI libraries are thin wrappers around the underlying C
 libraries. This usually means that you have to work directly with the
 MIDI bytes. In Mido, you can instead use Python objects::
