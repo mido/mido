@@ -258,9 +258,16 @@ class Input(Port):
         work yet, so it's better than nothing.
         """
 
-        while not self.poll():
+        # If there is a message pending, return it right away
+        msg = self._parser.get_msg()
+        if msg:
+            return msg
+
+        # Wait for a message to arrive
+        while 1:
             time.sleep(0.001)
-        return self._parser.get_msg()
+            if self.poll():
+                return self._parser.get_msg()
 
     def __iter__(self):
         """
