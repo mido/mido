@@ -3,8 +3,8 @@ Modo - a MIDI library for Python
 
 Modo is a Python library for sending, receiving and processing MIDI
 messages. There are currently backends for PortMIDI (tested with Linux
-and OSX, but may also work on Windows) and amidi (the Linux utility
-program).
+and Mac OS X, but may also work on Windows) and amidi (the Linux
+utility program).
 
 Modo works with Python 3 and 2. The PortMIDI backend is written in
 Python and requires no compilation.
@@ -84,7 +84,7 @@ I haven't tested this.)
 
 Requires portmidi shared library if you want to use the I/O classes.
 
-I'm using Ubuntu 13.04 and Mac OS Lion, but it should run wherever
+I'm using Ubuntu 13.04 and Mac OS X 10.7.5, but it should run wherever
 there you have Python and a portmidi shared library.
 
 
