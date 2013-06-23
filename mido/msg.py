@@ -26,6 +26,8 @@ msg_specs = [
     #
     # Channel messages
     # 
+    # pitchwheel value is a signed integer in the range -8192 - 8191
+    #
     Spec(0x80, 'note_off',        ('channel', 'note',    'velocity'), 3),
     Spec(0x90, 'note_on',         ('channel', 'note',    'velocity'), 3),
     Spec(0xa0, 'polytouch',       ('channel', 'note',    'value'),    3),
@@ -35,16 +37,9 @@ msg_specs = [
     Spec(0xe0, 'pitchwheel',      ('channel', 'value',),    3),
 
     #
-    # The value for pitchwheel is encoded as a 14 bit signed integer.
-    # This is a pain to work with, si I convert it to a float in the
-    # range [-1 ... 1]
-    #   Todo: make conversion functions
-    #
-    
-    #
     # System common messages
     #
-    # songpos.pos is 14 bit unsigned,
+    # songpos.pos is 14 bit unsigned int,
     # seralized as lsb msb
     #
     # Todo: rename song to song_select?
