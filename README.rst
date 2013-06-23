@@ -17,7 +17,7 @@ MIDI bytes. In Mido, you can instead use Python objects::
 Sending a message via PortMIDI::
 
     >>> from mido.portmidi import Output
-    >>> out = Output('SH-201')
+    >>> out = Output()
     >>> out.send(msg)
 
 Copying a message::
