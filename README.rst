@@ -1,4 +1,4 @@
-Mido - object oriented MIDI for Python
+Mido - Object oriented MIDI for Python
 =======================================
 
 Most Python MIDI libraries are thin wrappers around the underlying C
