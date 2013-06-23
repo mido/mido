@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Print out anything coming in on the input port.
 """
