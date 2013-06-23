@@ -6,7 +6,7 @@ messages. There are currently backends for PortMIDI (tested with Linux
 and Mac OS X, but may also work on Windows) and amidi (the Linux
 utility program).
 
-Modo works with Python 3 and 2. The PortMIDI backend is written in
+Modo works with Python 2 and 3. The PortMIDI backend is written in
 Python and requires no compilation.
 
 
