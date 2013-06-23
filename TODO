@@ -11,7 +11,6 @@
   - blocking read?
   - add backened attr to ports? (port.backend == 'portmidi')
   - add comparison for messages (should time be compared?)
-  - Message or Msg?
   - AttributeError / SomethingError for msg.tuba = 1 vs. msg.copy(tuba=1)
   - __enter__ / __exit__ for ports? (with Output() as port: port.send(msg))
   - opcode => status byte?
