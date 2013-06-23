@@ -124,15 +124,15 @@ class Parser:
             # Channel was already handled above
             names.remove('channel')
 
-        if msg.name == 'sysex':
+        if msg.type == 'sysex':
             msg.data = data
 
-        elif msg.name == 'pitchwheel':
+        elif msg.type == 'pitchwheel':
             value = data[0] | (data[1] << 7)
             value -= (2**13)  # Make this a signed value
             msg.value = value
 
-        elif msg.name == 'songpos':
+        elif msg.type == 'songpos':
             value = data[0] | data[1] << 7
             msg.pos = value
         else:

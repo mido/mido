@@ -319,7 +319,7 @@ class Output(Port):
         if self.closed:
             raise ValueError('send() called on closed port')
 
-        if msg.name == 'sysex':
+        if msg.type == 'sysex':
             chars = pm.c_char_p(bytes(msg.bin()))
             err = pm.lib.Pm_WriteSysEx(self.stream, 0, chars)
             _check_err(err)

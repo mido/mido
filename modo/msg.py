@@ -14,7 +14,7 @@ from collections import namedtuple
 pitchwheel_min = -8192
 pitchwheel_max = 8191
 
-Spec = namedtuple('Spec', 'opcode name args size')
+Spec = namedtuple('Spec', 'opcode type args size')
 
 msg_specs = [
     #
@@ -78,7 +78,7 @@ msg_specs = [
 
 # Lookup tables for quick access
 opcode2spec = dict([(spec.opcode, spec) for spec in msg_specs])
-name2spec = dict([(spec.name, spec) for spec in msg_specs])
+type2spec = dict([(spec.type, spec) for spec in msg_specs])
 
 #                                                                                  
 # Assert that data values as of correct type and size                              
@@ -157,8 +157,8 @@ class Message():
         Return a copy of the message. Attributes can
         be overriden by passing keyword arguments.
 
-        msg = Message('note_on', 20, 64)  # Create a node_on
-        softmsg = msg.copy(velocity=32)  # New note_on with softer velocity
+        msg = Message('note_on', note=20, velocity=64)  # Create a note_on
+        msg2 = msg.copy(velocity=32)  # New note_on with softer velocity
         """
 
         # Get values from this object
@@ -169,20 +169,14 @@ class Message():
         # Override
         kw.update(override)
 
-        return Message(self.name, **kw)
+        return Message(self.type, **kw)
 
-    def __init__(self, name_or_opcode, **kw):
-        # Todo: this need to go the other way as well
-
-        #
-        # Determine type and opcode of message
-        #
-
-        # This will be overriden if name_or_opcode is
+    def __init__(self, type_or_opcode, **kw):
+        # This will be overriden if type_or_opcode is
         # a channel message.
         default_channel = 0
 
-        if isinstance(name_or_opcode, int):
+        if isinstance(type_or_opcode, int):
             try:
                 opcode = name_or_opcode
                 if opcode < 0xf0:
@@ -191,13 +185,13 @@ class Message():
 
                 self._set('opcode', opcode)
                 self._set('spec', opcode2spec[opcode])
-                self._set('name', self.spec.name)
+                self._set('name', self.spec.type)
             except KeyError:
                 raise ValueError('Invalid MIDI message opcode: %s', hex(name_or_opcode))
         else:
             try:
-                self._set('name', name_or_opcode)
-                self._set('spec', name2spec[self.name])
+                self._set('name', type_or_opcode)
+                self._set('spec', type2spec[self.type])
                 self._set('opcode', self.spec.opcode)
             except KeyError:
                 raise ValueError('Invalid MIDI message name: %r', name_or_opcode)
@@ -219,7 +213,7 @@ class Message():
         self._set('is_chanmsg', (self.opcode < 0xf0))
 
     def __repr__(self):
-        args = [repr(self.name)] 
+        args = [repr(self.type)] 
         args += ['%s=%r' % (name, getattr(self, name)) for name in list(self.spec.args) + ['time']]
         args = ', '.join(args)
         return 'Message(%s)' % args
@@ -241,14 +235,14 @@ class Message():
             elif name == 'data':
                 b.extend(self.data)
 
-            elif self.name == 'pitchwheel' and name == 'value':
+            elif self.type == 'pitchwheel' and name == 'value':
                 value = msg.value + (2**13)
                 lsb = value & 0x7f
                 msb = value >> 7
                 data.append(lsb)
                 data.append(msb)
 
-            elif self.name == 'songpos' and name == 'pos':
+            elif self.type == 'songpos' and name == 'pos':
                 # Convert 14 bit value to two 7-bit values
                 # Todo: check if this is correct
                 lsb = msg.pos & 0x7f
@@ -260,7 +254,7 @@ class Message():
                 # Ordinary data byte
                 b.append(getattr(self, name))
 
-        if self.name == 'sysex':
+        if self.type == 'sysex':
             # Append a sysex_end
             b.append(0xf7)
 
@@ -292,17 +286,17 @@ class Message():
     def __cmp__(self, other):
         # Todo: should this include time?
         def key(msg):
-            k = tuple([msg.name] + [getattr(msg, a) for a in msg.spec.args])
+            k = tuple([msg.type] + [getattr(msg, a) for a in msg.spec.args])
             return k
             
         return cmp(key(self), key(other))
 
 def build_signature(spec):
-    if spec.name == 'continue':
+    if spec.type == 'continue':
         # continue is a keyword in Python, so add _
         funcname = 'continue_'
     else:
-        funcname = spec.name
+        funcname = spec.type
 
     #
     # Build function signature 
@@ -328,10 +322,10 @@ def _build_factories():
     functions = {}
 
     for spec in msg_specs:
-        if spec.name == 'continue':
+        if spec.type == 'continue':
             funcname = 'continue_'
         else:
-            funcname = spec.name
+            funcname = spec.type
 
         sig = build_signature(spec)
 
@@ -345,8 +339,8 @@ def _build_factories():
             args += (name + '=' + name)
 
         code =  'def %s:\n' % sig
-        code += '    """Return a new Message object of type %s."""\n' % spec.name
-        code += '    return Message(%r, %s)\n' % (spec.name, args)
+        code += '    """Return a new Message object of type %s."""\n' % spec.type
+        code += '    return Message(%r, %s)\n' % (spec.type, args)
 
         exec(code)
 
