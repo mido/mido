@@ -40,7 +40,8 @@ Requirements
 -------------
 
 Mido uses PortMIDI for I/O. A wrapper module is included, so all you
-need is is portmidi.so/dll installed on your system.
+need is is portmidi.so/dll installed on your system. PortMIDI is only
+required for I/O. The messages will work fine without it.
 
 Tested with Python 2.7 and 3.3. (3.2 should be OK. Older versions may
 or may not work.)
