@@ -1,21 +1,11 @@
-Modo - a MIDI library for Python
-=================================
+Mido - an object oriented MIDI library for Python
+==================================================
 
-Mido is a Python library for sending, receiving and processing MIDI
-messages. There are currently backends for PortMIDI (tested with Linux
-and Mac OS X, but may also work on Windows) and amidi (the Linux
-utility program).
+Mido is an object oriented MIDI library for Python 2 and 3.
 
-Mido works with Python 2 and 3. The PortMIDI backend is written in
-Python and requires no compilation.
-
-License: MIT
-
-
-Examples
----------
-
-Creating and modifying a message::
+Most Python MIDI libraries are thin wrappers around the underlying C
+libraries. This usually means that you have to work directly with the
+MIDI bytes. In Mido, you can instead use Python objects::
 
     >>> import mido
     >>> msg = mido.new('note_on', note=60, velocity=64)
@@ -35,19 +25,29 @@ Copying a message::
     >>> msg.copy(note=23, time=22)
     mido.Message('note_on', channel=7, note=23, velocity=64, time=22)
 
-More examples at the bottom.
-
 
 Requirements
-------------
+-------------
 
-Mido works with Python 2.7 and 3.2 (may work with older versions, but
-I haven't tested this.)
+Mido uses PortMIDI for I/O. A wrapper module is included, so all you
+need is is portmidi.so/dll installed on your system.
 
-Requires portmidi shared library if you want to use the I/O classes.
+Tested with Python 2.7 and 3.3. (3.2 should be OK. Older versions may
+or may not work.)
 
-I'm using Ubuntu 13.04 and Mac OS X 10.7.5, but it should run wherever
-there you have Python and a portmidi shared library.
+Runs on Linux 13.04 and Mac OS X 10.7.5. May also work on Windows.
+
+
+Installing
+-----------
+
+In the Linux / OS X terminal::
+
+    $ sudo python2 setup.py install
+
+or::
+
+    $ sudo python2 setup.py install
 
 
 Known bugs
@@ -61,6 +61,10 @@ Known bugs
     but I suspect that another process is sometimes stealing the CPU
     for long enough for this to happen. (Could it be garbage collection?
     I doubt it, but I won't rule it out yet.)
+
+  - libportmidi prints out error messages instead of returns err and
+    setting the error message string. This is stricly a bug in portmidi,
+    but it trickles up.
 
 
 Todo
@@ -135,6 +139,9 @@ The time attribute will not affect comparisons::
     >>> msg2 = msg.copy(time=20000)
     >>> msg == msg2
     True
+
+More documentation is planned.
+
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 

@@ -22,3 +22,4 @@
   - pitchwheel or pitch_wheel?
   - fix extras/joystick.py
   - add doc strings to Message class and __init__()
+  - use libportmidi-dev or libportmidi0?
