@@ -182,9 +182,9 @@ class Parser:
         while self.messages:
             yield self.messages.pop(0)
 
-def parse(data):
+def parseall(data):
     """
-    Parse MIDI data and return any messages found.
+    Parse MIDI data and return a list of all messages found.
 
     Todo: should return a generator?
     """
@@ -192,3 +192,14 @@ def parse(data):
     p = Parser()
     p.feed(data)
     return list(p)
+
+def parse(data):
+    """
+    Parse MIDI data and return
+    the first message found, or None
+    if no messages were found.
+    """
+
+    p = Parser()
+    p.feed(data)
+    return p.get_msg()
