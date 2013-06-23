@@ -267,8 +267,9 @@ class Input(Port):
         Iterate through all available messages.
         """
 
-        while self.poll():
-            yield self.recv()
+        self.poll()
+        while self._parser.messages:
+            yield self._parser.get_msg()
 
 class Output(Port):
     """
