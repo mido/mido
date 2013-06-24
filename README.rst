@@ -128,11 +128,18 @@ Planned API changes
 More examples
 --------------
 
-One of these::
+Receiving a message:
 
-    $ sudo python2 setup.py install
-    $ sudo python3 setup.py install
+.. code:: python
 
+    >>> from mido.portmidi import Input
+    >>> input = Input('some_device')
+    >>> msg = input.recv()
+
+Non-blocking receive:
+
+    >>> if input.poll():
+    >>>     msg = input.recv()
 
 Encoding:
 
