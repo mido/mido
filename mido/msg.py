@@ -84,14 +84,14 @@ for spec in msg_specs:
         # The upper 4 bits are message type, and
         # the lower 4 are MIDI channel.
         # We need lookup for all 16 MIDI channels.
-        for i in range(16):
-            spec_lookup[spec.status_byte + i] = spec
+        for channel in range(16):
+            spec_lookup[spec.status_byte | channel] = spec
     else:
         spec_lookup[spec.status_byte] = spec
 
     spec_lookup[spec.type] = spec
 
-del spec, i
+del spec, channel
 
 def assert_databyte(val):
     if not isinstance(val, int) or not (0 <= val < 128):
