@@ -35,9 +35,16 @@ Copying a message:
 Status
 -------
 
-The library is fully implemented, but a few details of the API will
-change. (See 'Planned API changes' below.) For this reason, I don't
-recommend using it in production just yet.
+Mido is not quite ready for production, but it's close. I hope to get
+some feedback before I finalize the API and release the first
+official version.
+
+The messages and PortMIDI Input and Output classes are fully implemented,
+and their API is unlikely to change. Some changes will be made to the Parser
+class to make its methods a little more consistent and streamlined, and
+the get_input/output_port() will probably be replaced with something that
+also returns the state of the port (such as whether it is open or not).
+
 
 
 License
@@ -84,17 +91,25 @@ Known bugs
     I doubt it, but I won't rule it out yet.)
 
   - libportmidi prints out error messages instead of returns err and
-    setting the error message string. This is stricly a bug in portmidi,
-    but it trickles up.
+    setting the error message string. This is most likely a bug in
+    portmidi but it trickles up.
+    
+  - there is an obscure bug involving the OS X application Midi Keys.
+    See tmp/segfault.py
 
 
 Todo
 -----
 
-   - implement blocking or callbacks for Input ports
+   - make the last few modifications to the basic API
 
-   - include some kind of event based scheduler?
+   - add an __iter__() method to ports. It is unclear whether this should
+     block or not.
 
+   - include a callback mechanism and maybe some kind of event based
+     system. This can be built as a library that on top of port and message
+     objects.
+   
    - include useful lookup tables or message attributes for common
      things like controller types
 
@@ -102,28 +117,15 @@ Todo
      note_off() (flag for portmidi.Input()?) Perhaps make it an option
      so you can choose the one you prefer, and any data will be
      converted to that format.
-
-More in the TODO file.
-
-
-Planned API changes
---------------------
-
+     
    - raise more sensible exceptions
 
    - there is currently no way of telling if am I/O device is opened
      or not. portmidi.get_input/output_names() and .get_output_names()
      should probably return name/isopened instead of just a name.
 
-   - an __iter__() method may be added to the Input class so
-     you can do 'for msg in port:', but it is not clear whether
-     it should block or not.
-
-   - some method names will be changed in the parser class. This will
-     now affect mido.parse() / mido.parseall().
-
    - base classes for input and output ports to make it easier to
-     implement new backends
+     implement new backends?
 
 
 More examples
