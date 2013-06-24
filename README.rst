@@ -133,7 +133,7 @@ Receiving a message:
 .. code:: python
 
     >>> from mido.portmidi import Input
-    >>> input = Input('some_device')
+    >>> input = Input()
     >>> msg = input.recv()
 
 Non-blocking receive:
@@ -143,7 +143,20 @@ Non-blocking receive:
     >>> if input.poll():
     >>>     msg = input.recv()
 
-Encoding:
+Inputs and outputs take an optional port name. This is name of the
+ALSA / CoreMIDI device to use:
+
+.. code:: python
+
+   >>> out = Output('SH-201')
+
+Available port names can be listed (but the exact API may change):
+
+   >>> import mido.portmidi as pm
+   >>> print(pm.get_input_names())
+   ['Midi Through Port-0', 'SH-201 MIDI 1']
+
+Encoding messages:
 
 .. code:: python
 
