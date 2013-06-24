@@ -117,7 +117,8 @@ def get_input_names():
     These can be passed to Input().
     """
 
-    return [dev.name for dev in _get_devices() if dev.isinput]
+    names = [dev.name for dev in _get_devices() if dev.isinput]
+    return list(sorted(names))
 
 def get_output_names():
     """
@@ -125,7 +126,8 @@ def get_output_names():
     These can be passed to Output().
     """
 
-    return [dev.name for dev in _get_devices() if dev.isoutput]
+    names = [dev.name for dev in _get_devices() if dev.isoutput]
+    return list(sorted(names))
 
 def _check_err(err):
     if err < 0:
