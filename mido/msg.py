@@ -12,8 +12,8 @@ from collections import namedtuple
 
 
 # Pitchwheel is a 14 bit signed integer
-pitchwheel_min = -8192
-pitchwheel_max = 8191
+PITCHWHEEL_MIN = -8192
+PITCHWHEEL_MAX = 8191
 
 
 Spec = namedtuple('Spec', ('status_byte', 'type', 'args', 'size'))
@@ -212,11 +212,11 @@ class Message(object):
                     raise ValueError('song position must be an int in range(0, 32768)')
 
             elif name == 'pitchwheel':
-                if not isinstance(value, int) or not (pitchwheel_min <= value <= pitchwheel_max):
+                if not isinstance(value, int) or not (PITCHWHEEL_MIN <= value <= PITCHWHEEL_MAX):
                     fmt = 'pitchwheel value must be an int in range({}, {})'
                     raise ValueError(fmt.format(
-                            pitchwheel_min,
-                            pitchwheel_max))
+                            PITCHWHEEL_MIN,
+                            PITCHWHEEL_MAX))
 
             elif name == 'data':
                 value = tuple(value)  # Make the data bytes immutable
