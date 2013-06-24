@@ -33,7 +33,7 @@ Copying a message:
 Status
 -------
 
-Everything is implemented, but a few details of the API can still
+The library is fully implemented, but a few details of the API will
 change. (See 'Planned API changes' below.) For this reason, I don't
 recommend using it in production just yet.
 
