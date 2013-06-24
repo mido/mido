@@ -36,7 +36,7 @@ Todo:
    - add method that returns the number of pending messages?
 """
 
-from .msg import Message, opcode2spec
+from .msg import Message
 
 class Parser:
     """

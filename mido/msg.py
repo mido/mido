@@ -74,9 +74,22 @@ msg_specs = [
     Spec(0xff, 'reset',          (), 1),
     ]
 
+#
 # Lookup tables for quick access
-opcode2spec = dict([(spec.opcode, spec) for spec in msg_specs])
-type2spec = dict([(spec.type, spec) for spec in msg_specs])
+# You can look up by opcode or type.
+#
+spec_lookup = dict()
+for spec in msg_specs:
+    if spec.opcode < 0xf0:
+        # Channel message. Add one lookup for all channels.
+        for i in range(16):
+            spec_lookup[spec.opcode + i] = spec
+    else:
+        spec_lookup[spec.opcode] = spec
+
+    spec_lookup[spec.type] = spec
+
+del spec, i
 
 #                                                                                  
 # Assert that data values as of correct type and size                              
@@ -151,29 +164,29 @@ class Message():
     """
     
     def __init__(self, type_or_opcode, **kw):
-        # This will be overriden if type_or_opcode is
-        # a channel message.
-        default_channel = 0
 
-        if isinstance(type_or_opcode, int):
+        try:
+            spec = spec_lookup[type_or_opcode]
+        except KeyError:
             try:
-                opcode = type_or_opcode
-                if opcode < 0xf0:
-                    # Channel message. Split out channel
-                    opcode, default_channel = opcode & 0xf0, opcode & 0x0f
+                value = hex(type_or_opcode)
+            except TypeError:
+                value = type_or_opcode
+            raise ValueError('Invalid type name or opcode (status byte): %r' % value)
 
-                self._set('opcode', opcode)
-                self._set('spec', opcode2spec[opcode])
-                self._set('type', self.spec.type)
-            except KeyError:
-                raise ValueError('Invalid MIDI message opcode: %s', hex(name_or_opcode))
+        opcode = spec.opcode
+
+        # Get channel. Can be overrided with keyword argument.
+        if opcode < 0xf0:
+            # Channel message. Split out channel from opcode.
+            default_channel = opcode & 0x0f
+            opcode &= 0xf0
         else:
-            try:
-                self._set('type', type_or_opcode)
-                self._set('spec', type2spec[self.type])
-                self._set('opcode', self.spec.opcode)
-            except KeyError:
-                raise ValueError('Invalid MIDI message name: %r', name_or_opcode)
+            channel = 0
+
+        self._set('spec', spec)
+        self._set('opcode', opcode)
+        self._set('type', self.spec.type)
 
         # Set default values
         for name in self.spec.args:

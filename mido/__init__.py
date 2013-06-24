@@ -11,6 +11,7 @@ for valid arguments):
 Parsing and encoding messages:
 
    >>> msg = mido.parse([0x80, 0x23, 0x40])
+   >>> msg = mido.parseall([0x90, 0x23, 0x40, [0x80, 0x23, 0x40]])
    
 
 Ole Martin Bjørndalen
