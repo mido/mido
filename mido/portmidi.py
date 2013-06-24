@@ -13,10 +13,6 @@ It is better to implement these generally further up.
 http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
 http://portmedia.sourceforge.net/portmidi/doxygen/main.html
 http://portmedia.sourceforge.net/portmidi/doxygen/portmidi_8h-source.html
-
-Todo:
-
-  - clean up API
 """
 
 from __future__ import print_function
@@ -24,7 +20,6 @@ import time
 
 from .parser import Parser
 from . import portmidi_init as pm
-from . import iobase
 
 debug = False
 
@@ -69,6 +64,29 @@ def _terminate():
     else:
         dbg('  (already terminated)')
 
+
+class _Device(dict):
+    """
+    PortMidi device.
+    """
+    def __init__(self, name, isinput, isoutput, **kw):
+        self.name = name
+        self.isinput = isinput
+        self.isoutput = isoutput
+        for (name, value) in kw.items():
+            setattr(self, name, value)
+
+    def __repr__(self):
+        args = []
+        for (name, value) in self.__dict__.items():
+            if not name.startswith('_'):
+                arg = '%s=%r' % (name, value)
+                args.append(arg)
+
+        args = ', '.join(args)
+
+        return '_Device(%s)' % args
+
 def _get_device(id):
     info_ptr = pm.lib.Pm_GetDeviceInfo(id)
     if info_ptr:
@@ -80,17 +98,17 @@ def _get_device(id):
         else:
             name = devinfo.name
 
-        dev = iobase.Device(name=name,
-                            input=devinfo.input != 0,
-                            output=devinfo.output != 0,
-                            id=id,
-                            interf=devinfo.interf,
-                            opened=devinfo.opened != 0)
+        dev = _Device(name=name,
+                      isinput=devinfo.input != 0,
+                      isoutput=devinfo.output != 0,
+                      id=id,
+                      interf=devinfo.interf,
+                      opened=devinfo.opened != 0)
 
         return dev
     return None
 
-def _get_all_devices(**query):
+def _get_devices():
     """
     Get all PortMidi devices.
     """
@@ -106,7 +124,21 @@ def _get_all_devices(**query):
 
     return devices
 
-get_devices = iobase.make_device_query(_get_all_devices)
+def get_input_names():
+    """
+    Return a list of all input port names.
+    These can be passed to Input().
+    """
+
+    return [dev.name for dev in _get_devices() if dev.isinput]
+
+def get_output_names():
+    """
+    Return a list of all input port names.
+    These can be passed to Output().
+    """
+
+    return [dev.name for dev in _get_devices() if dev.isoutput]
 
 class Error(Exception):
     pass
@@ -120,9 +152,9 @@ class Port:
     Abstract base class for Input and Output ports
     """
     def __init__(self, name=None):
-        self._init(name)
+        self.name = name
+        self._init()
         self.closed = False
-        self.name = _get_device(self._devid).name
 
     def close(self):
         dbg('closing port')
@@ -150,7 +182,7 @@ class Input(Port):
     PortMidi Input
     """
 
-    def _init(self, name=None):
+    def _init(self):
         """
         Create an input port.
 
@@ -162,14 +194,16 @@ class Input(Port):
 
         self._parser = Parser()
 
-        if name == None:
+        if self.name is None:
             self._devid = pm.lib.Pm_GetDefaultInputDeviceID()
             if self._devid < 0:
                 raise Error('No default input found')
+            self.name = _get_device(self._devid).name
         else:
-            devices = get_devices(name=name, input=1)
-            if len(devices) >= 1:
-                self._devid = devices[0].id
+            for dev in _get_devices():
+                if dev.name == self.name and dev.isinput:
+                    self._devid = dev.id
+                    break
             else:
                 raise Error('Unknown input device %r' % name)
 
@@ -282,7 +316,7 @@ class Output(Port):
     """
     PortMidi Output
     """
-    def _init(self, name=None):
+    def _init(self):
         """
         Create an output port.
 
@@ -290,18 +324,18 @@ class Output(Port):
         the default device is used instead (which may not exists on all systems).
         """
 
-        _initialize()
-        
-        if name == None:
+        if self.name is None:
             self._devid = pm.lib.Pm_GetDefaultOutputDeviceID()
             if self._devid < 0:
                 raise Error('No default output found')
+            self.name = _get_device(self._devid).name
         else:
-            devices = get_devices(name=name, output=1)
-            if len(devices) >= 1:
-                self._devid = devices[0].id
+            for dev in _get_devices():
+                if dev.name == self.name and dev.isoutput:
+                    self._devid = dev.id
+                    break
             else:
-                raise Error('Unknown output device %r' % name)
+                raise Error('Unknown output %r' % name)
 
         self.stream = pm.PortMidiStreamPtr()
         
