@@ -1,18 +1,5 @@
 """
 PortMidi I/O.
-
-Since this is written specifically for ProtoMIDI, we don't use:
-
-  - timers
-  - latency
-  - filters
-  - channel masks
-
-It is better to implement these generally further up.
-
-http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
-http://portmedia.sourceforge.net/portmidi/doxygen/main.html
-http://portmedia.sourceforge.net/portmidi/doxygen/portmidi_8h-source.html
 """
 
 from __future__ import print_function
