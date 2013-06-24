@@ -140,12 +140,9 @@ def get_output_names():
 
     return [dev.name for dev in _get_devices() if dev.isoutput]
 
-class Error(Exception):
-    pass
-
 def _check_err(err):
     if err < 0:
-        raise Error(pm.lib.Pm_GetErrorText(err))
+        raise IOError(pm.lib.Pm_GetErrorText(err))
 
 class Port:
     """
@@ -197,7 +194,7 @@ class Input(Port):
         if self.name is None:
             self._devid = pm.lib.Pm_GetDefaultInputDeviceID()
             if self._devid < 0:
-                raise Error('No default input found')
+                raise IOError('No default input found')
             self.name = _get_device(self._devid).name
         else:
             for dev in _get_devices():
@@ -205,7 +202,7 @@ class Input(Port):
                     self._devid = dev.id
                     break
             else:
-                raise Error('Unknown input device %r' % name)
+                raise IOError('Unknown input device %r' % name)
 
         self.stream = pm.PortMidiStreamPtr()
         
@@ -327,7 +324,7 @@ class Output(Port):
         if self.name is None:
             self._devid = pm.lib.Pm_GetDefaultOutputDeviceID()
             if self._devid < 0:
-                raise Error('No default output found')
+                raise IOError('No default output found')
             self.name = _get_device(self._devid).name
         else:
             for dev in _get_devices():
@@ -335,7 +332,7 @@ class Output(Port):
                     self._devid = dev.id
                     break
             else:
-                raise Error('Unknown output %r' % name)
+                raise IOError('Unknown output %r' % name)
 
         self.stream = pm.PortMidiStreamPtr()
         
