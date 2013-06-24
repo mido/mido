@@ -134,16 +134,7 @@ One of these::
     $ sudo python3 setup.py install
 
 
-Default values for everything is 0 (and () for sysex data):
-
-.. code:: python
-
-    >>> mido.new('note_on')
-    mido.Message('note_on', channel=0, note=0, velocity=0, time=0)
-    >>> mido.new('sysex')
-    mido.Message('sysex', data=(), time=0)
-
-Encoding a message:
+Encoding:
 
 .. code:: python
 
@@ -153,6 +144,16 @@ Encoding a message:
     '97 3C 40'
     >>> msg.bin()
     bytearray(b'\x97<@')
+
+Parsing:
+
+    >>> mido.parse([0x90, 60, 64])
+    mido.Message('note_on', channel=0, note=60, velocity=64, time=0)
+    >>> mido.parseall([0x80, 60, 64, 0x90, 60, 64])
+    [mido.Message('note_off', channel=0, note=60, velocity=64, time=0),
+    mido.Message('note_on', channel=0, note=60, velocity=64, time=0)]
+    >>> mido.parse(b'\x80Ab')
+    mido.Message('note_off', channel=0, note=65, velocity=98, time=0)
 
 Sysex messages:
 
@@ -169,6 +170,15 @@ Sysex messages:
 
 (Note that sysex messages contain the sysex_end byte (0xF7), so a
 separate 'sysex_end' message is not necessary.)
+
+Default values for everything is 0 (and () for sysex data):
+
+.. code:: python
+
+    >>> mido.new('note_on')
+    mido.Message('note_on', channel=0, note=0, velocity=0, time=0)
+    >>> mido.new('sysex')
+    mido.Message('sysex', data=(), time=0)
 
 
 Time

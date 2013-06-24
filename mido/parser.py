@@ -165,6 +165,7 @@ class Parser:
         Returns the number of pending messages.
         """
         if isinstance(data, bytes) and bytes is str:
+            print('!')
             # Byte strings in Python 2 need extra attention
             for char in data:
                 self.put_byte(ord(char))
