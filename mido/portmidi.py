@@ -19,7 +19,7 @@ from __future__ import print_function
 import time
 
 from .parser import Parser
-from . import portmidi_init as pm
+from . import portmidi_wrapper as pm
 
 debug = False
 
