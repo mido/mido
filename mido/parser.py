@@ -1,6 +1,9 @@
 """
 MIDI parser
 
+    The API will change to make it more streamlined.
+    This class should be considered internal to Mido for now.
+
     Basic usage:
 
         p = Parser()

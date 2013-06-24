@@ -122,7 +122,8 @@ class Message():
     """
     MIDI message class.
 
-    Valid arguments to mido.new() and mido.Message() are:
+    New messages are created with mido.new() or mido.Message().
+    Valid arguments are:
 
     mido.new('note_off', channel=0, note=0, velocity=0, time=0)
     mido.new('note_on', channel=0, note=0, velocity=0, time=0)
