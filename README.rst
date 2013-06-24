@@ -131,6 +131,21 @@ Todo
    - base classes for input and output ports to make it easier to
      implement new backends?
 
+   - handle unicode port names
+
+   - add backened attr to ports? (port.backend == 'portmidi')
+
+   - add comparison for messages (should time be compared?)
+
+   - AttributeError / SomethingError for msg.tuba = 1 vs. msg.copy(tuba=1)
+
+   - __enter__ / __exit__ for ports? (with Output() as port: port.send(msg))
+
+   - fix extras/joystick.py
+
+   - use libportmidi-dev or libportmidi0?
+
+
 
 More examples
 --------------
