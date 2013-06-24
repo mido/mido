@@ -185,7 +185,6 @@ class Message():
             channel = 0
 
         self._set('spec', spec)
-        self._set('status_byte', status_byte)
         self._set('type', self.spec.type)
 
         # Set default values
@@ -254,15 +253,22 @@ class Message():
     def __delattr__(self, name):
         raise ValueError('MIDI message attributes can\'t be deleted')
 
+    def _get_status_byte(self):
+        # Add channel to status byte.
+        sb = self.spec.status_byte
+        if sb <= 0xf0:
+            sb |= self.channel
+        return sb
+
+    status_byte = property(fget=_get_status_byte)
+    del _get_status_byte
+
     def bytes(self):
         """
         Encode message and return as a list of bytes.
         """
 
-        if hasattr(self, 'channel'):
-            b = [self.status_byte | self.channel]
-        else:
-            b = [self.status_byte]
+        b = [self.status_byte]
 
         for name in self.spec.args:
             if name == 'channel':
