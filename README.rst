@@ -39,11 +39,15 @@ Mido is not quite ready for production, but it's close. I hope to get
 some feedback before I finalize the API and release the first
 official version.
 
-The messages and PortMIDI Input and Output classes are fully implemented,
-and their API is unlikely to change. Some changes will be made to the Parser
-class to make its methods a little more consistent and streamlined, and
-the get_input/output_port() will probably be replaced with something that
-also returns the state of the port (such as whether it is open or not).
+The messages and PortMIDI Input and Output classes are fully
+implemented, and their API is unlikely to change much. Some changes
+will be made to the Parser class to make its methods a little more
+consistent and streamlined, and the get_input/output_port() will
+probably be replaced with something that also returns the state of the
+port (such as whether it is open or not).
+
+Much of the code, including the Message class, raises the wrong type
+of exceptions. This will have to be fixed.
 
 
 
