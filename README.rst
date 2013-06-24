@@ -237,6 +237,8 @@ The time attribute will not affect comparisons:
 More documentation is planned.
 
 
+Mido is short for MIDi Objects (or Musical Instrument Digital Objects).
+
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
 License: MIT
