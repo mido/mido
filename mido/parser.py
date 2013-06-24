@@ -17,12 +17,12 @@ MIDI parser
         p = Parser()
         p.feed(b'\x90\x23\x7f')      # note_on
         p.feed([0x80, 0x23, 0x7f])  # note_off
-        for msg in p:
-            print(msg)
+
+        print(parse([0x80, 0x23, 0x7f]))
 
     or just:
 
-        for msg in parse('\x90\x23\x7f\x90\x23\x00'):
+        for msg in parseall('\x90\x23\x7f\x90\x23\x00'):
             print(msg)
 
     p.messages   # A list of messages that have been parsed
