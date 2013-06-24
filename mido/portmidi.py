@@ -292,14 +292,23 @@ class Input(Port):
             if self.poll():
                 return self._parser.get_msg()
 
-    def __iter__(self):
-        """
-        Iterate through all available messages.
-        """
-
-        self.poll()
-        while self._parser.messages:
-            yield self._parser.get_msg()
+    #
+    # There is not __iter__() yet.
+    # 
+    # It is unclear how  __iter__() should
+    # behave. Should __iter__() iterate through
+    # all messages that will arrive on the port?
+    # That is:
+    #
+    #     for i in range(port.poll()):
+    #         yield port.recv()
+    #
+    # or:
+    #
+    #     while 1
+    #         while port.poll():
+    #             yield port.recv()
+    #
 
 class Output(Port):
     """
