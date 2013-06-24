@@ -4,6 +4,9 @@
 msg.py - MIDI messages
 
 http://www.midi.org/techspecs/midimessages.php
+
+New messages are created with mido.new() or mido.Message(),
+which both return a message object.
 """
 
 from __future__ import print_function
@@ -116,6 +119,36 @@ def assert_databyte(val):
 
 
 class Message():
+    """
+    MIDI message class.
+
+    Valid arguments to mido.new() and mido.Message() are:
+
+    mido.new('note_off', channel=0, note=0, velocity=0, time=0)
+    mido.new('note_on', channel=0, note=0, velocity=0, time=0)
+    mido.new('polytouch', channel=0, note=0, value=0, time=0)
+    mido.new('control_change', channel=0, control=0, value=0, time=0)
+    mido.new('program_change', channel=0, program=0, time=0)
+    mido.new('aftertouch', channel=0, value=0, time=0)
+    mido.new('pitchwheel', channel=0, value=0, time=0)
+    mido.new('sysex', data=(), time=0)
+    mido.new('undefined_f1', time=0)
+    mido.new('songpos', pos=0, time=0)
+    mido.new('song', song=0, time=0)
+    mido.new('undefined_f4', time=0)
+    mido.new('undefined_f5', time=0)
+    mido.new('tune_request', time=0)
+    mido.new('sysex_end', time=0)
+    mido.new('clock', time=0)
+    mido.new('undefined_f9', time=0)
+    mido.new('start', time=0)
+    mido.new('continue', time=0)
+    mido.new('stop', time=0)
+    mido.new('undefined_fd', time=0)
+    mido.new('active_sensing', time=0)
+    mido.new('reset', time=0)
+    """
+    
     def __init__(self, type_or_opcode, **kw):
         # This will be overriden if type_or_opcode is
         # a channel message.
