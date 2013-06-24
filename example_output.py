@@ -17,17 +17,13 @@ else:
 
 out = pm.Output(portname)
 
+# A pentatonic scale
 notes = [60, 62, 64, 67, 69, 72]
 
-#
-# Play random notes with random programs
-#
 try:
     while 1:
         # out.send(mido.new('program_change', program=random.randrange(128)))
         
-        # note = random.randrange(128)
-
         note = random.choice(notes)
         
         out.send(mido.new('note_on', note=note, velocity=100))
