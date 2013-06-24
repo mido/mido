@@ -147,6 +147,8 @@ Encoding:
 
 Parsing:
 
+.. code:: python
+
     >>> mido.parse([0x90, 60, 64])
     mido.Message('note_on', channel=0, note=60, velocity=64, time=0)
     >>> mido.parseall([0x80, 60, 64, 0x90, 60, 64])
