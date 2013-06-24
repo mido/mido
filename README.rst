@@ -119,7 +119,8 @@ Planned API changes
      you can do 'for msg in port:', but it is not clear whether
      it should block or not.
 
-   - some method names will be changed in the parser class.
+   - some method names will be changed in the parser class. This will
+     now affect mido.parse() / mido.parseall().
 
    - base classes for input and output ports to make it easier to
      implement new backends
@@ -178,6 +179,9 @@ Parsing:
     mido.Message('note_on', channel=0, note=60, velocity=64, time=0)]
     >>> mido.parse(b'\x80Ab')
     mido.Message('note_off', channel=0, note=65, velocity=98, time=0)
+
+msg.bytes() and mido.parse() can be used to send and receive messages
+via libraries which use byte based I/O, such as rtMidi.
 
 Sysex messages:
 
