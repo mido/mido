@@ -58,9 +58,9 @@ class TestParser(unittest.TestCase):
         
         self.assertEqual(ret, [])
 
-    def test_parse_stray_opcodes(self):
+    def test_parse_stray_status_bytes(self):
         """
-        Stray opcodes (opcode followed by too few data bytes)
+        Stray status bytes (status byte followed by too few data bytes)
         should be ignored.
         """
         ret = mido.parseall(b'\x90\x90\xf0')

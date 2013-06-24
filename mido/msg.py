@@ -17,7 +17,7 @@ from collections import namedtuple
 pitchwheel_min = -8192
 pitchwheel_max = 8191
 
-Spec = namedtuple('Spec', 'opcode type args size')
+Spec = namedtuple('Spec', 'status_byte type args size')
 
 msg_specs = [
     #
@@ -76,16 +76,16 @@ msg_specs = [
 
 #
 # Lookup tables for quick access
-# You can look up by opcode or type.
+# You can look up by status_byte or type.
 #
 spec_lookup = dict()
 for spec in msg_specs:
-    if spec.opcode < 0xf0:
+    if spec.status_byte < 0xf0:
         # Channel message. Add one lookup for all channels.
         for i in range(16):
-            spec_lookup[spec.opcode + i] = spec
+            spec_lookup[spec.status_byte + i] = spec
     else:
-        spec_lookup[spec.opcode] = spec
+        spec_lookup[spec.status_byte] = spec
 
     spec_lookup[spec.type] = spec
 
@@ -163,29 +163,29 @@ class Message():
     mido.new('reset', time=0)
     """
     
-    def __init__(self, type_or_opcode, **kw):
+    def __init__(self, type_or_status_byte, **kw):
 
         try:
-            spec = spec_lookup[type_or_opcode]
+            spec = spec_lookup[type_or_status_byte]
         except KeyError:
             try:
-                value = hex(type_or_opcode)
+                value = hex(type_or_status_byte)
             except TypeError:
-                value = type_or_opcode
-            raise ValueError('Invalid type name or opcode (status byte): %r' % value)
+                value = type_or_status_byte
+            raise ValueError('Invalid type name or status_byte (status_byte byte): %r' % value)
 
-        opcode = spec.opcode
+        status_byte = spec.status_byte
 
         # Get channel. Can be overrided with keyword argument.
-        if opcode < 0xf0:
-            # Channel message. Split out channel from opcode.
-            default_channel = opcode & 0x0f
-            opcode &= 0xf0
+        if status_byte < 0xf0:
+            # Channel message. Split out channel from status_byte.
+            default_channel = status_byte & 0x0f
+            status_byte &= 0xf0
         else:
             channel = 0
 
         self._set('spec', spec)
-        self._set('opcode', opcode)
+        self._set('status_byte', status_byte)
         self._set('type', self.spec.type)
 
         # Set default values
@@ -202,7 +202,7 @@ class Message():
         for name, value in kw.items():
             setattr(self, name, value)
 
-        # self._set('is_chanmsg', (self.opcode < 0xf0))
+        # self._set('is_chanmsg', (self.status_byte < 0xf0))
 
     def copy(self, **override):
         """
@@ -260,9 +260,9 @@ class Message():
         """
 
         if hasattr(self, 'channel'):
-            b = [self.opcode | self.channel]
+            b = [self.status_byte | self.channel]
         else:
-            b = [self.opcode]
+            b = [self.status_byte]
 
         for name in self.spec.args:
             if name == 'channel':

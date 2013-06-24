@@ -73,15 +73,15 @@ class Parser:
         #
         if byte >= 0x80:
             # New message
-            opcode = byte
+            status_byte = byte
 
-            if 0xf8 <= opcode <= 0xff:
+            if 0xf8 <= status_byte <= 0xff:
                 #
                 # Realtime message. These have no databytes,
                 # so they can be appended right away.
                 #
-                self.messages.append(Message(opcode))
-            elif opcode == 0xf7:
+                self.messages.append(Message(status_byte))
+            elif status_byte == 0xf7:
                 #
                 # End of sysex
                 #
@@ -95,7 +95,7 @@ class Parser:
                 #
                 # Start of message
                 #
-                self._msg = Message(opcode)  # This will split opcode and channel
+                self._msg = Message(status_byte)  # This will split status_byte and channel
                 self._data = []
 
         else:
@@ -123,7 +123,7 @@ class Parser:
 
         names = list(spec.args)
 
-        if msg.opcode < 0xf0:
+        if msg.status_byte < 0xf0:
             # Channel was already handled above
             names.remove('channel')
 

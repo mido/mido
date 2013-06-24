@@ -101,8 +101,6 @@ Known bugs
 Todo
 -----
 
-   - Message.opcode should probably be changed to 'status' or 'status_byte'.
-
    - make the last few modifications to the basic API
 
    - add an __iter__() method to ports. It is unclear whether this should

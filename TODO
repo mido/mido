@@ -13,9 +13,5 @@
   - add comparison for messages (should time be compared?)
   - AttributeError / SomethingError for msg.tuba = 1 vs. msg.copy(tuba=1)
   - __enter__ / __exit__ for ports? (with Output() as port: port.send(msg))
-  - opcode => status byte?
-  - put examples in root: example_output.py, example_processing.py, example_enconding.py etc.
-  - pitchwheel or pitch_wheel?
   - fix extras/joystick.py
-  - add doc strings to Message class and __init__()
   - use libportmidi-dev or libportmidi0?
