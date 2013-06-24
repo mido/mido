@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """
+Mido - object oriented MIDI for Python
+
+Create new objects (pydoc mido.new or help(mido.new)
+for valid arguments):
+
+   >>> mido.new('note_on', note=22, velocity=120)
+
+Parsing and encoding messages:
+
+   >>> msg = mido.parse([0x80, 0x23, 0x40])
+   
+
 Ole Martin Bjørndalen
 ombdalen@gmail.com
 http://nerdly.info/ole/
