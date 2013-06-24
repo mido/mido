@@ -67,12 +67,12 @@ class _Device(dict):
         args = []
         for (name, value) in self.__dict__.items():
             if not name.startswith('_'):
-                arg = '%s=%r' % (name, value)
+                arg = '{}={!r}'.format(name, value)
                 args.append(arg)
 
         args = ', '.join(args)
 
-        return '_Device(%s)' % args
+        return '_Device({})'.format(args)
 
 def _get_device(id):
     info_ptr = pm.lib.Pm_GetDeviceInfo(id)
@@ -133,7 +133,7 @@ def _check_err(err):
     if err < 0:
         raise IOError(pm.lib.Pm_GetErrorText(err))
 
-class Port:
+class Port(object):
     """
     Abstract base class for Input and Output ports
     """
@@ -161,7 +161,7 @@ class Port:
 
     def __repr__(self):
         cl = self.__class__.__name__
-        return '%s(%r)' % (cl, self.name)
+        return '{}({!r})'.format(cl, self.name)
 
 class Input(Port):
     """
@@ -189,12 +189,12 @@ class Input(Port):
             for dev in _get_devices():
                 if dev.name == self.name and dev.isinput:
                     if dev.opened:
-                        raise IOError('Input already opened: %r' % self.name)
+                        raise IOError('Input already opened: {!r}'.format(self.name))
 
                     self._devid = dev.id
                     break
             else:
-                raise IOError('Unknown input: %r' % self.name)
+                raise IOError('Unknown input: {!r}'.format(self.name))
 
         self.stream = pm.PortMidiStreamPtr()
         
@@ -218,7 +218,7 @@ class Input(Port):
             byte = value & 0xff
             dbg_bytes.append(byte)
             value >>= 8
-        print(' '.join('%02x' % b for b in dbg_bytes))
+        print(' '.join('{:02x}'.format(b) for b in dbg_bytes))
 
     def poll(self):
         """
@@ -331,12 +331,12 @@ class Output(Port):
             for dev in _get_devices():
                 if dev.name == self.name and dev.isoutput:
                     if dev.opened:
-                        raise IOError('Output already in use: %r' % self.name)
+                        raise IOError('Output already in use: {!r}'.format(dev.name))
 
                     self._devid = dev.id
                     break
             else:
-                raise IOError('Unknown output %r' % self.name)
+                raise IOError('Unknown output {!r}'.format(self.name))
 
         self.stream = pm.PortMidiStreamPtr()
         

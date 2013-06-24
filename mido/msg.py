@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 msg.py - MIDI messages
 
@@ -17,7 +15,8 @@ from collections import namedtuple
 pitchwheel_min = -8192
 pitchwheel_max = 8191
 
-Spec = namedtuple('Spec', 'status_byte type args size')
+
+Spec = namedtuple('Spec', ('status_byte', 'type', 'args', 'size'))
 
 msg_specs = [
     #
@@ -78,10 +77,13 @@ msg_specs = [
 # Lookup tables for quick access
 # You can look up by status_byte or type.
 #
-spec_lookup = dict()
+spec_lookup = {}
 for spec in msg_specs:
     if spec.status_byte < 0xf0:
-        # Channel message. Add one lookup for all channels.
+        # Channel message.
+        # The upper 4 bits are message type, and
+        # the lower 4 are MIDI channel.
+        # We need lookup for all 16 MIDI channels.
         for i in range(16):
             spec_lookup[spec.status_byte + i] = spec
     else:
@@ -91,47 +93,12 @@ for spec in msg_specs:
 
 del spec, i
 
-#                                                                                  
-# Assert that data values as of correct type and size                              
-#                                                                                  
-def isint(val):
-    """Check if a value is an integer"""
-    # Todo: is there a better way to check this?                                   
-    return isinstance(val, int)
-
-def isnum(val):
-    """Check if a value is a number"""
-    # Todo: is there a better way to check this?                                   
-    return isinstance(val, int) \
-        or isinstance(val, float) \
-        or isinstance(val, long)
-
-def assert_time(time):
-    if not (time == None or isnum(time)):
-        raise ValueError('time must be a number or None')
-
-def assert_channel(val):
-    if not isint(val) or not (0 <= val < 16):
-        raise ValueError('channel must be integer in range(0, 16)')
-
-# Todo: fix range (should be 14 bit unsigned)                                      
-def assert_songpos(val):
-    if not isint(val) or not (0 <= val < 32768):
-        raise ValueError('song position must be integer in range(0, 32768)')
-
-def assert_pitchwheel(val):
-    if not isint(val) or not (pitchwheel_min <= val <= pitchwheel_max):
-        fmt = 'pitchwheel value must be number in range({}, {})'
-        raise ValueError(fmt.format(
-                pitchwheel_min,
-                pitchwheel_max))
-
 def assert_databyte(val):
-    if not isint(val) or not (0 <= val < 128):
+    if not isinstance(val, int) or not (0 <= val < 128):
         raise ValueError('data byte must by in range(0, 128)')
 
 
-class Message():
+class Message(object):
     """
     MIDI message class.
 
@@ -167,15 +134,9 @@ class Message():
 
         try:
             spec = spec_lookup[type_or_status_byte]
-        except TypeError:
-            raise ValueError('First argument must be string or integer (was %r)' % \
-                                 type_or_status_byte)
         except KeyError:
-            try:
-                value = hex(type_or_status_byte)
-            except TypeError:
-                value = type_or_status_byte
-            raise ValueError('Invalid type name or status_byte (status_byte byte): %r' % value)
+            fmt = '{!r} is an invalid type name or status byte'
+            raise ValueError(fmt.format(type_or_status_byte))
 
         status_byte = spec.status_byte
 
@@ -200,9 +161,13 @@ class Message():
                 self._set(name, 0)
         self._set('time', 0)
 
-        # Override
+        # Override attibutes with keyword arguments
         for name, value in kw.items():
-            setattr(self, name, value)
+            try:
+                setattr(self, name, value)
+            except AttributeError:
+                fmt = '{!r} is an invalid keyword argument for this message type'
+                raise ValueError(fmt.format(name))
 
         # self._set('is_chanmsg', (self.status_byte < 0xf0))
 
@@ -236,13 +201,24 @@ class Message():
 
         if name in self.spec.args or name == 'time':
             if name == 'time':
-                assert_time(value)
+                if not (isinstance(value, int) or isinstance(value, float)):
+                    raise ValueError('time must be a number')
+
             elif name == 'channel':
-                assert_channel(value)
+                if not isinstance(value, int) or not (0 <= value < 16):
+                    raise ValueError('channel must be integer in range(0, 16)')
+
             elif name == 'pos':
-                assert_songpos(value)
+                if not isinstance(value, int) or not (0 <= value < 32768):
+                    raise ValueError('song position must be integer in range(0, 32768)')
+
             elif name == 'pitchwheel':
-                assert_pichwheel(value)
+                if not isinstance(value, int) or not (pitchwheel_min <= value <= pitchwheel_max):
+                    fmt = 'pitchwheel value must be number in range({}, {})'
+                    raise ValueError(fmt.format(
+                            pitchwheel_min,
+                            pitchwheel_max))
+
             elif name == 'data':
                 value = tuple(value)  # Make the data bytes immutable
                 for byte in value:
@@ -250,11 +226,11 @@ class Message():
 
             self.__dict__[name] = value
         else:
-            raise ValueError('Invalid argument for MIDI message: %r (must be one of: %s)' % (
-                    name, ' '.join(self.spec.args)))
-                    
+            fmt = '{} message has no {!r} attribute'
+            raise AttributeError(fmt.format(self.name, name)) 
+
     def __delattr__(self, name):
-        raise ValueError('MIDI message attributes can\'t be deleted')
+        raise AttributeError('Message attributes can\'t be deleted')
 
     def _get_status_byte(self):
         # Add channel to status byte.
@@ -320,16 +296,22 @@ class Message():
         a single space.
         """
 
-        return sep.join(['%02X' % byte for byte in self.bytes()])
+        return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
 
     def __repr__(self):
         args = [repr(self.type)] 
-        args += ['%s=%r' % (name, getattr(self, name)) for name in list(self.spec.args) + ['time']]
+        args += ['{}={!r}'.format(name, getattr(self, name))
+                 for name in list(self.spec.args) + ['time']]
         args = ', '.join(args)
-        return 'mido.Message(%s)' % args
+        return 'mido.Message({})'.format(args)
 
     def __eq__(self, other):
-        # The time attribute is not compared.
+        """
+        Compares message type and message specific attributes. (For
+        example ('note_on', channel, note, velocity) The time, spec
+        and status_byte attributes are not compared.
+        """
+
         def key(msg):
             k = tuple([msg.type] + [getattr(msg, a) for a in msg.spec.args])
             return k

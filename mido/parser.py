@@ -38,7 +38,7 @@ Todo:
 
 from .msg import Message
 
-class Parser:
+class Parser(object):
     """
     MIDI Parser.
     """
@@ -69,10 +69,10 @@ class Parser:
         try:
             int(byte)
         except TypeError:
-            raise TypeError('Argument must be an integer (was %r)' % byte)
+            raise TypeError('Argument must be an integer (was {!r})'.format(byte))
         
         if not 0 <= byte < 0x100:
-            raise ValueError('Byte out of range: %r' % byte)
+            raise ValueError('Byte out of range: {!r}'.format(byte))
 
         # Todo: enforce type and range of 'byte'
 
