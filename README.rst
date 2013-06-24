@@ -165,7 +165,7 @@ Non-blocking receive:
     >>> if input.poll():
     >>>     msg = input.recv()
 
-Inputs and outputs take an optional port name. This is name of the
+Inputs and outputs take an optional port name, which is name of the
 ALSA / CoreMIDI device to use:
 
 .. code:: python
