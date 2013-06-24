@@ -186,10 +186,13 @@ class Input(Port):
         else:
             for dev in _get_devices():
                 if dev.name == self.name and dev.isinput:
+                    if dev.opened:
+                        raise IOError('Input already opened: %r' % self.name)
+
                     self._devid = dev.id
                     break
             else:
-                raise IOError('Unknown input device %r' % name)
+                raise IOError('Unknown input: %r' % self.name)
 
         self.stream = pm.PortMidiStreamPtr()
         
@@ -316,10 +319,13 @@ class Output(Port):
         else:
             for dev in _get_devices():
                 if dev.name == self.name and dev.isoutput:
+                    if dev.opened:
+                        raise IOError('Output already in use: %r' % self.name)
+
                     self._devid = dev.id
                     break
             else:
-                raise IOError('Unknown output %r' % name)
+                raise IOError('Unknown output %r' % self.name)
 
         self.stream = pm.PortMidiStreamPtr()
         
