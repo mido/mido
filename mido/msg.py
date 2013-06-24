@@ -95,8 +95,7 @@ del spec, i
 
 def assert_databyte(val):
     if not isinstance(val, int) or not (0 <= val < 128):
-        raise ValueError('data byte must by in range(0, 128)')
-
+        raise ValueError('data byte must be and int in range(0, 128)')
 
 class Message(object):
     """
@@ -206,15 +205,15 @@ class Message(object):
 
             elif name == 'channel':
                 if not isinstance(value, int) or not (0 <= value < 16):
-                    raise ValueError('channel must be integer in range(0, 16)')
+                    raise ValueError('channel must be an int in range(0, 16)')
 
             elif name == 'pos':
                 if not isinstance(value, int) or not (0 <= value < 32768):
-                    raise ValueError('song position must be integer in range(0, 32768)')
+                    raise ValueError('song position must be an int in range(0, 32768)')
 
             elif name == 'pitchwheel':
                 if not isinstance(value, int) or not (pitchwheel_min <= value <= pitchwheel_max):
-                    fmt = 'pitchwheel value must be number in range({}, {})'
+                    fmt = 'pitchwheel value must be an int in range({}, {})'
                     raise ValueError(fmt.format(
                             pitchwheel_min,
                             pitchwheel_max))
@@ -223,11 +222,13 @@ class Message(object):
                 value = tuple(value)  # Make the data bytes immutable
                 for byte in value:
                     assert_databyte(byte)
+            else:
+                assert_databyte(value)
 
             self.__dict__[name] = value
         else:
             fmt = '{} message has no {!r} attribute'
-            raise AttributeError(fmt.format(self.name, name)) 
+            raise AttributeError(fmt.format(self.type, name)) 
 
     def __delattr__(self, name):
         raise AttributeError('Message attributes can\'t be deleted')
