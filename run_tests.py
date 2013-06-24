@@ -75,6 +75,19 @@ class TestParser(unittest.TestCase):
         msg2 = mido.parse(msg1.bytes())
         self.assertEqual(msg1, msg2)
 
+    def test_put_byte(self):
+        """
+        Encode a message and parse it. Should return the same message.
+        """
+        p = mido.Parser()
+
+        p.put_byte(0)
+        p.put_byte(255)
+
+        self.assertRaises(TypeError, p.put_byte, [1, 2, 3])
+        self.assertRaises(ValueError, p.put_byte, -1)
+        self.assertRaises(ValueError, p.put_byte, 256)
+
     # Todo: Parser should not crash when parsing random data
     #def test_parse_random_bytes(self):
     #    pass

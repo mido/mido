@@ -167,6 +167,9 @@ class Message():
 
         try:
             spec = spec_lookup[type_or_status_byte]
+        except TypeError:
+            raise ValueError('First argument must be string or integer (was %r)' % \
+                                 type_or_status_byte)
         except KeyError:
             try:
                 value = hex(type_or_status_byte)

@@ -66,6 +66,14 @@ class Parser:
         in range(0, 256).
         """
 
+        try:
+            int(byte)
+        except TypeError:
+            raise TypeError('Argument must be an integer (was %r)' % byte)
+        
+        if not 0 <= byte < 0x100:
+            raise ValueError('Byte out of range: %r' % byte)
+
         # Todo: enforce type and range of 'byte'
 
         #
