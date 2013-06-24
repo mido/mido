@@ -34,6 +34,9 @@ Planned API changes
 --------------------
 
    - raise more sensible exceptions
+   - there is currently no way of telling if am I/O device is opened
+     or not. portmidi.get_input/output_names() and .get_output_names()
+     should probably return name/isopened instead of just a name.
    - an __iter__() method may be added to the Input class so
      you can do 'for msg in port:', but it is not clear whether
      it should block or not.
