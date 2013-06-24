@@ -138,6 +138,8 @@ Receiving a message:
 
 Non-blocking receive:
 
+.. code:: python
+
     >>> if input.poll():
     >>>     msg = input.recv()
 
