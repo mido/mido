@@ -89,12 +89,10 @@ Known bugs
     initializing.
 
   - in Linux, I sometimes experience short lags, as if messages
-    are bunched up and then released again. I don't know what causes this,
-    but I suspect that another process is sometimes stealing the CPU
-    for long enough for this to happen. (Could it be garbage collection?
-    I doubt it, but I won't rule it out yet.)
+    are bunched up and then released again. This is probably a portmidi
+    problem.
 
-  - libportmidi prints out error messages instead of returns err and
+  - libportmidi prints out error messages instead of returning err and
     setting the error message string. This is most likely a bug in
     portmidi but it trickles up.
     
