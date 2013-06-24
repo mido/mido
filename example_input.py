@@ -11,14 +11,6 @@ implement nonblocking read with:
             print(msg)
 
         # ... do something else
-
-or the equivalent:
-
-    while 1:
-        for msg in input:
-            print(msg) 
-
-        # ... do something else
 """
 
 from __future__ import print_function
