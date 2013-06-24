@@ -9,6 +9,10 @@ MIDI bytes. In Mido, you can instead use Python objects:
 
     >>> import mido
     >>> msg = mido.new('note_on', note=60, velocity=64)
+    >>> msg.channel
+    0
+    >>> msg.type
+    'note_on'
     >>> msg.channel = 7
     >>> msg.note = 127
     >>> msg
