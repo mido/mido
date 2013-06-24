@@ -30,19 +30,12 @@ Copying a message:
     mido.Message('note_on', channel=7, note=23, velocity=64, time=22)
 
 
-Planned API changes
---------------------
+Status
+-------
 
-   - raise more sensible exceptions
-   - there is currently no way of telling if am I/O device is opened
-     or not. portmidi.get_input/output_names() and .get_output_names()
-     should probably return name/isopened instead of just a name.
-   - an __iter__() method may be added to the Input class so
-     you can do 'for msg in port:', but it is not clear whether
-     it should block or not.
-   - some method names will be changed in the parser class.
-   - base classes for input and output ports to make it easier to
-     implement new backends
+Everything is implemented, but a few details of the API can still
+change. (See 'Planned API changes' below.) For this reason, I don't
+recommend using it in production just yet.
 
 
 License
@@ -109,6 +102,25 @@ Todo
      converted to that format.
 
 More in the TODO file.
+
+
+Planned API changes
+--------------------
+
+   - raise more sensible exceptions
+
+   - there is currently no way of telling if am I/O device is opened
+     or not. portmidi.get_input/output_names() and .get_output_names()
+     should probably return name/isopened instead of just a name.
+
+   - an __iter__() method may be added to the Input class so
+     you can do 'for msg in port:', but it is not clear whether
+     it should block or not.
+
+   - some method names will be changed in the parser class.
+
+   - base classes for input and output ports to make it easier to
+     implement new backends
 
 
 More examples
