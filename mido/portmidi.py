@@ -10,6 +10,7 @@ from . import portmidi_wrapper as pm
 
 debug = False
 
+
 def dbg(*args):
     """
     Print a debugging message.
@@ -18,6 +19,7 @@ def dbg(*args):
         print('DBG:', *args)
 
 _initialized = False
+
 
 def _initialize():
     """
@@ -31,12 +33,13 @@ def _initialize():
 
     if _initialized:
         dbg('  (already initialized)')
-    else:        
-        pm.lib.Pm_Initialize()        
+    else:
+        pm.lib.Pm_Initialize()
 
         _initialized = True
         # Todo: This screws up __del__() for ports
         # atexit.register(_terminate)
+
 
 def _terminate():
     """
@@ -65,6 +68,7 @@ def _get_device(devid):
 
     return info_ptr.contents
 
+
 def _get_devices():
     """
     Return all PortMidi devices as a dictionary with
@@ -80,6 +84,7 @@ def _get_devices():
 
     return devices
 
+
 def get_input_names():
     """
     Return a list of all input port names.
@@ -89,6 +94,7 @@ def get_input_names():
     names = [dev.name for dev in
              _get_devices().values() if dev.input]
     return list(sorted(names))
+
 
 def get_output_names():
     """
@@ -100,12 +106,14 @@ def get_output_names():
              _get_devices().values() if dev.output]
     return list(sorted(names))
 
+
 def _check_err(err):
     """
     Raise IOError if err < 0.
     """
     if err < 0:
         raise IOError(pm.lib.Pm_GetErrorText(err))
+
 
 def _print_event(event):
     """
@@ -119,6 +127,7 @@ def _print_event(event):
         dbg_bytes.append(byte)
         value >>= 8
     print(' '.join('{:02x}'.format(b) for b in dbg_bytes))
+
 
 class Port(object):
     """
@@ -139,11 +148,12 @@ class Port(object):
         dbg('closing port')
 
         if not self.closed:
-            # Todo: Abort is not implemented for ALSA, so we get a warning here.
-            # But is this really needed?
+            # Todo: Abort is not implemented for ALSA,
+            # so we get a warning here.
+            # But is it really needed?
             # err = pm.lib.Pm_Abort(self.stream)
             # _check_err(err)
-            
+
             err = pm.lib.Pm_Close(self.stream)
             _check_err(err)
 
@@ -156,6 +166,7 @@ class Port(object):
         class_name = self.__class__.__name__
         return '{}({!r})'.format(class_name, self.name)
 
+
 class Input(Port):
     """
     PortMidi Input
@@ -165,10 +176,11 @@ class Input(Port):
         """
         Create an input port.
 
-        The argument 'name' is the name of the device to use. If not passed,
-        the default device is used instead (which may not exists on all systems).
+        The argument 'name' is the name of the device to use. If not
+        passed, the default device is used instead (which may not
+        exists on all systems).
         """
-        
+
         Port.__init__(self, name)
 
         _initialize()
@@ -192,7 +204,7 @@ class Input(Port):
                 raise IOError('unknown input: {!r}'.format(self.name))
 
         self.stream = pm.PortMidiStreamPtr()
-        
+
         dbg('opening input')
 
         err = pm.lib.Pm_OpenInput(pm.byref(self.stream),
@@ -208,16 +220,18 @@ class Input(Port):
 
     def poll(self):
         """
-        Read and parse whatever events have arrived since the last time we were called.
-        
+        Read and parse whatever events have arrived since the last
+        time we were called.
+
         Returns the number of messages ready to be received.
         """
 
         if self.closed:
             return
 
-        # I get hanging notes if MAX_EVENTS > 1, so I'll have to resort
-        # to calling Pm_Read() in a loop until there are no more pending events.
+        # I get hanging notes if MAX_EVENTS > 1, so I'll have to
+        # resort to calling Pm_Read() in a loop until there are no
+        # more pending events.
 
         max_events = 1
         # Todo: this should be allocated once
@@ -240,7 +254,7 @@ class Input(Port):
 
             # The bytes are stored in the lower 16 bit of the message,
             # starting with LSB and ending with MSB, for example:
-            #    0x007f4090 
+            #    0x007f4090
             # is a note_on message. The code below pops each byte from the
             # right and puts them into the parser. The stray data byte 0x00
             # will be ignored by the parser, so we can safely put all 4 bytes
@@ -262,7 +276,7 @@ class Input(Port):
 
         Use .poll() to see how many messages you can safely read
         without blocking.
-        
+
         NOTE: Blocking is currently implemented with polling and
         time.sleep(). This is inefficient, but the proper way doesn't
         work yet, so it's better than nothing.
@@ -281,7 +295,7 @@ class Input(Port):
 
     #
     # There is not __iter__() yet.
-    # 
+    #
     # It is unclear how  __iter__() should
     # behave. Should __iter__() iterate through
     # all messages that will arrive on the port?
@@ -297,6 +311,7 @@ class Input(Port):
     #             yield port.recv()
     #
 
+
 class Output(Port):
     """
     PortMidi Output
@@ -305,8 +320,9 @@ class Output(Port):
         """
         Create an output port.
 
-        The argument 'name' is the name of the device to use. If not passed,
-        the default device is used instead (which may not exists on all systems).
+        The argument 'name' is the name of the device to use. If not
+        passed, the default device is used instead (which may not
+        exists on all systems).
         """
 
         Port.__init__(self, name)
@@ -329,7 +345,7 @@ class Output(Port):
                 raise IOError('unknown output {!r}'.format(self.name))
 
         self.stream = pm.PortMidiStreamPtr()
-        
+
         err = pm.lib.Pm_OpenOutput(
             pm.byref(self.stream),
             devid,    # outputDevice

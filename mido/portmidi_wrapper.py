@@ -1,9 +1,7 @@
 """
  Initialize portmidi library
 
- This part is copied straight from Grant Yoshida's portmidizero:
-
- http://code.google.com/p/pyanist/source/browse/trunk/lib/portmidizero/portmidizero.py
+ This part is copied straight from Grant Yoshida's portmidizero.
 """
 
 import sys
@@ -62,6 +60,7 @@ lib.Pm_GetHostErrorText.argtypes = [c_char_p, c_uint]
 
 pmNoDevice = -1
 
+
 class PmDeviceInfo(Structure):
     _fields_ = [("structVersion", c_int),
                 ("interf", c_char_p),
@@ -95,12 +94,12 @@ lib.Pm_OpenInput.argtypes = [PortMidiStreamPtrPtr,
 
 lib.Pm_OpenOutput.restype = PmError
 lib.Pm_OpenOutput.argtypes = [PortMidiStreamPtrPtr,
-                             PmDeviceID,
-                             c_void_p,
-                             c_long,
-                             PmTimeProcPtr,
-                             c_void_p,
-                             c_long]
+                              PmDeviceID,
+                              c_void_p,
+                              c_long,
+                              PmTimeProcPtr,
+                              c_void_p,
+                              c_long]
 
 lib.Pm_SetFilter.restype = PmError
 lib.Pm_SetFilter.argtypes = [PortMidiStreamPtr, c_long]
@@ -115,6 +114,7 @@ lib.Pm_Close.restype = PmError
 lib.Pm_Close.argtypes = [PortMidiStreamPtr]
 
 PmMessage = c_long
+
 
 class PmEvent(Structure):
     _fields_ = [("message", PmMessage),

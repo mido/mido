@@ -1,5 +1,5 @@
-"""                                                                             
-List portmidi devices.                                                          
+"""
+List portmidi devices.
 """
 
 from __future__ import print_function

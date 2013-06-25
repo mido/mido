@@ -38,6 +38,7 @@ Todo:
 
 from .msg import Message
 
+
 class Parser(object):
     """
     MIDI Parser.
@@ -73,7 +74,7 @@ class Parser(object):
         except TypeError:
             fmt = 'argument must be an integer (was {!r})'
             raise TypeError(fmt.format(byte))
-        
+
         if not 0 <= byte < 0x100:
             fmt = 'byte out of range: {!r}'
             raise ValueError(fmt.format(byte))
@@ -107,7 +108,7 @@ class Parser(object):
                 #
                 # Start of message
                 #
-                self._msg = Message(status_byte)         
+                self._msg = Message(status_byte)
                 self._data = []
 
         else:
@@ -118,7 +119,7 @@ class Parser(object):
             if self._msg:
                 self._data.append(byte)
 
-                if len(self._data) == self._msg.spec.size-1:
+                if len(self._data) == self._msg.spec.size - 1:
                     self._add_data(self._msg, self._data)
                     self.messages.append(self._msg)
                     self.reset()
@@ -144,7 +145,7 @@ class Parser(object):
 
         elif msg.type == 'pitchwheel':
             value = data[0] | (data[1] << 7)
-            value -= (2**13)  # Make this a signed value
+            value -= (2 ** 13)  # Make this a signed value
             msg.value = value
 
         elif msg.type == 'songpos':
@@ -196,6 +197,7 @@ class Parser(object):
         while self.messages:
             yield self.messages.pop(0)
 
+
 def parseall(data):
     """
     Parse MIDI data and return a list of all messages found.
@@ -206,6 +208,7 @@ def parseall(data):
     p = Parser()
     p.feed(data)
     return list(p)
+
 
 def parse(data):
     """

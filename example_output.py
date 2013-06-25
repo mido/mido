@@ -23,12 +23,12 @@ notes = [60, 62, 64, 67, 69, 72]
 try:
     while 1:
         # out.send(mido.new('program_change', program=random.randrange(128)))
-        
+
         note = random.choice(notes)
-        
+
         out.send(mido.new('note_on', note=note, velocity=100))
         time.sleep(0.05)
-        
+
         out.send(mido.new('note_off', note=note, velocity=100))
         time.sleep(0.1)
 except KeyboardInterrupt:

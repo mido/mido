@@ -24,10 +24,10 @@ _MSG_SPECS = [
     #
     # This is the authorative definition of message types.
     #
-    
+
     #
     # Channel messages
-    # 
+    #
     # pitchwheel value is a signed integer in the range -8192 - 8191
     #
     Spec(0x80, 'note_off',        ('channel', 'note',    'velocity'), 3),
@@ -49,8 +49,8 @@ _MSG_SPECS = [
     # Sysex messages have a potentially infinite size.
     #
     Spec(0xf0, 'sysex',         ('data',),          float('inf')),
-    Spec(0xf1, 'undefined_f1',  (),                 1), 
-    Spec(0xf2, 'songpos',       ('pos',),           3),  
+    Spec(0xf1, 'undefined_f1',  (),                 1),
+    Spec(0xf2, 'songpos',       ('pos',),           3),
     Spec(0xf3, 'song',          ('song',),          2),
     Spec(0xf4, 'undefined_f4',  (), 1),
     Spec(0xf5, 'undefined_f5',  (), 1),
@@ -71,7 +71,8 @@ _MSG_SPECS = [
     Spec(0xfd, 'undefined_fd',   (), 1),
     Spec(0xfe, 'active_sensing', (), 1),
     Spec(0xff, 'reset',          (), 1),
-    ]
+]
+
 
 def _make_spec_lookup():
     """
@@ -101,13 +102,15 @@ def _make_spec_lookup():
 
 _SPEC_LOOKUP = _make_spec_lookup()
 
+
 def assert_databyte(value):
     """
-    Raise 
+    Raise
     """
     if not ((isinstance(value, int)) and
             (0 <= value < 128)):
         raise ValueError('data byte must be and int in range(0, 128)')
+
 
 class Message(object):
     """
@@ -140,7 +143,7 @@ class Message(object):
     mido.new('active_sensing', time=0)
     mido.new('reset', time=0)
     """
-    
+
     def __init__(self, type_or_status_byte, **kw):
 
         try:
@@ -190,7 +193,7 @@ class Message(object):
         """
 
         # Get values from this object
-        kw = {'time' : self.time}
+        kw = {'time': self.time}
         for name in self.spec.args:
             kw[name] = getattr(self, name)
 
@@ -204,27 +207,26 @@ class Message(object):
 
         if name in self.spec.args or name == 'time':
             if name == 'time':
-                if not (isinstance(value, int) or
-                        isinstance(value, float)):
+                if not (isinstance(value, int)
+                        or isinstance(value, float)):
                     raise ValueError('time must be a number')
 
             elif name == 'channel':
-                if (not isinstance(value, int) or
-                    not (0 <= value < 16)):
+                if not (isinstance(value, int) and
+                        (0 <= value < 16)):
                     raise ValueError('channel must be an int in range(0, 16)')
 
             elif name == 'pos':
-                if (not isinstance(value, int) or
-                    not (0 <= value < 32768)):
+                if not (isinstance(value, int) and
+                        (0 <= value < 32768)):
                     raise ValueError('pos must be an int in range(0, 32768)')
 
             elif name == 'value' and self.type == 'pitchwheel':
-                if (not isinstance(value, int) or
-                    not (PITCHWHEEL_MIN <= value <= PITCHWHEEL_MAX)):
+                if not (isinstance(value, int) and
+                        (PITCHWHEEL_MIN <= value <= PITCHWHEEL_MAX)):
                     fmt = 'pitchwheel value must be an int in range({}, {})'
-                    raise ValueError(fmt.format(
-                            PITCHWHEEL_MIN,
-                            PITCHWHEEL_MAX))
+                    raise ValueError(fmt.format(PITCHWHEEL_MIN,
+                                                PITCHWHEEL_MAX))
 
             elif name == 'data':
                 value = tuple(value)  # Make the data bytes immutable
@@ -236,7 +238,7 @@ class Message(object):
             self.__dict__[name] = value
         else:
             fmt = '{} message has no {!r} attribute'
-            raise AttributeError(fmt.format(self.type, name)) 
+            raise AttributeError(fmt.format(self.type, name))
 
     def __delattr__(self, name):
         raise AttributeError('Message attributes can\'t be deleted')
@@ -246,7 +248,7 @@ class Message(object):
         Compute and return status byte.  For channel messages, the
         channel will be added to the status_byte.
         """
-        
+
         # Add channel to status byte.
         sb = self.spec.status_byte
         if sb <= 0xf0:
@@ -271,7 +273,7 @@ class Message(object):
                 b.extend(self.data)
 
             elif self.type == 'pitchwheel' and name == 'value':
-                value = self.value + (2**13)
+                value = self.value + (2 ** 13)
                 lsb = value & 0x7f
                 msb = value >> 7
                 b.append(lsb)
@@ -299,7 +301,7 @@ class Message(object):
         """
         Encode message and return as a bytearray().
         """
-        
+
         # Todo: bytearray() or bytes()
         return bytearray(self.bytes())
 
@@ -313,7 +315,7 @@ class Message(object):
         return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
 
     def __repr__(self):
-        args = [repr(self.type)] 
+        args = [repr(self.type)]
         args += ['{}={!r}'.format(name, getattr(self, name))
                  for name in list(self.spec.args) + ['time']]
         args = ', '.join(args)
@@ -337,8 +339,9 @@ class Message(object):
 
             k = tuple([msg.type] + [getattr(msg, a) for a in msg.spec.args])
             return k
-            
+
         return key(self) == key(other)
+
 
 def build_signature(spec, include_type=True):
     """
@@ -362,13 +365,14 @@ def build_signature(spec, include_type=True):
 
     return sig
 
+
 def _print_signatures():
     """
     Print arguments for mido.new() for all supported message types.
 
     This will be used to generate documentation.
     """
-    
+
     for spec in _MSG_SPECS:
         sig = build_signature(spec)
         print('mido.new' + sig)
