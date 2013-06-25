@@ -177,7 +177,9 @@ class Message(object):
         return Message(self.type, **kw)
 
     def __setattr__(self, name, value):
-        # Todo: validation
+        """
+        Set an attribute.
+        """
 
         if name in self.spec.args or name == 'time':
             if name == 'time':
@@ -331,7 +333,7 @@ def build_signature(spec, include_type=True):
         if name == 'data':
             parts.append('data=()')
         else:
-            parts.append(name + '=0')
+            parts.append('{}=0'.format(name)
 
     sig = '(' + ', '.join(parts) + ')'
 
