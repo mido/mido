@@ -73,35 +73,10 @@ _MSG_SPECS = [
     Spec(0xff, 'reset',          (), 1),
 ]
 
-
-def _make_spec_lookup():
-    """
-    Build a lookup table for quick access.
-    You can look specs by status byte or type.
-
-    Channel messages have status byte keys
-    for all channels.
-    """
-
-    lookup = {}
-
-    for spec in _MSG_SPECS:
-        if spec.status_byte < 0xf0:
-            # Channel message.
-            # The upper 4 bits are message type, and
-            # the lower 4 are MIDI channel.
-            # We need lookup for all 16 MIDI channels.
-            for channel in range(16):
-                lookup[spec.status_byte | channel] = spec
-        else:
-            lookup[spec.status_byte] = spec
-
-        lookup[spec.type] = spec
-
-    return lookup
-
-_SPEC_LOOKUP = _make_spec_lookup()
-
+# Dictionary for looking up Channel messages have status byte keys for
+# all channels. This means there are keys for all bytes in range
+# range(128, 256).
+_SPEC_LOOKUP = {}  # Filled in by _init()
 
 def assert_databyte(value):
     """
@@ -373,3 +348,27 @@ def _print_signatures():
     for spec in _MSG_SPECS:
         sig = build_signature(spec)
         print('mido.new {}'.format(sig))
+
+def _init():
+    """
+    Initialize the module.
+
+    This build a lookup table for message specs
+    with keys for every valid message type and
+    status byte.
+    """
+
+    for spec in _MSG_SPECS:
+        if spec.status_byte < 0xf0:
+            # Channel message.
+            # The upper 4 bits are message type, and
+            # the lower 4 are MIDI channel.
+            # We need lookup for all 16 MIDI channels.
+            for channel in range(16):
+                _SPEC_LOOKUP[spec.status_byte | channel] = spec
+        else:
+            _SPEC_LOOKUP[spec.status_byte] = spec
+
+        _SPEC_LOOKUP[spec.type] = spec
+
+_init()
