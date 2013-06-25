@@ -333,7 +333,7 @@ def build_signature(spec, include_type=True):
         if name == 'data':
             parts.append('data=()')
         else:
-            parts.append('{}=0'.format(name)
+            parts.append(name + '=0')
 
     sig = '(' + ', '.join(parts) + ')'
 
