@@ -18,7 +18,7 @@ PITCHWHEEL_MAX = 8191
 
 Spec = namedtuple('Spec', ('status_byte', 'type', 'args', 'size'))
 
-msg_specs = [
+_MSG_SPECS = [
     #
     # MIDI message specifications
     #
@@ -73,28 +73,40 @@ msg_specs = [
     Spec(0xff, 'reset',          (), 1),
     ]
 
-#
-# Lookup tables for quick access
-# You can look up by status_byte or type.
-#
-spec_lookup = {}
-for spec in msg_specs:
-    if spec.status_byte < 0xf0:
-        # Channel message.
-        # The upper 4 bits are message type, and
-        # the lower 4 are MIDI channel.
-        # We need lookup for all 16 MIDI channels.
-        for channel in range(16):
-            spec_lookup[spec.status_byte | channel] = spec
-    else:
-        spec_lookup[spec.status_byte] = spec
+def _make_spec_lookup():
+    """
+    Build a lookup table for quick access.
+    You can look specs by status byte or type.
 
-    spec_lookup[spec.type] = spec
+    Channel messages have status byte keys
+    for all channels.
+    """
 
-del spec, channel
+    lookup = {}
 
-def assert_databyte(val):
-    if not isinstance(val, int) or not (0 <= val < 128):
+    for spec in _MSG_SPECS:
+        if spec.status_byte < 0xf0:
+            # Channel message.
+            # The upper 4 bits are message type, and
+            # the lower 4 are MIDI channel.
+            # We need lookup for all 16 MIDI channels.
+            for channel in range(16):
+                lookup[spec.status_byte | channel] = spec
+        else:
+            lookup[spec.status_byte] = spec
+
+        lookup[spec.type] = spec
+
+    return lookup
+
+_SPEC_LOOKUP = _make_spec_lookup()
+
+def assert_databyte(value):
+    """
+    Raise 
+    """
+    if not ((isinstance(value, int)) and
+            (0 <= value < 128)):
         raise ValueError('data byte must be and int in range(0, 128)')
 
 class Message(object):
@@ -132,43 +144,41 @@ class Message(object):
     def __init__(self, type_or_status_byte, **kw):
 
         try:
-            spec = spec_lookup[type_or_status_byte]
+            spec = _SPEC_LOOKUP[type_or_status_byte]
         except KeyError:
             fmt = '{!r} is an invalid type name or status byte'
             raise ValueError(fmt.format(type_or_status_byte))
 
-        status_byte = spec.status_byte
+        self.__dict__['spec'] = spec
+        self.__dict__['type'] = self.spec.type
 
-        # Get channel. Can be overrided with keyword argument.
-        if status_byte < 0xf0:
-            # Channel message. Split out channel from status_byte.
-            default_channel = status_byte & 0x0f
-            status_byte &= 0xf0
-        else:
-            channel = 0
-
-        self._set('spec', spec)
-        self._set('type', self.spec.type)
-
-        # Set default values
+        #
+        # Set default values for attributes
+        #
+        self.__dict__['time'] = 0
         for name in self.spec.args:
             if name == 'data':
-                self._set('data', ())
+                self.__dict__['data'] = ()
             elif name == 'channel':
-                self._set('channel', default_channel)
+                # This is a channel message, so if the first
+                # arguent to this function was a status_byte,
+                # the lower 4 bits will contain the channel.
+                if isinstance(type_or_status_byte, int):
+                    self.__dict__['channel'] = type_or_status_byte & 0x0f
+                else:
+                    self.__dict__['channel'] = 0
             else:
-                self._set(name, 0)
-        self._set('time', 0)
+                self.__dict__[name] = 0
 
+        #
         # Override attibutes with keyword arguments
+        #
         for name, value in kw.items():
             try:
                 setattr(self, name, value)
             except AttributeError:
-                fmt = '{!r} is an invalid keyword argument for this message type'
+                fmt = '{!r} is an invalid keyword argument for this message'
                 raise ValueError(fmt.format(name))
-
-        # self._set('is_chanmsg', (self.status_byte < 0xf0))
 
     def copy(self, **override):
         """
@@ -189,30 +199,28 @@ class Message(object):
 
         return Message(self.type, **kw)
 
-    def _set(self, name, value):
-        """
-        Set an attribute, bypassing all name and type checks.
-        """
-        self.__dict__[name] = value
-
     def __setattr__(self, name, value):
         # Todo: validation
 
         if name in self.spec.args or name == 'time':
             if name == 'time':
-                if not (isinstance(value, int) or isinstance(value, float)):
+                if not (isinstance(value, int) or
+                        isinstance(value, float)):
                     raise ValueError('time must be a number')
 
             elif name == 'channel':
-                if not isinstance(value, int) or not (0 <= value < 16):
+                if (not isinstance(value, int) or
+                    not (0 <= value < 16)):
                     raise ValueError('channel must be an int in range(0, 16)')
 
             elif name == 'pos':
-                if not isinstance(value, int) or not (0 <= value < 32768):
-                    raise ValueError('song position must be an int in range(0, 32768)')
+                if (not isinstance(value, int) or
+                    not (0 <= value < 32768)):
+                    raise ValueError('pos must be an int in range(0, 32768)')
 
-            elif name == 'pitchwheel':
-                if not isinstance(value, int) or not (PITCHWHEEL_MIN <= value <= PITCHWHEEL_MAX):
+            elif name == 'value' and self.type == 'pitchwheel':
+                if (not isinstance(value, int) or
+                    not (PITCHWHEEL_MIN <= value <= PITCHWHEEL_MAX)):
                     fmt = 'pitchwheel value must be an int in range({}, {})'
                     raise ValueError(fmt.format(
                             PITCHWHEEL_MIN,
@@ -234,6 +242,11 @@ class Message(object):
         raise AttributeError('Message attributes can\'t be deleted')
 
     def _get_status_byte(self):
+        """
+        Compute and return status byte.  For channel messages, the
+        channel will be added to the status_byte.
+        """
+        
         # Add channel to status byte.
         sb = self.spec.status_byte
         if sb <= 0xf0:
@@ -267,10 +280,10 @@ class Message(object):
             elif self.type == 'songpos' and name == 'pos':
                 # Convert 14 bit value to two 7-bit values
                 # Todo: check if this is correct
-                lsb = msg.pos & 0x7f
+                lsb = self.pos & 0x7f
                 b.append(lsb)
 
-                msb = msg.pos >> 7
+                msb = self.pos >> 7
                 b.append(msb)
             else:
                 # Ordinary data byte
@@ -309,11 +322,19 @@ class Message(object):
     def __eq__(self, other):
         """
         Compares message type and message specific attributes. (For
-        example ('note_on', channel, note, velocity) The time, spec
-        and status_byte attributes are not compared.
+        example (msg.type, msg.channel, msg.note, msg.velocity). The
+        time, spec and status_byte attributes are not compared.
         """
 
+        if not isinstance(other, Message):
+            raise TypeError('comparison between Message and another type')
+
         def key(msg):
+            """
+            Return a key for comparison. The key for 'note_on'
+            is (msg.type, msg.channel, msg.note, msg.velocity).
+            """
+
             k = tuple([msg.type] + [getattr(msg, a) for a in msg.spec.args])
             return k
             
@@ -348,6 +369,6 @@ def _print_signatures():
     This will be used to generate documentation.
     """
     
-    for spec in msg_specs:
+    for spec in _MSG_SPECS:
         sig = build_signature(spec)
         print('mido.new' + sig)

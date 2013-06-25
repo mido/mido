@@ -46,13 +46,15 @@ class Parser(object):
     def __init__(self):
         self.messages = []
         self.reset()
+        self._msg = None  # Current message
+        self._data = None  # Sysex data
 
     def reset(self):
         """
         Reset the parser.
         """
-        self._msg = None  # Current message
-        self._data = None  # Sysex data
+        self._msg = None
+        self._data = None
 
     def num_pending(self):
         """
@@ -69,10 +71,12 @@ class Parser(object):
         try:
             int(byte)
         except TypeError:
-            raise TypeError('Argument must be an integer (was {!r})'.format(byte))
+            fmt = 'argument must be an integer (was {!r})'
+            raise TypeError(fmt.format(byte))
         
         if not 0 <= byte < 0x100:
-            raise ValueError('Byte out of range: {!r}'.format(byte))
+            fmt = 'byte out of range: {!r}'
+            raise ValueError(fmt.format(byte))
 
         # Todo: enforce type and range of 'byte'
 
@@ -103,7 +107,7 @@ class Parser(object):
                 #
                 # Start of message
                 #
-                self._msg = Message(status_byte)  # This will split status_byte and channel
+                self._msg = Message(status_byte)         
                 self._data = []
 
         else:
@@ -151,7 +155,6 @@ class Parser(object):
             # Only normal data bytes.
             # Just map them to names.
             #
-            args = {}
             for (name, value) in zip(names, data):
                 setattr(msg, name, value)
 

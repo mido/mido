@@ -29,4 +29,5 @@ __all__ = []  # Prevent splat import
 
 from .msg import Message
 from .parser import Parser, parse, parseall
+
 new = Message  # Shortcut

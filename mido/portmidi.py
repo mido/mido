@@ -11,10 +11,13 @@ from . import portmidi_wrapper as pm
 debug = False
 
 def dbg(*args):
+    """
+    Print a debugging message.
+    """
     if debug:
         print('DBG:', *args)
 
-initialized = False
+_initialized = False
 
 def _initialize():
     """
@@ -22,17 +25,16 @@ def _initialize():
     it will do nothing.
     """
 
-    global initialized
+    global _initialized
 
     dbg('initialize()')
 
-    if initialized:
+    if _initialized:
         dbg('  (already initialized)')
-        pass
     else:        
         pm.lib.Pm_Initialize()        
 
-        initialized = True
+        _initialized = True
         # Todo: This screws up __del__() for ports
         # atexit.register(_terminate)
 
@@ -42,72 +44,39 @@ def _terminate():
     If you call it after it has already terminated, it will do nothing.
     """
 
-    global initialized
+    global _initialized
 
     dbg('terminate()')
-    if initialized:
+    if _initialized:
         pm.lib.Pm_Terminate()
-        initialized = False
+        _initialized = False
     else:
         dbg('  (already terminated)')
 
 
-class _Device(dict):
+def _get_device(devid):
     """
-    PortMidi device.
+    Return a device based on ID. Raises IOError
+    if the device is not found.
     """
-    def __init__(self, name, isinput, isoutput, **kw):
-        self.name = name
-        self.isinput = isinput
-        self.isoutput = isoutput
-        for (name, value) in kw.items():
-            setattr(self, name, value)
+    info_ptr = pm.lib.Pm_GetDeviceInfo(devid)
+    if not info_ptr:
+        raise IOError('PortMIDI device with id={} not found'.format(devid))
 
-    def __repr__(self):
-        args = []
-        for (name, value) in self.__dict__.items():
-            if not name.startswith('_'):
-                arg = '{}={!r}'.format(name, value)
-                args.append(arg)
-
-        args = ', '.join(args)
-
-        return '_Device({})'.format(args)
-
-def _get_device(id):
-    info_ptr = pm.lib.Pm_GetDeviceInfo(id)
-    if info_ptr:
-        devinfo = info_ptr.contents
-
-        if repr(devinfo.name).startswith('b'):
-            # Python 3
-            name = devinfo.name.decode('ascii')
-        else:
-            name = devinfo.name
-
-        dev = _Device(name=name,
-                      isinput=devinfo.input != 0,
-                      isoutput=devinfo.output != 0,
-                      id=id,
-                      interf=devinfo.interf,
-                      opened=devinfo.opened != 0)
-
-        return dev
-    return None
+    return info_ptr.contents
 
 def _get_devices():
     """
-    Get all PortMidi devices.
+    Return all PortMidi devices as a dictionary with
+    device ID as key.
     """
 
     _initialize()
 
-    devices = []
+    devices = {}
 
-    for id in range(pm.lib.Pm_CountDevices()):
-        dev = _get_device(id)
-        if dev is not None:
-            devices.append(dev)
+    for devid in range(pm.lib.Pm_CountDevices()):
+        devices[devid] = _get_device(devid)
 
     return devices
 
@@ -117,7 +86,8 @@ def get_input_names():
     These can be passed to Input().
     """
 
-    names = [dev.name for dev in _get_devices() if dev.isinput]
+    names = [dev.name for dev in
+             _get_devices().values() if dev.input]
     return list(sorted(names))
 
 def get_output_names():
@@ -126,26 +96,49 @@ def get_output_names():
     These can be passed to Output().
     """
 
-    names = [dev.name for dev in _get_devices() if dev.isoutput]
+    names = [dev.name for dev in
+             _get_devices().values() if dev.output]
     return list(sorted(names))
 
 def _check_err(err):
+    """
+    Raise IOError if err < 0.
+    """
     if err < 0:
         raise IOError(pm.lib.Pm_GetErrorText(err))
+
+def _print_event(event):
+    """
+    Print a PortMIDI event. (For debugging.)
+    """
+
+    value = event.message & 0xffffffff
+    dbg_bytes = []
+    for _ in range(4):
+        byte = value & 0xff
+        dbg_bytes.append(byte)
+        value >>= 8
+    print(' '.join('{:02x}'.format(b) for b in dbg_bytes))
 
 class Port(object):
     """
     Abstract base class for Input and Output ports
     """
+
     def __init__(self, name=None):
         self.name = name
-        self._init()
-        self.closed = False
+        self.closed = True
+        self.stream = None
 
     def close(self):
+        """
+        Close the port. If the port is already closed, nothing will
+        happen.
+        """
+
         dbg('closing port')
 
-        if hasattr(self, 'closed') and not self.closed:
+        if not self.closed:
             # Todo: Abort is not implemented for ALSA, so we get a warning here.
             # But is this really needed?
             # err = pm.lib.Pm_Abort(self.stream)
@@ -160,65 +153,58 @@ class Port(object):
         self.close()
 
     def __repr__(self):
-        cl = self.__class__.__name__
-        return '{}({!r})'.format(cl, self.name)
+        class_name = self.__class__.__name__
+        return '{}({!r})'.format(class_name, self.name)
 
 class Input(Port):
     """
     PortMidi Input
     """
 
-    def _init(self):
+    def __init__(self, name=None):
         """
         Create an input port.
 
         The argument 'name' is the name of the device to use. If not passed,
         the default device is used instead (which may not exists on all systems).
         """
+        
+        Port.__init__(self, name)
 
         _initialize()
 
         self._parser = Parser()
 
         if self.name is None:
-            self._devid = pm.lib.Pm_GetDefaultInputDeviceID()
-            if self._devid < 0:
+            devid = pm.lib.Pm_GetDefaultInputDeviceID()
+            if devid < 0:
                 raise IOError('No default input found')
-            self.name = _get_device(self._devid).name
+            self.name = _get_device(devid).name
         else:
-            for dev in _get_devices():
-                if dev.name == self.name and dev.isinput:
+            for devid, dev in _get_devices().items():
+                if dev.name == self.name and dev.input:
                     if dev.opened:
-                        raise IOError('Input already opened: {!r}'.format(self.name))
-
-                    self._devid = dev.id
-                    break
+                        fmt = 'Input already opened: {!r}'
+                        raise IOError(fmt.format(self.name))
+                    else:
+                        break
             else:
-                raise IOError('Unknown input: {!r}'.format(self.name))
+                raise IOError('unknown input: {!r}'.format(self.name))
 
         self.stream = pm.PortMidiStreamPtr()
         
         dbg('opening input')
 
         err = pm.lib.Pm_OpenInput(pm.byref(self.stream),
-                                  self._devid,  # inputDevice
-                                  pm.null,   # inputDriverInfo
-                                  1000,      # bufferSize
+                                  devid,    # inputDevice
+                                  pm.null,  # inputDriverInfo
+                                  1000,     # bufferSize
                                   pm.NullTimeProcPtr,   # time_proc
-                                  pm.null,   # time_info
+                                  pm.null,  # time_info
                                   )
         _check_err(err)
 
-        self._open = True
-
-    def _print_event(self, event):
-        value = event.message & 0xffffffff
-        dbg_bytes = []
-        for i in range(4):
-            byte = value & 0xff
-            dbg_bytes.append(byte)
-            value >>= 8
-        print(' '.join('{:02x}'.format(b) for b in dbg_bytes))
+        self.closed = False
 
     def poll(self):
         """
@@ -233,23 +219,24 @@ class Input(Port):
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to resort
         # to calling Pm_Read() in a loop until there are no more pending events.
 
-        MAX_EVENTS = 1
-        BufferType = pm.PmEvent * MAX_EVENTS  # Todo: this should be allocated once
-        buffer = BufferType()
+        max_events = 1
+        # Todo: this should be allocated once
+        BufferType = pm.PmEvent * max_events
+        buf = BufferType()
 
         while pm.lib.Pm_Poll(self.stream):
 
-            num_events = pm.lib.Pm_Read(self.stream, buffer, 1)
+            num_events = pm.lib.Pm_Read(self.stream, buf, 1)
             _check_err(num_events)
 
             #
             # Read the event
             #
 
-            event = buffer[0]
+            event = buf[0]
 
             #if debug:
-            #    self._print_event(event)
+            #    _print_event(event)
 
             # The bytes are stored in the lower 16 bit of the message,
             # starting with LSB and ending with MSB, for example:
@@ -314,7 +301,7 @@ class Output(Port):
     """
     PortMidi Output
     """
-    def _init(self):
+    def __init__(self, name=None):
         """
         Create an output port.
 
@@ -322,35 +309,38 @@ class Output(Port):
         the default device is used instead (which may not exists on all systems).
         """
 
-        if self.name is None:
-            self._devid = pm.lib.Pm_GetDefaultOutputDeviceID()
-            if self._devid < 0:
-                raise IOError('No default output found')
-            self.name = _get_device(self._devid).name
-        else:
-            for dev in _get_devices():
-                if dev.name == self.name and dev.isoutput:
-                    if dev.opened:
-                        raise IOError('Output already in use: {!r}'.format(dev.name))
+        Port.__init__(self, name)
 
-                    self._devid = dev.id
-                    break
+        if self.name is None:
+            devid = pm.lib.Pm_GetDefaultOutputDeviceID()
+            if devid < 0:
+                raise IOError('no default output found')
+            self.name = _get_device(devid).name
+        else:
+            # Find devid from name
+            for devid, dev in _get_devices().items():
+                if dev.name == self.name and dev.output:
+                    if dev.opened:
+                        fmt = 'output already in use: {!r}'
+                        raise IOError(fmt.format(dev.name))
+                    else:
+                        break
             else:
-                raise IOError('Unknown output {!r}'.format(self.name))
+                raise IOError('unknown output {!r}'.format(self.name))
 
         self.stream = pm.PortMidiStreamPtr()
         
-        err = pm.lib.Pm_OpenOutput(pm.byref(self.stream),
-                                   self._devid,  # outputDevice
-                                   pm.null,   # outputDriverInfo
-                                   0,         # bufferSize (ignored when latency=0?)
-                                   pm.NullTimeProcPtr,   # time_proc (default to internal clock)
-                                   pm.null,   # time_info
-                                   0,         # latency
-                                   )
+        err = pm.lib.Pm_OpenOutput(
+            pm.byref(self.stream),
+            devid,    # outputDevice
+            pm.null,  # outputDriverInfo
+            0,        # bufferSize (ignored when latency=0?)
+            pm.NullTimeProcPtr,  # default to internal clock
+            pm.null,  # time_info
+            0)        # latency
         _check_err(err)
 
-        self._open = True
+        self.closed = False
 
     def send(self, msg):
         """

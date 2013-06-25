@@ -13,22 +13,16 @@ class TestMessages(unittest.TestCase):
 
         self.assertEqual(msg1, msg2)
 
-    def test_pitchwheel_min(self):
+    def test_pitchwheel(self):
         """
-        Check if pitchwheel with minimal value encodes correctly.
+        Check if pitchwheel type check and encoding is working.
         """
-        msg = mido.new('pitchwheel', value=mido.msg.pitchwheel_min)
+        msg = mido.new('pitchwheel', value=mido.msg.PITCHWHEEL_MIN)
         bytes = msg.bytes()
-
         self.assertTrue(bytes[1] == bytes[2] == 0)
 
-    def test_pitchwheel_max(self):
-        """
-        Check if pitchwheel with maximal value encodes correctly.
-        """
-        msg = mido.new('pitchwheel', value=mido.msg.pitchwheel_max)
+        msg = mido.new('pitchwheel', value=mido.msg.PITCHWHEEL_MAX)
         bytes = msg.bytes()
-
         self.assertTrue(bytes[1] == bytes[2] == 127)
 
     def test_pitchwheel_encode_parse(self):
@@ -39,6 +33,23 @@ class TestMessages(unittest.TestCase):
         msg2 = mido.parse(msg1.bytes())
         
         self.assertEqual(msg1, msg2)
+
+    def test_channel_value(self):
+        """
+        Message.__init__() 
+
+        - if nothing is passed, the value is 0
+        - if first argument is a status_byte,
+          channel is the lower 4 bits of the status_byte
+        - the channel keyword argument overrides this value
+        """
+
+        self.assertEqual(mido.new('note_on').channel, 0)
+        self.assertEqual(mido.new('note_on', channel=1).channel, 1)
+
+        self.assertEqual(mido.new(0x90).channel, 0)
+        self.assertEqual(mido.new(0x91).channel, 1)
+        self.assertEqual(mido.new(0x90, channel=1).channel, 1)
 
 class TestParser(unittest.TestCase):
     
