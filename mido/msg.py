@@ -312,7 +312,7 @@ class Message(object):
 
     def __repr__(self):
         args = [repr(self.type)]
-        args.append('{}={!r}'.format(name, getattr(self, name))
+        args.extend('{}={!r}'.format(name, getattr(self, name))
                     for name in list(self.spec.args))
         args.append('time')
         args = ', '.join(args)
