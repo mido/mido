@@ -312,8 +312,9 @@ class Message(object):
 
     def __repr__(self):
         args = [repr(self.type)]
-        args.append(['{}={!r}'.format(name, getattr(self, name))
-                     for name in list(self.spec.args) + ['time']])
+        args.append('{}={!r}'.format(name, getattr(self, name))
+                    for name in list(self.spec.args))
+        args.append('time')
         args = ', '.join(args)
         return 'mido.Message({})'.format(args)
 
@@ -371,4 +372,4 @@ def _print_signatures():
 
     for spec in _MSG_SPECS:
         sig = build_signature(spec)
-        print('mido.new' + sig)
+        print('mido.new {}'.format(sig))
