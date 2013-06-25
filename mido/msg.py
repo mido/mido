@@ -1,10 +1,23 @@
 """
 msg.py - MIDI messages
 
-http://www.midi.org/techspecs/midimessages.php
-
 New messages are created with mido.new() or mido.Message(),
 which both return a message object.
+
+MIDI messages are binary encoded as one status byte followed by zero
+or more data bytes. The number and meaning of the data bytes is
+specific to each message type. (The exception is System Exclusive
+messages which have a start byte 0xf0 and end byte 0xf7 with any
+number of data bytes inbetween.)
+
+Data bytes are 7 bit, which means their values are in range 0 -
+127. The high bit is set in status bytes to signal a new message.
+
+A table of all standard MIDI messages and their binary encoding can be
+found here:
+
+   http://www.midi.org/techspecs/midimessages.php
+
 """
 
 from __future__ import print_function
@@ -80,8 +93,13 @@ _SPEC_LOOKUP = {}  # Filled in by _init()
 
 def assert_databyte(value):
     """
-    Raise
+    Raises ValueError if the data byte is not and
+    integer or out of range.
+
+    Data bytes are 7 bit, so valid values are 0 - 127. (The high bit
+    is set in status bytes to signal a new message.
     """
+
     if not (isinstance(value, int) and (0 <= value < 128)):
         raise ValueError('data byte must be and int in range(0, 128)')
 
