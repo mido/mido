@@ -136,6 +136,10 @@ class Message(object):
     mido.new('reset', time=0)
     """
 
+    # Attributes common to all messages.
+    # These are used in __setattr__().
+    _common_attrs = set(('spec', 'type', 'status_byte', 'time'))
+
     def __init__(self, type_or_status_byte, **kw):
 
         try:
@@ -144,26 +148,31 @@ class Message(object):
             fmt = '{!r} is an invalid type name or status byte'
             raise ValueError(fmt.format(type_or_status_byte))
 
-        self.__dict__['spec'] = spec
-        self.__dict__['type'] = self.spec.type
+        # Specify valid attributes for __setattr__().
+        # (self._msg_attrs = set() wouldn't work here
+        # since it's referred to by __setattr__()).
+        self.__dict__['_msg_attrs'] = set(spec.args)
+        
+        self.spec = spec
+        self.type = self.spec.type
 
         #
         # Set default values for attributes
         #
-        self.__dict__['time'] = 0
+        self.time = 0
         for name in self.spec.args:
             if name == 'data':
-                self.__dict__['data'] = ()
+                self.data = ()
             elif name == 'channel':
                 # This is a channel message, so if the first
                 # arguent to this function was a status_byte,
                 # the lower 4 bits will contain the channel.
                 if isinstance(type_or_status_byte, int):
-                    self.__dict__['channel'] = type_or_status_byte & 0x0f
+                    self.channel = type_or_status_byte & 0x0f
                 else:
-                    self.__dict__['channel'] = 0
+                    self.channel = 0
             else:
-                self.__dict__[name] = 0
+                setattr(self, name, 0)
 
         #
         # Override attibutes with keyword arguments
@@ -198,8 +207,10 @@ class Message(object):
         """
         Set an attribute.
         """
-
-        if name in self.spec.args or name == 'time':
+        
+        print(name)
+        
+        if name in self._msg_attrs:
             if name == 'time':
                 if not (isinstance(value, int) or isinstance(value, float)):
                     raise ValueError('time must be a number')
@@ -226,10 +237,15 @@ class Message(object):
             else:
                 assert_databyte(value)
 
+            # We can't assign directly here, or we'd have infinite
+            # recursion.
+            self.__dict__[name] = value
+        elif name in self._common_attrs:
             self.__dict__[name] = value
         else:
             fmt = '{} message has no {!r} attribute'
             raise AttributeError(fmt.format(self.type, name))
+
 
     def __delattr__(self, name):
         raise AttributeError('Message attributes can\'t be deleted')
