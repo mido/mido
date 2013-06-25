@@ -137,7 +137,83 @@ class Port(object):
     def __init__(self, name=None):
         self.name = name
         self.closed = True
-        self.stream = None
+        self.stream = pm.PortMidiStreamPtr()
+
+        _initialize()
+
+        self._open()
+
+    def _open(self):
+        """
+        Open the port.
+
+        This is called by the __init__().
+        """
+        
+        isinput = (self.__class__ == Input)
+
+        if self.name is None:
+            if isinput:
+                devid = pm.lib.Pm_GetDefaultInputDeviceID()
+            else:
+                devid = pm.lib.Pm_GetDefaultOutputDeviceID()
+
+            if devid < 0:
+                raise IOError('No default input found')
+
+            self.name = _get_device(devid).name
+        else:
+            # Look the device by name.
+            for devid, dev in _get_devices().items():
+                if dev.name != self.name:
+                    continue
+                
+                # Check if device is correct type
+                if isinput and dev.output:
+                    continue
+                elif (not isinput) and dev.input:
+                    continue
+
+                if dev.opened:
+                    if isinput:
+                        fmt = 'input already opened: {!r}'
+                    else:
+                        fmt = 'output already opened: {!r}'
+                        raise IOError(fmt.format(self.name))
+
+                # Found a match!
+                break
+            else:
+                # No match found.
+                if isinput:
+                    fmt = 'unknown input port: {!r}'
+                else:
+                    fmt = 'unknown output port: {!r}'
+                raise IOError(fmt.format(self.name))
+
+        dbg('opening input')
+
+        if isinput:
+            err = pm.lib.Pm_OpenInput(
+                pm.byref(self.stream),
+                devid,    # inputDevice
+                pm.null,  # inputDriverInfo
+                1000,     # bufferSize
+                pm.NullTimeProcPtr,   # time_proc
+                pm.null) # time_info
+        else:
+            err = pm.lib.Pm_OpenOutput(
+                pm.byref(self.stream),
+                devid,    # outputDevice
+                pm.null,  # outputDriverInfo
+                0,        # bufferSize (ignored when latency=0?)
+                pm.NullTimeProcPtr,  # default to internal clock
+                pm.null,  # time_info
+                0)        # latency
+
+        _check_err(err)
+
+        self.closed = False
 
     def close(self):
         """
@@ -182,41 +258,7 @@ class Input(Port):
         """
 
         Port.__init__(self, name)
-
-        _initialize()
-
         self._parser = Parser()
-
-        if self.name is None:
-            devid = pm.lib.Pm_GetDefaultInputDeviceID()
-            if devid < 0:
-                raise IOError('No default input found')
-            self.name = _get_device(devid).name
-        else:
-            for devid, dev in _get_devices().items():
-                if dev.name == self.name and dev.input:
-                    if dev.opened:
-                        fmt = 'Input already opened: {!r}'
-                        raise IOError(fmt.format(self.name))
-                    else:
-                        break
-            else:
-                raise IOError('unknown input: {!r}'.format(self.name))
-
-        self.stream = pm.PortMidiStreamPtr()
-
-        dbg('opening input')
-
-        err = pm.lib.Pm_OpenInput(pm.byref(self.stream),
-                                  devid,    # inputDevice
-                                  pm.null,  # inputDriverInfo
-                                  1000,     # bufferSize
-                                  pm.NullTimeProcPtr,   # time_proc
-                                  pm.null,  # time_info
-                                  )
-        _check_err(err)
-
-        self.closed = False
 
     def poll(self):
         """
@@ -316,51 +358,10 @@ class Output(Port):
     """
     PortMidi Output
     """
-    def __init__(self, name=None):
-        """
-        Create an output port.
-
-        The argument 'name' is the name of the device to use. If not
-        passed, the default device is used instead (which may not
-        exists on all systems).
-        """
-
-        Port.__init__(self, name)
-
-        if self.name is None:
-            devid = pm.lib.Pm_GetDefaultOutputDeviceID()
-            if devid < 0:
-                raise IOError('no default output found')
-            self.name = _get_device(devid).name
-        else:
-            # Find devid from name
-            for devid, dev in _get_devices().items():
-                if dev.name == self.name and dev.output:
-                    if dev.opened:
-                        fmt = 'output already in use: {!r}'
-                        raise IOError(fmt.format(dev.name))
-                    else:
-                        break
-            else:
-                raise IOError('unknown output {!r}'.format(self.name))
-
-        self.stream = pm.PortMidiStreamPtr()
-
-        err = pm.lib.Pm_OpenOutput(
-            pm.byref(self.stream),
-            devid,    # outputDevice
-            pm.null,  # outputDriverInfo
-            0,        # bufferSize (ignored when latency=0?)
-            pm.NullTimeProcPtr,  # default to internal clock
-            pm.null,  # time_info
-            0)        # latency
-        _check_err(err)
-
-        self.closed = False
 
     def send(self, msg):
         """
-        Send a message on the output port
+        Send a message on the output port.
         """
 
         if self.closed:
