@@ -289,10 +289,11 @@ class Message(object):
 
     def __repr__(self):
         args = [repr(self.type)]
-        args.extend('{}={!r}'.format(name, getattr(self, name))
-                    for name in list(self.spec.args))
+        for name in self.spec.args:
+            args.append('{}={!r}'.format(name, getattr(self, name)))
         args.append('time')
         args = ', '.join(args)
+
         return 'mido.Message({})'.format(args)
 
     def __eq__(self, other):
@@ -335,7 +336,7 @@ def build_signature(spec, include_type=True):
         else:
             parts.append(name + '=0')
 
-    sig = '(' + ', '.join(parts) + ')'
+    sig = '({})'.format(', '.join(parts))
 
     return sig
 
