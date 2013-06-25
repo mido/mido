@@ -107,8 +107,7 @@ def assert_databyte(value):
     """
     Raise
     """
-    if not ((isinstance(value, int)) and
-            (0 <= value < 128)):
+    if not (isinstance(value, int)) and 0 <= value < 128):
         raise ValueError('data byte must be and int in range(0, 128)')
 
 
@@ -316,8 +315,8 @@ class Message(object):
 
     def __repr__(self):
         args = [repr(self.type)]
-        args += ['{}={!r}'.format(name, getattr(self, name))
-                 for name in list(self.spec.args) + ['time']]
+        args.append(['{}={!r}'.format(name, getattr(self, name))
+                     for name in list(self.spec.args) + ['time']])
         args = ', '.join(args)
         return 'mido.Message({})'.format(args)
 
