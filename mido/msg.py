@@ -107,7 +107,7 @@ def assert_databyte(value):
     """
     Raise
     """
-    if not (isinstance(value, int)) and 0 <= value < 128):
+    if not (isinstance(value, int) and (0 <= value < 128)):
         raise ValueError('data byte must be and int in range(0, 128)')
 
 
@@ -206,18 +206,15 @@ class Message(object):
 
         if name in self.spec.args or name == 'time':
             if name == 'time':
-                if not (isinstance(value, int)
-                        or isinstance(value, float)):
+                if not (isinstance(value, int) or isinstance(value, float)):
                     raise ValueError('time must be a number')
 
             elif name == 'channel':
-                if not (isinstance(value, int) and
-                        (0 <= value < 16)):
+                if not (isinstance(value, int) and (0 <= value < 16)):
                     raise ValueError('channel must be an int in range(0, 16)')
 
             elif name == 'pos':
-                if not (isinstance(value, int) and
-                        (0 <= value < 32768)):
+                if not (isinstance(value, int) and (0 <= value < 32768)):
                     raise ValueError('pos must be an int in range(0, 32768)')
 
             elif name == 'value' and self.type == 'pitchwheel':
