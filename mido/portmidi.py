@@ -69,22 +69,6 @@ def _get_device(devid):
     return info_ptr.contents
 
 
-def _get_devices():
-    """
-    Return all PortMidi devices as a dictionary with
-    device ID as key.
-    """
-
-    _initialize()
-
-    devices = {}
-
-    for devid in range(pm.lib.Pm_CountDevices()):
-        devices[devid] = _get_device(devid)
-
-    return devices
-
-
 def get_input_names():
     """
     Return a list of all input port names.
@@ -141,15 +125,6 @@ class Port(object):
 
         _initialize()
 
-        self._open()
-
-    def _open(self):
-        """
-        Open the port.
-
-        This is called by the __init__().
-        """
-        
         isinput = (self.__class__ == Input)
 
         if self.name is None:
@@ -163,8 +138,14 @@ class Port(object):
 
             self.name = _get_device(devid).name
         else:
-            # Look the device by name.
-            for devid, dev in _get_devices().items():
+            #
+            # Look for the device by name and type (input / output)
+            #
+            num_devices = pm.lib.Pm_CountDevices()
+
+            for devid in range(num_devices):
+                dev = _get_device(devid)
+
                 if dev.name != self.name:
                     continue
                 
@@ -179,7 +160,7 @@ class Port(object):
                         fmt = 'input already opened: {!r}'
                     else:
                         fmt = 'output already opened: {!r}'
-                        raise IOError(fmt.format(self.name))
+                    raise IOError(fmt.format(self.name))
 
                 # Found a match!
                 break
