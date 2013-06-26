@@ -41,8 +41,6 @@ class MsgSpec:
     args is the attributes / keywords arguments specific to
     this message type.
 
-    args_set is set(args) for quick lookup.
-    
     size is the size of this message in bytes. This value is not used
     for sysex messages, since they use a top byte instead.
     """
@@ -54,7 +52,6 @@ class MsgSpec:
         self.status_byte = status_byte
         self.type = type_
         self.args = args
-        self.args_set = set(args)
         self.size = size
     
     def signature(self):
