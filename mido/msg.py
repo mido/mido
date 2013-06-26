@@ -25,8 +25,12 @@ from collections import namedtuple
 
 
 # Pitchwheel is a 14 bit signed integer
-PITCHWHEEL_MIN = -8192
-PITCHWHEEL_MAX = 8191
+MIN_PITCHWHEEL = -8192 ()
+MAX_PITCHWHEEL = 8191
+
+# Song pos is a 14 bit unsigned integer
+MIN_SONGPOS = 0
+MAX_SONGPOS = 16383  # (2 ** 14) - 1
 
 
 class MsgSpec:
@@ -92,7 +96,7 @@ _MSG_SPECS = [
     MsgSpec(0xb0, 'control_change',  ('channel', 'control', 'value'),    3),
     MsgSpec(0xc0, 'program_change',  ('channel', 'program',),   3),
     MsgSpec(0xd0, 'aftertouch',      ('channel', 'value',),    3),
-    MsgSpec(0xe0, 'pitchwheel',      ('channel', 'value',),    3),
+    MsgSpec(0xe0, 'pitchwheel',      ('channel', 'pitch',),    3),
 
     #
     # System common messages
@@ -145,7 +149,7 @@ def assert_databyte(byte):
     """
 
     if not (isinstance(byte, int) and (0 <= byte < 128)):
-        raise ValueError('data byte must be and int in range(0, 128)')
+        raise ValueError('data byte must be and int in range 0 - 127.')
 
 
 class Message(object):
@@ -177,7 +181,7 @@ class Message(object):
         Message('control_change', channel=0, control=0, value=0, time=0)
         Message('program_change', channel=0, program=0, time=0)
         Message('aftertouch', channel=0, value=0, time=0)
-        Message('pitchwheel', channel=0, value=0, time=0)
+        Message('pitchwheel', channel=0, pitch=0, time=0)
         Message('sysex', data=Message(), time=0)
         Message('undefined_f1', time=0)
         Message('songpos', pos=0, time=0)
@@ -263,25 +267,31 @@ class Message(object):
 
     def __setattr__(self, name, value):
         """Set an attribute."""
+
         if name in self._msg_attrs:
             if name == 'time':
                 if not (isinstance(value, int) or isinstance(value, float)):
-                    raise ValueError('time must be a number')
+                    raise TypeError('time must be an integer or float')
 
             elif name == 'channel':
-                if not (isinstance(value, int) and (0 <= value < 16)):
-                    raise ValueError('channel must be an int in range(0, 16)')
+                if not isinstance(value, int):
+                    raise TypeError('channel must be an integer')
+                elif not 0 <= value < 16:
+                    raise ValueError('channel must be in range 0 - 15')
 
             elif name == 'pos':
-                if not (isinstance(value, int) and (0 <= value < 32768)):
-                    raise ValueError('pos must be an int in range(0, 32768)')
+                if not isinstance(value, int):
+                    raise TypeError('song pos must be and integer'):
+                elif not MIN_SONGPOS <= value <= MAX_SONGPOS:
+                    raise ValueError('song pos must be in range 0 - 32768')
 
-            elif name == 'value' and self.type == 'pitchwheel':
-                if not (isinstance(value, int) and
-                        (PITCHWHEEL_MIN <= value <= PITCHWHEEL_MAX)):
-                    fmt = 'pitchwheel value must be an int in range({}, {})'
-                    raise ValueError(fmt.format(PITCHWHEEL_MIN,
-                                                PITCHWHEEL_MAX))
+            elif name == 'pitch':
+                if not isinstance(value, int):
+                    raise TypeError('pichwheel value must be an integer')
+                elif not MIN_PITCHWHEEL <= value <= MAX_PITCHWHEEL:
+                    fmt = 'pitchwheel value must be in range {} - {}'
+                    raise ValueError(fmt.format(MIN_PITCHWHEEL,
+                                                MAX_PITCHWHEEL))
 
             elif name == 'data':
                 value = tuple(value)  # Make the data bytes immutable
