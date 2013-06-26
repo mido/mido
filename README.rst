@@ -16,20 +16,28 @@ Mido allows you to work with MIDI messages as Python objects:
     >>> msg
     mido.Message('note_on', channel=7, note=127, velocity=64, time=0)
 
-Sending a message via PortMidi:
-
-.. code:: python
-
-    >>> from mido.portmidi import Output
-    >>> out = Output()
-    >>> out.send(msg)
-
 Copying a message:
 
 .. code:: python
 
     >>> msg.copy(note=23, time=22)
     mido.Message('note_on', channel=7, note=23, velocity=64, time=22)
+
+Sending a message via PortMidi:
+
+.. code:: python
+
+    >>> from mido.portmidi import Output
+    >>> outport = Output()
+    >>> outport.send(msg)
+
+Receiving a message:
+
+.. code:: python
+
+    >>> from mido.portmidi import Input
+    >>> inport = Input()
+    >>> msg = inport.receive()
 
 
 Status
@@ -149,20 +157,12 @@ Todo
 More examples
 --------------
 
-Receiving a message:
-
-.. code:: python
-
-    >>> from mido.portmidi import Input
-    >>> port = Input()
-    >>> msg = port.receive()
-
 Non-blocking receive:
 
 .. code:: python
 
-    >>> if port.poll():
-    ...     msg = input.receive()
+    >>> if inport.poll():
+    ...     msg = inport.receive()
     ...     print(msg)
 
 Inputs and outputs take an optional port name, which is name of the
