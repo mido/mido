@@ -18,11 +18,9 @@ data is any sequence of bytes, or an object that generates them.
 
 __author__ = 'Ole Martin Bjørndalen'
 __email__ = 'ombdalen@gmail.com'
-__url__ = 'http://nerdly.info/ole/'
+__url__ = 'http://github.com/olemb/mido/'
 __license__ = 'MIT'
 __version__ = '0.0.0'
-
-__all__ = []  # Prevent splat import
 
 from .msg import Message
 from .parser import parse, parseall
