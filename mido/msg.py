@@ -29,7 +29,52 @@ PITCHWHEEL_MIN = -8192
 PITCHWHEEL_MAX = 8191
 
 
-Spec = namedtuple('Spec', ('status_byte', 'type', 'args', 'size'))
+class MsgSpec:
+    """
+    Specifications for creating a message.
+    
+    status_byte is the first byte of the message. For channel
+    messages, the channel (lower 4 bits) is clear.
+
+    type is the type name of the message, for example 'sysex'.
+
+    args is the attributes / keywords arguments specific to
+    this message type.
+
+    args_set is set(args) for quick lookup.
+    
+    size is the size of this message in bytes. This value is not used
+    for sysex messages, since they use a top byte instead.
+    """
+    
+
+    def __init__(self, status_byte, type_, args, size):
+        """Create a new message specification.
+        """
+        self.status_byte = status_byte
+        self.type = type_
+        self.args = args
+        self.args_set = set(args)
+        self.size = size
+    
+    def signature(self):
+        """Return call signature for Message constructor for this type.
+
+        The signature is returned as a string.
+        """
+        parts = [repr(spec.type)]
+
+        for name in spec.args:
+            if name == 'data':
+                parts.append('data=()')
+            else:
+                parts.append(name + '=0')
+        parts.append('time=0')
+
+        sig = '({})'.format(', '.join(parts))
+
+        return sig
+
 
 _MSG_SPECS = [
     #
@@ -43,13 +88,13 @@ _MSG_SPECS = [
     #
     # pitchwheel value is a signed integer in the range -8192 - 8191
     #
-    Spec(0x80, 'note_off',        ('channel', 'note',    'velocity'), 3),
-    Spec(0x90, 'note_on',         ('channel', 'note',    'velocity'), 3),
-    Spec(0xa0, 'polytouch',       ('channel', 'note',    'value'),    3),
-    Spec(0xb0, 'control_change',  ('channel', 'control', 'value'),    3),
-    Spec(0xc0, 'program_change',  ('channel', 'program',),   3),
-    Spec(0xd0, 'aftertouch',      ('channel', 'value',),    3),
-    Spec(0xe0, 'pitchwheel',      ('channel', 'value',),    3),
+    MsgSpec(0x80, 'note_off',        ('channel', 'note',    'velocity'), 3),
+    MsgSpec(0x90, 'note_on',         ('channel', 'note',    'velocity'), 3),
+    MsgSpec(0xa0, 'polytouch',       ('channel', 'note',    'value'),    3),
+    MsgSpec(0xb0, 'control_change',  ('channel', 'control', 'value'),    3),
+    MsgSpec(0xc0, 'program_change',  ('channel', 'program',),   3),
+    MsgSpec(0xd0, 'aftertouch',      ('channel', 'value',),    3),
+    MsgSpec(0xe0, 'pitchwheel',      ('channel', 'value',),    3),
 
     #
     # System common messages
@@ -59,36 +104,40 @@ _MSG_SPECS = [
     #
     # Todo: rename song to song_select?
     #
-    # Sysex messages have a potentially infinite size.
+    # Sysex messages have no fixed size. They instead use a stop byte
+    # (0xf7, 'sysex_end') after the data bytes.
     #
-    Spec(0xf0, 'sysex',         ('data',),          float('inf')),
-    Spec(0xf1, 'undefined_f1',  (),                 1),
-    Spec(0xf2, 'songpos',       ('pos',),           3),
-    Spec(0xf3, 'song',          ('song',),          2),
-    Spec(0xf4, 'undefined_f4',  (), 1),
-    Spec(0xf5, 'undefined_f5',  (), 1),
-    Spec(0xf6, 'tune_request',  (), 1),
-    Spec(0xf7, 'sysex_end',     (), 1),
+    MsgSpec(0xf0, 'sysex',         ('data',),          None),
+    MsgSpec(0xf1, 'undefined_f1',  (),                 1),
+    MsgSpec(0xf2, 'songpos',       ('pos',),           3),
+    MsgSpec(0xf3, 'song',          ('song',),          2),
+    MsgSpec(0xf4, 'undefined_f4',  (), 1),
+    MsgSpec(0xf5, 'undefined_f5',  (), 1),
+    MsgSpec(0xf6, 'tune_request',  (), 1),
+    MsgSpec(0xf7, 'sysex_end',     (), 1),
 
     #
-    # System realtime messages These can interleave other messages but
-    # they have no data bytes, so that's OK
+    # System realtime messages. These can appear inside 'sysex'
+    # messages.
     #
-    Spec(0xf8, 'clock',          (), 1),
-    Spec(0xf9, 'undefined_f9',   (), 1),
-    Spec(0xfa, 'start',          (), 1),
+    MsgSpec(0xf8, 'clock',          (), 1),
+    MsgSpec(0xf9, 'undefined_f9',   (), 1),
+    MsgSpec(0xfa, 'start',          (), 1),
     # Note: 'continue' is a keyword in python, so is
     # is bound to protomidi.msg.continue_
-    Spec(0xfb, 'continue',       (), 1),
-    Spec(0xfc, 'stop',           (), 1),
-    Spec(0xfd, 'undefined_fd',   (), 1),
-    Spec(0xfe, 'active_sensing', (), 1),
-    Spec(0xff, 'reset',          (), 1),
+    MsgSpec(0xfb, 'continue',       (), 1),
+    MsgSpec(0xfc, 'stop',           (), 1),
+    MsgSpec(0xfd, 'undefined_fd',   (), 1),
+    MsgSpec(0xfe, 'active_sensing', (), 1),
+    MsgSpec(0xff, 'reset',          (), 1),
 ]
 
-# Dictionary for looking up Channel messages have status byte keys for
-# all channels. This means there are keys for all bytes in range
-# range(128, 256).
+#
+# Dictionary for looking up Channel messages. This has keys
+# for every valid message type name and for every valid status byte.
+#
+# For channel messages, there is one entry for each channel.
+#
 _SPEC_LOOKUP = {}  # Filled in by _init()
 
 def assert_databyte(byte):
@@ -104,57 +153,57 @@ def assert_databyte(byte):
 class Message(object):
     """
     MIDI message class.
-
-    ('note_off', channel=0, note=0, velocity=0, time=0)
-    ('note_on', channel=0, note=0, velocity=0, time=0)
-    ('polytouch', channel=0, note=0, value=0, time=0)
-    ('control_change', channel=0, control=0, value=0, time=0)
-    ('program_change', channel=0, program=0, time=0)
-    ('aftertouch', channel=0, value=0, time=0)
-    ('pitchwheel', channel=0, value=0, time=0)
-    ('sysex', data=(), time=0)
-    ('undefined_f1', time=0)
-    ('songpos', pos=0, time=0)
-    ('song', song=0, time=0)
-    ('undefined_f4', time=0)
-    ('undefined_f5', time=0)
-    ('tune_request', time=0)
-    ('sysex_end', time=0)
-    ('clock', time=0)
-    ('undefined_f9', time=0)
-    ('start', time=0)
-    ('continue', time=0)
-    ('stop', time=0)
-    ('undefined_fd', time=0)
-    ('active_sensing', time=0)
-    ('reset', time=0)
-
     """
 
     # Attributes common to all messages.
     # These are used in __setattr__().
     _common_attrs = set(('spec', 'type', 'status_byte', 'time'))
 
-    def __init__(self, type_or_status_byte, **kw):
+    def __init__(self, type_, **kw):
         """Create a new message.
 
-        The first argument determines the type and, for channel
-        messages, the channel of the message.
+        The first argument is typically the type of message to create,
+        for example 'note_on'.
 
-        Each message type takes a specific set of keyword arguments.
-        All values default to 0, except for
+        It can also be the status_byte, that is the first byte of the
+        message. For channel messages, the channel (lower 4 bits of
+        the status_byte) is masked out from the lower 4 bits of the
+        status byte. This can be overriden by passing the 'channel'
+        keyword argument.
 
-        Examples:
-        
-        Message('note_on', channel=7, note=3, velocity=0)
+        Valid keyword for each message type:
 
-        
+        Message('note_off', channel=0, note=0, velocity=0, time=0)
+        Message('note_on', channel=0, note=0, velocity=0, time=0)
+        Message('polytouch', channel=0, note=0, value=0, time=0)
+        Message('control_change', channel=0, control=0, value=0, time=0)
+        Message('program_change', channel=0, program=0, time=0)
+        Message('aftertouch', channel=0, value=0, time=0)
+        Message('pitchwheel', channel=0, value=0, time=0)
+        Message('sysex', data=Message(), time=0)
+        Message('undefined_f1', time=0)
+        Message('songpos', pos=0, time=0)
+        Message('song', song=0, time=0)
+        Message('undefined_f4', time=0)
+        Message('undefined_f5', time=0)
+        Message('tune_request', time=0)
+        Message('sysex_end', time=0)
+        Message('clock', time=0)
+        Message('undefined_f9', time=0)
+        Message('start', time=0)
+        Message('continue', time=0)
+        Message('stop', time=0)
+        Message('undefined_fd', time=0)
+        Message('active_sensing', time=0)
+        Message('reset', time=0)
         """
+        
+
         try:
-            spec = _SPEC_LOOKUP[type_or_status_byte]
+            spec = _SPEC_LOOKUP[type_]
         except KeyError:
             fmt = '{!r} is an invalid type name or status byte'
-            raise ValueError(fmt.format(type_or_status_byte))
+            raise ValueError(fmt.format(type_))
 
         # Specify valid attributes for __setattr__().
         # (self._msg_attrs = set() wouldn't work here
@@ -175,8 +224,8 @@ class Message(object):
                 # This is a channel message, so if the first
                 # arguent to this function was a status_byte,
                 # the lower 4 bits will contain the channel.
-                if isinstance(type_or_status_byte, int):
-                    self.channel = type_or_status_byte & 0x0f
+                if isinstance(type_, int):
+                    self.channel = type_ & 0x0f
                 else:
                     self.channel = 0
             else:
@@ -343,37 +392,6 @@ class Message(object):
 
         return key(self) == key(other)
 
-
-def _build_signature(spec, include_type=True):
-    """Return a constructor signature for this message type
-
-    This is used to build documentation.
-    """
-    if include_type:
-        parts = [repr(spec.type)]
-    else:
-        parts = []
-
-    for name in spec.args + ('time',):
-        if name == 'data':
-            parts.append('data=()')
-        else:
-            parts.append(name + '=0')
-
-    sig = '({})'.format(', '.join(parts))
-
-    return sig
-
-
-def _print_signatures():
-    """Print valid arguments for mido.new() for all supported message types.
-
-    This will be used to generate documentation.
-
-    """
-    for spec in _MSG_SPECS:
-        sig = _build_signature(spec)
-        print('mido.new {}'.format(sig))
 
 def _init():
     """Initialize the module.
