@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# ProtoMIDI documentation build configuration file, created by
-# sphinx-quickstart on Thu Aug 25 23:38:39 2011.
+# Mido documentation build configuration file, created by
+# sphinx-quickstart on Wed Jun 26 16:58:08 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -25,7 +25,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.ifconfig']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'ProtoMIDI'
-copyright = u'2011, Ole Martin Bjørndalen (http://nerdly.info/ole/)'
+project = u'Mido'
+copyright = u'2013, Ole Martin Bjørndalen'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -164,22 +164,27 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'ProtoMIDIdoc'
+htmlhelp_basename = 'Midodoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
 
-# The paper size ('letter' or 'a4').
-#latex_paper_size = 'letter'
+latex_elements = {
+# The paper size ('letterpaper' or 'a4paper').
+#'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
+#'pointsize': '10pt',
+
+# Additional stuff for the LaTeX preamble.
+#'preamble': '',
+}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'ProtoMIDI.tex', u'ProtoMIDI Documentation',
-   u'Ole Martin Bjørndalen (http://nerdly.info/ole/)', 'manual'),
+  ('index', 'Mido.tex', u'Mido Documentation',
+   u'Ole Martin Bjørndalen', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -196,9 +201,6 @@ latex_documents = [
 # If true, show URL addresses after external links.
 #latex_show_urls = False
 
-# Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
-
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
 
@@ -211,6 +213,30 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'protomidi', u'ProtoMIDI Documentation',
-     [u'Ole Martin Bjørndalen (http://nerdly.info/ole/)'], 1)
+    ('index', 'mido', u'Mido Documentation',
+     [u'Ole Martin Bjørndalen'], 1)
 ]
+
+# If true, show URL addresses after external links.
+#man_show_urls = False
+
+
+# -- Options for Texinfo output ------------------------------------------------
+
+# Grouping the document tree into Texinfo files. List of tuples
+# (source start file, target name, title, author,
+#  dir menu entry, description, category)
+texinfo_documents = [
+  ('index', 'Mido', u'Mido Documentation',
+   u'Ole Martin Bjørndalen', 'Mido', 'One line description of project.',
+   'Miscellaneous'),
+]
+
+# Documents to append as an appendix to all manuals.
+#texinfo_appendices = []
+
+# If false, no module index is generated.
+#texinfo_domain_indices = True
+
+# How to display URL addresses: 'footnote', 'no', or 'inline'.
+#texinfo_show_urls = 'footnote'
