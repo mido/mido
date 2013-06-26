@@ -1,7 +1,8 @@
 """
- Initialize portmidi library
+Low-level wrapper for PortMIDI library
 
- This part is copied straight from Grant Yoshida's portmidizero.
+Copied straight from Grant Yoshida's portmidizero, with small
+modifications.
 """
 
 import sys

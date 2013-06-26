@@ -90,7 +90,9 @@ class TestParser(unittest.TestCase):
         """
         Encode a message and parse it. Should return the same message.
         """
-        p = mido.Parser()
+        import mido.parser
+
+        p = mido.parser.Parser()
 
         p.put_byte(0)
         p.put_byte(255)

@@ -1,74 +1,64 @@
 """
-MIDI parser
+MIDI Parser
 
-    The API will change to make it more streamlined.
-    This class should be considered internal to Mido for now.
+The API may change to make it more streamlined. This class should be
+considered internal to Mido for now.
 
-    Basic usage:
+    Parser()
+        put_byte(byte)
+        feed(data)
+        get_msg() -> Message or None
+        reset()
+        messages
 
-        p = Parser()
+    parse(data) -> Message or None
+    parseall(data) -> [Message, ...]
 
-        # Note on
-        p.put_byte(0x90)
-        p.put_byte(60)
-        p.put_byte(127)
-
-        msg = p.get_msg()  # Returns the next message or None
-
-    Convenience methods:
-
-        p = Parser()
-        p.feed(b'\x90\x23\x7f')      # note_on
-        p.feed([0x80, 0x23, 0x7f])  # note_off
-
-        print(parse([0x80, 0x23, 0x7f]))
-
-    or just:
-
-        for msg in parseall('\x90\x23\x7f\x90\x23\x00'):
-            print(msg)
-
-    p.messages   # A list of messages that have been parsed
-    p.reset()    # Reset the parser
-
-Todo:
-   - refine API
-   - add method that returns the number of pending messages?
+byte is an integer in range 0 - 255.
+data is any sequence of bytes, or an object that generates them.
 """
 
+import sys
 from .msg import Message
+
+py2 = (sys.version_info.major == 2)
 
 
 class Parser(object):
-    """
-    MIDI Parser.
+    """MIDI Parser
+
+    Parses a stream of bytes and produces messages.
+
+    Data can be put into the parser in the form of
+    integers, bytearrays or byte strings.
     """
 
     def __init__(self):
+        """Create a new parser."""
         self.messages = []
         self.reset()
         self._msg = None  # Current message
         self._data = None  # Sysex data
 
     def reset(self):
-        """
-        Reset the parser.
-        """
+        """Reset the parser.
+
+        This will remove all parsed messages."""
         self._msg = None
         self._data = None
 
     def num_pending(self):
-        """
-        Return the number of messages ready to be received.
-        """
+        """Return the number of messages ready to be received."""
         return len(self.messages)
 
     def put_byte(self, byte):
-        """
-        Put one byte into the parser. 'byte' must be an integer
-        in range(0, 256).
-        """
+        """Put one byte into the parser.
 
+        The byte must be an integer in range 0 - 255.
+
+        (This function does all the work of parsing the
+        byte stream.)
+        """
         try:
             int(byte)
         except TypeError:
@@ -127,8 +117,9 @@ class Parser(object):
         return len(self.messages)
 
     def _add_data(self, msg, data):
-        """
-        Add data bytes that we have collected to the message.
+        """Add data bytes that we have collected to the message.
+
+        For internal use.
         """
 
         # Shortcuts
@@ -160,8 +151,7 @@ class Parser(object):
                 setattr(msg, name, value)
 
     def get_msg(self):
-        """
-        Get the first pending message.
+        """Get the first parsed message.
 
         Returns None if there is no message yet.
         """
@@ -171,15 +161,19 @@ class Parser(object):
             return None
 
     def feed(self, data):
-        """
-        Feed MIDI data to the parser.
+        """Feed MIDI data to the parser.
 
-        'data' is a sequence of integers or a byte string
-        of data to parse.
+        Accepts any object that produces a sequence of integers in
+        range 0 - 255, such as:
 
-        Returns the number of pending messages.
+            [0, 1, 2]
+            (0, 1, 2)
+            [for i in range(256)]
+            (for i in range(256)]
+            bytearray()
+            b''  # Will be converted to integers in Python 2.
         """
-        if isinstance(data, bytes) and bytes is str:
+        if py2 and isinstance(data, str):
             # Byte strings in Python 2 need extra attention
             for char in data:
                 self.put_byte(ord(char))

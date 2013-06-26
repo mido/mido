@@ -1,5 +1,5 @@
 """
-Prints message as they arrive on the input port.
+Print messages as they arrive on the input port.
 
 .recv() blocks until there is a message available. .poll() will return
 how many messages you can safely read without blocking, so you can

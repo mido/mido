@@ -91,16 +91,13 @@ _MSG_SPECS = [
 # range(128, 256).
 _SPEC_LOOKUP = {}  # Filled in by _init()
 
-def assert_databyte(value):
-    """
-    Raises ValueError if the data byte is not and
-    integer or out of range.
+def assert_databyte(byte):
+    """Raise ValueError if byte is not not int or out of range/
 
-    Data bytes are 7 bit, so valid values are 0 - 127. (The high bit
-    is set in status bytes to signal a new message.
+    Data bytes are 7 bit, so the valid range is 0 - 127.
     """
 
-    if not (isinstance(value, int) and (0 <= value < 128)):
+    if not (isinstance(byte, int) and (0 <= byte < 128)):
         raise ValueError('data byte must be and int in range(0, 128)')
 
 
@@ -108,32 +105,30 @@ class Message(object):
     """
     MIDI message class.
 
-    New messages are created with mido.new() or mido.Message().
-    Valid arguments are:
+    ('note_off', channel=0, note=0, velocity=0, time=0)
+    ('note_on', channel=0, note=0, velocity=0, time=0)
+    ('polytouch', channel=0, note=0, value=0, time=0)
+    ('control_change', channel=0, control=0, value=0, time=0)
+    ('program_change', channel=0, program=0, time=0)
+    ('aftertouch', channel=0, value=0, time=0)
+    ('pitchwheel', channel=0, value=0, time=0)
+    ('sysex', data=(), time=0)
+    ('undefined_f1', time=0)
+    ('songpos', pos=0, time=0)
+    ('song', song=0, time=0)
+    ('undefined_f4', time=0)
+    ('undefined_f5', time=0)
+    ('tune_request', time=0)
+    ('sysex_end', time=0)
+    ('clock', time=0)
+    ('undefined_f9', time=0)
+    ('start', time=0)
+    ('continue', time=0)
+    ('stop', time=0)
+    ('undefined_fd', time=0)
+    ('active_sensing', time=0)
+    ('reset', time=0)
 
-    mido.new('note_off', channel=0, note=0, velocity=0, time=0)
-    mido.new('note_on', channel=0, note=0, velocity=0, time=0)
-    mido.new('polytouch', channel=0, note=0, value=0, time=0)
-    mido.new('control_change', channel=0, control=0, value=0, time=0)
-    mido.new('program_change', channel=0, program=0, time=0)
-    mido.new('aftertouch', channel=0, value=0, time=0)
-    mido.new('pitchwheel', channel=0, value=0, time=0)
-    mido.new('sysex', data=(), time=0)
-    mido.new('undefined_f1', time=0)
-    mido.new('songpos', pos=0, time=0)
-    mido.new('song', song=0, time=0)
-    mido.new('undefined_f4', time=0)
-    mido.new('undefined_f5', time=0)
-    mido.new('tune_request', time=0)
-    mido.new('sysex_end', time=0)
-    mido.new('clock', time=0)
-    mido.new('undefined_f9', time=0)
-    mido.new('start', time=0)
-    mido.new('continue', time=0)
-    mido.new('stop', time=0)
-    mido.new('undefined_fd', time=0)
-    mido.new('active_sensing', time=0)
-    mido.new('reset', time=0)
     """
 
     # Attributes common to all messages.
@@ -141,7 +136,20 @@ class Message(object):
     _common_attrs = set(('spec', 'type', 'status_byte', 'time'))
 
     def __init__(self, type_or_status_byte, **kw):
+        """Create a new message.
 
+        The first argument determines the type, and for channel
+        messages, the channel of the message.
+
+        Each message type takes a specific set of keyword arguments.
+        All values default to 0, except for
+
+        Examples:
+        
+        Message('note_on', channel=7, note=3, velocity=0)
+
+        
+        """
         try:
             spec = _SPEC_LOOKUP[type_or_status_byte]
         except KeyError:
@@ -185,14 +193,17 @@ class Message(object):
                 raise ValueError(fmt.format(name))
 
     def copy(self, **override):
-        """
-        Return a copy of the message. Attributes can
-        be overriden by passing keyword arguments.
+        """Return a copy of the message.
 
-        msg = Message('note_on', note=20, velocity=64)  # Create a note_on
-        msg2 = msg.copy(velocity=32)  # New note_on with softer velocity
-        """
+        Attributes will be overriden by the passed keyword arguments.
+        Only message specific attributes can be overriden. The message
+        type can not be changed.
 
+        Example:
+
+            a = Message('note_on')
+            b = a.copy(velocity=32)
+        """
         # Get values from this object
         kw = {'time': self.time}
         for name in self.spec.args:
@@ -204,10 +215,7 @@ class Message(object):
         return Message(self.type, **kw)
 
     def __setattr__(self, name, value):
-        """
-        Set an attribute.
-        """
-        
+        """Set an attribute."""
         if name in self._msg_attrs:
             if name == 'time':
                 if not (isinstance(value, int) or isinstance(value, float)):
@@ -249,11 +257,11 @@ class Message(object):
         raise AttributeError('Message attributes can\'t be deleted')
 
     def _get_status_byte(self):
-        """
-        Compute and return status byte.  For channel messages, the
-        channel will be added to the status_byte.
-        """
+        """Compute and return status byte.
 
+        For channel messages, the returned status byte
+        will contain the channel in its lower 4 bits.
+        """
         # Add channel to status byte.
         sb = self.spec.status_byte
         if sb <= 0xf0:
@@ -264,10 +272,7 @@ class Message(object):
     del _get_status_byte
 
     def bytes(self):
-        """
-        Encode message and return as a list of bytes.
-        """
-
+        """Encode message and return as a list of bytes (integers)."""
         b = [self.status_byte]
 
         for name in self.spec.args:
@@ -303,20 +308,15 @@ class Message(object):
         return b
 
     def bin(self):
-        """
-        Encode message and return as a bytearray().
-        """
-
+        """Encode message and return as a bytearray."""
         # Todo: bytearray() or bytes()
         return bytearray(self.bytes())
 
     def hex(self, sep=' '):
-        """
-        Encode message and return as a string of hex numbers,
-        separated by the string sep. The default separator is
-        a single space.
-        """
+        """Encode message and return as a string of hex numbers,
 
+        Each number is separated by the string sep.
+        """
         return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
 
     def __repr__(self):
@@ -329,34 +329,26 @@ class Message(object):
         return 'mido.Message({})'.format(args)
 
     def __eq__(self, other):
+        """Compare message to another for equality.
+        
+        Key for comparison: (msg.type, msg.channel, msg.note, msg.velocity).
         """
-        Compares message type and message specific attributes. (For
-        example (msg.type, msg.channel, msg.note, msg.velocity). The
-        time, spec and status_byte attributes are not compared.
-        """
-
         if not isinstance(other, Message):
             raise TypeError('comparison between Message and another type')
 
         def key(msg):
-            """
-            Return a key for comparison. The key for 'note_on'
-            is (msg.type, msg.channel, msg.note, msg.velocity).
-            """
-
+            """Return a key for comparison."""
             k = tuple([msg.type] + [getattr(msg, a) for a in msg.spec.args])
             return k
 
         return key(self) == key(other)
 
 
-def build_signature(spec, include_type=True):
-    """
-    Builds a contructor signature for a message.
+def _build_signature(spec, include_type=True):
+    """Return a constructor signature for this message type
 
-    This is used to create documentation.
+    This is used to build documentation.
     """
-
     if include_type:
         parts = [repr(spec.type)]
     else:
@@ -374,25 +366,23 @@ def build_signature(spec, include_type=True):
 
 
 def _print_signatures():
-    """
-    Print arguments for mido.new() for all supported message types.
+    """Print valid arguments for mido.new() for all supported message types.
 
     This will be used to generate documentation.
-    """
 
+    """
     for spec in _MSG_SPECS:
-        sig = build_signature(spec)
+        sig = _build_signature(spec)
         print('mido.new {}'.format(sig))
 
 def _init():
-    """
-    Initialize the module.
+    """Initialize the module.
 
     This build a lookup table for message specs
     with keys for every valid message type and
     status byte.
-    """
 
+    """
     for spec in _MSG_SPECS:
         if spec.status_byte < 0xf0:
             # Channel message.

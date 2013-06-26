@@ -1,5 +1,5 @@
 """
-Sends random notes to the output port.
+Send random notes to the output port.
 """
 
 import sys

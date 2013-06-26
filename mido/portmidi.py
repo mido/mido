@@ -1,5 +1,21 @@
 """
 PortMidi I/O.
+
+Ports:
+
+    Input(name=None)
+        poll()        return how many messages are pending
+        recv()        return a message, or block until there is one.
+        close()       close the port
+
+    Output(name=None)
+        send(msg)     send a message
+        close()       close the port
+
+Get port names:
+
+    get_input_names()   return a list of input names
+    get_output_names()  return a list of output names
 """
 
 from __future__ import print_function
@@ -8,92 +24,26 @@ import time
 from .parser import Parser
 from . import portmidi_wrapper as pm
 
-debug = False
+
+#
+# Various internal stuff
+#
+
+_flags = {
+    'initialized' : False,
+    'debug' : False,
+}
 
 
-def dbg(*args):
-    """
-    Print a debugging message.
-    """
-    if debug:
+def _dbg(*args):
+    """Print a debugging message."""
+    if _flags['debug']:
         print('DBG:', *args)
-
-_initialized = False
-
-
-def _initialize():
-    """
-    Initialize PortMidi. If PortMidi is already initialized,
-    it will do nothing.
-    """
-
-    global _initialized
-
-    dbg('initialize()')
-
-    if _initialized:
-        dbg('  (already initialized)')
-    else:
-        pm.lib.Pm_Initialize()
-
-        _initialized = True
-        # Todo: This screws up __del__() for ports
-        # atexit.register(_terminate)
-
-
-def _terminate():
-    """
-    Terminate PortMidi. This will be called by an atexit() handler.
-    If you call it after it has already terminated, it will do nothing.
-    """
-
-    global _initialized
-
-    dbg('terminate()')
-    if _initialized:
-        pm.lib.Pm_Terminate()
-        _initialized = False
-    else:
-        dbg('  (already terminated)')
-
-
-def _get_device(devid):
-    """
-    Return a device based on ID. Raises IOError
-    if the device is not found.
-    """
-    info_ptr = pm.lib.Pm_GetDeviceInfo(devid)
-    if not info_ptr:
-        raise IOError('PortMIDI device with id={} not found'.format(devid))
-
-    return info_ptr.contents
-
-
-def get_input_names():
-    """
-    Return a list of all input port names.
-    These can be passed to Input().
-    """
-
-    names = [dev.name for dev in
-             _get_devices().values() if dev.input]
-    return list(sorted(names))
-
-
-def get_output_names():
-    """
-    Return a list of all input port names.
-    These can be passed to Output().
-    """
-
-    names = [dev.name for dev in
-             _get_devices().values() if dev.output]
-    return list(sorted(names))
 
 
 def _check_err(err):
     """
-    Raise IOError if err < 0.
+    Raise IOError with error message if err < 0.
     """
     if err < 0:
         raise IOError(pm.lib.Pm_GetErrorText(err))
@@ -113,9 +63,89 @@ def _print_event(event):
     print(' '.join('{:02x}'.format(b) for b in dbg_bytes))
 
 
+def _initialize():
+    """
+    Initialize PortMidi.
+
+    This is called by constructors and functions in this module as
+    needed.
+
+    If PortMidi is already initialized, it will do nothing.
+    """
+
+    _dbg('initialize()')
+
+    if _flags['_initialized']:
+        _dbg('  (already initialized)')
+    else:
+        pm.lib.Pm_Initialize()
+
+        _initialized = True
+
+        # Todo: This screws up __del__() for ports,
+        # so it's left out for now:
+        # atexit.register(_terminate)
+
+
+def _terminate():
+    """Terminate PortMidi.
+
+    Note: This function is never called.
+
+    It was meant to be used as an atexit handler, but it ended up
+    being called before the port object constructors, resulting in a
+    PortMIDI reporting "invalid stream ID", so it's just never called
+    until a solution is found.
+    """
+    _dbg('terminate()')
+    if _flags['initialized']:
+        pm.lib.Pm_Terminate()
+        _flags['initialized'] = False
+    else:
+        _dbg('  (already terminated)')
+
+
+def _get_device(devid):
+    """Return a PortMIDI device based on ID.
+
+    The return value is a PmDeviceInfo struct.
+
+    Raises IOError if the device is not found.
+    """
+    info_ptr = pm.lib.Pm_GetDeviceInfo(devid)
+    if not info_ptr:
+        raise IOError('PortMIDI device with id={} not found'.format(devid))
+
+    return info_ptr.contents
+
+
+#
+# Public functions and classes
+#
+
+def get_input_names():
+    """Return a list of all input port names.
+
+    These can be passed to Input().
+    """
+    names = [dev.name for dev in
+             _get_devices().values() if dev.input]
+    return list(sorted(names))
+
+
+def get_output_names():
+    """Return a list of all input port names.
+
+    These can be passed to Output().
+    """
+    names = [dev.name for dev in
+             _get_devices().values() if dev.output]
+    return list(sorted(names))
+
+
 class Port(object):
     """
-    Abstract base class for Input and Output ports
+    Abstract base class for PortMIDI Input and Output ports.
     """
 
     def __init__(self, name=None):
@@ -134,7 +164,7 @@ class Port(object):
                 devid = pm.lib.Pm_GetDefaultOutputDeviceID()
 
             if devid < 0:
-                raise IOError('No default input found')
+                raise IOError('no default input found')
 
             self.name = _get_device(devid).name
         else:
@@ -172,7 +202,7 @@ class Port(object):
                     fmt = 'unknown output port: {!r}'
                 raise IOError(fmt.format(self.name))
 
-        dbg('opening input')
+        _dbg('opening input')
 
         if isinput:
             err = pm.lib.Pm_OpenInput(
@@ -197,12 +227,14 @@ class Port(object):
         self.closed = False
 
     def close(self):
-        """
-        Close the port. If the port is already closed, nothing will
-        happen.
+        """Close the port.
+
+        If the port is already closed, nothing will happen.
+        The port is automatically closed when the object goes
+        out of scope or is garbage collected.
         """
 
-        dbg('closing port')
+        _dbg('closing port')
 
         if not self.closed:
             # Todo: Abort is not implemented for ALSA,
@@ -226,29 +258,27 @@ class Port(object):
 
 class Input(Port):
     """
-    PortMidi Input
+    PortMIDI Input port
     """
 
     def __init__(self, name=None):
-        """
-        Create an input port.
+        """Create an input port.
 
-        The argument 'name' is the name of the device to use. If not
-        passed, the default device is used instead (which may not
-        exists on all systems).
+        The argument is the port name, as returned by
+        get_input_names(). If name is not passed, the default input is
+        used instead.
         """
-
         Port.__init__(self, name)
         self._parser = Parser()
 
     def poll(self):
-        """
-        Read and parse whatever events have arrived since the last
-        time we were called.
+        """Return how many messages are ready to be received.
 
-        Returns the number of messages ready to be received.
-        """
+        This can be used for non-blocking .recv(), for example:
 
+             while p.poll():
+                 msg = p.recv()
+        """
         if self.closed:
             return
 
@@ -293,12 +323,14 @@ class Input(Port):
         return len(self._parser.messages)
 
     def recv(self):
-        """
-        Return the next pending message. Blocks until a message
-        is available.
+        """Return the next pending message.
 
-        Use .poll() to see how many messages you can safely read
-        without blocking.
+        Will block until a message arrives. For non-blocking
+        behaviour, you can use .poll() to see how many messages
+        can safely be received without blocking:
+
+            while poll():
+                msg = msg.recv()
 
         NOTE: Blocking is currently implemented with polling and
         time.sleep(). This is inefficient, but the proper way doesn't
@@ -337,14 +369,11 @@ class Input(Port):
 
 class Output(Port):
     """
-    PortMidi Output
+    PortMIDI output port
     """
 
     def send(self, msg):
-        """
-        Send a message on the output port.
-        """
-
+        """Send a message."""
         if self.closed:
             raise ValueError('send() called on closed port')
 
