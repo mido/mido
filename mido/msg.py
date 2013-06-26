@@ -138,7 +138,7 @@ class Message(object):
     def __init__(self, type_or_status_byte, **kw):
         """Create a new message.
 
-        The first argument determines the type, and for channel
+        The first argument determines the type and, for channel
         messages, the channel of the message.
 
         Each message type takes a specific set of keyword arguments.
