@@ -33,7 +33,7 @@ MIN_SONGPOS = 0
 MAX_SONGPOS = 16383
 
 
-class MsgSpec:
+class MsgSpec(object):
     """
     Specifications for creating a message.
     
@@ -79,33 +79,7 @@ class MsgSpec:
 
 
 _MSG_SPECS = [
-    #
-    # MIDI message specifications
-    #
-    # This is the authoritative definition of message types.
-    #
-
-    #
-    # Each attribute name has a specific type and valid range.
-    # Todo: This should be included in the documentation.
-    #
-    # 'channel'   0 - 15
-    # 'control'   0 - 127
-    # 'note'      0 - 127
-    # 'program'   0 - 127
-    # 'value'     0 - 127
-    # 'velocity'  0 - 127
-    # 'pitch'     MIN_PITCHWHEEL - MAX_PITCHWHEEL
-    # 'pos'       MIN_SONGPOS - MAX_SONGPOS
-    # 'data'      tuple of integers in range 0 - 127
-    # 'time'      any number
-    #
-
-    #
     # Channel messages
-    #
-    # pitchwheel value is a signed integer in the range -8192 - 8191
-    #
     MsgSpec(0x80, 'note_off',        ('channel', 'note',    'velocity'), 3),
     MsgSpec(0x90, 'note_on',         ('channel', 'note',    'velocity'), 3),
     MsgSpec(0xa0, 'polytouch',       ('channel', 'note',    'value'),    3),
@@ -114,17 +88,7 @@ _MSG_SPECS = [
     MsgSpec(0xd0, 'aftertouch',      ('channel', 'value',),    3),
     MsgSpec(0xe0, 'pitchwheel',      ('channel', 'pitch',),    3),
 
-    #
     # System common messages
-    #
-    # songpos.pos is 14 bit unsigned int,
-    # seralized as lsb msb
-    #
-    # Todo: rename song to song_select?
-    #
-    # Sysex messages have no fixed size. They instead use a stop byte
-    # (0xf7, 'sysex_end') after the data bytes.
-    #
     MsgSpec(0xf0, 'sysex',         ('data',),          None),
     MsgSpec(0xf1, 'undefined_f1',  (),                 1),
     MsgSpec(0xf2, 'songpos',       ('pos',),           3),
@@ -134,15 +98,10 @@ _MSG_SPECS = [
     MsgSpec(0xf6, 'tune_request',  (), 1),
     MsgSpec(0xf7, 'sysex_end',     (), 1),
 
-    #
-    # System realtime messages. These can appear inside 'sysex'
-    # messages.
-    #
+    # System realtime messages
     MsgSpec(0xf8, 'clock',          (), 1),
     MsgSpec(0xf9, 'undefined_f9',   (), 1),
     MsgSpec(0xfa, 'start',          (), 1),
-    # Note: 'continue' is a keyword in python, so is
-    # is bound to protomidi.msg.continue_
     MsgSpec(0xfb, 'continue',       (), 1),
     MsgSpec(0xfc, 'stop',           (), 1),
     MsgSpec(0xfd, 'undefined_fd',   (), 1),
@@ -424,7 +383,6 @@ def _init():
     This build a lookup table for message specs
     with keys for every valid message type and
     status byte.
-
     """
     for spec in _MSG_SPECS:
         if spec.status_byte < 0xf0:
