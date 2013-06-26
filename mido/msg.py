@@ -164,7 +164,7 @@ def assert_databyte(byte):
     Data bytes are 7 bit, so the valid range is 0 - 127.
     """
 
-    if not (isinstance(byte, int) and (0 <= byte < 128)):
+    if not (isinstance(byte, int) and (0 <= byte <= 127)):
         raise ValueError('data byte must be and int in range 0 - 127.')
 
 
@@ -292,7 +292,7 @@ class Message(object):
             elif name == 'channel':
                 if not isinstance(value, int):
                     raise TypeError('channel must be an integer')
-                elif not 0 <= value < 16:
+                elif not 0 <= value <= 15:
                     raise ValueError('channel must be in range 0 - 15')
 
             elif name == 'pos':
