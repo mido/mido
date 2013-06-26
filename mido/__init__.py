@@ -3,6 +3,26 @@
 """
 Mido - object oriented MIDI for Python
 
+Getting started:
+
+    >>> import mido
+    >>> msg = mido.new('note_on', channel=7, note=60, velocity=72)
+    >>> msg.type
+    'note_on'
+    >>> msg.note = 4
+    >>> msg.velocity += 3
+    >>> msg
+    mido.Message('note_on', channel=7, note=4, velocity=75, time=0)
+    >>> msg.copy(note=22, time=1.23)
+    mido.Message('note_on', channel=7, note=22, velocity=75, time=1.23)
+
+    >>> sysex = mido.new('sysex')
+    >>> sysex.data = range(3)
+    >>> sysex.hex()
+    'F0 00 01 02 F7'
+
+Se mido.portmidi for more about input and output ports.
+
 Module content:
 
     Message(type, **kw) -> Message
