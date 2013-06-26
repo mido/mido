@@ -136,7 +136,7 @@ class Message(object):
     # These are used in __setattr__().
     _common_attrs = set(('spec', 'type', 'status_byte', 'time'))
 
-    def __init__(self, type_, **kw):
+    def __init__(self, type_, **kwargs):
         """Create a new message.
 
         The first argument is typically the type of message to create,
@@ -147,35 +147,7 @@ class Message(object):
         the status_byte) is masked out from the lower 4 bits of the
         status byte. This can be overriden by passing the 'channel'
         keyword argument.
-
-        Valid keyword for each message type:
-
-        Message('note_off', channel=0, note=0, velocity=0, time=0)
-        Message('note_on', channel=0, note=0, velocity=0, time=0)
-        Message('polytouch', channel=0, note=0, value=0, time=0)
-        Message('control_change', channel=0, control=0, value=0, time=0)
-        Message('program_change', channel=0, program=0, time=0)
-        Message('aftertouch', channel=0, value=0, time=0)
-        Message('pitchwheel', channel=0, pitch=0, time=0)
-        Message('sysex', data=Message(), time=0)
-        Message('undefined_f1', time=0)
-        Message('songpos', pos=0, time=0)
-        Message('song', song=0, time=0)
-        Message('undefined_f4', time=0)
-        Message('undefined_f5', time=0)
-        Message('tune_request', time=0)
-        Message('sysex_end', time=0)
-        Message('clock', time=0)
-        Message('undefined_f9', time=0)
-        Message('start', time=0)
-        Message('continue', time=0)
-        Message('stop', time=0)
-        Message('undefined_fd', time=0)
-        Message('active_sensing', time=0)
-        Message('reset', time=0)
         """
-        
-
         try:
             spec = _SPEC_LOOKUP[type_]
         except KeyError:
@@ -211,7 +183,7 @@ class Message(object):
         #
         # Override attibutes with keyword arguments
         #
-        for name, value in kw.items():
+        for name, value in kwargs.items():
             try:
                 setattr(self, name, value)
             except AttributeError:
@@ -231,14 +203,14 @@ class Message(object):
             b = a.copy(velocity=32)
         """
         # Get values from this object
-        kw = {'time': self.time}
+        kwargs = {'time': self.time}
         for name in self.spec.args:
-            kw[name] = getattr(self, name)
+            kwargs[name] = getattr(self, name)
 
         # Override
-        kw.update(override)
+        kwargs.update(override)
 
-        return Message(self.type, **kw)
+        return Message(self.type, **kwargs)
 
     def __setattr__(self, name, value):
         """Set an attribute."""
@@ -306,39 +278,36 @@ class Message(object):
 
     def bytes(self):
         """Encode message and return as a list of bytes (integers)."""
-        b = [self.status_byte]
+        msg_bytes = [self.status_byte]
 
         for name in self.spec.args:
             if name == 'channel':
                 continue  # We already have this
 
             elif name == 'data':
-                b.extend(self.data)
+                msg_bytes.extend(self.data)
 
             elif name == 'pitch':
                 # Make pitch a positive number
                 # by subtracting the minimum value.
-                v = self.pitch - MIN_PITCHWHEEL
-                b.append(v & 0x7f)  # LSB
-                b.append(v >> 7)    # MSB
+                value = self.pitch - MIN_PITCHWHEEL
+                msg_bytes.append(value & 0x7f)  # LSB
+                msg_bytes.append(value >> 7)    # MSB
 
             elif name == 'pos':
                 # Convert 14 bit value to two 7-bit values
                 # Todo: check if this is correct
-                lsb = self.pos & 0x7f
-                b.append(lsb)
-
-                msb = self.pos >> 7
-                b.append(msb)
+                msg_bytes.append(self.pos & 0x7f)  # Lower 7 bit
+                msg_bytes.append(self.pos >> 7)  # Upper 7 bit
             else:
                 # Ordinary data byte
-                b.append(getattr(self, name))
+                msg_bytes.append(getattr(self, name))
 
         if self.type == 'sysex':
             # Append a sysex_end
-            b.append(0xf7)
+            msg_bytes.append(0xf7)
 
-        return b
+        return msg_bytes
 
     def bin(self):
         """Encode message and return as a bytearray."""
