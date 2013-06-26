@@ -25,12 +25,12 @@ from collections import namedtuple
 
 
 # Pitchwheel is a 14 bit signed integer
-MIN_PITCHWHEEL = -8192 ()
+MIN_PITCHWHEEL = -8192
 MAX_PITCHWHEEL = 8191
 
 # Song pos is a 14 bit unsigned integer
 MIN_SONGPOS = 0
-MAX_SONGPOS = 16383  # (2 ** 14) - 1
+MAX_SONGPOS = 16383
 
 
 class MsgSpec:
@@ -83,6 +83,22 @@ _MSG_SPECS = [
     # MIDI message specifications
     #
     # This is the authorative definition of message types.
+    #
+
+    #
+    # Each attribute name has a specific type and valid range.
+    # Todo: This should be included in the documentation.
+    #
+    # 'channel'   0 - 15
+    # 'control'   0 - 127
+    # 'note'      0 - 127
+    # 'program'   0 - 127
+    # 'value'     0 - 127
+    # 'velocity'  0 - 127
+    # 'pitch'     MIN_PITCHWHEEL - MAX_PITCHWHEEL
+    # 'pos'       MIN_SONGPOS - MAX_SONGPOS
+    # 'data'      tuple of integers in range 0 - 127
+    # 'time'      any number
     #
 
     #
@@ -281,17 +297,18 @@ class Message(object):
 
             elif name == 'pos':
                 if not isinstance(value, int):
-                    raise TypeError('song pos must be and integer'):
+                    raise TypeError('song pos must be and integer')
                 elif not MIN_SONGPOS <= value <= MAX_SONGPOS:
-                    raise ValueError('song pos must be in range 0 - 32768')
+                    s = 'song pos must be in range {} - {}'
+                    raise ValueError(s.format(MIN_SONGPOS, MAX_SONGPOS))
 
             elif name == 'pitch':
                 if not isinstance(value, int):
                     raise TypeError('pichwheel value must be an integer')
                 elif not MIN_PITCHWHEEL <= value <= MAX_PITCHWHEEL:
-                    fmt = 'pitchwheel value must be in range {} - {}'
-                    raise ValueError(fmt.format(MIN_PITCHWHEEL,
-                                                MAX_PITCHWHEEL))
+                    s = 'pitchwheel value must be in range {} - {}'
+                    raise ValueError(s.format(MIN_PITCHWHEEL,
+                                              MAX_PITCHWHEEL))
 
             elif name == 'data':
                 value = tuple(value)  # Make the data bytes immutable
@@ -339,14 +356,14 @@ class Message(object):
             elif name == 'data':
                 b.extend(self.data)
 
-            elif self.type == 'pitchwheel' and name == 'value':
-                value = self.value + (2 ** 13)
-                lsb = value & 0x7f
-                msb = value >> 7
-                b.append(lsb)
-                b.append(msb)
+            elif name == 'pitch':
+                # Make pitch a positive number
+                # by subtracting the minimum value.
+                v = self.pitch - MIN_PITCHWHEEL
+                b.append(v & 0x7f)  # LSB
+                b.append(v >> 7)    # MSB
 
-            elif self.type == 'songpos' and name == 'pos':
+            elif name == 'pos':
                 # Convert 14 bit value to two 7-bit values
                 # Todo: check if this is correct
                 lsb = self.pos & 0x7f

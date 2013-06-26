@@ -13,17 +13,17 @@ class TestMessages(unittest.TestCase):
 
     def test_pitchwheel(self):
         """Check if pitchwheel type check and encoding is working."""
-        msg = mido.new('pitchwheel', value=mido.msg.PITCHWHEEL_MIN)
+        msg = mido.new('pitchwheel', pitch=mido.msg.MIN_PITCHWHEEL)
         bytes = msg.bytes()
         self.assertTrue(bytes[1] == bytes[2] == 0)
 
-        msg = mido.new('pitchwheel', value=mido.msg.PITCHWHEEL_MAX)
+        msg = mido.new('pitchwheel', pitch=mido.msg.MAX_PITCHWHEEL)
         bytes = msg.bytes()
         self.assertTrue(bytes[1] == bytes[2] == 127)
 
     def test_pitchwheel_encode_parse(self):
         """Encode and parse pitchwheel with value=0."""
-        msg1 = mido.new('pitchwheel', value=0)
+        msg1 = mido.new('pitchwheel', pitch=0)
         msg2 = mido.parse(msg1.bytes())
         
         self.assertEqual(msg1, msg2)

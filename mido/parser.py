@@ -35,7 +35,7 @@ Possibly useful functionality:
 
 import sys
 from collections import deque
-from .msg import Message
+from .msg import Message, MIN_PITCHWHEEL
 
 py2 = (sys.version_info.major == 2)
 
@@ -141,9 +141,11 @@ class Parser(object):
             msg.data = data
 
         elif msg.type == 'pitchwheel':
-            value = data[0] | (data[1] << 7)
-            value -= (2 ** 13)  # Make this a signed value
-            msg.value = value
+            # Pitch is a 14 bit signed integer.
+            v = data[0] | (data[1] << 7)
+            # Make value value signed by
+            # adding the minimum value.
+            msg.pitch = v + MIN_PITCHWHEEL
 
         elif msg.type == 'songpos':
             value = data[0] | data[1] << 7
