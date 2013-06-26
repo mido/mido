@@ -323,7 +323,7 @@ class Message(object):
         args = [repr(self.type)]
         for name in self.spec.args:
             args.append('{}={!r}'.format(name, getattr(self, name)))
-        args.append('time')
+        args.append('time={!r}'.format(self.time))
         args = ', '.join(args)
 
         return 'mido.Message({})'.format(args)
