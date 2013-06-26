@@ -14,6 +14,10 @@ Module content:
 type is type name or status byte.
 byte is an integer in range 0 - 255.
 data is any sequence of bytes, or an object that generates them.
+
+For more on MIDI, se:
+
+    http://midi.org/
 """
 
 __author__ = 'Ole Martin Bjørndalen'
