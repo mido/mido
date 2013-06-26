@@ -82,7 +82,7 @@ _MSG_SPECS = [
     #
     # MIDI message specifications
     #
-    # This is the authorative definition of message types.
+    # This is the authoritative definition of message types.
     #
 
     #
