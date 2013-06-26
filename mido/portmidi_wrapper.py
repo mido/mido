@@ -1,7 +1,7 @@
 """
 Low-level wrapper for PortMIDI library
 
-Copied straight from Grant Yoshida's portmidizero, with small
+Copied straight from Grant Yoshida's portmidizero, with slight
 modifications.
 """
 
@@ -64,7 +64,7 @@ pmNoDevice = -1
 
 class PmDeviceInfo(Structure):
     _fields_ = [("structVersion", c_int),
-                ("interf", c_char_p),
+                ("interface", c_char_p),
                 ("name", c_char_p),
                 ("is_input", c_int),
                 ("is_output", c_int),

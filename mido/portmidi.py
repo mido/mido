@@ -84,23 +84,32 @@ def _terminate():
         _initialized
 
 
-def _get_device(device_id):
-    """Return a PortMidi device based on ID.
-
-    The return value is a PmDeviceInfo struct.
-
-    Raises IOError if the device is not found.
+class DeviceInfo(object):
     """
-    info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
-    if not info_pointer:
-        raise IOError('PortMidi device with id={} not found'.format(device_id))
+    Wrapper around PortMidi's device_info struct.
 
-    return info_pointer.contents
+    For internal use in mido.portmidi.
+    """
 
+    def __init__(self, device_id):
+        """Create a new DeviceInfo object."""
+
+        info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
+        if not info_pointer:
+            raise IOError('PortMidi device with id={} not found'.format(
+                    device_id))
+        info = info_pointer.contents
+        
+        self.interface = info.interface.decode('utf-8')
+        self.name = info.name.decode('utf-8')
+        self.is_input = info.is_input
+        self.is_output = info.is_output
+        self.opened = info.opened
+        
 
 def _get_devices():
     for device_id in range(pm.lib.Pm_CountDevices()):
-        yield _get_device(device_id)
+        yield DeviceInfo(device_id)
 
 #
 # Public functions and classes
