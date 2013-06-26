@@ -81,12 +81,12 @@ class Parser(object):
         try:
             int(byte)
         except TypeError:
-            fmt = 'argument must be an integer (was {!r})'
-            raise TypeError(fmt.format(byte))
+            text = 'argument must be an integer (was {!r})'
+            raise TypeError(text.format(byte))
 
         if not 0 <= byte < 256:
-            fmt = 'byte out of range: {!r}'
-            raise ValueError(fmt.format(byte))
+            text = 'byte out of range: {!r}'
+            raise ValueError(text.format(byte))
 
         #
         # Handle byte

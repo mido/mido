@@ -151,8 +151,8 @@ class Message(object):
         try:
             spec = _SPEC_LOOKUP[type_]
         except KeyError:
-            fmt = '{!r} is an invalid type name or status byte'
-            raise ValueError(fmt.format(type_))
+            text = '{!r} is an invalid type name or status byte'
+            raise ValueError(text.format(type_))
 
         # Specify valid attributes for __setattr__().
         # (self._msg_attrs = set() wouldn't work here
@@ -187,10 +187,10 @@ class Message(object):
             try:
                 setattr(self, name, value)
             except AttributeError:
-                fmt = '{!r} is an invalid keyword argument for this message'
-                raise ValueError(fmt.format(name))
+                text = '{!r} is an invalid keyword argument for this message'
+                raise ValueError(text.format(name))
 
-    def copy(self, **override):
+    def copy(self, **overrides):
         """Return a copy of the message.
 
         Attributes will be overriden by the passed keyword arguments.
@@ -203,14 +203,14 @@ class Message(object):
             b = a.copy(velocity=32)
         """
         # Get values from this object
-        kwargs = {'time': self.time}
-        for name in self.spec.args:
-            kwargs[name] = getattr(self, name)
+        args = {}
+        for name in self.spec.args + ('time',):
+            if name in overrides:
+                args[name] = overrides[name]
+            else:
+                args[name] = getattr(self, name)
 
-        # Override
-        kwargs.update(override)
-
-        return Message(self.type, **kwargs)
+        return Message(self.type, **args)
 
     def __setattr__(self, name, value):
         """Set an attribute."""
@@ -254,8 +254,8 @@ class Message(object):
         elif name in self._common_attrs:
             self.__dict__[name] = value
         else:
-            fmt = '{} message has no {!r} attribute'
-            raise AttributeError(fmt.format(self.type, name))
+            text = '{} message has no {!r} attribute'
+            raise AttributeError(text.format(self.type, name))
 
 
     def __delattr__(self, name):
@@ -267,11 +267,12 @@ class Message(object):
         For channel messages, the returned status byte
         will contain the channel in its lower 4 bits.
         """
-        # Add channel to status byte.
-        sb = self.spec.status_byte
-        if sb < 0xf0:
-            sb |= self.channel
-        return sb
+        byte = self.spec.status_byte
+        if byte < 0xf0:
+            # Add channel (lower 4 bits) to status byte.
+            # Those bits in spec.status_byte are always 0.
+            byte |= self.channel
+        return byte
 
     status_byte = property(fget=_get_status_byte)
     del _get_status_byte
