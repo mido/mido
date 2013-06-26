@@ -1,31 +1,48 @@
 """
 MIDI Parser
 
-The API may change to make it more streamlined. This class should be
-considered internal to Mido for now.
+The API of the Parser class will change to make it more consistent and
+useful. This class should be considered internal to Mido for now.
+
+Current API (more or less):
 
     Parser()
-        put_byte(byte)
         feed(data)
+        put_byte(byte)
         get_msg() -> Message or None
         reset()
-        messages
+        __iter__()    iterate through available messages
 
     parse(data) -> Message or None
     parseall(data) -> [Message, ...]
 
 byte is an integer in range 0 - 255.
 data is any sequence of bytes, or an object that generates them.
+
+API notes
+
+Required functionality:
+    - put one byte into the parser
+    - put a sequence of bytes into the parser
+    - check how many messages are available
+    - get one message
+
+Possibly useful functionality:
+    - get all messages as a list
+    - iterate through available messages
+    - reset parser (or you could just make a new parser)
 """
 
 import sys
+from collections import deque
 from .msg import Message
 
 py2 = (sys.version_info.major == 2)
 
 
 class Parser(object):
-    """MIDI Parser
+    """
+    MIDI Parser
 
     Parses a stream of bytes and produces messages.
 
@@ -35,21 +52,23 @@ class Parser(object):
 
     def __init__(self):
         """Create a new parser."""
-        self.messages = []
-        self.reset()
+        self._messages = deque()
         self._msg = None  # Current message
-        self._data = None  # Sysex data
+        self._data = []  # Sysex data
 
     def reset(self):
         """Reset the parser.
 
         This will remove all parsed messages."""
+        self._messages.clear()
         self._msg = None
-        self._data = None
+        self._data = []
 
-    def num_pending(self):
-        """Return the number of messages ready to be received."""
-        return len(self.messages)
+    # Not sure what to name this.
+    #
+    # def available_messages(self):
+    #     """Return the number of messages available for get_msg()."""
+    #     return len(self._messages)
 
     def put_byte(self, byte):
         """Put one byte into the parser.
@@ -65,11 +84,9 @@ class Parser(object):
             fmt = 'argument must be an integer (was {!r})'
             raise TypeError(fmt.format(byte))
 
-        if not 0 <= byte < 0x100:
+        if not 0 <= byte < 256:
             fmt = 'byte out of range: {!r}'
             raise ValueError(fmt.format(byte))
-
-        # Todo: enforce type and range of 'byte'
 
         #
         # Handle byte
@@ -79,42 +96,31 @@ class Parser(object):
             status_byte = byte
 
             if 0xf8 <= status_byte <= 0xff:
-                #
                 # Realtime message. These have no databytes,
                 # so they can be appended right away.
-                #
-                self.messages.append(Message(status_byte))
+                self._messages.append(Message(status_byte))
             elif status_byte == 0xf7:
-                #
                 # End of sysex
-                #
                 if self._msg:
                     self._msg.data = self._data
-                    self.messages.append(self._msg)
-                    self.reset()
+                    self._messages.append(self._msg)
+                    self._msg = None
+                    self._data = []
                 else:
                     pass  # Stray sysex_end byte. Ignore it.
             else:
-                #
                 # Start of message
-                #
                 self._msg = Message(status_byte)
-                self._data = []
-
         else:
-            #
             # Data byte (can possibly complete message)
-            #
-
             if self._msg:
                 self._data.append(byte)
 
                 if len(self._data) == self._msg.spec.size - 1:
                     self._add_data(self._msg, self._data)
-                    self.messages.append(self._msg)
-                    self.reset()
-
-        return len(self.messages)
+                    self._messages.append(self._msg)
+                    self._msg = None
+                    self._data = []
 
     def _add_data(self, msg, data):
         """Add data bytes that we have collected to the message.
@@ -155,8 +161,8 @@ class Parser(object):
 
         Returns None if there is no message yet.
         """
-        if self.messages:
-            return self.messages.pop(0)
+        if self._messages:
+            return self._messages.popleft()
         else:
             return None
 
@@ -181,36 +187,37 @@ class Parser(object):
             for byte in data:
                 self.put_byte(byte)
 
-        return len(self.messages)
-
     def __iter__(self):
-        """
-        Yield pending messages.
-        """
-
-        while self.messages:
-            yield self.messages.pop(0)
+        """Yield messages that have been parsed so far."""
+        # 
+        # This is a 'while count():' loop rather than 'for msg in
+        # self._messages:' to allow the caller to break out of the
+        # loop before consuming all of the messages. (This was used in
+        # the PortMIDI input port.)
+        # 
+        while len(self._messages):
+            yield self._messages.popleft()
 
 
 def parseall(data):
-    """
-    Parse MIDI data and return a list of all messages found.
+    """Parse MIDI data and return a list of all messages found.
 
-    Todo: should return a generator?
+    This is typically used to parse a little bit of data with a few
+    messages in it. It's best to use a Parser object for larger
+    amounts of data. Also, tt's often easier to use parse() if you
+    know there is only one message in the data.
     """
-
     p = Parser()
     p.feed(data)
     return list(p)
 
 
 def parse(data):
-    """
-    Parse MIDI data and return
-    the first message found, or None
-    if no messages were found.
-    """
+    """ Parse MIDI data and return the first message found.
 
+    Data after the first message is ignored. Use parseall()
+    to parse more than one message.
+    """
     p = Parser()
     p.feed(data)
     return p.get_msg()
