@@ -264,7 +264,7 @@ class Message(object):
         """
         # Add channel to status byte.
         sb = self.spec.status_byte
-        if sb <= 0xf0:
+        if sb < 0xf0:
             sb |= self.channel
         return sb
 
