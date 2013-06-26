@@ -320,7 +320,9 @@ class Input(Port):
                 value >>= 8
 
         # Todo: the parser needs another method
-        return len(self._parser.messages)
+        # returning the number of messages ready to
+        # be received.
+        return len(self._parser._messages)
 
     def recv(self):
         """Return the next pending message.
