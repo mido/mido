@@ -75,7 +75,7 @@ def _initialize():
 
     _dbg('initialize()')
 
-    if _flags['_initialized']:
+    if _flags['initialized']:
         _dbg('  (already initialized)')
     else:
         pm.lib.Pm_Initialize()
