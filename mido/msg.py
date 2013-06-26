@@ -59,9 +59,10 @@ class MsgSpec:
 
         The signature is returned as a string.
         """
-        parts = [repr(spec.type)]
+        parts = []
+        parts.append(repr(self.type))
 
-        for name in spec.args:
+        for name in self.args:
             if name == 'data':
                 parts.append('data=()')
             else:
