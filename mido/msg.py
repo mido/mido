@@ -208,8 +208,6 @@ class Message(object):
         Set an attribute.
         """
         
-        print(name)
-        
         if name in self._msg_attrs:
             if name == 'time':
                 if not (isinstance(value, int) or isinstance(value, float)):
