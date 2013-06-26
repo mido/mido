@@ -33,7 +33,7 @@ MIN_SONGPOS = 0
 MAX_SONGPOS = 16383
 
 
-class MsgSpec(object):
+class MessageSpec(object):
     """
     Specifications for creating a message.
     
@@ -78,35 +78,35 @@ class MsgSpec(object):
         return sig
 
 
-_MSG_SPECS = [
+_MESSAGE_SPECS = [
     # Channel messages
-    MsgSpec(0x80, 'note_off',        ('channel', 'note',    'velocity'), 3),
-    MsgSpec(0x90, 'note_on',         ('channel', 'note',    'velocity'), 3),
-    MsgSpec(0xa0, 'polytouch',       ('channel', 'note',    'value'),    3),
-    MsgSpec(0xb0, 'control_change',  ('channel', 'control', 'value'),    3),
-    MsgSpec(0xc0, 'program_change',  ('channel', 'program',),   3),
-    MsgSpec(0xd0, 'aftertouch',      ('channel', 'value',),    3),
-    MsgSpec(0xe0, 'pitchwheel',      ('channel', 'pitch',),    3),
+    MessageSpec(0x80, 'note_off',        ('channel', 'note',    'velocity'), 3),
+    MessageSpec(0x90, 'note_on',         ('channel', 'note',    'velocity'), 3),
+    MessageSpec(0xa0, 'polytouch',       ('channel', 'note',    'value'),    3),
+    MessageSpec(0xb0, 'control_change',  ('channel', 'control', 'value'),    3),
+    MessageSpec(0xc0, 'program_change',  ('channel', 'program',),   3),
+    MessageSpec(0xd0, 'aftertouch',      ('channel', 'value',),    3),
+    MessageSpec(0xe0, 'pitchwheel',      ('channel', 'pitch',),    3),
 
     # System common messages
-    MsgSpec(0xf0, 'sysex',         ('data',),          None),
-    MsgSpec(0xf1, 'undefined_f1',  (),                 1),
-    MsgSpec(0xf2, 'songpos',       ('pos',),           3),
-    MsgSpec(0xf3, 'song',          ('song',),          2),
-    MsgSpec(0xf4, 'undefined_f4',  (), 1),
-    MsgSpec(0xf5, 'undefined_f5',  (), 1),
-    MsgSpec(0xf6, 'tune_request',  (), 1),
-    MsgSpec(0xf7, 'sysex_end',     (), 1),
+    MessageSpec(0xf0, 'sysex',         ('data',),          None),
+    MessageSpec(0xf1, 'undefined_f1',  (),                 1),
+    MessageSpec(0xf2, 'songpos',       ('pos',),           3),
+    MessageSpec(0xf3, 'song',          ('song',),          2),
+    MessageSpec(0xf4, 'undefined_f4',  (), 1),
+    MessageSpec(0xf5, 'undefined_f5',  (), 1),
+    MessageSpec(0xf6, 'tune_request',  (), 1),
+    MessageSpec(0xf7, 'sysex_end',     (), 1),
 
     # System realtime messages
-    MsgSpec(0xf8, 'clock',          (), 1),
-    MsgSpec(0xf9, 'undefined_f9',   (), 1),
-    MsgSpec(0xfa, 'start',          (), 1),
-    MsgSpec(0xfb, 'continue',       (), 1),
-    MsgSpec(0xfc, 'stop',           (), 1),
-    MsgSpec(0xfd, 'undefined_fd',   (), 1),
-    MsgSpec(0xfe, 'active_sensing', (), 1),
-    MsgSpec(0xff, 'reset',          (), 1),
+    MessageSpec(0xf8, 'clock',          (), 1),
+    MessageSpec(0xf9, 'undefined_f9',   (), 1),
+    MessageSpec(0xfa, 'start',          (), 1),
+    MessageSpec(0xfb, 'continue',       (), 1),
+    MessageSpec(0xfc, 'stop',           (), 1),
+    MessageSpec(0xfd, 'undefined_fd',   (), 1),
+    MessageSpec(0xfe, 'active_sensing', (), 1),
+    MessageSpec(0xff, 'reset',          (), 1),
 ]
 
 #
@@ -134,9 +134,9 @@ class Message(object):
 
     # Attributes common to all messages.
     # These are used in __setattr__().
-    _common_attrs = set(('spec', 'type', 'status_byte', 'time'))
+    _common_attributes = set(('spec', 'type', 'status_byte', 'time'))
 
-    def __init__(self, type_, **kwargs):
+    def __init__(self, type_, **args):
         """Create a new message.
 
         The first argument is typically the type of message to create,
@@ -155,9 +155,9 @@ class Message(object):
             raise ValueError(text.format(type_))
 
         # Specify valid attributes for __setattr__().
-        # (self._msg_attrs = set() wouldn't work here
+        # (self._msg_attributes = set() wouldn't work here
         # since it's referred to by __setattr__()).
-        self.__dict__['_msg_attrs'] = set(spec.args)
+        self.__dict__['_msg_attributes'] = set(spec.args)
         
         self.spec = spec
         self.type = self.spec.type
@@ -183,7 +183,7 @@ class Message(object):
         #
         # Override attibutes with keyword arguments
         #
-        for name, value in kwargs.items():
+        for name, value in args.items():
             try:
                 setattr(self, name, value)
             except AttributeError:
@@ -215,7 +215,7 @@ class Message(object):
     def __setattr__(self, name, value):
         """Set an attribute."""
 
-        if name in self._msg_attrs:
+        if name in self._msg_attributes:
             if name == 'time':
                 if not (isinstance(value, int) or isinstance(value, float)):
                     raise TypeError('time must be an integer or float')
@@ -251,7 +251,7 @@ class Message(object):
             # We can't assign directly here, or we'd have infinite
             # recursion.
             self.__dict__[name] = value
-        elif name in self._common_attrs:
+        elif name in self._common_attributes:
             self.__dict__[name] = value
         else:
             text = '{} message has no {!r} attribute'
@@ -279,38 +279,40 @@ class Message(object):
 
     def bytes(self):
         """Encode message and return as a list of bytes (integers)."""
-        msg_bytes = [self.status_byte]
+        message_bytes = [self.status_byte]
 
         for name in self.spec.args:
             if name == 'channel':
-                continue  # We already have this
+                # This is a part of the status byte,
+                # so we don't need to encode it here.
+                continue
 
             elif name == 'data':
-                msg_bytes.extend(self.data)
+                message_bytes.extend(self.data)
 
             elif name == 'pitch':
                 # Make pitch a positive number
                 # by subtracting the minimum value.
                 value = self.pitch - MIN_PITCHWHEEL
-                msg_bytes.append(value & 0x7f)  # LSB
-                msg_bytes.append(value >> 7)    # MSB
+                message_bytes.append(value & 0x7f)  # Lower 7 bits
+                message_bytes.append(value >> 7)    # Upper 7 bits
 
             elif name == 'pos':
                 # Convert 14 bit value to two 7-bit values
                 # Todo: check if this is correct
-                msg_bytes.append(self.pos & 0x7f)  # Lower 7 bit
-                msg_bytes.append(self.pos >> 7)  # Upper 7 bit
+                message_bytes.append(self.pos & 0x7f)  # Lower 7 bit
+                message_bytes.append(self.pos >> 7)    # Upper 7 bit
             else:
                 # Ordinary data byte
-                msg_bytes.append(getattr(self, name))
+                message_bytes.append(getattr(self, name))
 
+        # Sysex messages need an end byte
         if self.type == 'sysex':
-            # Append a sysex_end
-            msg_bytes.append(0xf7)
+            message_bytes.append(0xf7)
 
-        return msg_bytes
+        return message_bytes
 
-    def bin(self):
+    def bytearray(self):
         """Encode message and return as a bytearray."""
         # Todo: bytearray() or bytes()
         return bytearray(self.bytes())
@@ -341,20 +343,19 @@ class Message(object):
 
         def key(msg):
             """Return a key for comparison."""
-            k = tuple([msg.type] + [getattr(msg, a) for a in msg.spec.args])
-            return k
+            return [msg.type] + [getattr(msg, arg) for arg in msg.spec.args]
 
         return key(self) == key(other)
 
 
-def _init():
+def _initialize():
     """Initialize the module.
 
     This build a lookup table for message specs
     with keys for every valid message type and
     status byte.
     """
-    for spec in _MSG_SPECS:
+    for spec in _MESSAGE_SPECS:
         if spec.status_byte < 0xf0:
             # Channel message.
             # The upper 4 bits are message type, and
@@ -367,4 +368,4 @@ def _init():
 
         _SPEC_LOOKUP[spec.type] = spec
 
-_init()
+_initialize()

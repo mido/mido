@@ -12,7 +12,7 @@ Module content:
     new(type, **kw) -> Message    alias for Message()
 
     parse(data) -> Message or None
-    parseall(data) -> [Message, ...]
+    parse_all(data) -> [Message, ...]
 
 type is type name or status byte.
 byte is an integer in range 0 - 255.
@@ -50,7 +50,9 @@ __url__ = 'http://github.com/olemb/mido/'
 __license__ = 'MIT'
 __version__ = '0.0.0'
 
-from .msg import Message
-from .parser import parse, parseall
+from .messages import Message
+from .parser import parse, parse_all
 
 new = Message  # Alias
+
+__all__ = ['Message', 'parse', 'parse_all']

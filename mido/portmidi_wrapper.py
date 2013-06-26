@@ -66,8 +66,8 @@ class PmDeviceInfo(Structure):
     _fields_ = [("structVersion", c_int),
                 ("interf", c_char_p),
                 ("name", c_char_p),
-                ("input", c_int),
-                ("output", c_int),
+                ("is_input", c_int),
+                ("is_output", c_int),
                 ("opened", c_int)]
 
 PmDeviceInfoPtr = POINTER(PmDeviceInfo)

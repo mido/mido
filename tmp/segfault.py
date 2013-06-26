@@ -17,14 +17,11 @@ import protomidi
 from protomidi.msg import *
 import protomidi.portmidi as pm
 
-pm.debug = True
+pm._flags['debug'] = True
 
-pprint.pprint(pm.get_devinfo())
-
-# pm.initialize()
 try:
     out = pm.Output()
-except pm.Error:
+except IO:
     traceback.print_exc()
 
 print('Sleeping for 2 seconds before opening input')

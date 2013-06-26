@@ -16,7 +16,7 @@ Mido allows you to work with MIDI messages as Python objects:
     >>> msg
     mido.Message('note_on', channel=7, note=127, velocity=64, time=0)
 
-Sending a message via PortMIDI:
+Sending a message via PortMidi:
 
 .. code:: python
 
@@ -39,15 +39,13 @@ Mido is not quite ready for production, but it's close. I hope to get
 some feedback before I finalize the API and release the first
 official version.
 
-The messages and PortMIDI Input and Output classes are fully
+The messages and PortMidi Input and Output classes are fully
 implemented, and their API is unlikely to change much. Some changes
 will be made to the Parser class to make its methods a little more
-consistent and streamlined, and the get_input/output_port() will
-probably be replaced with something that also returns the state of the
-port (such as whether it is open or not).
+consistent and streamlined.
 
-Much of the code, including the Message class, raises the wrong type
-of exceptions. This will have to be fixed.
+Some of the code raises the wrong type of exceptions. This will have
+to be fixed.
 
 
 
@@ -60,12 +58,15 @@ Released under the MIT license.
 Requirements
 -------------
 
-Mido uses PortMIDI for I/O. A wrapper module is included, so all you
-need is is portmidi.so/dll installed on your system. PortMIDI is only
-required for I/O. The messages will work fine without it.
+Mido uses PortMidi for I/O. The wrapper module is written using
+ctypes, so no compilationis is required. All you need is
+portmidi.so/dll installed on your system.
 
-Tested with Python 2.7 and 3.3. (3.2 should be OK. Older versions may
-or may not work.)
+PortMidi is only required if you want to use message ports. The
+messages will work fine without it.
+
+Developed for Python 2.7 and 3.3. (3.2 should be OK. Older versions
+may or may not work.)
 
 Runs on Linux 13.04 and Mac OS X 10.7.5. May also work on Windows.
 
@@ -85,16 +86,16 @@ or::
 Known bugs
 ----------
 
-  - on OS X, portmidi sometimes hangs for a couple of seconds while
+  - on OS X, PortMidi sometimes hangs for a couple of seconds while
     initializing.
 
   - in Linux, I sometimes experience short lags, as if messages
-    are bunched up and then released again. This is probably a portmidi
+    are bunched up and then released again. This is probably a PortMidi
     problem.
 
   - libportmidi prints out error messages instead of returning err and
     setting the error message string. This is most likely a bug in
-    portmidi but it trickles up.
+    PortMidi but it trickles up.
     
   - there is an obscure bug involving the OS X application Midi Keys.
     See tmp/segfault.py
@@ -153,15 +154,16 @@ Receiving a message:
 .. code:: python
 
     >>> from mido.portmidi import Input
-    >>> input = Input()
-    >>> msg = input.recv()
+    >>> port = Input()
+    >>> msg = port.receive()
 
 Non-blocking receive:
 
 .. code:: python
 
-    >>> if input.poll():
-    >>>     msg = input.recv()
+    >>> if port.poll():
+    ...     msg = input.receive()
+    ...     print(msg)
 
 Inputs and outputs take an optional port name, which is name of the
 ALSA / CoreMIDI device to use:
@@ -172,8 +174,8 @@ ALSA / CoreMIDI device to use:
 
 Available port names can be listed (but the exact API may change):
 
-   >>> import mido.portmidi as pm
-   >>> print(pm.get_input_names())
+   >>> from portmidi import get_input_names()
+   >>> get_input_names()
    ['Midi Through Port-0', 'SH-201 MIDI 1']
 
 Encoding messages:
@@ -193,7 +195,7 @@ Parsing:
 
     >>> mido.parse([0x90, 60, 64])
     mido.Message('note_on', channel=0, note=60, velocity=64, time=0)
-    >>> mido.parseall([0x80, 60, 64, 0x90, 60, 64])
+    >>> mido.parse_all([0x80, 60, 64, 0x90, 60, 64])
     [mido.Message('note_off', channel=0, note=60, velocity=64, time=0),
     mido.Message('note_on', channel=0, note=60, velocity=64, time=0)]
     >>> mido.parse(b'\x80Ab')
@@ -256,4 +258,4 @@ Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
 License: MIT
 
-The Portmidi wrapper is based on Portmidizero by Grant Yoshida.
+The PortMidi wrapper is based on Portmidizero by Grant Yoshida.

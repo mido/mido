@@ -8,26 +8,21 @@ Current API (more or less):
 
     Parser()
         feed(data)
-        put_byte(byte)
-        get_msg() -> Message or None
+        feed_byte(byte)
+        get_message() -> Message or None
         reset()
         __iter__()    iterate through available messages
 
     parse(data) -> Message or None
-    parseall(data) -> [Message, ...]
+    parse_all(data) -> [Message, ...]
 
 byte is an integer in range 0 - 255.
 data is any sequence of bytes, or an object that generates them.
 
 API notes
 
-Required functionality:
-    - put one byte into the parser
-    - put a sequence of bytes into the parser
-    - check how many messages are available
-    - get one message
-
 Possibly useful functionality:
+    - check how many messages are available
     - get all messages as a list
     - iterate through available messages
     - reset parser (or you could just make a new parser)
@@ -35,9 +30,9 @@ Possibly useful functionality:
 
 import sys
 from collections import deque
-from .msg import Message, MIN_PITCHWHEEL
+from .messages import Message, MIN_PITCHWHEEL
 
-py2 = (sys.version_info.major == 2)
+python2 = (sys.version_info.major == 2)
 
 
 class Parser(object):
@@ -52,26 +47,20 @@ class Parser(object):
 
     def __init__(self):
         """Create a new parser."""
-        self._messages = deque()
-        self._msg = None  # Current message
-        self._data = []  # Sysex data
+        self._parsed_messages = deque()
+        self._message = None  # Current message
+        self._data = []  # Data bytes
 
     def reset(self):
         """Reset the parser.
 
         This will remove all parsed messages."""
-        self._messages.clear()
-        self._msg = None
+        self._parsed_messages.clear()
+        self._message = None
         self._data = []
 
-    # Not sure what to name this.
-    #
-    # def available_messages(self):
-    #     """Return the number of messages available for get_msg()."""
-    #     return len(self._messages)
-
-    def put_byte(self, byte):
-        """Put one byte into the parser.
+    def feed_byte(self, byte):
+        """Feed one byte into the parser.
 
         The byte must be an integer in range 0 - 255.
 
@@ -84,7 +73,7 @@ class Parser(object):
             text = 'argument must be an integer (was {!r})'
             raise TypeError(text.format(byte))
 
-        if not 0 <= byte < 256:
+        if not 0 <= byte <= 255:
             text = 'byte out of range: {!r}'
             raise ValueError(text.format(byte))
 
@@ -98,28 +87,28 @@ class Parser(object):
             if 0xf8 <= status_byte <= 0xff:
                 # Realtime message. These have no databytes,
                 # so they can be appended right away.
-                self._messages.append(Message(status_byte))
+                self._parsed_messages.append(Message(status_byte))
             elif status_byte == 0xf7:
                 # End of sysex
-                if self._msg:
-                    self._msg.data = self._data
-                    self._messages.append(self._msg)
-                    self._msg = None
+                if self._message:
+                    self._message.data = self._data
+                    self._parsed_messages.append(self._message)
+                    self._message = None
                     self._data = []
                 else:
                     pass  # Stray sysex_end byte. Ignore it.
             else:
                 # Start of message
-                self._msg = Message(status_byte)
+                self._message = Message(status_byte)
         else:
             # Data byte (can possibly complete message)
-            if self._msg:
+            if self._message:
                 self._data.append(byte)
 
-                if len(self._data) == self._msg.spec.size - 1:
-                    self._add_data(self._msg, self._data)
-                    self._messages.append(self._msg)
-                    self._msg = None
+                if len(self._data) == self._message.spec.size - 1:
+                    self._add_data(self._message, self._data)
+                    self._parsed_messages.append(self._message)
+                    self._message = None
                     self._data = []
 
     def _add_data(self, msg, data):
@@ -158,13 +147,13 @@ class Parser(object):
             for (name, value) in zip(names, data):
                 setattr(msg, name, value)
 
-    def get_msg(self):
+    def get_message(self):
         """Get the first parsed message.
 
         Returns None if there is no message yet.
         """
-        if self._messages:
-            return self._messages.popleft()
+        if self._parsed_messages:
+            return self._parsed_messages.popleft()
         else:
             return None
 
@@ -181,13 +170,13 @@ class Parser(object):
             bytearray()
             b''  # Will be converted to integers in Python 2.
         """
-        if py2 and isinstance(data, str):
+        if python2 and isinstance(data, str):
             # Byte strings in Python 2 need extra attention
             for char in data:
-                self.put_byte(ord(char))
+                self.feed_byte(ord(char))
         else:
             for byte in data:
-                self.put_byte(byte)
+                self.feed_byte(byte)
 
     def __iter__(self):
         """Yield messages that have been parsed so far."""
@@ -195,13 +184,13 @@ class Parser(object):
         # This is a 'while count():' loop rather than 'for msg in
         # self._messages:' to allow the caller to break out of the
         # loop before consuming all of the messages. (This was used in
-        # the PortMIDI input port.)
+        # the PortMidi input port.)
         # 
-        while len(self._messages):
-            yield self._messages.popleft()
+        while len(self._parsed_messages):
+            yield self._parsed_messages.popleft()
 
 
-def parseall(data):
+def parse_all(data):
     """Parse MIDI data and return a list of all messages found.
 
     This is typically used to parse a little bit of data with a few
@@ -209,17 +198,17 @@ def parseall(data):
     amounts of data. Also, tt's often easier to use parse() if you
     know there is only one message in the data.
     """
-    p = Parser()
-    p.feed(data)
-    return list(p)
+    parser = Parser()
+    parser.feed(data)
+    return list(parser)
 
 
 def parse(data):
     """ Parse MIDI data and return the first message found.
 
-    Data after the first message is ignored. Use parseall()
+    Data after the first message is ignored. Use parse_all()
     to parse more than one message.
     """
-    p = Parser()
-    p.feed(data)
-    return p.get_msg()
+    parser = Parser()
+    parser.feed(data)
+    return parser.get_message()

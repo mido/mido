@@ -13,11 +13,11 @@ class TestMessages(unittest.TestCase):
 
     def test_pitchwheel(self):
         """Check if pitchwheel type check and encoding is working."""
-        msg = mido.new('pitchwheel', pitch=mido.msg.MIN_PITCHWHEEL)
+        msg = mido.new('pitchwheel', pitch=mido.messages.MIN_PITCHWHEEL)
         bytes = msg.bytes()
         self.assertTrue(bytes[1] == bytes[2] == 0)
 
-        msg = mido.new('pitchwheel', pitch=mido.msg.MAX_PITCHWHEEL)
+        msg = mido.new('pitchwheel', pitch=mido.messages.MAX_PITCHWHEEL)
         bytes = msg.bytes()
         self.assertTrue(bytes[1] == bytes[2] == 127)
 
@@ -48,13 +48,13 @@ class TestParser(unittest.TestCase):
 
     def test_parse_stray_data(self):
         """The parser should ignore stray data bytes."""
-        ret = mido.parseall(b'\x20\x30')
+        ret = mido.parse_all(b'\x20\x30')
         
         self.assertEqual(ret, [])
 
     def test_parse_stray_status_bytes(self):
         """The parser should ignore stray status bytes."""
-        ret = mido.parseall(b'\x90\x90\xf0')
+        ret = mido.parse_all(b'\x90\x90\xf0')
         
         self.assertEqual(ret, [])
 
@@ -67,18 +67,18 @@ class TestParser(unittest.TestCase):
         msg2 = mido.parse(msg1.bytes())
         self.assertEqual(msg1, msg2)
 
-    def test_put_byte(self):
-        """Put various things into put_byte()."""
+    def test_feed_byte(self):
+        """Put various things into feed_byte()."""
         import mido.parser
 
-        p = mido.parser.Parser()
+        parser = mido.parser.Parser()
 
-        p.put_byte(0)
-        p.put_byte(255)
+        parser.feed_byte(0)
+        parser.feed_byte(255)
 
-        self.assertRaises(TypeError, p.put_byte, [1, 2, 3])
-        self.assertRaises(ValueError, p.put_byte, -1)
-        self.assertRaises(ValueError, p.put_byte, 256)    
+        self.assertRaises(TypeError, parser.feed_byte, [1, 2, 3])
+        self.assertRaises(ValueError, parser.feed_byte, -1)
+        self.assertRaises(ValueError, parser.feed_byte, 256)    
 
     # Todo: Parser should not crash when parsing random data
     #def test_parse_random_bytes(self):
@@ -86,5 +86,3 @@ class TestParser(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-Message('note_on', channel=1, note=2, velocity=3, time=0)
-Message('note_on', channel=1, note=2, velocity=3, time=0)

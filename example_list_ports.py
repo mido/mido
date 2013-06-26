@@ -1,17 +1,17 @@
 """
-List available PortMIDI devices.
+List available PortMidi ports.
 """
 
 from __future__ import print_function
 
-import mido.portmidi as pm
+from mido.portmidi import get_input_names, get_output_names
 
-print('Input ports:')
-for name in pm.get_input_names():
-    print('   ', repr(name))
-print()
+def print_ports(heading, port_names):
+    print(heading)
+    for name in port_names:
+        print('    {!r}'.format(name))
+    print()
 
-print('Output ports:')
-for name in pm.get_output_names():
-    print('   ', repr(name))
 print()
+print_ports('Input Ports:', get_input_names())
+print_ports('Output Ports:', get_output_names())
