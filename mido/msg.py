@@ -1,5 +1,5 @@
 """
-msg.py - MIDI messages
+MIDI messages
 
 New messages are created with mido.new() or mido.Message(),
 which both return a message object.

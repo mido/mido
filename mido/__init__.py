@@ -3,6 +3,28 @@
 """
 Mido - object oriented MIDI for Python
 
+New messages are created with mido.new() or mido.Message(), which both
+return a message object.
+
+Module content:
+
+    Message(type, **kw) -> Message
+    new(type, **kw) -> Message    alias for Message()
+
+    parse(data) -> Message or None
+    parseall(data) -> [Message, ...]
+
+type is type name or status byte.
+byte is an integer in range 0 - 255.
+data is any sequence of bytes, or an object that generates them.
+
+Se mido.portmidi for more about input and output ports.
+
+For more on MIDI, see:
+
+    http://midi.org/
+
+
 Getting started:
 
     >>> import mido
@@ -20,24 +42,6 @@ Getting started:
     >>> sysex.data = range(3)
     >>> sysex.hex()
     'F0 00 01 02 F7'
-
-Se mido.portmidi for more about input and output ports.
-
-Module content:
-
-    Message(type, **kw) -> Message
-    new(type, **kw) -> Message    alias for Message()
-
-    parse(data) -> Message or None
-    parseall(data) -> [Message, ...]
-
-type is type name or status byte.
-byte is an integer in range 0 - 255.
-data is any sequence of bytes, or an object that generates them.
-
-For more on MIDI, se:
-
-    http://midi.org/
 """
 
 __author__ = 'Ole Martin Bjørndalen'
