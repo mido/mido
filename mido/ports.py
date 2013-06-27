@@ -23,5 +23,6 @@ def multi_receive(ports):
         for port in ports:
             for _ in range(port.pending()):
                 yield (port.receive(), port)
-            time.sleep(0.001)
+
+        time.sleep(0.001)
 
