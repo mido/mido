@@ -78,7 +78,7 @@ class MessageSpec(object):
         return sig
 
 
-_MESSAGE_SPECS = [
+MESSAGE_SPECS = [
     # Channel messages
     MessageSpec(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
     MessageSpec(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
@@ -115,7 +115,7 @@ _MESSAGE_SPECS = [
 #
 # For channel messages, there is one entry for each channel.
 #
-_SPEC_LOOKUP = {}  # Filled in by _init()
+SPEC_LOOKUP = {}  # Filled in by _init()
 
 def assert_databyte(byte):
     """Raise exception of byte has wrong type or is out of range
@@ -153,7 +153,7 @@ class Message(object):
         keyword argument.
         """
         try:
-            spec = _SPEC_LOOKUP[type_]
+            spec = SPEC_LOOKUP[type_]
         except KeyError:
             text = '{!r} is an invalid type name or status byte'
             raise ValueError(text.format(type_))
@@ -364,17 +364,17 @@ def _initialize():
     with keys for every valid message type and
     status byte.
     """
-    for spec in _MESSAGE_SPECS:
+    for spec in MESSAGE_SPECS:
         if spec.status_byte < 0xf0:
             # Channel message.
             # The upper 4 bits are message type, and
             # the lower 4 are MIDI channel.
             # We need lookup for all 16 MIDI channels.
             for channel in range(16):
-                _SPEC_LOOKUP[spec.status_byte | channel] = spec
+                SPEC_LOOKUP[spec.status_byte | channel] = spec
         else:
-            _SPEC_LOOKUP[spec.status_byte] = spec
+            SPEC_LOOKUP[spec.status_byte] = spec
 
-        _SPEC_LOOKUP[spec.type] = spec
+        SPEC_LOOKUP[spec.type] = spec
 
 _initialize()
