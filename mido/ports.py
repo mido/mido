@@ -46,6 +46,47 @@ def multi_iter_pending(ports):
             yield (port.receive(), port)
 
 
+class IOPort(object):
+    """Input / output port.
+
+    This is a convenient wrapper around an input port and
+    and an output port which provides the functionality of
+    both. Every method call is forwarded to the appropriate
+    port.
+
+    I don't know if it works yet.
+    """
+
+    def __init__(self, inport, outport):
+        self.inport = inport
+        self.outport = outport
+        self.closed = False
+
+    def send(self, message):
+        return self.outport.send()
+
+    def receive(self):
+        return self.inport.receive()
+
+    def pending(self):
+        return self.inport.pending()
+
+    def close(self):
+        if not self.closed:
+            self.inport.close()
+            self.outport.close()
+
+    def __iter__(self):
+        for message in self.inport:
+            yield message
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        return False
+
+
 class MessageBuffer:
     """
     Maintains an internal deque of messages.
@@ -57,6 +98,8 @@ class MessageBuffer:
     receive() is not supported, because it would be a bad idea for a
     MessageBuffer object to block, since it's getting its data from
     the same thread as the one that's blocked.
+
+    I don't know if it works yet.
     """
 
     def __init__(self):
