@@ -269,9 +269,8 @@ class Input(Port):
     def __init__(self, name=None):
         """Create an input port.
 
-        The argument is the port name, as returned by
-        get_input_names(). If name is not passed, the default input is
-        used instead.
+        name is the port name, as returned by get_input_names(). If
+        name is not passed, the default input is used instead.
         """
         Port.__init__(self, name)
         self._parser = Parser()
@@ -366,6 +365,14 @@ class Output(Port):
     """
     PortMidi output port
     """
+
+    def __init__(self, name=None):
+        """Create an output port
+        
+        name is the port name, as returned by get_output_names(). If
+        name is not passed, the default output is used instead.
+        """
+        Port.__init__(self, name)
 
     def send(self, message):
         """Send a message."""
