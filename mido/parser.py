@@ -85,7 +85,7 @@ class Parser(object):
                 # End of sysex
                 if self._current_message:
                     self._current_message.data = self._data_bytes
-                    self._.append_message(self._current_message)
+                    self._deliver_message(self._current_message)
                 else:
                     pass  # Stray sysex_end byte. Ignore it.
             else:
