@@ -7,10 +7,12 @@ Module Content:
         receive()     return a message, or block until there is one.
         poll()        return how many messages are pending
         close()       close the port
+        device        DeviceInfo for the underlying device
 
     Output(name=None)
         send(msg)     send a message
         close()       close the port
+        device        DeviceInfo for the underlying device
 
     DeviceInfo()      info about underlying device
     get_devices()  -> [DeviceInfo, ...]

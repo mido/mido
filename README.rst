@@ -92,7 +92,7 @@ or::
 
 
 Known bugs
-----------
+-----------
 
   - on OS X, PortMidi sometimes hangs for a couple of seconds while
     initializing.
@@ -131,20 +131,8 @@ Todo
      
    - raise more sensible exceptions
 
-   - there is currently no way of telling if am I/O device is opened
-     or not. portmidi.get_input/output_names() and .get_output_names()
-     should probably return name/isopened instead of just a name.
-
    - base classes for input and output ports to make it easier to
      implement new backends?
-
-   - handle unicode port names
-
-   - add backened attr to ports? (port.backend == 'portmidi')
-
-   - add comparison for messages (should time be compared?)
-
-   - AttributeError / SomethingError for msg.tuba = 1 vs. msg.copy(tuba=1)
 
    - __enter__ / __exit__ for ports? (with Output() as port: port.send(msg))
 
