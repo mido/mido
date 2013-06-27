@@ -277,7 +277,7 @@ class Port(object):
             port_type = 'output'
 
         return "<{state} {port_type} '{self.name}'" \
-               " ({self.device.interface})'".format(**locals())
+               " ({self.device.interface})>".format(**locals())
 
 
 class Input(Port):
