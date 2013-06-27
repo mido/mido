@@ -17,17 +17,27 @@ Mido allows you to work with MIDI messages as Python objects:
     >>> msg == msg2
     False
 
-Sending and receiving messages via PortMidi (this moves all channel
-messages to channel 2):
+Sysex messages:
+
+.. code:: python
+
+    >>> s = mido.new('sysex', data=[1, 2])
+    >>> s.hex()
+    'F0 01 02 F7'
+    >>> s.data = (i for i in range(5))
+    >>> s.hex()
+    'F0 00 01 02 03 04 F7'
+
+Sending and receiving messages via PortMidi:
 
 .. code:: python
 
     >>> from mido.portmidi import Input, Output
-    >>> with Input() as inport, Output() as outport:
-    ...     for msg in inport:
-    ...         if hasattr(msg, 'channel'):
-    ...             msg.channel = 2
-    ...         outport.send(msg)
+    >>> outport = Output()
+    >>> outport.send(msg)
+    >>> inport = Input()
+    >>> for msg in inport:
+    >>>     print(msg)
 
 Ports can opened by name:
 
@@ -36,8 +46,10 @@ Ports can opened by name:
     >>> from mido.portmidi import get_input_names
     >>> get_input_names()
     ['Midi Through Port-0', 'SH-201']
-    >>> port = Input('SH-201')
-    <Input 'Midi Through Port-0'>
+    >>> Input()  # Open default port
+    <open input 'Midi Through Port-0' (ALSA)'
+    >>> Input('SH-201')
+    <open input 'SH-201' (ALSA)'
     
 
 Status
@@ -136,110 +148,6 @@ Todo
 
    - use libportmidi-dev or libportmidi0?
 
-
-
-More examples
---------------
-
-Non-blocking receive:
-
-.. code:: python
-
-    >>> if port.poll():
-    >>>     msg = receive()
-
-or:
-
-.. code:: python
-
-    >>> for _ in range(port.poll()):
-    ...     msg = port.receive()
-
-Inputs and outputs take an optional port name, which is name of the
-ALSA / CoreMIDI device to use:
-
-.. code:: python
-
-   >>> out = Output('SH-201')
-
-Available port names can be listed:
-
-.. code:: python
-
-   >>> from portmidi import get_input_names()
-   >>> get_input_names()
-   ['Midi Through Port-0', 'SH-201 MIDI 1']
-
-Encoding messages:
-
-.. code:: python
-
-    >>> msg.bytes()
-    [151, 60, 64]
-    >>> msg.hex()
-    '97 3C 40'
-    >>> msg.bin()
-    bytearray(b'\x97<@')
-
-Parsing:
-
-.. code:: python
-
-    >>> mido.parse([0x90, 60, 64])
-    mido.Message('note_on', channel=0, note=60, velocity=64, time=0)
-    >>> mido.parse_all([0x80, 60, 64, 0x90, 60, 64])
-    [mido.Message('note_off', channel=0, note=60, velocity=64, time=0),
-    mido.Message('note_on', channel=0, note=60, velocity=64, time=0)]
-    >>> mido.parse(b'\x80Ab')
-    mido.Message('note_off', channel=0, note=65, velocity=98, time=0)
-
-msg.bytes() and mido.parse() can be used to send and receive messages
-via libraries which use byte based I/O, such as rtMidi.
-
-Sysex messages:
-
-.. code:: python
-
-    >>> s = mido.new('sysex', data=[1, 2])
-    >>> s.hex()
-    'F0 01 02 F7'
-    >>> s.data = (i for i in range(5))
-    >>> s.data
-    (0, 1, 2, 3, 4)
-    >>> s.hex()
-    'F0 00 01 02 03 04 F7'
-
-(Note that sysex messages contain the sysex_end byte (0xF7), so a
-separate 'sysex_end' message is not necessary.)
-
-Default values for everything is 0 (and () for sysex data):
-
-.. code:: python
-
-    >>> mido.new('note_on')
-    mido.Message('note_on', channel=0, note=0, velocity=0, time=0)
-    >>> mido.new('sysex')
-    mido.Message('sysex', data=(), time=0)
-
-
-Time
------
-
-The time attribute can be used for time annotations. Mido doesn't care
-what you use it for, as long as it's a valid number. Examples:
-
-.. code:: python
-
-    >>> msg.time = 183
-    >>> msg.time = 220.84
-
-The time attribute will not affect comparisons:
-
-.. code:: python
-
-    >>> msg2 = msg.copy(time=20000)
-    >>> msg == msg2
-    False
 
 Mido is short for MIDi Objects (or Musical Instrument Digital Objects).
 
