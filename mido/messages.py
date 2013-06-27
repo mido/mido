@@ -21,7 +21,6 @@ found here:
 """
 
 from __future__ import print_function
-from collections import namedtuple
 
 
 # Pitchwheel is a 14 bit signed integer
@@ -31,7 +30,6 @@ MAX_PITCHWHEEL = 8191
 # Song pos is a 14 bit unsigned integer
 MIN_SONGPOS = 0
 MAX_SONGPOS = 16383
-
 
 class MessageSpec(object):
     """
@@ -47,8 +45,7 @@ class MessageSpec(object):
 
     size is the size of this message in bytes. This value is not used
     for sysex messages, since they use an end byte instead.
-    """
-    
+    """    
 
     def __init__(self, status_byte, type_, args, size):
         """Create a new message specification.
@@ -70,7 +67,7 @@ class MessageSpec(object):
             if name == 'data':
                 parts.append('data=()')
             else:
-                parts.append(name + '=0')
+                parts.append('{}=0'.format(name))
         parts.append('time=0')
 
         sig = '({})'.format(', '.join(parts))
@@ -109,13 +106,6 @@ MESSAGE_SPECS = [
     MessageSpec(0xff, 'reset', (), 1),
 ]
 
-#
-# Dictionary for looking up Channel messages. This has keys
-# for every valid message type name and for every valid status byte.
-#
-# For channel messages, there is one entry for each channel.
-#
-SPEC_LOOKUP = {}  # Filled in by _init()
 
 def assert_databyte(byte):
     """Raise exception of byte has wrong type or is out of range
@@ -140,6 +130,22 @@ class Message(object):
     # These are used in __setattr__().
     _common_attributes = set(('spec', 'type', 'status_byte', 'time'))
 
+    _spec_lookup = {}
+
+    for spec in MESSAGE_SPECS:
+        if spec.status_byte < 0xf0:
+            # Channel message.
+            # The upper 4 bits are message type, and
+            # the lower 4 are MIDI channel.
+            # We need lookup for all 16 MIDI channels.
+            for channel in range(16):
+                _spec_lookup[spec.status_byte | channel] = spec
+        else:
+            _spec_lookup[spec.status_byte] = spec
+
+        _spec_lookup[spec.type] = spec
+    del spec, channel
+
     def __init__(self, type_, **args):
         """Create a new message.
 
@@ -153,7 +159,7 @@ class Message(object):
         keyword argument.
         """
         try:
-            spec = SPEC_LOOKUP[type_]
+            spec = self._spec_lookup[type_]
         except KeyError:
             text = '{!r} is an invalid type name or status byte'
             raise ValueError(text.format(type_))
@@ -355,26 +361,3 @@ class Message(object):
             return [msg.type] + [getattr(msg, arg) for arg in msg.spec.args]
 
         return key(self) == key(other)
-
-
-def _initialize():
-    """Initialize the module.
-
-    This build a lookup table for message specs
-    with keys for every valid message type and
-    status byte.
-    """
-    for spec in MESSAGE_SPECS:
-        if spec.status_byte < 0xf0:
-            # Channel message.
-            # The upper 4 bits are message type, and
-            # the lower 4 are MIDI channel.
-            # We need lookup for all 16 MIDI channels.
-            for channel in range(16):
-                SPEC_LOOKUP[spec.status_byte | channel] = spec
-        else:
-            SPEC_LOOKUP[spec.status_byte] = spec
-
-        SPEC_LOOKUP[spec.type] = spec
-
-_initialize()
