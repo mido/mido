@@ -100,6 +100,10 @@ or::
 
     $ sudo python2 setup.py install
 
+Installing libportmidi in Ubuntu:
+
+    $ sudo apt-get install libportmidi-dev
+
 
 Known Bugs
 -----------
