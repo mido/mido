@@ -262,8 +262,8 @@ class Port(object):
     def __enter__(self):
         return self
 
-    def __exit__(self):
-        self.close()
+    def __exit__(self, type, value, traceback):
+        return False
 
     def __repr__(self):
         class_name = self.__class__.__name__

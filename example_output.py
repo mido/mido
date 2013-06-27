@@ -29,7 +29,7 @@ try:
             port.send(mido.new('note_off', note=note, velocity=100))
             time.sleep(0.1)
 except KeyboardInterrupt:
-    pass
+    print()
 finally:
     # Send 'All Notes Off'
     port.send(mido.new('control_change', control=123, value=0))
