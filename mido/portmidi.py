@@ -5,7 +5,7 @@ Module Content:
 
     Input(name=None)
         receive()     return a message, or block until there is one.
-        poll()        return how many messages are pending
+        pending()     return how many messages are pending
         close()       close the port
         __iter__()    iterate through messages as they arrive
         device        DeviceInfo for the underlying device
@@ -294,12 +294,12 @@ class Input(Port):
         Port.__init__(self, name)
         self._parser = Parser()
 
-    def poll(self):
+    def pending(self):
         """Return how many messages are ready to be received.
 
         This can be used for non-blocking receive(), for example:
 
-             while port.poll():
+             for _ in range(port.pending()):
                  message = port.receive()
         """
         if self.closed:
@@ -342,10 +342,10 @@ class Input(Port):
         """Return the next message.
 
         This will block until a message arrives. For non-blocking
-        behavior, you can use poll() to see how many messages can
+        behavior, you can use pending() to see how many messages can
         safely be received without blocking:
 
-            while port.poll():
+            for _ in range(port.pending()):
                 message = port.receive()
 
         NOTE: Blocking is currently implemented with polling and
@@ -361,10 +361,9 @@ class Input(Port):
         # Wait for a message to arrive.
         while 1:
             time.sleep(0.001)
-            if self.poll():
-                # poll() has read at least one
-                # message from the device.
-                # Return the first message.
+            if self.pending():
+                # pending() has read at least one message from the
+                # device. Return the first message.
                 return self._parser.get_message()
 
     def __iter__(self):
@@ -431,9 +430,9 @@ class IOPort(object):
         return self.input.receive()
     receive.__doc__ = Input.receive.__doc__
 
-    def poll(self):
-        return self.input.poll()
-    poll.__doc__ = Input.poll.__doc__
+    def pending(self):
+        return self.input.pending()
+    pending.__doc__ = Input.pending.__doc__
 
     def close(self):
         if not self.closed:

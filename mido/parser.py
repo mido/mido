@@ -6,6 +6,7 @@ Module content:
     Parser()
         feed(data)
         feed_byte(byte)
+        pending()      return the number of pending messages
         get_message() -> Message or None
         reset()
         __iter__()    iterate through available messages
@@ -49,12 +50,9 @@ class Parser(object):
         self._data = []
 
     def feed_byte(self, byte):
-        """Feed one byte into the parser.
+        """Feed one MIDI byte into the parser.
 
         The byte must be an integer in range 0 - 255.
-
-        (This function does all the work of parsing the
-        byte stream.)
         """
         try:
             int(byte)
@@ -136,16 +134,6 @@ class Parser(object):
             for (name, value) in zip(names, data):
                 setattr(msg, name, value)
 
-    def get_message(self):
-        """Get the first parsed message.
-
-        Returns None if there is no message yet.
-        """
-        if self._parsed_messages:
-            return self._parsed_messages.popleft()
-        else:
-            return None
-
     def feed(self, data):
         """Feed MIDI data to the parser.
 
@@ -166,6 +154,22 @@ class Parser(object):
         else:
             for byte in data:
                 self.feed_byte(byte)
+
+    def pending(self):
+        """Return the number of pending messages."""
+        return len(self._parsed_messages)
+
+    def get_message(self):
+        """Get the first parsed message.
+
+        Returns None if there is no message yet. If you don't want to
+        deal with None, you can use pending() to see how many messages
+        you can get before you get None.
+        """
+        if self._parsed_messages:
+            return self._parsed_messages.popleft()
+        else:
+            return None
 
     def __iter__(self):
         """Yield messages that have been parsed so far."""

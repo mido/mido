@@ -21,7 +21,7 @@ def multi_receive(ports):
         random.shuffle(ports)
         
         for port in ports:
-            for _ in range(port.poll()):
+            for _ in range(port.pending()):
                 yield (port.receive(), port)
             time.sleep(0.001)
 

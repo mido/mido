@@ -51,6 +51,9 @@ __url__ = 'http://github.com/olemb/mido/'
 __license__ = 'MIT'
 __version__ = '0.0.0'
 
+import ports
+import parser
+import messages
 from .messages import Message
 from .parser import Parser, parse, parse_all
 

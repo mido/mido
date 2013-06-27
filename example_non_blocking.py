@@ -19,7 +19,7 @@ try:
         while 1:
             # Iterate through all messages
             # that are available at this time.
-            for _ in range(port.poll()):
+            for _ in range(port.pending()):
                 message = port.receive()
                 print('{}  {}'.format(message.hex(), message))
 
