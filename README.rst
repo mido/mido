@@ -146,9 +146,13 @@ Non-blocking receive:
 
 .. code:: python
 
-    >>> if inport.poll():
-    ...     msg = inport.receive()
-    ...     print(msg)
+    >>> if port.poll():
+    >>>     msg = receive()
+
+or:
+
+    >>> for _ in range(port.poll()):
+    ...     msg = port.receive()
 
 Inputs and outputs take an optional port name, which is name of the
 ALSA / CoreMIDI device to use:
