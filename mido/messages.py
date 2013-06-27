@@ -118,13 +118,17 @@ _MESSAGE_SPECS = [
 _SPEC_LOOKUP = {}  # Filled in by _init()
 
 def assert_databyte(byte):
-    """Raise ValueError if byte is not not int or out of range/
+    """Raise exception of byte has wrong type or is out of range
 
-    Data bytes are 7 bit, so the valid range is 0 - 127.
+    Raises TypeError if the byte is not an integer, and ValueError if
+    it is out of range. Data bytes are 7 bit, so the valid range is
+    0 - 127.
     """
 
-    if not (isinstance(byte, int) and (0 <= byte <= 127)):
-        raise ValueError('data byte must be and int in range 0 - 127.')
+    if not isinstance(byte, int):
+        raise TypeError('data byte must be an integer')
+    elif not 0 <= byte <= 127:
+        raise ValueError('data byte must be in range 0 - 127')
 
 
 class Message(object):
