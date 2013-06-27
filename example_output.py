@@ -34,4 +34,3 @@ except KeyboardInterrupt:
 finally:
     # Send 'All Notes Off'
     port.send(mido.new('control_change', control=123, value=0))
-u
