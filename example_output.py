@@ -20,6 +20,7 @@ notes = [60, 62, 64, 67, 69, 72]
 
 try:
     with Output(portname) as port:
+        print("Using input '{}'".format(port.name))
         while 1:
             note = random.choice(notes)
             

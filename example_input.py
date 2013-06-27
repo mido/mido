@@ -1,5 +1,5 @@
 """
-Print messages as they arrive on the input port.
+Receive messages from the input port and print them out.
 """
 
 from __future__ import print_function
@@ -13,7 +13,9 @@ else:
     portname = None  # Use default port
 
 try:
-    for message in Input(portname):
-        print('{}  {}'.format(message.hex(), message))
+    with Input(portname) as port:
+        print("Using input '{}'".format(port.name))
+        for message in port:
+            print('{}  {}'.format(message.hex(), message))
 except KeyboardInterrupt:
     pass
