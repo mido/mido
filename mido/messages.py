@@ -187,8 +187,9 @@ class Message(object):
             try:
                 setattr(self, name, value)
             except AttributeError:
-                text = '{!r} is an invalid keyword argument for this message'
-                raise ValueError(text.format(name))
+                raise ValueError('{!r} is an invalid ' \
+                                     'keyword argument for this message type' \
+                                     ''.format(name))
 
     def copy(self, **overrides):
         """Return a copy of the message.
@@ -313,8 +314,10 @@ class Message(object):
         return message_bytes
 
     def bytearray(self):
-        """Encode message and return as a bytearray."""
-        # Todo: bytearray() or bytes()
+        """Encode message and return as a bytearray.
+
+        This can be used to write the message to a file.
+        """
         return bytearray(self.bytes())
 
     def hex(self, sep=' '):
