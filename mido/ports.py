@@ -6,6 +6,7 @@ Module content:
     multi_receive(*ports)
 """
 
+import time
 import random
 
 def multi_receive(ports):
@@ -22,3 +23,5 @@ def multi_receive(ports):
         for port in ports:
             for _ in range(port.poll()):
                 yield (port.receive(), port)
+            time.sleep(0.001)
+
