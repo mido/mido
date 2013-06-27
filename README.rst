@@ -47,9 +47,9 @@ Ports can opened by name:
     >>> get_input_names()
     ['Midi Through Port-0', 'SH-201']
     >>> Input()  # Open default port
-    <open input 'Midi Through Port-0' (ALSA)'
+    <open input 'Midi Through Port-0' (ALSA)>'
     >>> Input('SH-201')
-    <open input 'SH-201' (ALSA)'
+    <open input 'SH-201' (ALSA)>'
     
 
 Status

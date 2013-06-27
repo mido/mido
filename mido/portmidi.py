@@ -276,7 +276,7 @@ class Port(object):
         else:
             port_type = 'output'
 
-        return "<{state} {port_type} '{self.name}'" \
+        return "<{state} {port_type} port '{self.name}'" \
                " ({self.device.interface})>".format(**locals())
 
 
