@@ -102,6 +102,11 @@ Known bugs
   - there is an obscure bug involving the OS X application Midi Keys.
     See tmp/segfault.py
 
+  - if close() is in the __exit__() method of an output port, or
+    context.closing() is used on the port, an exception is raised
+    saying "send() called on closed port". This needs to be figured
+    out.
+
 
 Todo
 -----
