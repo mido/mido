@@ -18,17 +18,16 @@ else:
 # A pentatonic scale
 notes = [60, 62, 64, 67, 69, 72]
 
-port = Output(portname)
-
 try:
-    while 1:
-        note = random.choice(notes)
-
-        port.send(mido.new('note_on', note=note, velocity=100))
-        time.sleep(0.05)
-
-        port.send(mido.new('note_off', note=note, velocity=100))
-        time.sleep(0.1)
+    with Output(portname) as port:
+        while 1:
+            note = random.choice(notes)
+            
+            port.send(mido.new('note_on', note=note, velocity=100))
+            time.sleep(0.05)
+            
+            port.send(mido.new('note_off', note=note, velocity=100))
+            time.sleep(0.1)
 except KeyboardInterrupt:
     pass
 finally:

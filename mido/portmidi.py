@@ -259,6 +259,12 @@ class Port(object):
     def __del__(self):
         self.close()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        self.close()
+
     def __repr__(self):
         class_name = self.__class__.__name__
         return '<{} ({!r}>'.format(class_name, self.name)
