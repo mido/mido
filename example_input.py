@@ -1,16 +1,5 @@
 """
 Print messages as they arrive on the input port.
-
-Input.receive() blocks until there is a message available. Input.poll()
-will return how many messages you can safely read without blocking, so
-you can implement nonblocking read with:
-
-    while 1:
-        for _ in range(port.poll()):
-            message = port.receive()
-            print(message)
-
-        # ... do something else for a while
 """
 
 from __future__ import print_function
