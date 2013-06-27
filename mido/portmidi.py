@@ -186,9 +186,7 @@ class Port(object):
             self.device = DeviceInfo(device_id)
             self.name = self.device.name
         else:
-            #
             # Look for the device by name and type (input / output)
-            #
             for device in get_devices():
                 if device.name != self.name:
                     continue
@@ -205,7 +203,6 @@ class Port(object):
                     text = 'port already opened: {!r}'
                     raise IOError(text.format(self.name))
 
-                # Nothing went wrong! We found a match!
                 self.device = device
                 break
             else:
@@ -335,8 +332,7 @@ class Input(Port):
                 self._parser.feed_byte(byte)
                 packed_message >>= 8
 
-        # Todo: the parser needs another method.
-        return len(self._parser._parsed_messages)
+        return self._parser.pending()
 
     def receive(self):
         """Return the next message.
