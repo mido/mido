@@ -51,8 +51,8 @@ Ports can opened by name:
     >>> Input('SH-201')
     <open input port 'SH-201' (ALSA)>
     
-The whole API is based on duck typing, so it's pretty easy to write
-ports for another library like RtMidi independently and then use them
+The ports API is made for duck typing, so it's pretty easy to write
+ports for another library like RtMidi independently, and then use them
 with Mido.
 
 
