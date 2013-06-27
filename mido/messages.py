@@ -273,7 +273,7 @@ class Message(object):
                 self.data = ()
             elif name == 'channel':
                 # This is a channel message, so if the first
-                # arguent to this function was a status_byte,
+                # argument to this function was a status_byte,
                 # the lower 4 bits will contain the channel.
                 if isinstance(type_, int):
                     self.channel = type_ & 0x0f
