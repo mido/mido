@@ -298,9 +298,11 @@ class Input(Port):
 
              for _ in range(port.pending()):
                  message = port.receive()
+
+        Todo: return 0 or raise exception if the port is closed?
         """
         if self.closed:
-            return
+            return 0
 
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
         # resort to calling Pm_Read() in a loop until there are no
@@ -347,6 +349,11 @@ class Input(Port):
         NOTE: Blocking is currently implemented with polling and
         time.sleep(). This is inefficient, but the proper way doesn't
         work yet, so it's better than nothing.
+
+        Todo: What should happen when the port is closed?
+        - raise exception?
+        - return pending messages until we run out, then
+          raise exception?
         """
 
         # If there is a message pending, return it right away.
