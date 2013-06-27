@@ -89,7 +89,7 @@ _MESSAGE_SPECS = [
     MessageSpec(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
 
     # System common messages
-    MessageSpec(0xf0, 'sysex', ('data',), None),
+    MessageSpec(0xf0, 'sysex', ('data',), float('inf')),
     MessageSpec(0xf1, 'undefined_f1', (), 1),
     MessageSpec(0xf2, 'songpos', ('pos',), 3),
     MessageSpec(0xf3, 'song', ('song',), 2),
