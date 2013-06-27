@@ -46,7 +46,7 @@ class MessageSpec(object):
     this message type.
 
     size is the size of this message in bytes. This value is not used
-    for sysex messages, since they use a top byte instead.
+    for sysex messages, since they use an end byte instead.
     """
     
 
