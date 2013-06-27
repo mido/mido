@@ -108,48 +108,69 @@ def get_message_specs():
     ]
 
 
-def assert_time(value):
-    if not (isinstance(value, int) or isinstance(value, float)):
+def check_time(time):
+    """Check type and value of time.
+    
+    Raises TypeError if value is not an integer or a float"""
+    if not (isinstance(time, int) or isinstance(time, float)):
         raise TypeError('time must be an integer or float')
-    return value
 
 
-def assert_channel(value):
-    if not isinstance(value, int):
+def check_channel(channel):
+    """Check type and value of channel.
+
+    Raises TypeError if the value is not an integer, and ValueError if
+    it is outside range 0 - 127.
+    """
+    if not isinstance(channel, int):
         raise TypeError('channel must be an integer')
-    elif not 0 <= value <= 15:
+    elif not 0 <= channel <= 15:
         raise ValueError('channel must be in range 0 - 15')
-    return value
 
 
-def assert_pos(value):
-    if not isinstance(value, int):
+def check_pos(pos):
+    """Check type and value of song position.
+
+    Raise TypeError if the value is not an integer, and ValueError if
+    it is outside range MIN_SONGPOS - MAX_SONGPOS.
+    """
+    if not isinstance(pos, int):
         raise TypeError('song pos must be and integer')
-    elif not MIN_SONGPOS <= value <= MAX_SONGPOS:
+    elif not MIN_SONGPOS <= pos <= MAX_SONGPOS:
         raise ValueError('song pos must be in range {} - {}'.format(
                 MIN_SONGPOS, MAX_SONGPOS))
-    return value
 
 
-def assert_pitch(value):
-    if not isinstance(value, int):
+def check_pitch(pitch):
+    """Raise TypeError if the value is not an integer, and ValueError
+    if it is outside range MIN_PITCHWHEEL - MAX_PITCHWHEEL.
+    """
+    if not isinstance(pitch, int):
         raise TypeError('pichwheel value must be an integer')
-    elif not MIN_PITCHWHEEL <= value <= MAX_PITCHWHEEL:
+    elif not MIN_PITCHWHEEL <= pitch <= MAX_PITCHWHEEL:
         raise ValueError('pitchwheel value must be in range {} - {}'.format(
-                MIN_PITCHWHEEL,MAX_PITCHWHEEL))
-    return value
+                MIN_PITCHWHEEL, MAX_PITCHWHEEL))
 
 
-def assert_data(value):
-    # Make the data bytes immutable.
-    # tuple() raises TypeError if value is not iterable.
-    value = tuple(value)
-    for byte in value:
-        assert_databyte(byte)
-    return value
+def check_data(data_bytes):
+    """Check type of data_byte and type and range of each data byte.
+
+    Returns the data bytes as a tuple of integers.
+
+    Raises TypeError if value is not iterable.
+    Raises TypeError if one of the bytes is not an integer.
+    Raises ValueError if one of the bytes is out of range 0 - 127.
+    """
+    # Make the sequence immutable.
+    data_bytes = tuple(data_bytes)
+
+    for byte in data_bytes:
+        check_databyte(byte)
+
+    return data_bytes
 
 
-def assert_databyte(value):
+def check_databyte(value):
     """Raise exception of byte has wrong type or is out of range
 
     Raises TypeError if the byte is not an integer, and ValueError if
@@ -160,7 +181,6 @@ def assert_databyte(value):
         raise TypeError('data byte must be an integer')
     elif not 0 <= value <= 127:
         raise ValueError('data byte must be in range 0 - 127')
-    return value
 
 class Message(object):
     """
@@ -272,21 +292,21 @@ class Message(object):
         """Set an attribute."""
 
         if name in self._msg_attributes:
-            asserts = {'time': assert_time,
-                       'channel': assert_channel,
-                       'pos': assert_pos,
-                       'pitch': assert_pitch,
-                       'data' : assert_data}
-            func = asserts.get(name, assert_databyte)
-            value = func(value)
+            try:
+                check = globals()['check_{}'.format(name)]
+            except KeyError:
+                check = check_databyte
+
+            ret = check(value)
+            if name == 'data':
+                value = ret
 
             self.__dict__[name] = value
         elif name in self._common_attributes:
             self.__dict__[name] = value
         else:
-            text = '{} message has no {!r} attribute'
-            raise AttributeError(text.format(self.type, name))
-
+            raise AttributeError('{} message has no {!r} attribute'.format(
+                    self.type, name))
 
     def __delattr__(self, name):
         raise AttributeError('Message attributes can\'t be deleted')
