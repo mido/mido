@@ -182,6 +182,33 @@ def check_databyte(value):
     elif not 0 <= value <= 127:
         raise ValueError('data byte must be in range 0 - 127')
 
+
+def encode_channel(channel):
+    """Convert channel into a list of bytes. Return an empty list of
+    bytes, since channel is already masked into status byte.
+    """
+    return ()
+
+
+def encode_data(data):
+    """Encode sysex data as a list of bytes. A sysex end byte (0xf7)
+    is appended.
+    """
+    return list(data) + [0xf7]
+
+ 
+def encode_pitch(pitch):
+    """Encode pitchwheel pitch as a list of bytes.
+    """
+    pitch -= MIN_PITCHWHEEL
+    return [pitch & 0x7f, pitch >> 7]
+
+
+def encode_pos(pos):
+    """Encode song position as a list of bytes."""
+    return [pos & 0x7f, pos >> 7]
+
+
 class Message(object):
     """
     MIDI message class.
@@ -328,37 +355,16 @@ class Message(object):
     del _get_status_byte
 
     def bytes(self):
-        """Encode message and return as a list of bytes (integers)."""
+        """Encode message and return as a list of integers."""
         message_bytes = [self.status_byte]
 
         for name in self.spec.args:
-            if name == 'channel':
-                # This is a part of the status byte,
-                # so we don't need to encode it here.
-                continue
-
-            elif name == 'data':
-                message_bytes.extend(self.data)
-
-            elif name == 'pitch':
-                # Make pitch a positive number
-                # by subtracting the minimum value.
-                value = self.pitch - MIN_PITCHWHEEL
-                message_bytes.append(value & 0x7f)  # Lower 7 bits
-                message_bytes.append(value >> 7)    # Upper 7 bits
-
-            elif name == 'pos':
-                # Convert 14 bit value to two 7-bit values
-                # Todo: check if this is correct
-                message_bytes.append(self.pos & 0x7f)  # Lower 7 bit
-                message_bytes.append(self.pos >> 7)    # Upper 7 bit
-            else:
-                # Ordinary data byte
-                message_bytes.append(getattr(self, name))
-
-        # Sysex messages need an end byte
-        if self.type == 'sysex':
-            message_bytes.append(0xf7)
+            value = getattr(self, name)
+            try:
+                encode = globals()['encode_{}'.format(name)]
+                message_bytes.extend(encode(value))
+            except KeyError:
+                message_bytes.append(value)
 
         return message_bytes
 
