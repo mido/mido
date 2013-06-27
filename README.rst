@@ -240,7 +240,7 @@ The time attribute will not affect comparisons:
 
     >>> msg2 = msg.copy(time=20000)
     >>> msg == msg2
-    True
+    False
 
 More documentation is planned.
 
