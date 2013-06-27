@@ -90,7 +90,7 @@ class DeviceInfo(object):
     """
     Info about a PortMidi device.
 
-    device_id   a signed integer
+    device_id   an integer
     interface   interface name (for example 'ALSA')
     name        device name (the same as port name)
     is_input    boolean, True if this is an input device
@@ -124,9 +124,9 @@ class DeviceInfo(object):
         else:
             device_type = 'output'
 
-        return "<{0} device '{1.name}'" \
-            " interface='{1.interface}'>" \
-            "".format(device_type, self, )
+        return "<{0} {1} device '{2.name}'" \
+            " interface='{2.interface}'>" \
+            "".format(state, device_type, self)
 
 
 def get_devices():
