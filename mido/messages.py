@@ -80,33 +80,33 @@ class MessageSpec(object):
 
 _MESSAGE_SPECS = [
     # Channel messages
-    MessageSpec(0x80, 'note_off',        ('channel', 'note',    'velocity'), 3),
-    MessageSpec(0x90, 'note_on',         ('channel', 'note',    'velocity'), 3),
-    MessageSpec(0xa0, 'polytouch',       ('channel', 'note',    'value'),    3),
-    MessageSpec(0xb0, 'control_change',  ('channel', 'control', 'value'),    3),
-    MessageSpec(0xc0, 'program_change',  ('channel', 'program',),   3),
-    MessageSpec(0xd0, 'aftertouch',      ('channel', 'value',),    3),
-    MessageSpec(0xe0, 'pitchwheel',      ('channel', 'pitch',),    3),
+    MessageSpec(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
+    MessageSpec(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
+    MessageSpec(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
+    MessageSpec(0xb0, 'control_change', ('channel', 'control', 'value'), 3),
+    MessageSpec(0xc0, 'program_change', ('channel', 'program',), 3),
+    MessageSpec(0xd0, 'aftertouch', ('channel', 'value',), 3),
+    MessageSpec(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
 
     # System common messages
-    MessageSpec(0xf0, 'sysex',         ('data',),          None),
-    MessageSpec(0xf1, 'undefined_f1',  (),                 1),
-    MessageSpec(0xf2, 'songpos',       ('pos',),           3),
-    MessageSpec(0xf3, 'song',          ('song',),          2),
-    MessageSpec(0xf4, 'undefined_f4',  (), 1),
-    MessageSpec(0xf5, 'undefined_f5',  (), 1),
-    MessageSpec(0xf6, 'tune_request',  (), 1),
-    MessageSpec(0xf7, 'sysex_end',     (), 1),
+    MessageSpec(0xf0, 'sysex', ('data',), None),
+    MessageSpec(0xf1, 'undefined_f1', (), 1),
+    MessageSpec(0xf2, 'songpos', ('pos',), 3),
+    MessageSpec(0xf3, 'song', ('song',), 2),
+    MessageSpec(0xf4, 'undefined_f4', (), 1),
+    MessageSpec(0xf5, 'undefined_f5', (), 1),
+    MessageSpec(0xf6, 'tune_request', (), 1),
+    MessageSpec(0xf7, 'sysex_end', (), 1),
 
     # System realtime messages
-    MessageSpec(0xf8, 'clock',          (), 1),
-    MessageSpec(0xf9, 'undefined_f9',   (), 1),
-    MessageSpec(0xfa, 'start',          (), 1),
-    MessageSpec(0xfb, 'continue',       (), 1),
-    MessageSpec(0xfc, 'stop',           (), 1),
-    MessageSpec(0xfd, 'undefined_fd',   (), 1),
+    MessageSpec(0xf8, 'clock', (), 1),
+    MessageSpec(0xf9, 'undefined_f9', (), 1),
+    MessageSpec(0xfa, 'start', (), 1),
+    MessageSpec(0xfb, 'continue', (), 1),
+    MessageSpec(0xfc, 'stop', (), 1),
+    MessageSpec(0xfd, 'undefined_fd', (), 1),
     MessageSpec(0xfe, 'active_sensing', (), 1),
-    MessageSpec(0xff, 'reset',          (), 1),
+    MessageSpec(0xff, 'reset', (), 1),
 ]
 
 #
