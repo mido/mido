@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Example of non-blocking reception from input port.
 """

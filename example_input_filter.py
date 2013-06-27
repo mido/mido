@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Receive messages on the input port and print messages with a specific
 channel (defaults to 0).

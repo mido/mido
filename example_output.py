@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Send random notes to the output port.
 """

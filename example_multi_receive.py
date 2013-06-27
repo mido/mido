@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Receive messages from multiple ports.
 """
