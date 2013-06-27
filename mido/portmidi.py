@@ -302,7 +302,7 @@ class Input(Port):
         Todo: return 0 or raise exception if the port is closed?
         """
         if self.closed:
-            return 0
+            return self._parser.pending()
 
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
         # resort to calling Pm_Read() in a loop until there are no
@@ -360,6 +360,9 @@ class Input(Port):
         message = self._parser.get_message()
         if message:
             return message
+
+        if self.closed:
+            raise ValueError('receive() called on closed port')
 
         # Wait for a message to arrive.
         while 1:
