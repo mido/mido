@@ -106,20 +106,54 @@ MESSAGE_SPECS = [
     MessageSpec(0xff, 'reset', (), 1),
 ]
 
+def assert_time(value):
+    if not (isinstance(value, int) or isinstance(value, float)):
+        raise TypeError('time must be an integer or float')
+    return value
 
-def assert_databyte(byte):
+def assert_channel(value):
+    if not isinstance(value, int):
+        raise TypeError('channel must be an integer')
+    elif not 0 <= value <= 15:
+        raise ValueError('channel must be in range 0 - 15')
+    return value
+
+def assert_pos(value):
+    if not isinstance(value, int):
+        raise TypeError('song pos must be and integer')
+    elif not MIN_SONGPOS <= value <= MAX_SONGPOS:
+        raise ValueError('song pos must be in range {} - {}'.format(
+                MIN_SONGPOS, MAX_SONGPOS))
+    return value
+
+def assert_pitch(value):
+    if not isinstance(value, int):
+        raise TypeError('pichwheel value must be an integer')
+    elif not MIN_PITCHWHEEL <= value <= MAX_PITCHWHEEL:
+        raise ValueError('pitchwheel value must be in range {} - {}'.format(
+                MIN_PITCHWHEEL,MAX_PITCHWHEEL))
+    return value
+
+def assert_data(value):
+    # Make the data bytes immutable.
+    # tuple() raises TypeError if value is not iterable.
+    value = tuple(value)
+    for byte in value:
+        assert_databyte(byte)
+    return value
+
+def assert_databyte(value):
     """Raise exception of byte has wrong type or is out of range
 
     Raises TypeError if the byte is not an integer, and ValueError if
     it is out of range. Data bytes are 7 bit, so the valid range is
     0 - 127.
     """
-
-    if not isinstance(byte, int):
+    if not isinstance(value, int):
         raise TypeError('data byte must be an integer')
-    elif not 0 <= byte <= 127:
+    elif not 0 <= value <= 127:
         raise ValueError('data byte must be in range 0 - 127')
-
+    return value
 
 class Message(object):
     """
@@ -132,6 +166,7 @@ class Message(object):
 
     _spec_lookup = {}
 
+    # Build _spec_lookup
     for spec in MESSAGE_SPECS:
         if spec.status_byte < 0xf0:
             # Channel message.
@@ -227,42 +262,14 @@ class Message(object):
         """Set an attribute."""
 
         if name in self._msg_attributes:
-            if name == 'time':
-                if not (isinstance(value, int) or isinstance(value, float)):
-                    raise TypeError('time must be an integer or float')
+            asserts = {'time': assert_time,
+                       'channel': assert_channel,
+                       'pos': assert_pos,
+                       'pitch': assert_pitch,
+                       'data' : assert_data}
+            func = asserts.get(name, assert_databyte)
+            value = func(value)
 
-            elif name == 'channel':
-                if not isinstance(value, int):
-                    raise TypeError('channel must be an integer')
-                elif not 0 <= value <= 15:
-                    raise ValueError('channel must be in range 0 - 15')
-
-            elif name == 'pos':
-                if not isinstance(value, int):
-                    raise TypeError('song pos must be and integer')
-                elif not MIN_SONGPOS <= value <= MAX_SONGPOS:
-                    s = 'song pos must be in range {} - {}'
-                    raise ValueError(s.format(MIN_SONGPOS, MAX_SONGPOS))
-
-            elif name == 'pitch':
-                if not isinstance(value, int):
-                    raise TypeError('pichwheel value must be an integer')
-                elif not MIN_PITCHWHEEL <= value <= MAX_PITCHWHEEL:
-                    s = 'pitchwheel value must be in range {} - {}'
-                    raise ValueError(s.format(MIN_PITCHWHEEL,
-                                              MAX_PITCHWHEEL))
-
-            elif name == 'data':
-                # Make the data bytes immutable.
-                # Raises TypeError if value is not iterable.
-                value = tuple(value)
-                for byte in value:
-                    assert_databyte(byte)
-            else:
-                assert_databyte(value)
-
-            # We can't assign directly here, or we'd have infinite
-            # recursion.
             self.__dict__[name] = value
         elif name in self._common_attributes:
             self.__dict__[name] = value
