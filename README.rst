@@ -7,38 +7,38 @@ Mido allows you to work with MIDI messages as Python objects:
 
     >>> import mido
     >>> msg = mido.new('note_on', note=60, velocity=64)
-    >>> msg.channel
-    0
+    >>> msg
+    mido.Message('note_on', channel=0, note=60, velocity=64, time=0)
     >>> msg.type
     'note_on'
-    >>> msg.channel = 7
-    >>> msg.note = 127
-    >>> msg
-    mido.Message('note_on', channel=7, note=127, velocity=64, time=0)
+    >>> msg.channel = 6
+    >>> msg.note = 19
+    >>> msg2 = msg.copy(channel=9, velocity=127)
+    >>> msg == msg2
+    False
 
-Copying a message:
-
-.. code:: python
-
-    >>> msg.copy(note=23, time=22)
-    mido.Message('note_on', channel=7, note=23, velocity=64, time=22)
-
-Sending a message via PortMidi:
+Sending and receiving messages via PortMidi (this moves all channel
+messages to channel 2):
 
 .. code:: python
 
-    >>> from mido.portmidi import Output
-    >>> port = Output()
-    >>> port.send(msg)
+    >>> from mido.portmidi import Input, Output
+    >>> with Input() as inport, Output() as outport:
+    ...     for msg in inport:
+    ...         if hasattr(msg, 'channel'):
+    ...             msg.channel = 2
+    ...         outport.send(msg)
 
-Receiving a message:
+Ports can opened by name:
 
 .. code:: python
 
-    >>> from mido.portmidi import Input
-    >>> port = Input()
-    >>> msg = port.receive()
-
+    >>> from mido.portmidi import get_input_names
+    >>> get_input_names()
+    ['Midi Through Port-0', 'SH-201']
+    >>> port = Input('SH-201')
+    <Input 'Midi Through Port-0'>
+    
 
 Status
 -------

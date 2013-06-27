@@ -266,8 +266,18 @@ class Port(object):
         return False
 
     def __repr__(self):
-        class_name = self.__class__.__name__
-        return '<{} ({!r}>'.format(class_name, self.name)
+        if self.closed:
+            state = 'closed'
+        else:
+            state = 'open'
+
+        if self.__class__ is Input:
+            port_type = 'input'
+        else:
+            port_type = 'output'
+
+        return "<{state} {port_type} '{self.name}'" \
+               " ({self.device.interface})'".format(**locals())
 
 
 class Input(Port):
