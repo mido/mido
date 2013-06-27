@@ -247,7 +247,9 @@ class Message(object):
                                               MAX_PITCHWHEEL))
 
             elif name == 'data':
-                value = tuple(value)  # Make the data bytes immutable
+                # Make the data bytes immutable.
+                # Raises TypeError if value is not iterable.
+                value = tuple(value)
                 for byte in value:
                     assert_databyte(byte)
             else:
