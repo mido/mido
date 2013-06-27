@@ -163,7 +163,7 @@ ALSA / CoreMIDI device to use:
 
    >>> out = Output('SH-201')
 
-Available port names can be listed (but the exact API may change):
+Available port names can be listed:
 
 .. code:: python
 
