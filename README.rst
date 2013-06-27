@@ -67,8 +67,8 @@ Requirements
 -------------
 
 Mido uses PortMidi for I/O. The wrapper module is written using
-ctypes, so no compilationis is required. All you need is
-portmidi.so/dll installed on your system.
+ctypes, so no compilation is required. All you need is portmidi.so/dll
+installed on your system.
 
 PortMidi is only required if you want to use message ports. The
 messages will work fine without it.
