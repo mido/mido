@@ -39,10 +39,6 @@ Sending and receiving messages via PortMidi:
     >>> for msg in inport:
     >>>     print(msg)
 
-The whole API is based on duck typing, so it's pretty easy to write
-ports for another library like RtMidi independently and then use them
-with Mido.
-
 Ports can opened by name:
 
 .. code:: python
@@ -55,6 +51,10 @@ Ports can opened by name:
     >>> Input('SH-201')
     <open input port 'SH-201' (ALSA)>
     
+The whole API is based on duck typing, so it's pretty easy to write
+ports for another library like RtMidi independently and then use them
+with Mido.
+
 
 Status
 -------
