@@ -92,11 +92,11 @@ class DeviceInfo(object):
     """
     Info about a PortMidi device.
 
-    device_id   an integer
-    interface   interface name (for example 'ALSA')
-    name        device name (the same as port name)
-    is_input    boolean, True if this is an input device
-    is_output   boolean, True if this is an output device
+        device_id   an integer
+        interface   interface name (for example 'ALSA')
+        name        device name (the same as port name)
+        is_input    boolean, True if this is an input device
+        is_output   boolean, True if this is an output device
     """
 
     def __init__(self, device_id):
