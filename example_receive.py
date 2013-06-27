@@ -15,8 +15,9 @@ else:
 
 try:
     with Input(portname) as port:
-        print("Using input '{}'".format(port.name))
+        print('Using {}'.format(port))
+        print('Waiting for messages...')
         for message in port:
-            print('{}  {}'.format(message.hex(), message))
+            print('Received {}  {}'.format(message.hex(), message))
 except KeyboardInterrupt:
     pass

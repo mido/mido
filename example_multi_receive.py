@@ -9,7 +9,7 @@ from mido.ports import multi_receive
 # Open all available inputs.
 ports = [Input(name) for name in get_input_names()]
 for port in ports:
-    print("Using input '{}'".format(port.name))
+    print('Using {}'.format(port))
 print('Waiting for messages...')
 
 try:

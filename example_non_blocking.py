@@ -16,7 +16,7 @@ else:
 
 try:
     with Input(portname) as port:
-        print("Using input '{}'".format(port.name))
+        print('Using {}'.format(port))
         while 1:
             # Iterate through all messages
             # that are available at this time.
