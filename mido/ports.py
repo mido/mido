@@ -1,5 +1,10 @@
 """
 Utility functions for dealing with ports.
+
+Module content:
+
+    multi_receive(ports) -> Message generator
+    multi_iter_pending(ports) -> Message generator
 """
 
 import time
@@ -21,6 +26,7 @@ def multi_receive(ports):
                 yield (port.receive(), port)
 
         time.sleep(0.001)
+
 
 def multi_iter_pending(ports):
     """Iterate through all pending messages in ports.
