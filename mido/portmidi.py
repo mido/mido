@@ -172,7 +172,7 @@ class Port(object):
 
         _initialize()
 
-        this_is_input = (self.__class__ == Input)
+        this_is_input = (self.__class__ is Input)
 
         if self.name is None:
             if this_is_input:
