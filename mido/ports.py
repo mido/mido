@@ -1,18 +1,12 @@
 """
 Utility functions for dealing with ports.
-
-The functions in here are experimental, but they may become a part of
-the library in there future.
 """
 
 import time
 import random
 
-def receive_from_ports(ports):
+def multi_receive(ports):
     """Receive messages from multiple ports.
-
-    Note: This function should be considered experimental.
-    It can go away or change in there future.
 
     Generates (message, port) tuples from every port in ports. The
     ports are polled in random order for fairness, and all messages
@@ -28,11 +22,8 @@ def receive_from_ports(ports):
 
         time.sleep(0.001)
 
-def iterate_pending_at_ports(ports):
+def multi_iter_pending(ports):
     """Iterate through all pending messages in ports.
-
-    Note: This function should be considered experimental for now.
-    It can go away or change in there future.
 
     ports is an iterable of message ports to check.
 
