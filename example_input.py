@@ -10,7 +10,7 @@ you can implement nonblocking read with:
             message = port.receive()
             print(message)
 
-        # ... do something else
+        # ... do something else for a while
 """
 
 from __future__ import print_function
