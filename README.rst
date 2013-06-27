@@ -1,4 +1,4 @@
-Mido - Object oriented MIDI for Python
+Mido - Object Oriented MIDI for Python
 =======================================
 
 Mido allows you to work with MIDI messages as Python objects:
@@ -17,7 +17,7 @@ Mido allows you to work with MIDI messages as Python objects:
     >>> msg == msg2
     False
 
-Sysex messages:
+System Exclusive messages:
 
 .. code:: python
 
@@ -97,7 +97,7 @@ or::
     $ sudo python2 setup.py install
 
 
-Known bugs
+Known Bugs
 -----------
 
   - on OS X, PortMidi sometimes hangs for a couple of seconds while
@@ -120,8 +120,8 @@ Known bugs
     out.
 
 
-Todo
------
+Todo / Future Plans
+--------------------
 
    - make the last few modifications to the basic API
 
