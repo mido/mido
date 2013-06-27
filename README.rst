@@ -234,7 +234,7 @@ The time attribute will not affect comparisons:
 
     >>> msg2 = msg.copy(time=20000)
     >>> msg == msg2
-    True
+    False
 
 Mido is short for MIDi Objects (or Musical Instrument Digital Objects).
 
