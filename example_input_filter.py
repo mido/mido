@@ -19,7 +19,7 @@ def accept_notes(port):
         if msg.type in ('note_on', 'note_off'):
             yield msg
 
-if sys.argv[1:]:
+if len(sys.argv) > 1:
     portname = sys.argv[1]
 else:
     portname = None   # Use default port
