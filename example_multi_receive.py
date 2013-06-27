@@ -1,3 +1,7 @@
+"""
+Receive messages from multiple ports.
+"""
+
 from mido.portmidi import Input, get_input_names
 from mido.ports import multi_receive
 
