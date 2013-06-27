@@ -151,6 +151,8 @@ Non-blocking receive:
 
 or:
 
+.. code:: python
+
     >>> for _ in range(port.poll()):
     ...     msg = port.receive()
 
