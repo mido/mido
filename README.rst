@@ -28,16 +28,16 @@ Sending a message via PortMidi:
 .. code:: python
 
     >>> from mido.portmidi import Output
-    >>> outport = Output()
-    >>> outport.send(msg)
+    >>> port = Output()
+    >>> port.send(msg)
 
 Receiving a message:
 
 .. code:: python
 
     >>> from mido.portmidi import Input
-    >>> inport = Input()
-    >>> msg = inport.receive()
+    >>> port = Input()
+    >>> msg = port.receive()
 
 
 Status
@@ -164,6 +164,8 @@ ALSA / CoreMIDI device to use:
    >>> out = Output('SH-201')
 
 Available port names can be listed (but the exact API may change):
+
+.. code:: python
 
    >>> from portmidi import get_input_names()
    >>> get_input_names()
