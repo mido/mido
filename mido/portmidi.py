@@ -131,8 +131,11 @@ class DeviceInfo(object):
 
 def get_devices():
     """Return a list of DeviceInfo objects, one for each PortMidi device."""  
+    devices = []
     for device_id in range(pm.lib.Pm_CountDevices()):
-        yield DeviceInfo(device_id)
+        devices.append(DeviceInfo(device_id))
+
+    return devices
 
 
 def get_input_names():
