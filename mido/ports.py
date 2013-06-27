@@ -5,6 +5,7 @@ Module content:
 
     multi_receive(ports) -> Message generator
     multi_iter_pending(ports) -> Message generator
+    IOPort
     MessageBuffer
 """
 
