@@ -74,42 +74,45 @@ class MessageSpec(object):
 
         return sig
 
+def get_message_specs():
+    return [
+        # Channel messages
+        MessageSpec(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
+        MessageSpec(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
+        MessageSpec(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
+        MessageSpec(0xb0, 'control_change',
+                    ('channel', 'control', 'value'), 3),
+        MessageSpec(0xc0, 'program_change', ('channel', 'program',), 3),
+        MessageSpec(0xd0, 'aftertouch', ('channel', 'value',), 3),
+        MessageSpec(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
 
-MESSAGE_SPECS = [
-    # Channel messages
-    MessageSpec(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
-    MessageSpec(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
-    MessageSpec(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
-    MessageSpec(0xb0, 'control_change', ('channel', 'control', 'value'), 3),
-    MessageSpec(0xc0, 'program_change', ('channel', 'program',), 3),
-    MessageSpec(0xd0, 'aftertouch', ('channel', 'value',), 3),
-    MessageSpec(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
+        # System common messages
+        MessageSpec(0xf0, 'sysex', ('data',), float('inf')),
+        MessageSpec(0xf1, 'undefined_f1', (), 1),
+        MessageSpec(0xf2, 'songpos', ('pos',), 3),
+        MessageSpec(0xf3, 'song', ('song',), 2),
+        MessageSpec(0xf4, 'undefined_f4', (), 1),
+        MessageSpec(0xf5, 'undefined_f5', (), 1),
+        MessageSpec(0xf6, 'tune_request', (), 1),
+        MessageSpec(0xf7, 'sysex_end', (), 1),
 
-    # System common messages
-    MessageSpec(0xf0, 'sysex', ('data',), float('inf')),
-    MessageSpec(0xf1, 'undefined_f1', (), 1),
-    MessageSpec(0xf2, 'songpos', ('pos',), 3),
-    MessageSpec(0xf3, 'song', ('song',), 2),
-    MessageSpec(0xf4, 'undefined_f4', (), 1),
-    MessageSpec(0xf5, 'undefined_f5', (), 1),
-    MessageSpec(0xf6, 'tune_request', (), 1),
-    MessageSpec(0xf7, 'sysex_end', (), 1),
+        # System realtime messages
+        MessageSpec(0xf8, 'clock', (), 1),
+        MessageSpec(0xf9, 'undefined_f9', (), 1),
+        MessageSpec(0xfa, 'start', (), 1),
+        MessageSpec(0xfb, 'continue', (), 1),
+        MessageSpec(0xfc, 'stop', (), 1),
+        MessageSpec(0xfd, 'undefined_fd', (), 1),
+        MessageSpec(0xfe, 'active_sensing', (), 1),
+        MessageSpec(0xff, 'reset', (), 1),
+    ]
 
-    # System realtime messages
-    MessageSpec(0xf8, 'clock', (), 1),
-    MessageSpec(0xf9, 'undefined_f9', (), 1),
-    MessageSpec(0xfa, 'start', (), 1),
-    MessageSpec(0xfb, 'continue', (), 1),
-    MessageSpec(0xfc, 'stop', (), 1),
-    MessageSpec(0xfd, 'undefined_fd', (), 1),
-    MessageSpec(0xfe, 'active_sensing', (), 1),
-    MessageSpec(0xff, 'reset', (), 1),
-]
 
 def assert_time(value):
     if not (isinstance(value, int) or isinstance(value, float)):
         raise TypeError('time must be an integer or float')
     return value
+
 
 def assert_channel(value):
     if not isinstance(value, int):
@@ -117,6 +120,7 @@ def assert_channel(value):
     elif not 0 <= value <= 15:
         raise ValueError('channel must be in range 0 - 15')
     return value
+
 
 def assert_pos(value):
     if not isinstance(value, int):
@@ -126,6 +130,7 @@ def assert_pos(value):
                 MIN_SONGPOS, MAX_SONGPOS))
     return value
 
+
 def assert_pitch(value):
     if not isinstance(value, int):
         raise TypeError('pichwheel value must be an integer')
@@ -134,6 +139,7 @@ def assert_pitch(value):
                 MIN_PITCHWHEEL,MAX_PITCHWHEEL))
     return value
 
+
 def assert_data(value):
     # Make the data bytes immutable.
     # tuple() raises TypeError if value is not iterable.
@@ -141,6 +147,7 @@ def assert_data(value):
     for byte in value:
         assert_databyte(byte)
     return value
+
 
 def assert_databyte(value):
     """Raise exception of byte has wrong type or is out of range
@@ -164,10 +171,11 @@ class Message(object):
     # These are used in __setattr__().
     _common_attributes = set(('spec', 'type', 'status_byte', 'time'))
 
+    # Quick lookup of specs by name or status_byte.
     _spec_lookup = {}
 
     # Build _spec_lookup
-    for spec in MESSAGE_SPECS:
+    for spec in get_message_specs():
         if spec.status_byte < 0xf0:
             # Channel message.
             # The upper 4 bits are message type, and
@@ -179,7 +187,9 @@ class Message(object):
             _spec_lookup[spec.status_byte] = spec
 
         _spec_lookup[spec.type] = spec
+
     del spec, channel
+
 
     def __init__(self, type_, **args):
         """Create a new message.
