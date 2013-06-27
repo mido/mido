@@ -12,8 +12,11 @@ Module Content:
         send(msg)     send a message
         close()       close the port
 
-    get_input_names()   return a list of input names
-    get_output_names()  return a list of output names
+    DeviceInfo()      info about underlying device
+    get_devices()  -> [DeviceInfo, ...]
+
+    get_input_names()   return all input port names as a sorted list
+    get_output_names()  return all output port names as a sorted list
 """
 
 from __future__ import print_function
@@ -54,7 +57,6 @@ def _initialize():
 
     If PortMidi is already initialized, it will do nothing.
     """
-
     global _initialized
 
     if _initialized:
@@ -62,7 +64,7 @@ def _initialize():
 
         _initialized = True
 
-        # Todo: This screws up __del__() for ports,
+        # This screws up __del__() for ports,
         # so it's left out for now:
         # atexit.register(_terminate)
 
@@ -86,9 +88,13 @@ def _terminate():
 
 class DeviceInfo(object):
     """
-    Wrapper around PortMidi's device_info struct.
+    Info about a PortMidi device.
 
-    For internal use in mido.portmidi.
+    device_id   a signed integer
+    interface   interface name (for example 'ALSA')
+    name        device name (the same as port name)
+    is_input    boolean, True if this is an input device
+    is_output   boolean, True if this is an output device
     """
 
     def __init__(self, device_id):
@@ -100,36 +106,50 @@ class DeviceInfo(object):
                     device_id))
         info = info_pointer.contents
         
+        self.device_id = device_id
         self.interface = info.interface.decode('utf-8')
         self.name = info.name.decode('utf-8')
         self.is_input = info.is_input
         self.is_output = info.is_output
-        self.opened = info.opened
-        
+        self.opened = bool(info.opened)
+ 
+    def __repr__(self):
+        if self.opened:
+            state = 'open'
+        else:
+            state = 'closed'
 
-def _get_devices():
+        if self.is_input:
+            device_type = 'input'
+        else:
+            device_type = 'output'
+
+        return "<{0} device '{1.name}'" \
+            " interface='{1.interface}'>" \
+            "".format(device_type, self, )
+
+
+def get_devices():
+    """Return a list of DeviceInfo objects, one for each PortMidi device."""  
     for device_id in range(pm.lib.Pm_CountDevices()):
         yield DeviceInfo(device_id)
 
-#
-# Public functions and classes
-#
 
 def get_input_names():
-    """Return a list of all input port names.
+    """Return a sorted list of all input port names.
 
-    These can be passed to Input().
+    These names can be passed to Input().
     """
-    names = [device.name for device in _get_devices() if device.is_input]
+    names = [device.name for device in get_devices() if device.is_input]
     return list(sorted(names))
 
 
 def get_output_names():
-    """Return a list of all input port names.
+    """Return a sorted list of all input port names.
 
-    These can be passed to Output().
+    These names can be passed to Output().
     """
-    names = [device.name for device in _get_devices() if device.is_output]
+    names = [device.name for device in get_devices() if device.is_output]
     return list(sorted(names))
 
 
@@ -142,6 +162,7 @@ class Port(object):
         self.name = name
         self.closed = True
         self._stream = pm.PortMidiStreamPtr()
+        self.device = None
 
         _initialize()
 
@@ -156,16 +177,17 @@ class Port(object):
             if device_id < 0:
                 raise IOError('no default port found')
 
-            self.name = _get_device(device_id).name
+            self.device = DeviceInfo(device_id)
+            self.name = self.device.name
         else:
             #
             # Look for the device by name and type (input / output)
             #
-            for device_id, device in enumerate(_get_devices()):
+            for device in get_devices():
                 if device.name != self.name:
                     continue
                 
-                # Check if device is correct type
+                # Skip if device is the wrong type
                 if this_is_input:
                     if device.is_output:
                         continue
@@ -174,15 +196,19 @@ class Port(object):
                         continue
 
                 if device.opened:
-                    fmt = 'port already opened: {!r}'
-                    raise IOError(fmt.format(self.name))
+                    text = 'port already opened: {!r}'
+                    raise IOError(text.format(self.name))
 
                 # Nothing went wrong! We found a match!
+                self.device = device
                 break
             else:
                 # No match found.
                 fmt = 'unknown port: {!r}'
                 raise IOError(fmt.format(self.name))
+
+        # Make a shortcut, since this is so long
+        device_id = self.device.device_id
 
         if this_is_input:
             _check_error(pm.lib.Pm_OpenInput(
@@ -203,6 +229,7 @@ class Port(object):
                     0))         # latency
 
         self.closed = False
+        self.device.opened = True
 
     def close(self):
         """Close the port.
@@ -221,13 +248,14 @@ class Port(object):
             _check_error(pm.lib.Pm_Close(self._stream))
 
             self.closed = True
+            self.device.opened = False
 
     def __del__(self):
         self.close()
 
     def __repr__(self):
         class_name = self.__class__.__name__
-        return '{}({!r})'.format(class_name, self.name)
+        return '<{} ({!r}>'.format(class_name, self.name)
 
 
 class Input(Port):
