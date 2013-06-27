@@ -60,7 +60,7 @@ functionality is in place, and the API is unlikely to change much from
 this point.
 
 What remains is mostly documentation. Also, the code needs a bit more
-work, and many more test cases have to be written.
+work, and many more test cases need to be written.
 
 
 License
@@ -120,29 +120,11 @@ Known Bugs
     out.
 
 
-Todo / Future Plans
---------------------
+Future Plans
+-------------
 
-   - make the last few modifications to the basic API
-
-   - include a callback mechanism and maybe some kind of event based
-     system. This can be built as a library that on top of port and message
-     objects.
-   
    - include useful lookup tables or message attributes for common
      things like controller types
-
-   - handle devices that send note_on(velocity=0) instead of
-     note_off() (flag for portmidi.Input()?) Perhaps make it an option
-     so you can choose the one you prefer, and any data will be
-     converted to that format.
-     
-   - raise more sensible exceptions
-
-   - base classes for input and output ports to make it easier to
-     implement new backends?
-
-   - __enter__ / __exit__ for ports? (with Output() as port: port.send(msg))
 
    - fix extras/joystick.py
 
