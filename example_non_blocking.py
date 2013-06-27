@@ -22,7 +22,7 @@ try:
                 message = port.receive()
                 print('{}  {}'.format(message.hex(), message))
 
-            print('Doing something else')
+            print('Doing something else for a while...')
             time.sleep(0.5)
 except KeyboardInterrupt:
     pass
