@@ -8,7 +8,6 @@ Module content:
         feed_byte(byte)
         pending()      return the number of pending messages
         get_message() -> Message or None
-        reset()
         __iter__()    iterate through available messages
 
     parse(data) -> Message or None
@@ -38,15 +37,15 @@ class Parser(object):
     def __init__(self):
         """Create a new parser."""
         self._parsed_messages = deque()
-        self._message = None  # Current message
+        self._current_message = None
         self._data_bytes = []  # Data bytes
 
-    def reset(self):
-        """Reset the parser.
-
-        This will remove all parsed messages."""
-        self._parsed_messages.clear()
-        self._message = None
+    def _deliver_message(self, message):
+        """Deliver message into message deque and reset internal
+        state for next message.
+        """
+        self._parsed_messages.append(message)
+        self._current_message = None
         self._data_bytes = []
 
     def feed_byte(self, byte):
@@ -57,12 +56,10 @@ class Parser(object):
         try:
             int(byte)
         except TypeError:
-            text = 'argument must be an integer (was {!r})'
-            raise TypeError(text.format(byte))
+            raise TypeError('byte must be an integer (was {!r})'.format(byte))
 
         if not 0 <= byte <= 255:
-            text = 'byte out of range: {!r}'
-            raise ValueError(text.format(byte))
+            raise ValueError('byte out of range: {!r}'.format(byte))
 
         #
         # Handle byte
@@ -72,31 +69,39 @@ class Parser(object):
             status_byte = byte
 
             if 0xf8 <= status_byte <= 0xff:
-                # Realtime message. These have no databytes,
-                # so they can be appended right away.
-                self._parsed_messages.append(Message(status_byte))
+                # Realtime message.
+
+                # Are we inside a sysex message?
+                if (self._current_message and
+                    self._current_message.type == 'sysex'):
+                    # Realtime messages are allowed inside sysex.
+                    # We append directly to _messages so we don't
+                    # lose the sysex message.
+                    self._parsed_messages.append(Message(status_byte))
+                else:
+                    self._deliver_message(Message(status_byte))
+
             elif status_byte == 0xf7:
                 # End of sysex
-                if self._message:
-                    self._message.data = self._data_bytes
-                    self._parsed_messages.append(self._message)
-                    self._message = None
-                    self._data_bytes = []
+                if self._current_message:
+                    self._current_message.data = self._data_bytes
+                    self._.append_message(self._current_message)
                 else:
                     pass  # Stray sysex_end byte. Ignore it.
             else:
-                # Start of message
-                self._message = Message(status_byte)
+                # Start a new message.
+                self._current_message = Message(status_byte)
         else:
-            # Data byte (can possibly complete message)
-            if self._message:
+            # Data byte.
+            if self._current_message:
                 self._data_bytes.append(byte)
-
-                if len(self._data_bytes) == self._message.spec.size - 1:
-                    self._add_data_bytes(self._message, self._data_bytes)
-                    self._parsed_messages.append(self._message)
-                    self._message = None
-                    self._data_bytes = []
+                
+                # Do we have enough data bytes for a complete message?
+                data_size = self._current_message.spec.size - 1
+                if len(self._data_bytes) == data_size:
+                    self._add_data_bytes(self._current_message,
+                                         self._data_bytes)
+                    self._deliver_message(self._current_message)
 
     def _add_data_bytes(self, message, data_bytes):
         """Add data bytes that we have collected to the message.
@@ -141,7 +146,7 @@ class Parser(object):
             b''  # Will be converted to integers in Python 2.
         """
         if python2 and isinstance(data, str):
-            # Byte strings in Python 2 need extra attention
+            # Byte strings in Python 2 need extra attention.
             for char in data:
                 self.feed_byte(ord(char))
         else:
