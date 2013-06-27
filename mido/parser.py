@@ -39,7 +39,7 @@ class Parser(object):
         """Create a new parser."""
         self._parsed_messages = deque()
         self._message = None  # Current message
-        self._data = []  # Data bytes
+        self._data_bytes = []  # Data bytes
 
     def reset(self):
         """Reset the parser.
@@ -47,7 +47,7 @@ class Parser(object):
         This will remove all parsed messages."""
         self._parsed_messages.clear()
         self._message = None
-        self._data = []
+        self._data_bytes = []
 
     def feed_byte(self, byte):
         """Feed one MIDI byte into the parser.
@@ -78,10 +78,10 @@ class Parser(object):
             elif status_byte == 0xf7:
                 # End of sysex
                 if self._message:
-                    self._message.data = self._data
+                    self._message.data = self._data_bytes
                     self._parsed_messages.append(self._message)
                     self._message = None
-                    self._data = []
+                    self._data_bytes = []
                 else:
                     pass  # Stray sysex_end byte. Ignore it.
             else:
@@ -90,49 +90,42 @@ class Parser(object):
         else:
             # Data byte (can possibly complete message)
             if self._message:
-                self._data.append(byte)
+                self._data_bytes.append(byte)
 
-                if len(self._data) == self._message.spec.size - 1:
-                    self._add_data(self._message, self._data)
+                if len(self._data_bytes) == self._message.spec.size - 1:
+                    self._add_data_bytes(self._message, self._data_bytes)
                     self._parsed_messages.append(self._message)
                     self._message = None
-                    self._data = []
+                    self._data_bytes = []
 
-    def _add_data(self, msg, data):
+    def _add_data_bytes(self, message, data_bytes):
         """Add data bytes that we have collected to the message.
 
         For internal use.
         """
 
-        # Shortcuts
-        spec = msg.spec
+        if message.type == 'sysex':
+            message.data = data
 
-        names = list(spec.args)
+        elif message.type == 'pitchwheel':
+            message.pitch = (data_bytes[0] | (data_bytes[1] << 7)) \
+                + MIN_PITCHWHEEL
 
-        if msg.status_byte < 0xf0:
-            # Channel was already handled above
-            names.remove('channel')
+        elif message.type == 'songpos':
+            value = data_bytes[0] | data_bytes[1] << 7
+            message.pos = value
 
-        if msg.type == 'sysex':
-            msg.data = data
-
-        elif msg.type == 'pitchwheel':
-            # Pitch is a 14 bit signed integer.
-            v = data[0] | (data[1] << 7)
-            # Make value value signed by
-            # adding the minimum value.
-            msg.pitch = v + MIN_PITCHWHEEL
-
-        elif msg.type == 'songpos':
-            value = data[0] | data[1] << 7
-            msg.pos = value
         else:
-            #
-            # Only normal data bytes.
-            # Just map them to names.
-            #
-            for (name, value) in zip(names, data):
-                setattr(msg, name, value)
+            if hasattr(message, 'channel'):
+                # Skip channel. It's already masked into the status byte.
+                attribute_names = message.spec.args[1:]
+            else:
+                attribute_names = message.sped.args
+
+            # The remaining arguments are all one data byte each.
+            # Map them to attributes.
+            for (name, value) in zip(attribute_names, data_bytes):
+                setattr(message, name, value)
 
     def feed(self, data):
         """Feed MIDI data to the parser.
@@ -173,10 +166,6 @@ class Parser(object):
 
     def __iter__(self):
         """Yield messages that have been parsed so far."""
-        # This is a 'while count():' loop rather than 'for msg in
-        # self._messages:' to allow the caller to break out of the
-        # loop before consuming all of the messages. (This was used in
-        # the PortMidi input port.)
         while len(self._parsed_messages):
             yield self._parsed_messages.popleft()
 
