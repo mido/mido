@@ -6,7 +6,7 @@ will return how many messages you can safely read without blocking, so
 you can implement nonblocking read with:
 
     while 1:
-        while port.messages_waiting():
+        while port.poll():
             message = input.receive()
             print(message)
 
