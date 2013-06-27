@@ -24,9 +24,7 @@ else:
     portname = None  # Use default port
 
 try:
-    port = Input(portname)
-    while 1:
-        message = port.receive()
+    for message in Input(portname):
         print('{}  {}'.format(message.hex(), message))
 except KeyboardInterrupt:
     pass

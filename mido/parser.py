@@ -180,12 +180,10 @@ class Parser(object):
 
     def __iter__(self):
         """Yield messages that have been parsed so far."""
-        # 
         # This is a 'while count():' loop rather than 'for msg in
         # self._messages:' to allow the caller to break out of the
         # loop before consuming all of the messages. (This was used in
         # the PortMidi input port.)
-        # 
         while len(self._parsed_messages):
             yield self._parsed_messages.popleft()
 

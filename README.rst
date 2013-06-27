@@ -114,9 +114,6 @@ Todo
 
    - make the last few modifications to the basic API
 
-   - add an __iter__() method to ports. It is unclear whether this should
-     block or not.
-
    - include a callback mechanism and maybe some kind of event based
      system. This can be built as a library that on top of port and message
      objects.
