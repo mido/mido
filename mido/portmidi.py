@@ -126,9 +126,9 @@ class DeviceInfo(object):
         else:
             device_type = 'output'
 
-        return "<{0} {1} device '{2.name}'" \
-            " interface='{2.interface}'>" \
-            "".format(state, device_type, self)
+        return "<{state} {device_type} device '{self.name}'" \
+            " '{self.interface}'>" \
+            "".format(**locals())
 
 
 def get_devices():
