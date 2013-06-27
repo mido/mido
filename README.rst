@@ -137,6 +137,7 @@ Latest version of the code: http://github.com/olemb/mido/ .
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
-License: MIT
-
 The PortMidi wrapper is based on portmidizero by Grant Yoshida.
+
+Thanks to tialpoy on Reddit for extensive code review and helpful
+suggestions.
