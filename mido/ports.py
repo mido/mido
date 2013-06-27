@@ -64,7 +64,7 @@ class IOPort(object):
         self.closed = False
 
     def send(self, message):
-        return self.outport.send()
+        return self.outport.send(message)
 
     def receive(self):
         return self.inport.receive()
