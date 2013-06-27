@@ -43,18 +43,12 @@ Receiving a message:
 Status
 -------
 
-Mido is not quite ready for production, but it's close. I hope to get
-some feedback before I finalize the API and release the first
-official version.
+Mido is not quite ready for production, but it's close. All of basic
+functionality is in place, and the API is unlikely to change much from
+this point.
 
-The messages and PortMidi Input and Output classes are fully
-implemented, and their API is unlikely to change much. Some changes
-will be made to the Parser class to make its methods a little more
-consistent and streamlined.
-
-Some of the code raises the wrong type of exceptions. This will have
-to be fixed.
-
+What remains is mostly documentation. Also, the code needs a bit more
+work, and many more test cases have to be written.
 
 
 License
@@ -242,13 +236,12 @@ The time attribute will not affect comparisons:
     >>> msg == msg2
     True
 
-More documentation is planned.
-
-
 Mido is short for MIDi Objects (or Musical Instrument Digital Objects).
+
+Latest version of the code: http://github.com/olemb/mido/ .
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
 
 License: MIT
 
-The PortMidi wrapper is based on Portmidizero by Grant Yoshida.
+The PortMidi wrapper is based on portmidizero by Grant Yoshida.

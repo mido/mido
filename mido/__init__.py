@@ -11,6 +11,7 @@ Module content:
     Message(type, **kw) -> Message
     new(type, **kw) -> Message    alias for Message()
 
+    Parser()
     parse(data) -> Message or None
     parse_all(data) -> [Message, ...]
 
@@ -51,8 +52,8 @@ __license__ = 'MIT'
 __version__ = '0.0.0'
 
 from .messages import Message
-from .parser import parse, parse_all
+from .parser import Parser, parse, parse_all
 
 new = Message  # Alias
 
-__all__ = ['Message', 'parse', 'parse_all']
+__all__ = ['Message', 'Parser', 'parse', 'parse_all',]

@@ -1,10 +1,7 @@
 """
 MIDI Parser
 
-The API of the Parser class will change to make it more consistent and
-useful. This class should be considered internal to Mido for now.
-
-Current API (more or less):
+Module content:
 
     Parser()
         feed(data)
@@ -18,14 +15,6 @@ Current API (more or less):
 
 byte is an integer in range 0 - 255.
 data is any sequence of bytes, or an object that generates them.
-
-API notes
-
-Possibly useful functionality:
-    - check how many messages are available
-    - get all messages as a list
-    - iterate through available messages
-    - reset parser (or you could just make a new parser)
 """
 
 import sys
