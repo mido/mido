@@ -104,6 +104,12 @@ Installing libportmidi in Ubuntu:
     $ sudo apt-get install libportmidi-dev
 
 
+More About MIDI
+----------------
+
+http://www.midi.org/
+
+
 Known Bugs
 -----------
 
