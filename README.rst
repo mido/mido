@@ -83,8 +83,7 @@ installed on your system.
 PortMidi is only required if you want to use message ports. The
 messages will work fine without it.
 
-Developed for Python 2.7 and 3.3. (3.2 should be OK. Older versions
-may or may not work.)
+Developed for Python 2.7 and 3.2.
 
 Runs on Linux 13.04 and Mac OS X 10.7.5. May also work on Windows.
 
