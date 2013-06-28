@@ -144,7 +144,9 @@ Future Plans
    - use libportmidi-dev or libportmidi0?
 
 
-Mido is short for MIDi Objects (or Musical Instrument Digital Objects).
+Mido is short for MIDi Objects (or Musical Instrument Digital
+Objects). It is pronounced with i and in "little" and o as in
+"object", or in Japanese: ミド.
 
 Latest version of the code: http://github.com/olemb/mido/ .
 
