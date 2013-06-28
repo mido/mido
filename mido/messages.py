@@ -505,7 +505,7 @@ def parse(text):
         else:
             try:
                 setattr(message, name, int(value))
-            except AttributeError, exception:
+            except AttributeError as exception:
                 raise ValueError(exception.message)
 
     return message
@@ -525,7 +525,7 @@ def parse_stream(stream):
             line = line.split('#')[0].strip()
             if line:
                 yield parse(line), None
-        except ValueError, exception:
+        except ValueError as exception:
             error_message = 'line {line_number}: {message}'.format(
                 line_number=line_number,
                 message=exception.message)
