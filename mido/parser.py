@@ -13,7 +13,7 @@ Module content:
     parse(data) -> Message or None
     parse_all(data) -> [Message, ...]
 
-byte is an integer in range 0 - 255.
+byte is an integer in range 0 .. 255.
 data is any sequence of bytes, or an object that generates them.
 """
 
@@ -51,7 +51,7 @@ class Parser(object):
     def feed_byte(self, byte):
         """Feed one MIDI byte into the parser.
 
-        The byte must be an integer in range 0 - 255.
+        The byte must be an integer in range 0 .. 255.
         """
         try:
             int(byte)
@@ -136,7 +136,7 @@ class Parser(object):
         """Feed MIDI data to the parser.
 
         Accepts any object that produces a sequence of integers in
-        range 0 - 255, such as:
+        range 0 .. 255, such as:
 
             [0, 1, 2]
             (0, 1, 2)

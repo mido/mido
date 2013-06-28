@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Mido - object oriented MIDI for Python
+Mido - Object Oriented MIDI for Python
 
 New messages are created with mido.new() or mido.Message(), which both
 return a message object.
@@ -16,7 +16,7 @@ Module content:
     parse_all(data) -> [Message, ...]
 
 type is type name or status byte.
-byte is an integer in range 0 - 255.
+byte is an integer in range 0 .. 255.
 data is any sequence of bytes, or an object that generates them.
 
 Se mido.portmidi for more about input and output ports.
