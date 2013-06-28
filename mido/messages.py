@@ -248,10 +248,6 @@ class Message(object):
     MIDI message class.
     """
 
-    # Attributes common to all messages.
-    # These are used in __setattr__().
-    _common_attributes = set(('spec', 'type', 'status_byte', 'time'))
-
     # Quick lookup of specs by name or status_byte.
     _spec_lookup = {}
 
@@ -290,18 +286,15 @@ class Message(object):
             text = '{!r} is an invalid type name or status byte'
             raise ValueError(text.format(type_))
 
-        # Specify valid attributes for __setattr__().
-        # (self._msg_attributes = set() wouldn't work here
-        # since it's referred to by __setattr__()).
-        self.__dict__['_msg_attributes'] = set(spec.args)
+        self._set('_settable_attributes', set(spec.args))
+        self._settable_attributes.add('time')
         
-        self.spec = spec
-        self.type = self.spec.type
+        self._set('spec', spec)
+        self._set('type', self.spec.type)
 
         #
         # Set default values for attributes
         #
-        self.time = 0
         for name in self.spec.args:
             if name == 'data':
                 self.data = ()
@@ -315,6 +308,7 @@ class Message(object):
                     self.channel = 0
             else:
                 setattr(self, name, 0)
+        self._set('time', 0)
 
         #
         # Override attibutes with keyword arguments
@@ -349,10 +343,14 @@ class Message(object):
 
         return Message(self.type, **args)
 
+    def _set(self, name, value):
+        """Sets an attribute directly, bypassing all type and value checks"""
+        self.__dict__[name] = value
+
     def __setattr__(self, name, value):
         """Set an attribute."""
 
-        if name in self._msg_attributes:
+        if name in self._settable_attributes:
             try:
                 check = globals()['check_{}'.format(name)]
             except KeyError:
@@ -363,14 +361,14 @@ class Message(object):
                 value = ret
 
             self.__dict__[name] = value
-        elif name in self._common_attributes:
-            self.__dict__[name] = value
+        elif name in self.__dict__:
+            raise AttributeError('{} attribute is read only'.format(name))
         else:
-            raise AttributeError('{} message has no {!r} attribute'.format(
+            raise AttributeError('{} message has no attribute {}'.format(
                     self.type, name))
 
     def __delattr__(self, name):
-        raise AttributeError('Message attributes can\'t be deleted')
+        raise AttributeError('attribute can not be deleted')
 
     def _get_status_byte(self):
         """Compute and return status byte.
