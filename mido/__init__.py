@@ -45,18 +45,16 @@ Getting started:
     'F0 00 01 02 F7'
 """
 
+from . import ports, parser, messages, text
+from .messages import Message
+from .parser import Parser, parse, parse_all
+new = Message  # Alias
+
 __author__ = 'Ole Martin Bjørndalen'
 __email__ = 'ombdalen@gmail.com'
 __url__ = 'http://github.com/olemb/mido/'
 __license__ = 'MIT'
 __version__ = '0.0.0'
 
-from . import ports
-from . import parser
-from . import messages
-from .messages import Message
-from .parser import Parser, parse, parse_all
-
-new = Message  # Alias
 
 __all__ = ['Message', 'Parser', 'parse', 'parse_all',]
