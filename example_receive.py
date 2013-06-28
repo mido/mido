@@ -18,6 +18,6 @@ try:
         print('Using {}'.format(port))
         print('Waiting for messages...')
         for message in port:
-            print('Received {}  {}'.format(message.hex(), message))
+            print('Received {} {}'.format(message.hex(), mido.text.format(message)))
 except KeyboardInterrupt:
     pass

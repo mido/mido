@@ -9,6 +9,8 @@ Mido allows you to work with MIDI messages as Python objects:
     >>> msg = mido.new('note_on', note=60, velocity=64)
     >>> msg
     mido.Message('note_on', channel=0, note=60, velocity=64, time=0)
+    >>> str(msg)
+    'note_on channel=0 note=60 velocity=64'
     >>> msg.type
     'note_on'
     >>> msg.channel = 6

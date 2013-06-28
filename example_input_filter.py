@@ -30,6 +30,6 @@ try:
         print("Ignoring everything but 'note_on' and 'note_off'.")
         print('Waiting for notes...')
         for message in accept_notes(port):
-            print('{}  {}'.format(message.hex(), message))
+            print('Received {}'.format(message))
 except KeyboardInterrupt:
     pass

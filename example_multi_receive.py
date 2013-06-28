@@ -14,6 +14,6 @@ print('Waiting for messages...')
 
 try:
     for message, port in multi_receive(ports):
-        print('Received {} from {}'.format(message.type, port.name))
+        print('Received {}'.format(message))
 except KeyboardInterrupt:
     pass

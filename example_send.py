@@ -20,9 +20,6 @@ else:
 # A pentatonic scale
 notes = [60, 62, 64, 67, 69, 72]
 
-def print_message(message):
-    print('Sending {}  {}'.format(message.hex(), message))
-
 try:
     with Output(portname) as port:
         print('Using {}'.format(port))
@@ -30,12 +27,12 @@ try:
             note = random.choice(notes)
 
             message = mido.new('note_on', note=note, velocity=100)
-            print_message(message)
+            print('Sending {}'.format(message))
             port.send(message)
             time.sleep(0.05)
             
             port.send(mido.new('note_off', note=note, velocity=100))
-            print_message(message)
+            print('Sending {}'.format(message))
             port.send(message)
             time.sleep(0.1)
 except KeyboardInterrupt:

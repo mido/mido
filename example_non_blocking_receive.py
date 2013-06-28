@@ -22,7 +22,7 @@ try:
             # that are available at this time.
             for _ in range(port.pending()):
                 message = port.receive()
-                print('{}  {}'.format(message.hex(), message))
+                print('Received {}'.format(message))
 
             print('Doing something else for a while...')
             time.sleep(0.5)

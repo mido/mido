@@ -45,7 +45,7 @@ Getting started:
     'F0 00 01 02 F7'
 """
 
-from . import ports, parser, messages, text
+from . import ports, parser, messages
 from .messages import Message
 from .parser import Parser, parse, parse_all
 new = Message  # Alias

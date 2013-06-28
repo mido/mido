@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Unfinished example of IOPort usage.
 
@@ -13,7 +14,7 @@ from mido.ports import IOPort
 
 with IOPort(Input(), Output()) as port:
     print('Using {} and {}'.format(port.inport, port.outport))
-    port.send(mido.new('continue'))
-    for msg in port:
-        print('Received {}, sending it back out.'.format(msg))
-        port.send(msg)
+    port.send(mido.new('pitchwheel', pitch=122))
+    for message in port:
+        print('Received {}, sending it back out.'.format(message))
+        port.send(message)
