@@ -289,13 +289,13 @@ class Message(object):
         self._set('_valid_attributes', set(spec.arguments))
         self._valid_attributes.add('time')
         
-        self._set('spec', spec)
-        self._set('type', self.spec.type)
+        self._set('_spec', spec)
+        self._set('type', self._spec.type)
 
         #
         # Set default values for attributes
         #
-        for name in self.spec.arguments:
+        for name in self._spec.arguments:
             if name == 'data':
                 self.data = ()
             elif name == 'channel':
@@ -335,7 +335,7 @@ class Message(object):
         """
         # Get values from this object
         arguments = {}
-        for name in self.spec.arguments + ('time',):
+        for name in self._spec.arguments + ('time',):
             if name in overrides:
                 arguments[name] = overrides[name]
             else:
@@ -376,7 +376,7 @@ class Message(object):
         For channel messages, the returned status byte
         will contain the channel in its lower 4 bits.
         """
-        byte = self.spec.status_byte
+        byte = self._spec.status_byte
         if byte < 0xf0:
             # Add channel (lower 4 bits) to status byte.
             # Those bits in spec.status_byte are always 0.
@@ -390,7 +390,7 @@ class Message(object):
         """Encode message and return as a list of integers."""
         message_bytes = [self.status_byte]
 
-        for name in self.spec.arguments:
+        for name in self._spec.arguments:
             value = getattr(self, name)
             try:
                 encode = globals()['encode_{}'.format(name)]
@@ -415,13 +415,12 @@ class Message(object):
         return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
 
     def __repr__(self):
-        arguments = [repr(self.type)]
-        for name in self.spec.arguments:
-            arguments.append('{}={!r}'.format(name, getattr(self, name)))
-        arguments.append('time={!r}'.format(self.time))
-        arguments = ', '.join(arguments)
+        parts = [self.type]
 
-        return 'mido.Message({})'.format(arguments)
+        for name in self._spec.arguments + ('time',):
+            parts.append('{}={!r}'.format(name, getattr(self, name)))
+
+        return 'mido.Message({})'.format(', '.join(parts))
 
     def __str__(self):
         return format(self)
@@ -436,7 +435,7 @@ class Message(object):
 
         def key(msg):
             """Return a key for comparison."""
-            return [msg.type] + [getattr(msg, arg) for arg in msg.spec.arguments]
+            return [msg.type] + [getattr(msg, arg) for arg in msg._spec.arguments]
 
         return key(self) == key(other)
 
@@ -477,7 +476,7 @@ def parse(text):
         message.time = time
 
     arguments = words[1:]
-    valid_arguments = message.spec.arguments
+    valid_arguments = message._spec.arguments
 
     names_seen = set()
 
@@ -540,7 +539,7 @@ def format(message, include_time=False):
     if include_time:
         words.append(str(message.time))
     words.append(message.type)
-    for name in message.spec.arguments:
+    for name in message._spec.arguments:
         value = getattr(message, name)
         if name == 'data':
             value = '({})'.format(','.join([str(byte) for byte in value]))

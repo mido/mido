@@ -97,7 +97,7 @@ class Parser(object):
                 self._data_bytes.append(byte)
                 
                 # Do we have enough data bytes for a complete message?
-                data_size = self._current_message.spec.size - 1
+                data_size = self._current_message._spec.size - 1
                 if len(self._data_bytes) == data_size:
                     self._add_data_bytes(self._current_message,
                                          self._data_bytes)
@@ -123,9 +123,9 @@ class Parser(object):
         else:
             if hasattr(message, 'channel'):
                 # Skip channel. It's already masked into the status byte.
-                attribute_names = message.spec.arguments[1:]
+                attribute_names = message._spec.arguments[1:]
             else:
-                attribute_names = message.sped.arguments
+                attribute_names = message._spec.arguments
 
             # The remaining arguments are all one data byte each.
             # Map them to attributes.
