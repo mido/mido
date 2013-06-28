@@ -54,8 +54,8 @@ when you assign to an attribute:
       File "./mido/messages.py", line 327, in __setattr__
         ret = check(value)
       File "./mido/messages.py", line 128, in check_channel
-        raise ValueError('channel must be in range 0 - 15')
-    ValueError: channel must be in range 0 - 15
+        raise ValueError('channel must be in range 0 .. 15')
+    ValueError: channel must be in range 0 .. 15
 
 and when you pass a keyword argument to the constructor or the copy()
 method:
