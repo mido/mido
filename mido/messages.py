@@ -74,19 +74,19 @@ class MessageSpec(object):
 
     type is the type name of the message, for example 'sysex'.
 
-    args is the attributes / keywords arguments specific to
+    arguments is the attributes / keywords arguments specific to
     this message type.
 
     size is the size of this message in bytes. This value is not used
     for sysex messages, since they use an end byte instead.
     """    
 
-    def __init__(self, status_byte, type_, args, size):
+    def __init__(self, status_byte, type_, arguments, size):
         """Create a new message specification.
         """
         self.status_byte = status_byte
         self.type = type_
-        self.args = args
+        self.arguments = arguments
         self.size = size
     
     def signature(self):
@@ -97,7 +97,7 @@ class MessageSpec(object):
         parts = []
         parts.append(repr(self.type))
 
-        for name in self.args:
+        for name in self.arguments:
             if name == 'data':
                 parts.append('data=()')
             else:
@@ -268,7 +268,7 @@ class Message(object):
     del spec, channel
 
 
-    def __init__(self, type_, **args):
+    def __init__(self, type_, **arguments):
         """Create a new message.
 
         The first argument is typically the type of message to create,
@@ -286,8 +286,8 @@ class Message(object):
             text = '{!r} is an invalid type name or status byte'
             raise ValueError(text.format(type_))
 
-        self._set('_settable_attributes', set(spec.args))
-        self._settable_attributes.add('time')
+        self._set('_valid_attributes', set(spec.arguments))
+        self._valid_attributes.add('time')
         
         self._set('spec', spec)
         self._set('type', self.spec.type)
@@ -295,7 +295,7 @@ class Message(object):
         #
         # Set default values for attributes
         #
-        for name in self.spec.args:
+        for name in self.spec.arguments:
             if name == 'data':
                 self.data = ()
             elif name == 'channel':
@@ -313,7 +313,7 @@ class Message(object):
         #
         # Override attibutes with keyword arguments
         #
-        for name, value in args.items():
+        for name, value in arguments.items():
             try:
                 setattr(self, name, value)
             except AttributeError:
@@ -334,14 +334,14 @@ class Message(object):
             b = a.copy(velocity=32)
         """
         # Get values from this object
-        args = {}
-        for name in self.spec.args + ('time',):
+        arguments = {}
+        for name in self.spec.arguments + ('time',):
             if name in overrides:
-                args[name] = overrides[name]
+                arguments[name] = overrides[name]
             else:
-                args[name] = getattr(self, name)
+                arguments[name] = getattr(self, name)
 
-        return Message(self.type, **args)
+        return Message(self.type, **arguments)
 
     def _set(self, name, value):
         """Sets an attribute directly, bypassing all type and value checks"""
@@ -350,7 +350,7 @@ class Message(object):
     def __setattr__(self, name, value):
         """Set an attribute."""
 
-        if name in self._settable_attributes:
+        if name in self._valid_attributes:
             try:
                 check = globals()['check_{}'.format(name)]
             except KeyError:
@@ -390,7 +390,7 @@ class Message(object):
         """Encode message and return as a list of integers."""
         message_bytes = [self.status_byte]
 
-        for name in self.spec.args:
+        for name in self.spec.arguments:
             value = getattr(self, name)
             try:
                 encode = globals()['encode_{}'.format(name)]
@@ -415,13 +415,13 @@ class Message(object):
         return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
 
     def __repr__(self):
-        args = [repr(self.type)]
-        for name in self.spec.args:
-            args.append('{}={!r}'.format(name, getattr(self, name)))
-        args.append('time={!r}'.format(self.time))
-        args = ', '.join(args)
+        arguments = [repr(self.type)]
+        for name in self.spec.arguments:
+            arguments.append('{}={!r}'.format(name, getattr(self, name)))
+        arguments.append('time={!r}'.format(self.time))
+        arguments = ', '.join(arguments)
 
-        return 'mido.Message({})'.format(args)
+        return 'mido.Message({})'.format(arguments)
 
     def __str__(self):
         return format(self)
@@ -436,7 +436,7 @@ class Message(object):
 
         def key(msg):
             """Return a key for comparison."""
-            return [msg.type] + [getattr(msg, arg) for arg in msg.spec.args]
+            return [msg.type] + [getattr(msg, arg) for arg in msg.spec.arguments]
 
         return key(self) == key(other)
 
@@ -477,7 +477,7 @@ def parse(text):
         message.time = time
 
     arguments = words[1:]
-    valid_arguments = message.spec.args
+    valid_arguments = message.spec.arguments
 
     names_seen = set()
 
@@ -540,7 +540,7 @@ def format(message, include_time=False):
     if include_time:
         words.append(str(message.time))
     words.append(message.type)
-    for name in message.spec.args:
+    for name in message.spec.arguments:
         value = getattr(message, name)
         if name == 'data':
             value = '({})'.format(','.join([str(byte) for byte in value]))

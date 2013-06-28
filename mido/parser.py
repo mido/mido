@@ -123,9 +123,9 @@ class Parser(object):
         else:
             if hasattr(message, 'channel'):
                 # Skip channel. It's already masked into the status byte.
-                attribute_names = message.spec.args[1:]
+                attribute_names = message.spec.arguments[1:]
             else:
-                attribute_names = message.sped.args
+                attribute_names = message.sped.arguments
 
             # The remaining arguments are all one data byte each.
             # Map them to attributes.
