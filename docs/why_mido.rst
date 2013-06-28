@@ -36,7 +36,7 @@ With Mido, you can instead do:
 Type and Value Checking
 ------------------------
 
-Woeking directly with the bytes is also error prone. For example, data
+Working directly with the bytes is also error prone. For example, data
 bytes have a valid range of 0 .. 127, while lists can store any Python
 object. If you make a mistake in your computation of a data value, you
 won't know it until it blows up in some unrelated part of your
