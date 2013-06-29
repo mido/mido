@@ -35,11 +35,10 @@ Sending and receiving messages via PortMidi:
 .. code:: python
 
     >>> from mido.portmidi import Input, Output
-    >>> outport = Output()
-    >>> outport.send(msg)
     >>> inport = Input()
+    >>> outport = Output()
     >>> for msg in inport:
-    >>>     print(msg)
+    ...     outport.send(msg)
 
 Ports can opened by name:
 
