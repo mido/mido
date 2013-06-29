@@ -45,14 +45,33 @@ Ports can opened by name:
 
     >>> mido.input_names()
     ['Midi Through Port-0', 'SH-201']
-    >>> mido.input()  # Open default port
-    <open input port 'Midi Through Port-0' (ALSA)>
     >>> mido.input('SH-201')
     <open input port 'SH-201' (ALSA)>
     
-The ports API is made for duck typing, so it's pretty easy to write
-ports for another library like RtMidi independently, and then use them
-with Mido.
+Since Mido uses duck typing, you can add new port types and backends
+without involving Mido at all. All you need are objects that support
+the functionality you want to use. For example:
+
+.. code:: python
+
+    import mido
+
+    class PrintPort:
+        def send(self, message):
+            print(message)
+
+    with mido.input(), LogPort as inport, outport:
+        for message in inport:
+            outport.send(message)
+
+or::
+
+    import mido
+    import rtmido  # fictional wrapper for RtMido
+
+    with rtmido.output() as port:
+        port.send(mido.new('pitchbend', channel=3, pitch=842))
+        ...
 
 
 Status
