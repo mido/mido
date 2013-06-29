@@ -17,41 +17,6 @@ A table of all standard MIDI messages and their binary encoding can be
 found here:
 
    http://www.midi.org/techspecs/midimessages.php
-
-
-Parsing and serializing messages
----------------------------------
-
-Searializes MIDI messages to single line text strings.
-
-Functions:
-
-    parse_number(text) => int, float or None
-    parse(text) => mido.Message or raise ValueError
-    parse_stream(line_generator) => yield mido.Message, error_message
-    format(message) => text
-
-Examples of messages:
-
-    note_on channel=0 note=40 velocity=16
-    sysex data=(0,14,122,29)
-
-Values can be left out. They will then be set to the default value (0
-or ()):
-
-    >>> parse('note_on')
-    mido.Message('note_on', channel=0, note=0, velocity=0, time=0)
-    >>> parse('sysex')
-    mido.Message('sysex', data=(), time=0)
-
-Whitespace around the line is ignored. Sysex data must not contain
-whitespace.
-
-If the first word in the line is a number (int or float), it will be
-assigned to message.time:
-
-    >>> parse('0.5 note_on channel=1')
-    mido.Message('note_on', channel=1, note=0, velocity=0, time=0.5)
 """
 
 # Pitchwheel is a 14 bit signed integer
@@ -420,7 +385,7 @@ class Message(object):
         return 'mido.Message({})'.format(', '.join(parts))
 
     def __str__(self):
-        return format(self)
+        return text_format(self)
 
     def __eq__(self, other):
         """Compare message to another for equality.
@@ -437,7 +402,7 @@ class Message(object):
         return key(self) == key(other)
 
 
-def parse_number(text):
+def text_parse_number(text):
     """Parse text as a number.
 
     Return number or None if text is not a number."""
@@ -450,7 +415,7 @@ def parse_number(text):
     else:
         return None
 
-def parse(text):
+def text_parse(text):
     """Parse a string of text and return a message.
 
     The string can span multiple lines, but must contain
@@ -462,7 +427,7 @@ def parse(text):
     if len(words) < 1:
         raise ValueError('string is empty')
 
-    time = parse_number(words[0])
+    time = text_parse_number(words[0])
     if time is not None:
         del words[0]
         if len(words) < 1:
@@ -505,7 +470,7 @@ def parse(text):
     return message
 
 
-def parse_stream(stream):
+def text_parse_stream(stream):
     """Parse a stram of messages and yield (message, error_message)
 
     stream can be any iterable that generates text strings. If
@@ -527,7 +492,7 @@ def parse_stream(stream):
         line_number += 1
 
 
-def format(message, include_time=False):
+def text_format(message, include_time=False):
     """Format a message and return as a string."""
     if not isinstance(message, Message):
         raise ValueError('message must be a mido.Message object')
