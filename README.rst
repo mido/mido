@@ -1,5 +1,5 @@
-Mido - Object Oriented MIDI for Python
-=======================================
+Mido - MIDI Objects for Python
+===============================
 
 Mido allows you to work with MIDI messages as Python objects:
 
