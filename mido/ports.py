@@ -98,7 +98,7 @@ class MessageBuffer:
 
     receive() is not supported, because it would be a bad idea for a
     MessageBuffer object to block, since it's getting its data from
-    the same thread as the one that's blocked.
+    the same thread as the one it's running in.
 
     I don't know if it works yet.
     """
