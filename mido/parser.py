@@ -37,16 +37,72 @@ class Parser(object):
     def __init__(self):
         """Create a new parser."""
         self._parsed_messages = deque()
-        self._current_message = None
+        self._status_byte = None
         self._data_bytes = []  # Data bytes
+        self._bytes_to_go = None
 
-    def _deliver_message(self, message):
-        """Deliver message into message deque and reset internal
-        state for next message.
-        """
+    def _deliver(self, message):
         self._parsed_messages.append(message)
-        self._current_message = None
-        self._data_bytes = []
+
+    def _build_message(self):
+        type_ = self._spec.type
+
+        if type_ == 'sysex':
+            return Message('sysex', data=data)
+
+        elif type_ == 'pitchwheel':
+            pitch = self._data_bytes[0] | \
+                ((self._data_bytes[1] << 7) + MIN_PITCHWHEEL)
+            m = Message('pitchwheel', pitch=pitch)
+            return m
+
+        elif type_ == 'songpos':
+            return Message('songpos', pos=(self._data_bytes[0] | \
+                                               (self._data_bytes[1] << 7)))
+
+        else:
+            if self._status_byte < 0xf0:
+                attribute_names = self._spec.arguments[1:]
+            else:
+                attribute_names = self._spec.arguments
+
+            return Message(type_, **dict(zip(attribute_names, self._data_bytes)))
+
+    def _handle_status_byte(self, byte):
+        if 0xf8 <= byte <= 0xff:
+            # Realtime message are delivered straight away.
+            self._parsed_messages.append(Message(byte))
+
+            if self._status_byte != 0xf0:
+                # Realtime message arrived inside a non-sysex
+                # message. Discard the message we were parsing.
+                self._status_byte = 0
+
+        elif byte == 0xf7:
+            # End of sysex
+            if self._status_byte == 0xf0:
+                # We were inside a sysex message. Deliver it.
+                self._deliver(Message('sysex', data=self._data_bytes))
+                self._status_byte = None
+            else:
+                # Ignore stray end_of_sysex.
+                pass
+        else:
+            # Start of new message
+            self._status_byte = byte
+            self._spec = Message._spec_lookup[byte]
+            self._bytes_to_go = self._spec.size - 1
+
+    def _handle_data_byte(self, byte):
+        self._data_bytes.append(byte)
+
+        if self._status_byte:
+            self._bytes_to_go -= 1
+            if self._bytes_to_go == 0:
+                self._deliver(self._build_message())
+        else:
+            # Stray data byte. Ignore it.
+            pass
 
     def feed_byte(self, byte):
         """Feed one MIDI byte into the parser.
@@ -56,81 +112,15 @@ class Parser(object):
         try:
             int(byte)
         except TypeError:
-            raise TypeError('byte must be an integer (was {!r})'.format(byte))
+            raise TypeError('byte must be an integer')
 
         if not 0 <= byte <= 255:
-            raise ValueError('byte out of range: {!r}'.format(byte))
+            raise ValueError('byte must be in range 0..255')
 
-        #
-        # Handle byte
-        #
         if byte >= 0x80:
-            # New message
-            status_byte = byte
-
-            if 0xf8 <= status_byte <= 0xff:
-                # Realtime message.
-
-                # Are we inside a sysex message?
-                if (self._current_message and
-                    self._current_message.type == 'sysex'):
-                    # Realtime messages are allowed inside sysex.
-                    # We append directly to _messages so we don't
-                    # lose the sysex message.
-                    self._parsed_messages.append(Message(status_byte))
-                else:
-                    self._deliver_message(Message(status_byte))
-
-            elif status_byte == 0xf7:
-                # End of sysex
-                if self._current_message:
-                    self._current_message.data = self._data_bytes
-                    self._deliver_message(self._current_message)
-                else:
-                    pass  # Stray sysex_end byte. Ignore it.
-            else:
-                # Start a new message.
-                self._current_message = Message(status_byte)
+            self._handle_status_byte(byte)
         else:
-            # Data byte.
-            if self._current_message:
-                self._data_bytes.append(byte)
-                
-                # Do we have enough data bytes for a complete message?
-                data_size = self._current_message._spec.size - 1
-                if len(self._data_bytes) == data_size:
-                    self._add_data_bytes(self._current_message,
-                                         self._data_bytes)
-                    self._deliver_message(self._current_message)
-
-    def _add_data_bytes(self, message, data_bytes):
-        """Add data bytes that we have collected to the message.
-
-        For internal use.
-        """
-
-        if message.type == 'sysex':
-            message.data = data
-
-        elif message.type == 'pitchwheel':
-            message.pitch = (data_bytes[0] | (data_bytes[1] << 7)) \
-                + MIN_PITCHWHEEL
-
-        elif message.type == 'songpos':
-            value = data_bytes[0] | data_bytes[1] << 7
-            message.pos = value
-
-        else:
-            if hasattr(message, 'channel'):
-                # Skip channel. It's already masked into the status byte.
-                attribute_names = message._spec.arguments[1:]
-            else:
-                attribute_names = message._spec.arguments
-
-            # The remaining arguments are all one data byte each.
-            # Map them to attributes.
-            for (name, value) in zip(attribute_names, data_bytes):
-                setattr(message, name, value)
+            self._handle_data_byte(byte)
 
     def feed(self, data):
         """Feed MIDI data to the parser.
@@ -150,6 +140,7 @@ class Parser(object):
             for char in data:
                 self.feed_byte(ord(char))
         else:
+            print(repr(data))
             for byte in data:
                 self.feed_byte(byte)
 

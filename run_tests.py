@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import random
 import unittest
 import mido
 
@@ -24,10 +25,10 @@ class TestMessages(unittest.TestCase):
 
     def test_pitchwheel_encode_parse(self):
         """Encode and parse pitchwheel with value=0."""
-        msg1 = mido.new('pitchwheel', pitch=0)
-        msg2 = mido.parse(msg1.bytes())
-        
-        self.assertTrue(msg1 == msg2)
+        a = mido.new('pitchwheel', pitch=0)
+        b = mido.parse(a.bytes())
+
+        self.assertTrue(a == b)
 
     def test_channel_value(self):
         """See if the channel masking and overrides work in init."""
@@ -87,8 +88,11 @@ class TestParser(unittest.TestCase):
         self.assertRaises(ValueError, parser.feed_byte, 256)    
 
     # Todo: Parser should not crash when parsing random data
-    #def test_parse_random_bytes(self):
-    #    pass
-
+    def test_parse_random_bytes(self):
+        parser = mido.Parser()
+        for _ in range(10000):
+            byte = random.randrange(256)
+            parser.feed_byte(byte)
+            
 if __name__ == '__main__':
     unittest.main()
