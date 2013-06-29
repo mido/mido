@@ -82,10 +82,9 @@ class Parser(object):
                 # We were inside a sysex message. Deliver it.
                 self._parsed_messages.append(Message('sysex',
                                                      data=self._data_bytes))
-                self._status_byte = None
-            else:
-                # Ignore stray end_of_sysex.
-                pass
+            # Reset parser.
+            self._status_byte = None
+            self._data_bytes = []
         else:
             # Start of new message
             self._status_byte = byte
