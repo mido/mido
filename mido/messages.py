@@ -88,7 +88,10 @@ class MessageSpec(object):
         self.type = type_
         self.arguments = arguments
         self.size = size
-    
+   
+        # Attributes that can be set on the object
+        self.valid_attributes = set(self.arguments) | {'time'}
+ 
     def signature(self):
         """Return call signature for Message constructor for this type.
 
@@ -286,9 +289,6 @@ class Message(object):
             text = '{!r} is an invalid type name or status byte'
             raise ValueError(text.format(type_))
 
-        self._set('_valid_attributes', set(spec.arguments))
-        self._valid_attributes.add('time')
-        
         self._set('_spec', spec)
         self._set('type', self._spec.type)
 
@@ -350,7 +350,7 @@ class Message(object):
     def __setattr__(self, name, value):
         """Set an attribute."""
 
-        if name in self._valid_attributes:
+        if name in self._spec.valid_attributes:
             try:
                 check = globals()['check_{}'.format(name)]
             except KeyError:
