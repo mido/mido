@@ -36,11 +36,12 @@ With Mido, you can instead do:
 Type and Value Checking
 ------------------------
 
-Working directly with the bytes is also error prone. For example, data
-bytes are integers and have a valid range of 0..127, while lists can
-store any Python object. If you make a mistake in your computation of
-a data value, you won't know it until it blows up in some unrelated
-part of your program.
+Working directly with the bytes is also error prone. While MIDI data
+bytes have a valid range of 0..127, the size of Python integers is only
+limited by how much memory is available. If you make a mistake in your
+computation of a data value, it could easily travel around undetected
+until it blows up some seemingly unrelated part of your system. These
+kinds of errors are tricky to track down.
 
 Mido messages come with type and value checking built in. This happens
 when you assign to an attribute:
