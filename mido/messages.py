@@ -54,9 +54,6 @@ assigned to message.time:
     mido.Message('note_on', channel=1, note=0, velocity=0, time=0.5)
 """
 
-from __future__ import print_function
-
-
 # Pitchwheel is a 14 bit signed integer
 MIN_PITCHWHEEL = -8192
 MAX_PITCHWHEEL = 8191

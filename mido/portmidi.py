@@ -21,8 +21,6 @@ Module Content:
     get_input_names()   return all input port names as a sorted list
     get_output_names()  return all output port names as a sorted list
 """
-
-from __future__ import print_function
 import time
 
 from .parser import Parser

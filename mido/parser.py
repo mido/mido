@@ -140,7 +140,6 @@ class Parser(object):
             for char in data:
                 self.feed_byte(ord(char))
         else:
-            print(repr(data))
             for byte in data:
                 self.feed_byte(byte)
 
