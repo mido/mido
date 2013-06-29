@@ -77,12 +77,12 @@ or::
 Status
 -------
 
-Mido is not quite ready for production, but it's close. All of basic
-functionality is in place, and the API is unlikely to change much from
-this point.
+Mido is not quite ready for a formal release, but it's close. All of
+the basic functionality is in place, and the API is unlikely to change
+much from this point. What remains is to write thorough documentation
+and to add more unit tests.
 
-What remains is mostly documentation. Also, the code needs a bit more
-work, and many more test cases need to be written.
+I am aiming for a release sometime in July.
 
 
 License
