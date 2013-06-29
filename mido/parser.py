@@ -76,7 +76,7 @@ class Parser(object):
             if self._status_byte != 0xf0:
                 # Realtime message arrived inside a non-sysex
                 # message. Discard the message we were parsing.
-                self._status_byte = 0
+                self._status_byte = None
 
         elif byte == 0xf7:
             # End of sysex
