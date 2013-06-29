@@ -72,7 +72,7 @@ def _terminate():
 
     if _initialized:
         pm.lib.Pm_Terminate()
-        _initialized
+        _initialized = False
 
 
 class DeviceInfo(object):
