@@ -82,7 +82,7 @@ the basic functionality is in place, and the API is unlikely to change
 much from this point. What remains is to write thorough documentation
 and to add more unit tests.
 
-I am aiming for a release sometime in July.
+I am aiming for a release sometime in July 2013.
 
 
 License
