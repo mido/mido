@@ -41,9 +41,6 @@ class Parser(object):
         self._data_bytes = []  # Data bytes
         self._bytes_to_go = None
 
-    def _deliver(self, message):
-        self._parsed_messages.append(message)
-
     def _build_message(self):
         type_ = self._spec.type
 
@@ -82,7 +79,8 @@ class Parser(object):
             # End of sysex
             if self._status_byte == 0xf0:
                 # We were inside a sysex message. Deliver it.
-                self._deliver(Message('sysex', data=self._data_bytes))
+                self._parsed_messages.append(Message('sysex',
+                                                     data=self._data_bytes))
                 self._status_byte = None
             else:
                 # Ignore stray end_of_sysex.
@@ -99,7 +97,7 @@ class Parser(object):
         if self._status_byte:
             self._bytes_to_go -= 1
             if self._bytes_to_go == 0:
-                self._deliver(self._build_message())
+                self._parsed_messages.append(self._build_message())
         else:
             # Stray data byte. Ignore it.
             pass
