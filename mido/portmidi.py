@@ -38,18 +38,6 @@ def _check_error(return_value):
         raise IOError(pm.lib.Pm_GetErrorText(return_value))
 
 
-def _print_event(event):
-    """Print a PortMidi event. (For debugging.)"""
-
-    value = event.message & 0xffffffff
-    message_bytes = []
-    for _ in range(4):
-        byte = value & 0xff
-        message_bytes.append(byte)
-        value >>= 8
-    print(' '.join('{:02x}'.format(b) for b in message_bytes))
-
-
 def _initialize():
     """Initialize PortMidi.
 
@@ -321,6 +309,7 @@ class Input(Port):
 
             # Get the event
             event = read_buffer[0]
+            # print('Received: {:x}'.format(event.message))
 
             # The bytes of the message are stored like this:
             #    0x00201090 -> (0x90, 0x10, 0x10)
