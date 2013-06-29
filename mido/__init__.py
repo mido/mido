@@ -63,18 +63,19 @@ def input_names():
     """Return a sorted list of all input port names.
     These names can be passed to mido.input() and mido.port().
     """
-    return _get_backend('portmidi').get_input_names()
+    return _get_portmidi().get_input_names()
 
 
 def output_names():
     """Return a sorted list of all output port names.
     These names can be passed to mido.output() and mido.port().
     """
-    return _get_backend('portmidi').get_output_names()
+    return _get_portmidi().get_output_names()
 
 
-#def port_names(backend='portmidi'):
-#    return _get_backend(backend).get_port_names()
+def port_names():
+    """Return the names of all ports that axllow input and output."""
+    return sorted(set(input_names()) & set(output_names()))
 
 
 def input(name=None):
@@ -92,20 +93,14 @@ def port(name=None):
     return _open_port(name, mode='io')
 
 
-def _get_backend(backend):
-    # Todo: what about Python 2 unicode strings?
-    if isinstance(backend, str):
-        if backend == 'portmidi':
-            from . import portmidi
-            return portmidi
-        else:
-            # Todo: it this the right error to raise?
-            raise ValueError('no such backend {!r}'.format(backend))
-    else:
-        return backend
+def _get_portmidi():
+    # Todo: check for exceptions?
+    from . import portmidi
+    return portmidi
+
 
 def _open_port(name=None, mode=None, backend='portmidi'):
-    backend = _get_backend(backend)
+    backend = _get_portmidi()
 
     if mode == 'i':
         return backend.Input(name)

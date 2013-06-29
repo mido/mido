@@ -63,6 +63,9 @@ class IOPort(object):
         self.outport = outport
         self.closed = False
 
+        # Todo: what if they have different names?
+        self.name = self.inport.name
+
     def send(self, message):
         return self.outport.send(message)
 
@@ -86,6 +89,14 @@ class IOPort(object):
 
     def __exit__(self, type, value, traceback):
         return False
+
+    def __repr__(self):
+        if self.closed:
+            state = 'closed'
+        else:
+            state = 'open'
+
+        return "<{} I/O port '{}'>".format(state, self.name)
 
 
 class MessageBuffer:
