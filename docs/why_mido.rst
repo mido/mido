@@ -37,7 +37,7 @@ Type and Value Checking
 ------------------------
 
 Working directly with the bytes is also error prone. For example, data
-bytes are integers and have a valid range of 0 .. 127, while lists can
+bytes are integers and have a valid range of 0..127, while lists can
 store any Python object. If you make a mistake in your computation of
 a data value, you won't know it until it blows up in some unrelated
 part of your program.
@@ -54,8 +54,8 @@ when you assign to an attribute:
       File "./mido/messages.py", line 327, in __setattr__
         ret = check(value)
       File "./mido/messages.py", line 128, in check_channel
-        raise ValueError('channel must be in range 0 .. 15')
-    ValueError: channel must be in range 0 .. 15
+        raise ValueError('channel must be in range 0..15')
+    ValueError: channel must be in range 0..15
 
 and when you pass a keyword argument to the constructor or the copy()
 method:
