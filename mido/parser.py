@@ -63,7 +63,8 @@ class Parser(object):
             else:
                 attribute_names = self._spec.arguments
 
-            return Message(type_, **dict(zip(attribute_names, self._data_bytes)))
+            return Message(type_,
+                           **dict(zip(attribute_names, self._data_bytes)))
 
     def _handle_status_byte(self, byte):
         if 0xf8 <= byte <= 0xff:
@@ -88,6 +89,7 @@ class Parser(object):
         else:
             # Start of new message
             self._status_byte = byte
+            self._data_bytes = []
             self._spec = Message._spec_lookup[byte]
             self._bytes_to_go = self._spec.size - 1
 
