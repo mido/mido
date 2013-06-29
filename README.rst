@@ -60,11 +60,13 @@ the functionality you want to use. For example:
         def send(self, message):
             print(message)
 
-    with mido.input(), LogPort() as inport, outport:
+    with mido.input(), LogPort() as inport, printport:
         for message in inport:
-            outport.send(message)
+            printport.send(message)
 
-or::
+or:
+
+.. code:: python
 
     import mido
     import rtmido  # fictional wrapper for RtMido
