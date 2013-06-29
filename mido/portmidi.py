@@ -219,9 +219,7 @@ class Port(object):
 
             return device
         else:
-            # No match found.
-            fmt = 'unknown port: {!r}'
-            raise IOError(fmt.format(self.name))
+            raise IOError('unknown port: {!r}'.format(self.name))
 
     def close(self):
         """Close the port.
