@@ -99,7 +99,7 @@ class Parser(object):
             if self._bytes_to_go == 0:
                 self._parsed_messages.append(self._build_message())
         else:
-            # Stray data byte. Ignore it.
+            # Ignore stray data byte
             pass
 
     def feed_byte(self, byte):
