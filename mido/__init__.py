@@ -56,5 +56,63 @@ __url__ = 'http://github.com/olemb/mido/'
 __license__ = 'MIT'
 __version__ = '0.0.0'
 
+# Prevent splat import.
+__all__ = []
 
-__all__ = ['Message', 'Parser', 'parse', 'parse_all',]
+def input_names():
+    """Return a sorted list of all input port names.
+    These names can be passed to mido.input() and mido.port().
+    """
+    return _get_backend('portmidi').get_input_names()
+
+
+def output_names():
+    """Return a sorted list of all output port names.
+    These names can be passed to mido.output() and mido.port().
+    """
+    return _get_backend('portmidi').get_output_names()
+
+
+#def port_names(backend='portmidi'):
+#    return _get_backend(backend).get_port_names()
+
+
+def input(name=None):
+    """Open an input port."""
+    return _open_port(name, mode='i')
+
+
+def output(name=None):
+    """Open an output port."""
+    return _open_port(name, mode='o')
+
+
+def port(name=None):
+    """Open a port for input and output."""
+    return _open_port(name, mode='io')
+
+
+def _get_backend(backend):
+    # Todo: what about Python 2 unicode strings?
+    if isinstance(backend, str):
+        if backend == 'portmidi':
+            from . import portmidi
+            return portmidi
+        else:
+            # Todo: it this the right error to raise?
+            raise ValueError('no such backend {!r}'.format(backend))
+    else:
+        return backend
+
+def _open_port(name=None, mode=None, backend='portmidi'):
+    backend = _get_backend(backend)
+
+    if mode == 'i':
+        return backend.Input(name)
+    elif mode == 'o':
+        return backend.Output(name)
+    elif mode == 'io':
+        return ports.IOPort(backend.Input(name),
+                            backend.Output(name))
+    else:
+        raise ValueError('invalid mode {!r}'.format(mode))

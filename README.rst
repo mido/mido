@@ -34,9 +34,8 @@ Sending and receiving messages via PortMidi:
 
 .. code:: python
 
-    >>> from mido.portmidi import Input, Output
-    >>> inport = Input()
-    >>> outport = Output()
+    >>> inport = mido.input()
+    >>> outport = mido.output()
     >>> for msg in inport:
     ...     outport.send(msg)
 
@@ -44,12 +43,11 @@ Ports can opened by name:
 
 .. code:: python
 
-    >>> from mido.portmidi import get_input_names
-    >>> get_input_names()
+    >>> mido.input_names()
     ['Midi Through Port-0', 'SH-201']
-    >>> Input()  # Open default port
+    >>> mido.input()  # Open default port
     <open input port 'Midi Through Port-0' (ALSA)>
-    >>> Input('SH-201')
+    >>> mido.input('SH-201')
     <open input port 'SH-201' (ALSA)>
     
 The ports API is made for duck typing, so it's pretty easy to write
@@ -81,6 +79,9 @@ Mido uses `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ for I/O. The
 wrapper module is written using ctypes, so no compilation is
 required. All you need is portmidi.so/dll installed on your system.
+
+PortMidi is loaded on demand when you open a port or call one of the
+I/O functions like `mido.input_names()`.
 
 PortMidi is only required if you want to use message ports. The
 messages themselves work fine without it.
