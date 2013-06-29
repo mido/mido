@@ -171,17 +171,17 @@ class Port(object):
         if opening_input:
             _check_error(pm.lib.Pm_OpenInput(
                     pm.byref(self._stream),
-                    device_id,  # inputDevice
-                    pm.null,    # inputDriverInfo
-                    1000,       # bufferSize
-                    pm.NullTimeProcPtr,   # time_proc
-                    pm.null))    # time_info
+                    device_id,  # input device
+                    pm.null,    # input driver info
+                    1000,       # buffer size
+                    pm.NullTimeProcPtr,  # time proc
+                    pm.null))    # time info
         else:
             _check_error(pm.lib.Pm_OpenOutput(
                     pm.byref(self._stream),
-                    device_id,  # outputDevice
-                    pm.null,    # outputDriverInfo
-                    0,          # bufferSize (ignored when latency=0?)
+                    device_id,  # output device
+                    pm.null,    # output diver info
+                    0,          # buffer size (ignored when latency == 0?)
                     pm.NullTimeProcPtr,  # default to internal clock
                     pm.null,    # time_info
                     0))         # latency
