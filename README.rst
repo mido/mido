@@ -69,7 +69,7 @@ or:
 .. code:: python
 
     import mido
-    import rtmido  # fictional wrapper for RtMido
+    import rtmido  # fictional wrapper for RtMidi
 
     with rtmido.output() as port:
         port.send(mido.new('pitchbend', channel=3, pitch=842))
