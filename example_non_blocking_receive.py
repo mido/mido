@@ -6,7 +6,6 @@ Example of non-blocking reception from input port.
 from __future__ import print_function
 import sys
 import time
-import mido
 from mido.portmidi import Input
 
 if len(sys.argv) > 1:
