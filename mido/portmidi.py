@@ -215,11 +215,11 @@ class Port(object):
                     continue
 
             if device.opened:
-                raise IOError('port already opened: {!r}'.format(self.name))
+                raise IOError('port already opened: {!r}'.format(name))
 
             return device
         else:
-            raise IOError('unknown port: {!r}'.format(self.name))
+            raise IOError('unknown port: {!r}'.format(name))
 
     def close(self):
         """Close the port.
