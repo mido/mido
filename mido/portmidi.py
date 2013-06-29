@@ -174,7 +174,7 @@ class Port(object):
                     device_id,  # Input device
                     pm.null,    # Input driver info
                     1000,       # Buffer size
-                    pm.NullTimeProcPtr,  # time callback
+                    pm.NullTimeProcPtr,  # Time callback
                     pm.null))    # Time info
         else:
             _check_error(pm.lib.Pm_OpenOutput(
@@ -182,7 +182,7 @@ class Port(object):
                     device_id,  # Output device
                     pm.null,    # Output diver info
                     0,          # Buffer size (ignored when latency == 0?)
-                    pm.NullTimeProcPtr,  # default to internal clock
+                    pm.NullTimeProcPtr,  # Default to internal clock
                     pm.null,    # Time info
                     0))         # Latency
 
