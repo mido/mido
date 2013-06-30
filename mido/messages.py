@@ -96,6 +96,27 @@ def get_message_specs():
     ]
 
 
+def build_spec_lookup(message_specs):
+    lookup = {}
+
+    for spec in message_specs:
+        status_byte = spec.status_byte
+
+        if status_byte < 0xf0:
+            # Channel message.
+            # The upper 4 bits are message type, and
+            # the lower 4 are MIDI channel.
+            # We need lookup for all 16 MIDI channels.
+            for channel in range(16):
+                lookup[status_byte | channel] = spec
+        else:
+            lookup[status_byte] = spec
+
+        lookup[spec.type] = spec
+
+    return lookup
+
+
 def check_time(time):
     """Check type and value of time.
     
@@ -202,28 +223,8 @@ class Message(object):
     MIDI message class.
     """
 
-    def _build_spec_lookup():
-        lookup = {}
-
-        for spec in get_message_specs():
-            status_byte = spec.status_byte
-
-            if status_byte < 0xf0:
-                # Channel message.
-                # The upper 4 bits are message type, and
-                # the lower 4 are MIDI channel.
-                # We need lookup for all 16 MIDI channels.
-                for channel in range(16):
-                    lookup[status_byte | channel] = spec
-            else:
-                lookup[status_byte] = spec
-
-            lookup[spec.type] = spec
-
-        return lookup
-
     # Quick lookup of specs by name or status_byte.
-    _spec_lookup = _build_spec_lookup()
+    _spec_lookup = build_spec_lookup(get_message_specs())
 
 
     def __init__(self, type_, **parameters):
