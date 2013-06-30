@@ -142,17 +142,6 @@ Known Bugs
     out.
 
 
-Future Plans
--------------
-
-   - include useful lookup tables or message attributes for common
-     things like controller types
-
-   - fix extras/joystick.py
-
-   - use libportmidi-dev or libportmidi0?
-
-
 Mido is short for MIDi Objects (or Musical Instrument Digital
 Objects). It is pronounced with i and in "little" and o as in
 "object", or in Japanese: ミド.
