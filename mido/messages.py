@@ -362,7 +362,7 @@ class Message(object):
 
         return message_bytes
 
-    def bytearray(self):
+    def bin(self):
         """Encode message and return as a bytearray.
 
         This can be used to write the message to a file.
