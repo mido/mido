@@ -14,7 +14,7 @@ Ports:
 
     input(name=None) -- open an input port
     output(name=None) -- open an output port
-    port(name=None) -- open an I/O port
+    port(name=None) -- open an I/O port (capable of both input and output)
 
     input_names() -- return a list of names of available input ports
     output_names() -- return a list of names of available output ports
