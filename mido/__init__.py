@@ -8,18 +8,29 @@ designed to be as straight forward and pythonic as possible.
 
 Creating messages:
 
-    new -- create a new message
+    new(type, **parameters) -- create a new message
+
+Ports:
+
+    input(name=None) -- open an input port
+    output(name=None) -- open an output port
+    port(name=None) -- open an I/O port
+
+    input_names() -- return a list of names of available input ports
+    output_names() -- return a list of names of available output ports
+    port_names() -- return a list of available I/O ports
 
 Parsing MIDI streams:
 
-    parse -- parse a single message from input stream
-    parse_all -- parse all messages in input stream
+    parse(bytes) -- parse a single message from input stream
+    parse_all(bytes) -- parse all messages in input stream
     Parser -- MIDI parser class
 
 Parsing objects serialized with str(message):
 
-    parse_string -- parse a string containing a message
-    parse_string_stream -- parse an iterable generating strings
+    parse_string(string) -- parse a string containing a message
+    parse_string_stream(iterable) -- parse strings from an iterable and
+                                     generate messages
 
 Sub modules:
 
