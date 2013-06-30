@@ -1,20 +1,8 @@
 """
 MIDI Parser
 
-Module content:
-
-    Parser()
-        feed(data)
-        feed_byte(byte)
-        pending()      return the number of pending messages
-        get_message() -> Message or None
-        __iter__()    iterate through available messages
-
-    parse(data) -> Message or None
-    parse_all(data) -> [Message, ...]
-
-byte is an integer in range 0 .. 255.
-data is any sequence of bytes, or an object that generates them.
+There is no need to use this module directly. All you need is
+available in the toplevel module.
 """
 
 import sys

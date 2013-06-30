@@ -1,12 +1,12 @@
 """
-Utility functions for dealing with ports.
+Useful tools for working with ports
 
 Module content:
 
-    multi_receive(ports) -> Message generator
-    multi_iter_pending(ports) -> Message generator
-    IOPort
-    MessageBuffer
+    multi_receive -- receive messages from multiple ports
+    multi_iter_pending -- iterate through messages from multiple ports
+    IOPort -- combined input / output port. Wraps around to normal ports
+    MessageBuffer -- pseudo-port that stores messages in a deque
 """
 
 import time

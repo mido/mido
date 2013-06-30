@@ -1,7 +1,8 @@
 Mido - MIDI Objects for Python
 ===============================
 
-Mido allows you to work with MIDI messages as Python objects:
+Mido is a library for working with MIDI messages and ports. It's
+designed to be as straight forward and pythonic as possible.
 
 .. code:: python
 

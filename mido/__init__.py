@@ -1,7 +1,34 @@
 # -*- coding: utf-8 -*-
 
 """
-Mido - MIDI Objects for Python
+MIDI Objects for Python
+
+Mido is a library for working with MIDI messages and ports. It's
+designed to be as straight forward and pythonic as possible.
+
+Creating messages:
+
+    new -- create a new message
+
+Parsing MIDI streams:
+
+    parse -- parse a single message from input stream
+    parse_all -- parse all messages in input stream
+    Parser -- MIDI parser class
+
+Parsing objects serialized with str(message):
+
+    parse_string -- parse a string containing a message
+    parse_string_stream -- parse an iterable generating strings
+
+Sub modules:
+
+    ports -- useful tools for working with ports
+
+For more on MIDI, see:
+
+    http://www.midi.org/
+
 
 Getting started:
 
@@ -34,8 +61,7 @@ Getting started:
     >>> input_names()
     ['MPK mini MIDI 1', 'SH-201']
 """
-
-from . import ports, parser, messages
+from . import ports
 from .messages import Message as new, parse_string, parse_string_stream
 from .parser import Parser, parse, parse_all
 

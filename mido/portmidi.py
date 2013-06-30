@@ -1,25 +1,8 @@
 """
 Input and Output ports for PortMidi.
 
-Module Content:
-
-    Input(name=None)
-        receive()     return a message, or block until there is one.
-        pending()     return how many messages are pending
-        close()       close the port
-        __iter__()    iterate through messages as they arrive
-        device        DeviceInfo for the underlying device
-
-    Output(name=None)
-        send(msg)     send a message
-        close()       close the port
-        device        DeviceInfo for the underlying device
-
-    DeviceInfo()      info about underlying device
-    get_devices()  -> [DeviceInfo, ...]
-
-    get_input_names()   return all input port names as a sorted list
-    get_output_names()  return all output port names as a sorted list
+There is no need to use this module directly. All you need is
+available in the toplevel module.
 """
 import time
 
