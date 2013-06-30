@@ -46,18 +46,18 @@ the functionality you want to use. For example:
 
 .. code:: python
 
-import mido
-
-class PrintPort:
-    def send(self, message):
-        print(message)
-
-input = mido.input()
-printport = PrintPort()
-
-for message in input:
-    printport.send(message)
-
+    import mido
+    
+    class PrintPort:
+        def send(self, message):
+            print(message)
+    
+    input = mido.input()
+    printport = PrintPort()
+    
+    for message in input:
+        printport.send(message)
+    
 or:
 
 .. code:: python
