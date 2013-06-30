@@ -34,8 +34,7 @@ class MessageSpec(object):
     """    
 
     def __init__(self, status_byte, type_, arguments, length):
-        """Create a new message specification.
-        """
+        """Create a new message specification."""
         self.status_byte = status_byte
         self.type = type_
         self.arguments = arguments
@@ -100,7 +99,8 @@ def get_message_specs():
 def check_time(time):
     """Check type and value of time.
     
-    Raises TypeError if value is not an integer or a float"""
+    Raises TypeError if value is not an integer or a float
+    """
     if not (isinstance(time, int) or isinstance(time, float)):
         raise TypeError('time must be an integer or float')
 
@@ -176,7 +176,7 @@ def encode_channel(channel):
     """Convert channel into a list of bytes. Return an empty list of
     bytes, since channel is already masked into status byte.
     """
-    return ()
+    return []
 
 
 def encode_data(data):
@@ -187,8 +187,7 @@ def encode_data(data):
 
  
 def encode_pitch(pitch):
-    """Encode pitchwheel pitch as a list of bytes.
-    """
+    """Encode pitchwheel pitch as a list of bytes."""
     pitch -= MIN_PITCHWHEEL
     return [pitch & 0x7f, pitch >> 7]
 
@@ -401,7 +400,8 @@ class Message(object):
 def text_parse_number(text):
     """Parse text as a number.
 
-    Return number or None if text is not a number."""
+    Return number or None if text is not a number.
+    """
 
     for convert in [int, float]:
         try:
