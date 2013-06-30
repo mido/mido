@@ -18,12 +18,12 @@ Ports:
 
     input_names() -- return a list of names of available input ports
     output_names() -- return a list of names of available output ports
-    port_names() -- return a list of available I/O ports
+    port_names() -- return a list of names of available I/O ports
 
 Parsing MIDI streams:
 
-    parse(bytes) -- parse a single message from input stream
-    parse_all(bytes) -- parse all messages in input stream
+    parse(bytes) -- parse a single message bytes (any iterable that generates integers in 0..127)
+    parse_all(bytes) -- parse all messages bytes
     Parser -- MIDI parser class
 
 Parsing objects serialized with str(message):
