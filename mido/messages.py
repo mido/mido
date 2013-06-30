@@ -39,17 +39,17 @@ class MessageSpec(object):
     arguments is the attributes / keywords arguments specific to
     this message type.
 
-    size is the size of this message in bytes. This value is not used
+    length is the length of this message in bytes. This value is not used
     for sysex messages, since they use an end byte instead.
     """    
 
-    def __init__(self, status_byte, type_, arguments, size):
+    def __init__(self, status_byte, type_, arguments, length):
         """Create a new message specification.
         """
         self.status_byte = status_byte
         self.type = type_
         self.arguments = arguments
-        self.size = size
+        self.length = length
    
         # Attributes that can be set on the object
         self.valid_attributes = set(self.arguments) | {'time'}
@@ -377,12 +377,12 @@ class Message(object):
         return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
 
     def __repr__(self):
-        parts = [self.type]
+        parts = []
 
         for name in self._spec.arguments + ('time',):
             parts.append('{}={!r}'.format(name, getattr(self, name)))
 
-        return 'mido.Message({})'.format(', '.join(parts))
+        return '<{} message {}>'.format(self.type, ', '.join(parts))
 
     def __str__(self):
         return text_format(self)
@@ -400,6 +400,12 @@ class Message(object):
             return [msg.type] + [getattr(msg, arg) for arg in msg._spec.arguments]
 
         return key(self) == key(other)
+
+    def __len__(self):
+        if self.type == 'sysex':
+            return len(self.data) + 2
+        else:
+            return self._spec.length
 
 
 def text_parse_number(text):

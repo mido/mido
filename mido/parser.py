@@ -90,7 +90,7 @@ class Parser(object):
             self._status_byte = byte
             self._data_bytes = []
             self._spec = Message._spec_lookup[byte]
-            self._bytes_to_go = self._spec.size - 1
+            self._bytes_to_go = self._spec.length - 1
 
     def _handle_data_byte(self, byte):
         self._data_bytes.append(byte)

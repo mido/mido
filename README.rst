@@ -6,48 +6,39 @@ Mido allows you to work with MIDI messages as Python objects:
 .. code:: python
 
     >>> import mido
-    >>> msg = mido.new('note_on', note=60, velocity=64)
-    >>> msg
-    mido.Message('note_on', channel=0, note=60, velocity=64, time=0)
-    >>> str(msg)
-    'note_on channel=0 note=60 velocity=64'
-    >>> msg.type
+    >>> m = mido.new('note_on', note=60, velocity=64)
+    >>> m
+    <note_on message channel=0, note=60, velocity=64, time=0>
+    >>> m.type
     'note_on'
-    >>> msg.channel = 6
-    >>> msg.note = 19
-    >>> msg2 = msg.copy(channel=9, velocity=127)
-    >>> msg == msg2
-    False
-
-System Exclusive messages:
-
-.. code:: python
-
-    >>> s = mido.new('sysex', data=[1, 2])
-    >>> s.hex()
-    'F0 01 02 F7'
-    >>> s.data = (i for i in range(5))
+    >>> m.channel = 6
+    >>> m.note = 19
+    >>> m.copy(velocity=120)
+    <note_on message channel=0, note=60, velocity=64, time=0>
+    >>> s = mido.new('sysex', data=[byte for byte in range(5)])
+    >>> s.data
+    (0, 1, 2, 3, 4)
     >>> s.hex()
     'F0 00 01 02 03 04 F7'
+    >>> len(s)
+    7
 
 Sending and receiving messages via PortMidi:
 
 .. code:: python
 
-    >>> inport = mido.input()
-    >>> outport = mido.output()
-    >>> for msg in inport:
-    ...     outport.send(msg)
+    >>> input = mido.input()  # Open default input.
+    >>> input.name
+    'MPK mini MIDI 1'
+    >>> output = mido.output('SD-20 Part A')
+    >>> 
+    >>> for message in input:
+    ...     output.send(message)
 
-Ports can opened by name:
 
-.. code:: python
+Extending Mido
+---------------
 
-    >>> mido.input_names()
-    ['Midi Through Port-0', 'SH-201']
-    >>> mido.input('SH-201')
-    <open input port 'SH-201' (ALSA)>
-    
 Since Mido uses duck typing, you can add new port types and backends
 without involving Mido at all. All you need are objects that support
 the functionality you want to use. For example:
@@ -60,7 +51,7 @@ the functionality you want to use. For example:
         def send(self, message):
             print(message)
 
-    with mido.input(), LogPort() as inport, printport:
+    with mido.input(), PrintPort() as inport, printport:
         for message in inport:
             printport.send(message)
 
