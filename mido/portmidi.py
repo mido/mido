@@ -24,7 +24,7 @@ Module Content:
 import time
 
 from .parser import Parser
-from . import portmidi_wrapper as pm
+from . import portmidi_init as pm
 
 _initialized = False
 
