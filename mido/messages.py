@@ -385,7 +385,7 @@ class Message(object):
         return '<{} message {}>'.format(self.type, ', '.join(parts))
 
     def __str__(self):
-        return text_format(self)
+        return _format_as_string(self)
 
     def __eq__(self, other):
         """Compare message to another for equality.
@@ -421,7 +421,7 @@ def text_parse_number(text):
     else:
         return None
 
-def text_parse(text):
+def parse_string(text):
     """Parse a string of text and return a message.
 
     The string can span multiple lines, but must contain
@@ -476,7 +476,7 @@ def text_parse(text):
     return message
 
 
-def text_parse_stream(stream):
+def parse_string_stream(stream):
     """Parse a stram of messages and yield (message, error_message)
 
     stream can be any iterable that generates text strings. If
@@ -498,8 +498,12 @@ def text_parse_stream(stream):
         line_number += 1
 
 
-def text_format(message, include_time=False):
-    """Format a message and return as a string."""
+def _format_as_string(message, include_time=False):
+    """Format a message and return as a string.
+
+    There is no reason to call this function directly.
+    Use str(message) instead.
+    """
     if not isinstance(message, Message):
         raise ValueError('message must be a mido.Message object')
 
