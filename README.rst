@@ -23,7 +23,8 @@ Mido allows you to work with MIDI messages as Python objects:
     >>> len(s)
     7
 
-Sending and receiving messages via PortMidi:
+Messages can be sent and received if you have `PortMidi
+<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed:
 
 .. code:: python
 
@@ -87,19 +88,14 @@ Released under the MIT license.
 Requirements
 -------------
 
-Mido uses `PortMidi
-<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ for I/O. The
-wrapper module is written using ctypes, so no compilation is
-required. All you need is portmidi.so/dll installed on your system.
-
-PortMidi is loaded on demand when you open a port or call one of the
-I/O functions like `mido.input_names()`.
-
-PortMidi is only required if you want to use message ports. The
-messages themselves work fine without it.
-
 Developed for Python 2.7 and 3.2. Tested on Ubuntu 13.04 and Mac OS X
 10.7.5, but should run on whatever system PortMidi is ported to.
+
+If you want to use message ports, you need need to install `PortMidi
+<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_. Mido loads
+libportmidi.so / .dll on demand when you open a port or call one of
+the I/O functions like `mido.input_names()`. The wrapper module is
+written with ctypes and requires no compilation.
 
 
 Installing
