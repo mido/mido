@@ -28,12 +28,12 @@ Messages can be sent and received if you have `PortMidi
 
 .. code:: python
 
-    >>> input = mido.input()  # Open default input.
-    >>> input.name
+    >>> default_input = mido.input()
+    >>> default_input.name
     'MPK mini MIDI 1'
     >>> output = mido.output('SD-20 Part A')
     >>> 
-    >>> for message in input:
+    >>> for message in default_input:
     ...     output.send(message)
 
 
@@ -46,15 +46,17 @@ the functionality you want to use. For example:
 
 .. code:: python
 
-    import mido
+import mido
 
-    class PrintPort:
-        def send(self, message):
-            print(message)
+class PrintPort:
+    def send(self, message):
+        print(message)
 
-    with mido.input(), PrintPort() as inport, printport:
-        for message in inport:
-            printport.send(message)
+input = mido.input()
+printport = PrintPort()
+
+for message in input:
+    printport.send(message)
 
 or:
 
