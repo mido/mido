@@ -1,6 +1,11 @@
 Mido - MIDI Objects for Python
 ===============================
 
+Requires Python 2.7 or 3.2. Runs on Ubuntu and Mac OS X. May also run
+on other systems.
+
+License: MIT
+
 Mido is a library for working with MIDI messages and ports. It's
 designed to be as straight forward and pythonic as possible.
 
@@ -82,17 +87,8 @@ and to add more unit tests.
 I am aiming for a release sometime in July 2013.
 
 
-License
---------
-
-Released under the MIT license.
-
-
 Requirements
 -------------
-
-Developed for Python 2.7 and 3.2. Tested on Ubuntu 13.04 and Mac OS X
-10.7.5, but should run on whatever PortMidi is ported to.
 
 If you want to use message ports, you need to install `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_. Mido loads
