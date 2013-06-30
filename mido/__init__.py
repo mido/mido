@@ -29,26 +29,38 @@ For more on MIDI, see:
 Getting started:
 
     >>> import mido
-    >>> msg = mido.new('note_on', channel=7, note=60, velocity=72)
-    >>> msg.type
+    >>> m = mido.new('note_on', note=60, velocity=64)
+    >>> m
+    <note_on message channel=0, note=60, velocity=64, time=0>
+    >>> m.type
     'note_on'
-    >>> msg.note = 4
-    >>> msg.velocity += 3
-    >>> msg
-    mido.Message('note_on', channel=7, note=4, velocity=75, time=0)
-    >>> msg.copy(note=22, time=1.23)
-    mido.Message('note_on', channel=7, note=22, velocity=75, time=1.23)
+    >>> m.channel = 6
+    >>> m.note = 19
+    >>> m.copy(velocity=120)
+    <note_on message channel=0, note=60, velocity=64, time=0>
+    >>> s = mido.new('sysex', data=[byte for byte in range(5)])
+    >>> s.data
+    (0, 1, 2, 3, 4)
+    >>> s.hex()
+    'F0 00 01 02 03 04 F7'
+    >>> len(s)
+    7
 
-    >>> sysex = mido.new('sysex')
-    >>> sysex.data = range(3)
-    >>> sysex.hex()
-    'F0 00 01 02 F7'
+    >>> default_input = mido.input()
+    >>> default_input.name
+    'MPK mini MIDI 1'
+    >>> output = mido.output('SD-20 Part A')
+    >>> 
+    >>> for message in default_input:
+    ...     output.send(message)
+
+    >>> input_names()
+    ['MPK mini MIDI 1', 'SH-201']
 """
 
 from . import ports, parser, messages
-from .messages import Message
+from .messages import Message as new
 from .parser import Parser, parse, parse_all
-new = Message  # Alias
 
 __author__ = 'Ole Martin Bjørndalen'
 __email__ = 'ombdalen@gmail.com'
