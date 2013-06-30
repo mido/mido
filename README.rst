@@ -91,7 +91,7 @@ Requirements
 -------------
 
 Developed for Python 2.7 and 3.2. Tested on Ubuntu 13.04 and Mac OS X
-10.7.5, but should run wherever PortMidi ported to.
+10.7.5, but should run on whatever PortMidi is ported to.
 
 If you want to use message ports, you need need to install `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_. Mido loads
