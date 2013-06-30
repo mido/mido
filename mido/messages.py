@@ -222,7 +222,7 @@ class Message(object):
     del spec, channel
 
 
-    def __init__(self, type_, **arguments):
+    def __init__(self, type_, **parameters):
         """Create a new message.
 
         The first argument is typically the type of message to create,
@@ -243,9 +243,10 @@ class Message(object):
         self._set('_spec', spec)
         self._set('type', self._spec.type)
 
-        #
-        # Set default values for attributes
-        #
+        self._set_attributes_to_default_values(type_)
+        self._override_attributes(parameters)
+
+    def _set_attributes_to_default_values(self, type_):
         for name in self._spec.arguments:
             if name == 'data':
                 self.data = ()
@@ -261,10 +262,8 @@ class Message(object):
                 setattr(self, name, 0)
         self._set('time', 0)
 
-        #
-        # Override attibutes with keyword arguments
-        #
-        for name, value in arguments.items():
+    def _override_attributes(self, parameters):
+        for name, value in parameters.items():
             try:
                 setattr(self, name, value)
             except AttributeError:
