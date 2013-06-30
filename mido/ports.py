@@ -54,34 +54,33 @@ class IOPort(object):
     and an output port which provides the functionality of
     both. Every method call is forwarded to the appropriate
     port.
-
-    I don't know if it works yet.
     """
 
-    def __init__(self, inport, outport):
-        self.inport = inport
-        self.outport = outport
+    def __init__(self, input, output):
+        self.input = input
+        self.output = output
         self.closed = False
 
         # Todo: what if they have different names?
-        self.name = self.inport.name
+        self.name = self.input.name
 
     def send(self, message):
-        return self.outport.send(message)
+        return self.output.send(message)
 
     def receive(self):
-        return self.inport.receive()
+        return self.input.receive()
 
     def pending(self):
-        return self.inport.pending()
+        return self.input.pending()
 
     def close(self):
         if not self.closed:
-            self.inport.close()
-            self.outport.close()
+            self.input.close()
+            self.output.close()
+            self.closed = True
 
     def __iter__(self):
-        for message in self.inport:
+        for message in self.input:
             yield message
 
     def __enter__(self):
@@ -96,7 +95,8 @@ class IOPort(object):
         else:
             state = 'open'
 
-        return "<{} I/O port '{}'>".format(state, self.name)
+        return "<{} I/O port '{}' ({})>".format(
+            state, self.name, self.input.device.interface)
 
 
 class MessageBuffer:
@@ -110,8 +110,6 @@ class MessageBuffer:
     receive() is not supported, because it would be a bad idea for a
     MessageBuffer object to block, since it's getting its data from
     the same thread as the one it's running in.
-
-    I don't know if it works yet.
     """
 
     def __init__(self):
