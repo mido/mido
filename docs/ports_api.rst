@@ -3,8 +3,8 @@ Mido Ports API
 
 .. code:: python
 
-Common Attributes and Methods
-------------------------------
+Attributes and Methods Common to Input and Output Ports
+--------------------------------------------------------
 
 .. code:: python
 
@@ -18,8 +18,8 @@ Common Attributes and Methods
     .__exit__()
 
 
-Input Port
------------
+Methods Specific to Input Ports
+--------------------------------
 
 .. code:: python
 
@@ -28,8 +28,8 @@ Input Port
     .__iter__() => generator that does 'yeild receive()` in a loop
 
     
-Output Port
-------------
+Methods Specific to Output Ports
+---------------------------------
 
 .. code:: python
 
