@@ -43,13 +43,8 @@ Non-blocking `receive()` is possible with `pending()`:
 
 .. code:: python
 
-    with mido.input() as input:
-        while 1:
-            while input.pending() > 0:
-                message = input.receive()
-                print(message)
-
-            do('Something else')
+   if input.pending() > 0
+        message = input.receive()
 
 To use ports, you need to have `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
