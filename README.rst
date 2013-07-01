@@ -117,7 +117,8 @@ http://www.midi.org/
 Known Bugs
 -----------
 
-  - in interactive mode, this happens (but only in interactive mode):
+  - in interactive mode, this happens (but only in interactive mode)
+    (edit: this is because the input is still bound to _):
 
 .. code:: python
 
