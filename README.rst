@@ -38,8 +38,9 @@ Messages can be sent and received if you have `PortMidi
     >>> default_input
     <open input port 'MPK mini MIDI 1' (ALSA)>
     >>> with mido.output('SD-20 Part A') as out:
-    >>> for message in default_input:
-    ...     out.send(message)
+    ...     for message in default_input:
+    ...         out.send(message)
+
 
 
 Extending Mido
