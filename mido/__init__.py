@@ -14,11 +14,11 @@ Ports:
 
     input(name=None) -- open an input port
     output(name=None) -- open an output port
-    port(name=None) -- open an I/O port (capable of both input and output)
+    ioport(name=None) -- open an I/O port (capable of both input and output)
 
     input_names() -- return a list of names of available input ports
     output_names() -- return a list of names of available output ports
-    port_names() -- return a list of names of available I/O ports
+    ioport_names() -- return a list of names of available I/O ports
 
 Parsing MIDI streams:
 
@@ -99,7 +99,7 @@ def output_names():
     return _get_portmidi().get_output_names()
 
 
-def port_names():
+def ioport_names():
     """Return the names of all ports that axllow input and output."""
     return sorted(set(input_names()) & set(output_names()))
 
@@ -114,7 +114,7 @@ def output(name=None):
     return _open_port(name, mode='o')
 
 
-def port(name=None):
+def ioport(name=None):
     """Open a port for input and output."""
     return _open_port(name, mode='io')
 
