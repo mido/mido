@@ -401,7 +401,7 @@ class Message(object):
             return self._spec.length
 
 
-def text_parse_number(text):
+def _parse_string_number(text):
     """Parse text as a number.
 
     Return number or None if text is not a number.
@@ -427,7 +427,7 @@ def parse_string(text):
     if len(words) < 1:
         raise ValueError('string is empty')
 
-    time = text_parse_number(words[0])
+    time = _parse_string_number(words[0])
     if time is not None:
         del words[0]
         if len(words) < 1:
