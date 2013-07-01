@@ -55,6 +55,19 @@ To use ports, you need to have `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
 your system.
 
+When you assign attributes or pass keyword arguments, they are checked
+for each possible way they could be invalid:
+
+    >>> msg = mido.new('pitchwheel', banana=1)
+    ValueError: 'banana' is an invalid keyword argument for this message type
+    >>> msg = mido.new('pitchwheel', pitch=100)
+    >>> msg.pitch = 1235892384
+    ValueError: pitchwheel value must be in range -8192..8191
+    >>> msg.pitch = 'Banana!'
+    TypeError: pichwheel value must be an integer
+
+This ensures that you always have a valid message.
+
 
 Status
 -------
