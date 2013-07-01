@@ -58,6 +58,8 @@ your system.
 When you assign attributes or pass keyword arguments, they are checked
 for each possible way they could be invalid:
 
+.. code:: python
+
     >>> msg = mido.new('pitchwheel', banana=1)
     ValueError: 'banana' is an invalid keyword argument for this message type
     >>> msg = mido.new('pitchwheel', pitch=100)
