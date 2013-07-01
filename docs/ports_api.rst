@@ -6,9 +6,11 @@ Mido Ports API
 Common Attributes and Methods
 ------------------------------
 
+.. code:: python
+
     .name -- name of the port
     .closed -- True if the port is closed
-
+    
     .__init__(name=None) -- if name is None, open the default port
     .close() -- close the port
     .__del__() -- calls .close()
