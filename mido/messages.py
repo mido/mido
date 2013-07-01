@@ -130,35 +130,35 @@ def check_channel(channel):
     """Check type and value of channel.
 
     Raises TypeError if the value is not an integer, and ValueError if
-    it is outside range 0 .. 127.
+    it is outside range 0..127.
     """
     if not isinstance(channel, int):
         raise TypeError('channel must be an integer')
     elif not 0 <= channel <= 15:
-        raise ValueError('channel must be in range 0 .. 15')
+        raise ValueError('channel must be in range 0..15')
 
 
 def check_pos(pos):
     """Check type and value of song position.
 
     Raise TypeError if the value is not an integer, and ValueError if
-    it is outside range MIN_SONGPOS .. MAX_SONGPOS.
+    it is outside range MIN_SONGPOS..MAX_SONGPOS.
     """
     if not isinstance(pos, int):
         raise TypeError('song pos must be and integer')
     elif not MIN_SONGPOS <= pos <= MAX_SONGPOS:
-        raise ValueError('song pos must be in range {} .. {}'.format(
+        raise ValueError('song pos must be in range {}..{}'.format(
                 MIN_SONGPOS, MAX_SONGPOS))
 
 
 def check_pitch(pitch):
     """Raise TypeError if the value is not an integer, and ValueError
-    if it is outside range MIN_PITCHWHEEL .. MAX_PITCHWHEEL.
+    if it is outside range MIN_PITCHWHEEL..MAX_PITCHWHEEL.
     """
     if not isinstance(pitch, int):
         raise TypeError('pichwheel value must be an integer')
     elif not MIN_PITCHWHEEL <= pitch <= MAX_PITCHWHEEL:
-        raise ValueError('pitchwheel value must be in range {} .. {}'.format(
+        raise ValueError('pitchwheel value must be in range {}..{}'.format(
                 MIN_PITCHWHEEL, MAX_PITCHWHEEL))
 
 
@@ -169,7 +169,7 @@ def check_data(data_bytes):
 
     Raises TypeError if value is not iterable.
     Raises TypeError if one of the bytes is not an integer.
-    Raises ValueError if one of the bytes is out of range 0 .. 127.
+    Raises ValueError if one of the bytes is out of range 0..127.
     """
     # Make the sequence immutable.
     data_bytes = tuple(data_bytes)
@@ -185,12 +185,12 @@ def check_databyte(value):
 
     Raises TypeError if the byte is not an integer, and ValueError if
     it is out of range. Data bytes are 7 bit, so the valid range is
-    0 .. 127.
+    0..127.
     """
     if not isinstance(value, int):
         raise TypeError('data byte must be an integer')
     elif not 0 <= value <= 127:
-        raise ValueError('data byte must be in range 0 .. 127')
+        raise ValueError('data byte must be in range 0..127')
 
 
 def encode_channel(channel):
