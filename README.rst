@@ -12,68 +12,48 @@ designed to be as straight forward and Pythonic as possible.
 .. code:: python
 
     >>> import mido
-    >>> m = mido.new('note_on', note=60, velocity=64)
-    >>> m
-    <note_on message channel=0, note=60, velocity=64, time=0>
-    >>> m.type
+    >>> 
+    >>> note_on = mido.new('note_on', note=60, velocity=100)
+    >>> note_on.type
     'note_on'
-    >>> m.channel = 6
-    >>> m.note = 19
-    >>> m.copy(velocity=120)
-    <note_on message channel=0, note=60, velocity=64, time=0>
-    >>> s = mido.new('sysex', data=[byte for byte in range(5)])
-    >>> s.data
+    >>> note_on.channel = 2
+    >>> note_on.copy(note=62, velocity=73)
+    <note_on message channel=2, note=62, velocity=73, time=0>
+
+    >>> sysex = mido.new('sysex', data=[byte for byte in range(5)])
+    >>> sysex.data
     (0, 1, 2, 3, 4)
-    >>> s.hex()
-    'F0 00 01 02 03 04 F7'
-    >>> len(s)
-    7
+    >>> sysex.data = [ord(char) for char in 'Hello MIDI!']
+    >>> sysex.hex()
+    'F0 48 65 6C 6C 6F 20 4D 49 44 49 21 F7'
+    >>> len(sysex)
+    13
 
-Messages can be sent and received if you have `PortMidi
-<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed:
-
-.. code:: python
-
-    >>> default_input = mido.input()
-    >>> default_input
-    <open input port 'MPK mini MIDI 1' (ALSA)>
-    >>> with mido.output('SD-20 Part A') as out:
-    ...     for message in default_input:
-    ...         out.send(message)
-
-
-
-Extending Mido
----------------
-
-Since Mido uses duck typing, you can add new port types and backends
-without involving Mido at all. All you need are objects that support
-the functionality you want to use. For example:
+Messages can be sent and received on ports:
 
 .. code:: python
 
-    import mido
-    
-    class PrintPort:
-        def send(self, message):
-            print(message)
-    
-    input = mido.input()
-    printport = PrintPort()
-    
-    for message in input:
-        printport.send(message)
-    
-or:
+    default_input = mido.input()
+    output = mido.output('SH-201')
+
+    for message in default_input:
+        output.send(message)
+
+Non-blocking `receive()` is possible with `pending()`:
 
 .. code:: python
 
-    import mido
-    import rtmido  # fictional wrapper for RtMidi
+    with mido.input() as input:
+        while 1:
+            while input.pending() > 0:
+                message = default.receive()
+                print(message)
 
-    with rtmido.output() as port:
-        port.send(mido.new('pitchbend', channel=3, pitch=842))
-        ...
+            do('Something else')
+
+To use ports, you need to have `PortMidi
+<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
+your system.
 
 
 Status
