@@ -26,7 +26,7 @@ designed to be as straight forward and Pythonic as possible.
     >>> msg.data = [ord(char) for char in 'Hello MIDI!']
     >>> msg.hex()
     'F0 48 65 6C 6C 6F 20 4D 49 44 49 21 F7'
-    >>> msg(sysex)
+    >>> len(msg)
     13
 
 Messages can be sent and received on ports:
