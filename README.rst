@@ -13,20 +13,20 @@ designed to be as straight forward and Pythonic as possible.
 
     >>> import mido
     >>> 
-    >>> note_on = mido.new('note_on', note=60, velocity=100)
-    >>> note_on.type
+    >>> msg = mido.new('note_on', note=60, velocity=100)
+    >>> msg.type
     'note_on'
-    >>> note_on.channel = 2
-    >>> note_on.copy(note=62, velocity=73)
+    >>> msg.channel = 2
+    >>> msg.copy(note=62, velocity=73)
     <note_on message channel=2, note=62, velocity=73, time=0>
 
-    >>> sysex = mido.new('sysex', data=[byte for byte in range(5)])
-    >>> sysex.data
+    >>> msg = mido.new('sysex', data=[byte for byte in range(5)])
+    >>> msg.data
     (0, 1, 2, 3, 4)
-    >>> sysex.data = [ord(char) for char in 'Hello MIDI!']
-    >>> sysex.hex()
+    >>> msg.data = [ord(char) for char in 'Hello MIDI!']
+    >>> msg.hex()
     'F0 48 65 6C 6C 6F 20 4D 49 44 49 21 F7'
-    >>> len(sysex)
+    >>> msg(sysex)
     13
 
 Messages can be sent and received on ports:
