@@ -23,7 +23,7 @@ Input Port
 
 .. code:: python
 
-    .receive() => message -- blocks until there is a message)
+    .receive() => message -- blocks until there is a message
     .pending() => number of messages pending
     .__iter__() => generator that does 'yeild receive()` in a loop
 
