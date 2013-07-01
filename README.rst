@@ -46,7 +46,7 @@ Non-blocking `receive()` is possible with `pending()`:
     with mido.input() as input:
         while 1:
             while input.pending() > 0:
-                message = default.receive()
+                message = input.receive()
                 print(message)
 
             do('Something else')
