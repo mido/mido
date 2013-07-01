@@ -43,7 +43,7 @@ Non-blocking `receive()` is possible with `pending()`:
 
 .. code:: python
 
-    if input.pending() > 0
+    if input.pending() > 0:
         message = input.receive()
 
 To use ports, you need to have `PortMidi
