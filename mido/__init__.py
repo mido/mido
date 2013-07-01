@@ -89,14 +89,14 @@ def input_names():
     """Return a sorted list of all input port names.
     These names can be passed to mido.input() and mido.port().
     """
-    return _get_portmidi().get_input_names()
+    return _get_portmidi().input_names()
 
 
 def output_names():
     """Return a sorted list of all output port names.
     These names can be passed to mido.output() and mido.port().
     """
-    return _get_portmidi().get_output_names()
+    return _get_portmidi().output_names()
 
 
 def ioport_names():

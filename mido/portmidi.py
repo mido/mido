@@ -110,7 +110,7 @@ def get_devices():
     return devices
 
 
-def get_input_names():
+def input_names():
     """Return a sorted list of all input port names.
 
     These names can be passed to Input().
@@ -119,7 +119,7 @@ def get_input_names():
     return list(sorted(names))
 
 
-def get_output_names():
+def output_names():
     """Return a sorted list of all input port names.
 
     These names can be passed to Output().
@@ -255,7 +255,7 @@ class Input(Port):
     def __init__(self, name=None):
         """Create an input port.
 
-        name is the port name, as returned by get_input_names(). If
+        name is the port name, as returned by input_names(). If
         name is not passed, the default input is used instead.
         """
         Port.__init__(self, name)
@@ -357,7 +357,7 @@ class Output(Port):
     def __init__(self, name=None):
         """Create an output port
         
-        name is the port name, as returned by get_output_names(). If
+        name is the port name, as returned by output_names(). If
         name is not passed, the default output is used instead.
         """
         Port.__init__(self, name)
