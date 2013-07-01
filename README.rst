@@ -117,6 +117,25 @@ http://www.midi.org/
 Known Bugs
 -----------
 
+  - in interactive mode, this happens (but only in interactive mode):
+
+.. code:: python
+
+    >>> import mido
+    >>> mido
+    >>> mido.input()
+    <open input port 'Midi Through Port-0' (ALSA)>
+    >>> mido.input()
+    PortMidi call failed...
+      PortMidi: `Invalid device ID'
+    type ENTER...
+    
+    # In a script, it works fine.
+    import mido
+    
+    mido.input()  # __del__() is called here
+    mido.input()  # and here
+
   - on OS X, PortMidi sometimes hangs for a couple of seconds while
     initializing.
 
