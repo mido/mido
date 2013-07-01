@@ -31,5 +31,7 @@ Input Port
 Output Port
 ------------
 
+.. code:: python
+
     .__init__(name=None)
     .send(message)
