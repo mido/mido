@@ -55,7 +55,7 @@ To use ports, you need to have `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
 your system.
 
-When you assign attributes or pass keyword arguments, they are checked
+When you assign to attributes or pass keyword arguments, they are checked
 for each possible way they could be invalid:
 
 .. code:: python
