@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import random
 import unittest
+import StringIO
 import mido
 
 # http://docs.python.org/2/library/unittest.html
@@ -44,6 +46,164 @@ class TestMessages(unittest.TestCase):
         original = mido.new('sysex', data=(1, 2, 3, 4, 5))
         parsed = mido.parse(original.bytes())
         self.assertTrue(original == parsed)
+
+    def test_check_functions(self):
+        """Test the check_*() functions."""
+        m = mido.messages
+
+        # 'time' field only allows int and float.
+        m.check_time(1)
+        m.check_time(1.5)
+        self.assertRaises(TypeError, m.check_time, None)
+        self.assertRaises(TypeError, m.check_time, 'abc')
+
+        # Channel
+        self.assertRaises(TypeError, m.check_channel, None)
+        self.assertRaises(TypeError, m.check_channel, 'abc')
+        self.assertRaises(TypeError, m.check_channel, 0.5)
+        self.assertRaises(ValueError, m.check_channel, -1)
+        self.assertRaises(ValueError, m.check_channel, 16)
+        m.check_channel(0)
+        m.check_channel(15)
+
+        # Song position
+        self.assertRaises(TypeError, m.check_pos, None)
+        self.assertRaises(TypeError, m.check_pos, 'abc')
+        self.assertRaises(ValueError, m.check_pos, m.MIN_SONGPOS - 1)
+        self.assertRaises(ValueError, m.check_pos, m.MAX_SONGPOS + 1)
+        m.check_pos(m.MIN_SONGPOS)
+        m.check_pos(m.MAX_SONGPOS)
+
+        # Pitchwheel pitch
+        self.assertRaises(TypeError, m.check_pitch, None)
+        self.assertRaises(TypeError, m.check_pitch, 0.5)
+        self.assertRaises(TypeError, m.check_pitch, 'abc')
+        self.assertRaises(ValueError, m.check_pitch, m.MIN_PITCHWHEEL - 1)
+        self.assertRaises(ValueError, m.check_pitch, m.MAX_PITCHWHEEL + 1)
+        m.check_pitch(m.MIN_PITCHWHEEL)
+        m.check_pitch(m.MAX_PITCHWHEEL)
+
+        # Data byte
+        self.assertRaises(TypeError, m.check_databyte, None)
+        self.assertRaises(TypeError, m.check_databyte, 0.5)
+        self.assertRaises(ValueError, m.check_databyte, -1)
+        self.assertRaises(ValueError, m.check_databyte, 128)
+        m.check_databyte(0)
+        m.check_databyte(127)
+
+        # Data (sysex)
+        self.assertEqual((0, 1, 2), m.check_data([0, 1, 2]))
+        self.assertEqual((0, 1, 2), m.check_data((i for i in range(3))))
+        self.assertRaises(TypeError, m.check_data, 1)
+        self.assertRaises(TypeError, m.check_data, ('a', 'b', 'c'))
+        self.assertRaises(ValueError, m.check_data, (-1, -2, -3))
+
+    def test_encode_functions(self):
+        """Test the encode_*() functions."""
+        m = mido.messages
+
+        # These have no type and value checks, since the data
+        # is assumed to be correct already. (It was checked on
+        # the way into the object.)
+
+        # Channel should be ignored, and an empty list returned.
+        # Thus, there is no reason to check for TypeError
+        # and ValueError.
+        self.assertEqual(m.encode_channel(channel=0), [])
+
+        # Encode data
+        sysex_end_byte = 0xf7
+        self.assertEqual([1, 2, 3, sysex_end_byte], m.encode_data((1, 2, 3)))
+
+        # Pitchwheel pitch
+        self.assertEqual([0, 0], m.encode_pitch(m.MIN_PITCHWHEEL))
+        self.assertEqual([127, 127], m.encode_pitch(m.MAX_PITCHWHEEL))
+        self.assertEqual([0, 64], m.encode_pitch(0))
+
+        # Song position
+        self.assertEqual([0, 0], m.encode_pos(0))
+        self.assertEqual([127, 127], m.encode_pos(m.MAX_SONGPOS))
+        # Check endian
+        self.assertEqual([16, 78], m.encode_pos(10000))
+
+
+class TestStringFormat(unittest.TestCase):
+    def test_parse_string_number(self):
+        m = mido.messages
+
+        # _parse_string_number() returns None for anything not
+        # integer of float.
+        self.assertTrue(0 == m._parse_string_number('0'))
+        self.assertTrue(0 == m._parse_string_number(' 0 ')) # Test whitespace.
+        self.assertTrue(0.7 == m._parse_string_number(' 0.7 '))
+        self.assertRaises(TypeError, m._parse_string_number, None)
+        self.assertRaises(TypeError, m._parse_string_number, [])
+        self.assertEqual(None, m._parse_string_number('abc'))
+        self.assertTrue(None == m._parse_string_number(' abc '))
+
+    def test_parse_string(self):
+        m = mido.messages
+
+        self.assertEqual(m.parse_string('note_on channel=2 note=3'),
+                         mido.new('note_on', channel=2, note=3))
+
+        self.assertEqual(m.parse_string('sysex data=(1,2,3)'),
+                         mido.new('sysex', data=(1, 2, 3)))
+
+        a = m.parse_string('0.5 note_on channel=2 note=3')
+        b = mido.new('sysex', data=(1, 2, 3), time=0.5)
+        self.assertEqual(a.time, b.time)
+
+        # Should raise ValueError if something is wrong with the string.
+        # Extra comma after 'channel=2':
+        self.assertRaises(ValueError,
+                          m.parse_string, 'note_on channel=2, note=3')      
+        self.assertRaises(ValueError,
+                          m.parse_string, 'note_on channel=2, note=3')
+        self.assertRaises(ValueError,
+                          m.parse_string, '++++S+S+SOIO(KOPKEPOKFWKF')
+        self.assertRaises(ValueError,
+                          m.parse_string, 'note_on banana=2')
+        self.assertRaises(ValueError,
+                          m.parse_string, 'sysex (1, 2, 3)')
+        self.assertRaises(ValueError,
+                          m.parse_string, 'sysex (1  2  3)')
+
+    def test_format_as_string(self):
+        f = mido.messages._format_as_string
+
+        msg = mido.new('note_on', channel=9)
+        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=0')
+
+        msg = mido.new('sysex', data=(1, 2, 3))
+        self.assertEqual(f(msg), 'sysex data=(1,2,3)')
+
+        msg = mido.new('sysex', data=())
+        self.assertEqual(f(msg), 'sysex data=()')
+
+        msg = mido.new('continue')
+        self.assertEqual(f(msg), 'continue')
+
+    def test_parse_string_stream(self):
+        m = mido.messages
+
+        # Correct input.
+        stream = StringIO.StringIO("""
+             note_on channel=1  # Ignore this
+             # and this
+             continue
+        """)
+        gen = m.parse_string_stream(stream)
+        self.assertEqual(gen.next(), (mido.new('note_on', channel=1), None))
+        self.assertEqual(gen.next(), (mido.new('continue'), None))
+
+        # Invalid input. It should catch the ValueError
+        # from parse_string() and return (None, 'Error message').
+        stream = StringIO.StringIO('ijsoijfdsf\noiajoijfs')
+        gen = m.parse_string_stream(stream)
+        self.assertEqual(gen.next()[0], None)
+        self.assertEqual(gen.next()[0], None)
+        self.assertRaises(StopIteration, gen.next)
 
 class TestParser(unittest.TestCase):
     

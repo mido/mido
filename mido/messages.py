@@ -466,6 +466,8 @@ def parse_string(text):
                 setattr(message, name, int(value))
             except AttributeError as exception:
                 raise ValueError(exception.message)
+            except ValueError:
+                raise ValueError('{!r} is not an integer'.format(value))
 
     return message
 
@@ -483,7 +485,7 @@ def parse_string_stream(stream):
         try:
             line = line.split('#')[0].strip()
             if line:
-                yield parse(line), None
+                yield parse_string(line), None
         except ValueError as exception:
             error_message = 'line {line_number}: {message}'.format(
                 line_number=line_number,
