@@ -49,6 +49,7 @@ Non-blocking `receive()` is possible with `pending()`:
 
     if input.pending() > 0:
         message = input.receive()
+        ...
 
 To use ports, you need to have `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
