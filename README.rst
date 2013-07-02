@@ -105,13 +105,12 @@ Installing libportmidi in Ubuntu::
 
     $ sudo apt-get install libportmidi-dev
 
-I installed it on OS X in `MacPorts <http://www.macports.org/>`_ with:
+I installed it on OS X in `MacPorts <http://www.macports.org/>`_ with::
 
     $ sudo port install portmidi
 
-It is available in `Homebrew <http://mxcl.github.io/homebrew/>`_ under
+It's available in `Homebrew <http://mxcl.github.io/homebrew/>`_ under
 the same name.
-
 
 
 License
