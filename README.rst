@@ -51,7 +51,7 @@ To use ports, you need to have `PortMidi
 your system.
 
 When you assign to attributes or pass keyword arguments, they are checked
-for each possible way they could be invalid:
+for every possible way they could be invalid:
 
 .. code:: python
 
