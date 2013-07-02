@@ -7,35 +7,35 @@ designed to be as straight forward and Pythonic as possible.
 .. code:: python
 
     >>> import mido
-    >>> msg = mido.new('note_on', note=60, velocity=100)
+    >>> m = mido.new('note_on', note=60, velocity=100)
 
 .. code:: python
 
-    >>> msg.type
+    >>> m.type
     'note_on'
-    >>> msg.channel = 2
-    >>> msg.copy(note=62, velocity=73)
+    >>> m.channel = 2
+    >>> m.copy(note=62, velocity=73)
     <note_on message channel=2, note=62, velocity=73, time=0>
 
 .. code:: python
 
-    >>> msg = mido.new('sysex', data=[byte for byte in range(5)])
-    >>> msg.data
+    >>> m = mido.new('sysex', data=[byte for byte in range(5)])
+    >>> m.data
     (0, 1, 2, 3, 4)
-    >>> msg.data = [ord(char) for char in 'Hello MIDI!']
-    >>> msg.hex()
+    >>> m.data = [ord(char) for char in 'Hello MIDI!']
+    >>> m.hex()
     'F0 48 65 6C 6C 6F 20 4D 49 44 49 21 F7'
-    >>> len(msg)
+    >>> len(m)
     13
 
 Messages can be sent and received on ports:
 
 .. code:: python
 
-    default_input = mido.input()
+    input = mido.input()  # Default input
     output = mido.output('SH-201')
 
-    for message in default_input:
+    for message in input:
         output.send(message)
 
 Non-blocking `receive()` is possible with `pending()`:
