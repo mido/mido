@@ -101,7 +101,11 @@ or::
 
     $ sudo python3 setup.py install
 
-Installing libportmidi in Ubuntu::
+
+Installing PortMidi
+--------------------
+
+In Ubuntu::
 
     $ sudo apt-get install libportmidi-dev
 
