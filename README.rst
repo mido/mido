@@ -116,7 +116,7 @@ the same name.
 License
 --------
 
-Mido is released under the `MIT license
+Mido is released under the terms of the `MIT license
 <http://en.wikipedia.org/wiki/MIT_License>`_.
 
 
