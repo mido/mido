@@ -12,13 +12,17 @@ designed to be as straight forward and Pythonic as possible.
 .. code:: python
 
     >>> import mido
-    >>> 
     >>> msg = mido.new('note_on', note=60, velocity=100)
+
+.. code:: python
+
     >>> msg.type
     'note_on'
     >>> msg.channel = 2
     >>> msg.copy(note=62, velocity=73)
     <note_on message channel=2, note=62, velocity=73, time=0>
+
+.. code:: python
 
     >>> msg = mido.new('sysex', data=[byte for byte in range(5)])
     >>> msg.data
@@ -111,26 +115,6 @@ http://www.midi.org/
 
 Known Bugs
 -----------
-
-  - in interactive mode, this happens (but only in interactive mode)
-    (edit: this is because the input is still bound to _):
-
-.. code:: python
-
-    >>> import mido
-    >>> mido
-    >>> mido.input()
-    <open input port 'Midi Through Port-0' (ALSA)>
-    >>> mido.input()
-    PortMidi call failed...
-      PortMidi: `Invalid device ID'
-    type ENTER...
-    
-    # In a script, it works fine.
-    import mido
-    
-    mido.input()  # __del__() is called here
-    mido.input()  # and here
 
   - on OS X, PortMidi sometimes hangs for a couple of seconds while
     initializing.
