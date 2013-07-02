@@ -1,10 +1,8 @@
 Mido Ports API
 ===============
 
-.. code:: python
-
-Attributes and Methods Common to Input and Output Ports
---------------------------------------------------------
+Common Methds and Attributes
+-----------------------------
 
 .. code:: python
 
