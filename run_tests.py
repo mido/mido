@@ -253,6 +253,7 @@ class TestParser(unittest.TestCase):
         for _ in range(10000):
             byte = random.randrange(256)
             parser.feed_byte(byte)
+
             
 if __name__ == '__main__':
     unittest.main()
