@@ -307,13 +307,3 @@ also a non-blocking version of this function:
     while 1:
         for message in multi_iter_pending([port1, port2, port3]):
             ...
-
-
-
-
-
-PortMidi and Other Backends
-----------------------------
-
-*Note!* Mido currently only supports `PortMidi` ports. More backends
- will possible be added in the future, but it is unclear.
