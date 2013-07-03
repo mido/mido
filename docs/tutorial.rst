@@ -213,9 +213,14 @@ here.)
 Closing Ports
 --------------
 
-A port can be closed by calling the `close()` method, but often it is
-a good idea to use the `with` statement, which will close the block
-automatically when the block is over:
+A port can be closed by calling the `close()` method:
+
+.. code:: python
+
+    port.close()
+
+but often it is better to use the `with` statement, which will close
+the block automatically when the block is over:
 
 .. code:: python
 
