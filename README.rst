@@ -132,7 +132,7 @@ Future Plans
 
 * Support more MIDI libraries, either distibuted with Mido or as
   separate packages. (A wrapper for `python-rtmidi
-  <http://pypi.python.org/pypi/python-rtmidi/>_` is almost complete.)
+  <http://pypi.python.org/pypi/python-rtmidi/>`_ is almost complete.)
   It is unclear how or even if new backends will be integrated with
   Mido, but in the meantime they can be used by calling
   `rtmido.input()`, `alsamido.input()` etc.
