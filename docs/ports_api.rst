@@ -23,6 +23,7 @@ Methods Specific to Input Ports
 
     .receive() => message -- blocks until there is a message
     .pending() => number of messages pending
+    .iter_pending() => iterate through pending messages (never blocks)
     .__iter__() => generator that does 'yeild receive()` in a loop
 
     

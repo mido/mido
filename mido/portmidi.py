@@ -307,6 +307,11 @@ class Input(Port):
 
         return self._parser.pending()
 
+    def iter_pending(self):
+        """Iterate through pending messages."""
+        for _ in range(self.pending()):
+            yield self.receive()
+
     def receive(self):
         """Return the next message.
 

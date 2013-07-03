@@ -73,6 +73,11 @@ class IOPort(object):
     def pending(self):
         return self.input.pending()
 
+    def iter_pending(self):
+        """Iterate through pending messages."""
+        for message in self.input.iter_pending():
+            yield message
+
     def close(self):
         if not self.closed:
             self.input.close()
