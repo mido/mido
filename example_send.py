@@ -29,7 +29,7 @@ try:
             port.send(message)
             time.sleep(0.05)
             
-            port.send(mido.new('note_off', note=note, velocity=100))
+            message = mido.new('note_off', note=note, velocity=100)
             print('Sending {}'.format(message))
             port.send(message)
             time.sleep(0.1)
