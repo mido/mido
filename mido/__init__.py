@@ -22,7 +22,8 @@ Ports:
 
 Parsing MIDI streams:
 
-    parse(bytes) -- parse a single message bytes (any iterable that generates integers in 0..127)
+    parse(bytes) -- parse a single message bytes
+                    (any iterable that generates integers in 0..127)
     parse_all(bytes) -- parse all messages bytes
     Parser -- MIDI parser class
 
@@ -65,7 +66,7 @@ Getting started:
     >>> default_input.name
     'MPK mini MIDI 1'
     >>> output = mido.output('SD-20 Part A')
-    >>> 
+    >>>
     >>> for message in default_input:
     ...     output.send(message)
 
@@ -85,12 +86,14 @@ __version__ = '0.0.0'
 # Prevent splat import.
 __all__ = []
 
+
 def new(type, **parameters):
     """Return a new message.
 
     For a list of valid parameters, see the Message Types in the docs.
     """
     return Message(type, **parameters)
+
 
 def input_names():
     """Return a sorted list of all input port names.

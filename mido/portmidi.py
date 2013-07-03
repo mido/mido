@@ -75,7 +75,7 @@ class DeviceInfo(object):
         info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
         if not info_pointer:
             raise IOError('PortMidi device with id={} not found'.format(
-                    device_id))
+                          device_id))
         info = info_pointer.contents
         
         self.device_id = device_id
@@ -102,7 +102,7 @@ class DeviceInfo(object):
 
 
 def get_devices():
-    """Return a list of DeviceInfo objects, one for each PortMidi device."""  
+    """Return a list of DeviceInfo objects, one for each PortMidi device."""
     devices = []
     for device_id in range(pm.lib.Pm_CountDevices()):
         devices.append(DeviceInfo(device_id))
@@ -153,21 +153,22 @@ class Port(object):
 
         if opening_input:
             _check_error(pm.lib.Pm_OpenInput(
-                    pm.byref(self._stream),
-                    device_id,  # Input device
-                    pm.null,    # Input driver info
-                    1000,       # Buffer size
-                    pm.NullTimeProcPtr,  # Time callback
-                    pm.null))    # Time info
+                         pm.byref(self._stream),
+                         device_id,  # Input device
+                         pm.null,    # Input driver info
+                         1000,       # Buffer size
+                         pm.NullTimeProcPtr,  # Time callback
+                         pm.null))    # Time info
         else:
             _check_error(pm.lib.Pm_OpenOutput(
-                    pm.byref(self._stream),
-                    device_id,  # Output device
-                    pm.null,    # Output diver info
-                    0,          # Buffer size (ignored when latency == 0?)
-                    pm.NullTimeProcPtr,  # Default to internal clock
-                    pm.null,    # Time info
-                    0))         # Latency
+                         pm.byref(self._stream),
+                         device_id,  # Output device
+                         pm.null,    # Output diver info
+                         0,          # Buffer size
+                                     # (ignored when latency == 0?)
+                         pm.NullTimeProcPtr,  # Default to internal clock
+                         pm.null,    # Time info
+                         0))         # Latency
 
         self.closed = False
         self.device.opened = True

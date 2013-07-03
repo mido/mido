@@ -17,6 +17,7 @@ MAX_PITCHWHEEL = 8191
 MIN_SONGPOS = 0
 MAX_SONGPOS = 16383
 
+
 class MessageSpec(object):
     """
     Specifications for creating a message.
@@ -31,7 +32,7 @@ class MessageSpec(object):
 
     length is the length of this message in bytes. This value is not used
     for sysex messages, since they use an end byte instead.
-    """    
+    """
 
     def __init__(self, status_byte, type_, arguments, length):
         """Create a new message specification."""
@@ -61,6 +62,7 @@ class MessageSpec(object):
         sig = '({})'.format(', '.join(parts))
 
         return sig
+
 
 def get_message_specs():
     return [
@@ -148,7 +150,7 @@ def check_pos(pos):
         raise TypeError('song pos must be and integer')
     elif not MIN_SONGPOS <= pos <= MAX_SONGPOS:
         raise ValueError('song pos must be in range {}..{}'.format(
-                MIN_SONGPOS, MAX_SONGPOS))
+                         MIN_SONGPOS, MAX_SONGPOS))
 
 
 def check_pitch(pitch):
@@ -159,7 +161,7 @@ def check_pitch(pitch):
         raise TypeError('pichwheel value must be an integer')
     elif not MIN_PITCHWHEEL <= pitch <= MAX_PITCHWHEEL:
         raise ValueError('pitchwheel value must be in range {}..{}'.format(
-                MIN_PITCHWHEEL, MAX_PITCHWHEEL))
+                         MIN_PITCHWHEEL, MAX_PITCHWHEEL))
 
 
 def check_data(data_bytes):
@@ -226,7 +228,6 @@ class Message(object):
     # Quick lookup of specs by name or status_byte.
     _spec_lookup = build_spec_lookup(get_message_specs())
 
-
     def __init__(self, type_, **parameters):
         """Create a new message.
 
@@ -272,9 +273,9 @@ class Message(object):
             try:
                 setattr(self, name, value)
             except AttributeError:
-                raise ValueError('{!r} is an invalid ' \
-                                     'keyword argument for this message type' \
-                                     ''.format(name))
+                raise ValueError('{!r} is an invalid'
+                                 ' keyword argument for this message type'
+                                 ''.format(name))
 
     def copy(self, **overrides):
         """Return a copy of the message.
@@ -320,7 +321,7 @@ class Message(object):
             raise AttributeError('{} attribute is read only'.format(name))
         else:
             raise AttributeError('{} message has no attribute {}'.format(
-                    self.type, name))
+                                 self.type, name))
 
     def __delattr__(self, name):
         raise AttributeError('attribute can not be deleted')
@@ -390,7 +391,8 @@ class Message(object):
 
         def key(msg):
             """Return a key for comparison."""
-            return [msg.type] + [getattr(msg, arg) for arg in msg._spec.arguments]
+            return [msg.type] + [
+                getattr(msg, arg) for arg in msg._spec.arguments]
 
         return key(self) == key(other)
 
@@ -414,6 +416,7 @@ def _parse_string_number(text):
             continue
     else:
         return None
+
 
 def parse_string(text):
     """Parse a string of text and return a message.
@@ -490,7 +493,7 @@ def parse_string_stream(stream):
             error_message = 'line {line_number}: {message}'.format(
                 line_number=line_number,
                 message=exception.message)
-            yield None, error_message            
+            yield None, error_message
         line_number += 1
 
 

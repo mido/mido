@@ -13,6 +13,7 @@ import time
 import random
 from collections import deque
 
+
 def multi_receive(ports):
     """Receive messages from multiple ports.
 

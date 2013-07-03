@@ -4,6 +4,7 @@ import mido.messages
 
 __all__ = []
 
+
 def _init():
     for spec in mido.messages.get_message_specs():
         this_module = sys.modules[__name__]

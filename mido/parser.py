@@ -42,8 +42,9 @@ class Parser(object):
             return m
 
         elif type_ == 'songpos':
-            return Message('songpos', pos=(self._data_bytes[0] | \
-                                               (self._data_bytes[1] << 7)))
+            return Message('songpos',
+                           pos=(self._data_bytes[0] |
+                               (self._data_bytes[1] << 7)))
 
         else:
             if self._status_byte < 0xf0:
