@@ -384,7 +384,7 @@ class Message(object):
         return '<{} message {}>'.format(self.type, ', '.join(parts))
 
     def __str__(self):
-        return _format_as_string(self, include_time=True)
+        return _format_as_string(self, include_time=False)
 
     def __eq__(self, other):
         """Compare message to another for equality.
