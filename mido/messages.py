@@ -384,7 +384,7 @@ class Message(object):
         return '<{} message {}>'.format(self.type, ', '.join(parts))
 
     def __str__(self):
-        return _format_as_string(self, include_time=False)
+        return _format_as_string(self, include_time=True)
 
     def __eq__(self, other):
         """Compare message to another for equality.
@@ -512,7 +512,7 @@ def _format_as_string(message, include_time=False):
         raise ValueError('message must be a mido.Message object')
 
     words = []
-    if include_time:
+    if include_time and message.time != 0:
         words.append(str(message.time))
     words.append(message.type)
     for name in message._spec.arguments:
