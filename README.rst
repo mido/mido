@@ -50,6 +50,10 @@ To use ports, you need to have `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
 your system.
 
+
+Safety First
+-------------
+
 When you assign to attributes or pass keyword arguments, they are checked
 for every possible way they could be invalid:
 
@@ -64,6 +68,22 @@ for every possible way they could be invalid:
     TypeError: pichwheel value must be an integer
 
 This ensures that you always have a valid message.
+
+
+Message Creation Shortcuts
+---------------------------
+
+If you think creating new messages is a bit wordy, you can use
+shorcuts (note: this is experimental):
+
+.. code:: python
+
+    >>> from mido.shortcuts import *
+    >>> note_on(channel=2, note=4)
+    >>> sysex(data=(1, 2, 3))
+    <sysex message data=(1, 2, 3), time=0>
+    >>> continue_()  # This is a keyword in Python, so it needs an extra _.
+    <continue message time=0>
 
 
 Status
