@@ -28,6 +28,10 @@ Only these character will ever occur in a string encoded Mido message::
 
     [a-z][0-9][ =_.+()]
 
+or written out::
+
+    'abcdefghijklmnopqrstuvwxyz0123456789 =_.+()'
+
 This means the message can be embedded in most text formats without
 any form of escaping.
 
