@@ -46,6 +46,13 @@ Non-blocking `receive()` is possible with `pending()`:
         message = input.receive()
         ...
 
+but it's often easier to do:
+
+.. code:: python
+
+    for message in input.iter_pending():
+        ...
+
 To use ports, you need to have `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
 your system.
@@ -73,8 +80,8 @@ This ensures that you always have a valid message.
 Message Creation Shortcuts
 ---------------------------
 
-If you think creating new messages is a bit wordy, you can use
-shorcuts (note: this is experimental):
+If you find creating new messages is a bit wordy, you can use shorcuts
+(note: this is experimental):
 
 .. code:: python
 
