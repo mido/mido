@@ -370,8 +370,6 @@ class Output(Port):
 
     def send(self, message):
         """Send a message."""
-        print('****', message)
-
         if self.closed:
             raise ValueError('send() called on closed port')
 
