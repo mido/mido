@@ -11,22 +11,16 @@ designed to be as straight forward and Pythonic as possible.
 
 .. code:: python
 
+    >>> from mido shortcuts import *
+    >>> m = note_on(note=60, velocity=100)
+
+.. code:: python
+
     >>> m.type
     'note_on'
     >>> m.channel = 2
     >>> m.copy(note=62, velocity=73)
     <note_on message channel=2, note=62, velocity=73, time=0>
-
-.. code:: python
-
-    >>> m = mido.new('sysex', data=[byte for byte in range(5)])
-    >>> m.data
-    (0, 1, 2, 3, 4)
-    >>> m.data = [ord(char) for char in 'Hello MIDI!']
-    >>> m.hex()
-    'F0 48 65 6C 6C 6F 20 4D 49 44 49 21 F7'
-    >>> len(m)
-    13
 
 Messages can be sent and received on ports:
 
@@ -38,75 +32,61 @@ Messages can be sent and received on ports:
     for message in input:
         output.send(message)
 
-Non-blocking `receive()` is possible with `pending()`:
+Blocking and nonblocking receive are supported, as well as blocking
+and non-blocking receive from multiple ports. Ports can be used with
+the `with` statement, and input ports can be iterated over in both a
+blocking and non-blocking way to generate messages.
 
-.. code:: python
-
-    if input.pending() > 0:
-        message = input.receive()
-        ...
-
-but it's often easier to do:
-
-.. code:: python
-
-    for message in input.iter_pending():
-        ...
-
-To use ports, you need to have `PortMidi
-<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
-your system. It will be loaded on demand when one of the port
-functions such as `mido.input()` and `mido.input_names()` is called.
-
-(Support for other MIDI libraries may be added if there is
-interest. See `docs/ports_api.rst` for who to write your own custom
-ports.)
+See `<docs/tutorial.rst>`_ for more.
 
 
-Safety First
--------------
+Features
+---------
 
-When you assign to attributes or pass keyword arguments, they are checked
-for every possible way they could be invalid:
+* Full implementation of all standard MIDI messages.
 
-.. code:: python
+* Full name, type and value checking of keyword arguments
+  and attributes ensures that you always have a valid message.
 
-    >>> msg = mido.new('pitchwheel', banana=1)
-    ValueError: 'banana' is an invalid keyword argument for this message type
-    >>> msg = mido.new('pitchwheel', pitch=100)
-    >>> msg.pitch = 1235892384
-    ValueError: pitchwheel value must be in range -8192..8191
-    >>> msg.pitch = 'Banana!'
-    TypeError: pichwheel value must be an integer
+* Sysex is supported, with data bytes as a tuple of integers.
 
-This ensures that you always have a valid message.
+* Can easily be integrated with other libraries and tools. (Messages
+  can be encoded to and decoded from many formats, including lists of
+  bytes, bytearrays, hex strings and text strings.)
 
+* Includes a flexible MIDI parser which can be used to parse MIDI from
+  any source or format by feeding it bytes and fetching the produced
+  messages.)
 
-Message Creation Shortcuts
----------------------------
+* Custom port types and wrappers for other MIDI libraries can be
+  written and used with Mido by implementing the simple port
+  API. (Uses duck typing.)
 
-If you find creating new messages is a bit wordy, you can use shorcuts
-(note: this is experimental):
+* Text serialization format for messages. (Can be safely embedded in
+  most text file formats and protocols without escaping.)
 
-.. code:: python
+* Fully documented, with comprehensive tutorial.
 
-    >>> from mido.shortcuts import *
-    >>> note_on(channel=2, note=4)
-    >>> sysex(data=(1, 2, 3))
-    <sysex message data=(1, 2, 3), time=0>
-    >>> continue_()  # This is a keyword in Python, so it needs an extra _.
-    <continue message time=0>
+* Includes a fairly complete unit test suite. (Ports are not tested
+  yet.)
 
 
 Status
 -------
 
-Mido is not quite ready for a formal release, but it's close. All of
-the basic functionality is in place, and the API is unlikely to change
-much from this point. What remains is to write thorough documentation
-and to add more unit tests.
+Mido is nearly ready for its first official release. All of the basic
+functionality is in place, and the API is unlikely to change from this
+point. What remains is mostly to polish up the documentation and
+nitpick the code a bit.
 
 I am aiming for a release sometime in July 2013.
+
+
+License
+--------
+
+Mido is released under the terms of the `MIT license
+<http://en.wikipedia.org/wiki/MIT_License>`_.
 
 
 Requirements
@@ -115,11 +95,12 @@ Requirements
 Requires Python 2.7 or 3.2. Runs on Ubuntu and Mac OS X. May also run
 on other systems.
 
-If you want to use message ports, you need to install `PortMidi
-<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_. Mido loads
-`libportmidi.so` / `.dll` on demand when you open a port or call one
-of the I/O functions like `mido.input_names()`. The wrapper module is
-written with ctypes and requires no compilation.
+If you want to use message ports, you will need `PortMidi
+<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
+your system. Mido loads `libportmidi.so` / `.dll` on demand when you
+open a port or call one of the I/O functions like
+`mido.input_names()`. The wrapper module is written with ctypes and
+requires no compilation.
 
 
 Installing
@@ -149,41 +130,42 @@ It's available in `Homebrew <http://mxcl.github.io/homebrew/>`_ under
 the same name.
 
 
-License
---------
+Future Plans
+-------------
 
-Mido is released under the terms of the `MIT license
-<http://en.wikipedia.org/wiki/MIT_License>`_.
+* Support more MIDI libraries, either distibuted with Mido or as
+  separate packages. (A wrapper for `python-rtmidi
+  <http://pypi.python.org/pypi/python-rtmidi/>_` is almost complete.)
+  It is unclear how or even if new backends will be integrated with
+  Mido, but in the meantime they can be used by calling
+  `rtmido.input()`, `alsamido.input()` etc.
+
+* Add a library of useful tools, such as delays, an event engine and
+  message filters.
+
+
+Known Bugs
+-----------
+
+There are no know stoppers, but PortMidi has a few bugs that can be
+inconvenient:
+
+* on OS X, PortMidi usually hangs for a second or two seconds while
+  initializing. (It always succeeds.)
+
+* libportmidi prints out error messages instead of returning err and
+  setting the error message string. Thus, Mido can't catch errors and
+  raise the proper exception. (This can be seen if you try to open a
+  port with a given name twice.)
+
+* there is an obscure bug involving the OS X application Midi Keys.
+  See tmp/segfault.py.
 
 
 More About MIDI
 ----------------
 
 http://www.midi.org/
-
-
-Known Bugs
------------
-
-  - on OS X, PortMidi sometimes hangs for a couple of seconds while
-    initializing.
-
-  - in Linux, I sometimes experience short lags, as if messages
-    are bunched up and then released again. This is probably a PortMidi
-    problem.
-
-  - libportmidi prints out error messages instead of returning err and
-    setting the error message string. This is most likely a bug in
-    PortMidi but it trickles up.
-    
-  - there is an obscure bug involving the OS X application Midi Keys.
-    See tmp/segfault.py
-
-  - if close() is in the __exit__() method of an output port, or
-    context.closing() is used on the port, an exception is raised
-    saying "send() called on closed port". This needs to be figured
-    out.
-
 
 Mido is short for MIDi Objects (or Musical Instrument Digital
 Objects). It is pronounced with i and in "little" and o as in
