@@ -73,7 +73,7 @@ Getting started:
     ['MPK mini MIDI 1', 'SH-201']
 """
 from . import ports
-from .messages import Message as new, parse_string, parse_string_stream
+from .messages import Message, parse_string, parse_string_stream
 from .parser import Parser, parse, parse_all
 
 __author__ = 'Ole Martin Bjørndalen'
@@ -84,6 +84,13 @@ __version__ = '0.0.0'
 
 # Prevent splat import.
 __all__ = []
+
+def new(type, **parameters):
+    """Return a new message.
+
+    For a list of valid parameters, see the Message Types in the docs.
+    """
+    return Message(type, **parameters)
 
 def input_names():
     """Return a sorted list of all input port names.

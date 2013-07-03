@@ -3,6 +3,9 @@
 Developer Interface
 ====================
 
+Creating Message and Opening Ports
+-----------------------------------
+
 .. module:: mido
 
 .. autofunction:: new
@@ -22,13 +25,15 @@ Parsing and Parser class
 .. autofunction:: parse
 .. autofunction:: parse_all
 .. autoclass:: Parser
+   :members:
    :inherited-members:
 
 
 Message Objects
 ----------------
 
-.. autoclass:: mido.messages.Message
+.. autoclass:: mido.Message
+   :members:
    :inherited-members:
 
 
@@ -36,19 +41,22 @@ Port Objects
 -------------
 
 .. autoclass:: mido.portmidi.Input
+   :members:
    :inherited-members:
 
 .. autoclass:: mido.portmidi.Output
+   :members:
    :inherited-members:
 
 
 IOPort Objects
 ---------------
 
-`IOPort` objects has all the attibutes and methods of `Input` and
-`Output` objects.
+`IOPort` contain an `Input` and an `Output` object, and forward all
+method calls to these.
 
 .. autoclass:: mido.ports.IOPort
+   :members:
    :inherited-members:
 
 
@@ -63,6 +71,8 @@ Useful Port Functions
 
 String Serialization
 ---------------------
+
+.. module:: mido
 
 There is not `format_as_string()`, but you can use `str(message)`.
 
