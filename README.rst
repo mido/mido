@@ -11,11 +11,6 @@ designed to be as straight forward and Pythonic as possible.
 
 .. code:: python
 
-    >>> from mido shortcuts import *
-    >>> m = note_on(note=60, velocity=100)
-
-.. code:: python
-
     >>> m.type
     'note_on'
     >>> m.channel = 2
