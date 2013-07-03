@@ -8,7 +8,7 @@ It was developed in 1981 by Dave Smith and Chet Wood of Sequential
 Circuits with the assistance of Ikutaro Kakehashi of Roland. MIDI was
 quickly embraced by all the major synth manufacturers, and led to
 developents such as microcomputer sequencers, and with them the
-electronic home studio. Although may attempts have been made to
+electronic home studio. Although many attempts have been made to
 replace it, it is still the industy standard.
 
 MIDI was designed for the 8-bit microcontrollers found in synthesizers
