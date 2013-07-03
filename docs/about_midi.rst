@@ -53,6 +53,8 @@ Messages can be divided into four groups:
 Some Examples of Messages
 --------------------------
 
+::
+
     # Turn on and off middle C
     92 3C 64  note_on channel=2 note=60 velocity=100
     82 3C 64  note_off channel=2 note=60 velocity=100
