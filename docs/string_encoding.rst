@@ -22,7 +22,8 @@ The format is simple::
     [TIME] MESSAGE_TYPE [PARAMETER=VALUE ...]
 
 `str()` will always generate a time, but the parser accepts lines
-without a time, in which case `time` will be set to 0.
+without a time, in which case `time` will be set to 0. The formatter (`str()`)
+will add a time in front of the messages if `time` is != 0.
 
 Only these character will ever occur in a string encoded Mido message::
 
