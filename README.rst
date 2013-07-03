@@ -50,6 +50,8 @@ Features
 
 * Sysex is supported, with data bytes as a tuple of integers.
 
+* Support for Python 2 and 3.
+
 * Can easily be integrated with other libraries and tools. (Messages
   can be encoded to and decoded from many formats, including lists of
   bytes, bytearrays, hex strings and text strings.)
