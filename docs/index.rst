@@ -18,7 +18,7 @@ Contents:
    tutorial
    message_types
    string_encoding
-   ports_api
+   port_api
 
 
 Indices and tables

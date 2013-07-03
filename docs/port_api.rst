@@ -1,5 +1,5 @@
-Ports API and Custom Ports
-===========================
+Port API and Custom Ports
+==========================
 
 Mido currently only supportes PortMidi, but if you want to use it with
 another MIDI library you can write your own custom port classes. These

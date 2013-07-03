@@ -134,7 +134,7 @@ System Exclusive (sysex) Messages
 
 Sysex messages have a `data` parameter, which is a sequence of bytes.
 The `data` parameter takes any object that generates bytes when
-iterated over. This is converted internally into a tuple of integers::
+iterated over. This is converted internally into a tuple of integers:
 
 .. code:: python
 
@@ -146,7 +146,7 @@ iterated over. This is converted internally into a tuple of integers::
     <sysex message data=(97, 98, 99), time=0>
 
 Sysex messages inlude the `sysex_end` byte when sent and received, so
-while there is a `sysex_end` message type, it is never used::
+while there is a `sysex_end` message type, it is never used:
 
 .. code:: python
 
@@ -262,7 +262,7 @@ receive messages in a loop, you can do:
         ...
 
 If you don't want to block, you can use `pending()` to see how many
-messages are available::
+messages are available:
 
 .. code:: python
 

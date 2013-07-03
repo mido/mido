@@ -62,5 +62,6 @@ The `data` parameter accepts any iterable that generates numbers in
     mido.new('sysex', data=range(10))
     mido.new('sysex', data=(i for i in range(10) if i % 2 == 0))
 
-For details about the binary encoding of MIDI message, see
+For details about the binary encoding of MIDI message, see:
+
 http://www.midi.org/techspecs/midimessages.php
