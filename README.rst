@@ -55,7 +55,12 @@ but it's often easier to do:
 
 To use ports, you need to have `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
-your system.
+your system. It will be loaded on demand when one of the port
+functions such as `mido.input()` and `mido.input_names()` is called.
+
+(Support for other MIDI libraries may be added if there is
+interest. See `docs/ports_api.rst` for who to write your own custom
+ports.)
 
 
 Safety First

@@ -11,6 +11,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   why_mido
+   tutorial
+   message_types
+   string_encoding
+   ports_api
 
 
 Indices and tables

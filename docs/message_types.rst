@@ -30,24 +30,37 @@ reset
 ==============  ==============================
 
 
-Value Types
-------------
+Parameter Types
+----------------
 
-========  ======================
-Name      Valid Range
-========  ======================
-channel   0..15
-control   0..127
-note      0..127
-program   0..127
-song      0..127
-value     0..127
-velocity  0..127
-data      (0..127, 0..127, ...)
-pitch     -8192..8191
-pos       0..16383
-========  ======================
+========  ======================  ================
+Name      Valid Range             Default Value
+========  ======================  ================
+channel   0..15                   0
+control   0..127                  0
+note      0..127                  0
+program   0..127                  0
+song      0..127                  0
+value     0..127                  0
+velocity  0..127                  0
+data      (0..127, 0..127, ...)   () (empty tuple)
+pitch     -8192..8191             0
+pos       0..16383                0
+time      any integer or float    0
+========  ======================  ================
 
+The `time` parameter is not included in the encoded message, and is
+(currently) not used by Mido in any way. You can use it for whatever
+purpose you wish.
+
+The `data` parameter accepts any iterable that generates numbers in
+0..127. This includes:
+
+.. code:: python
+
+    mido.new('sysex', data=[1, 2, 3])
+    mido.new('sysex', data=range(10))
+    mido.new('sysex', data=(i for i in range(10) if i % 2 == 0))
 
 For details about the binary encoding of MIDI message, see
 http://www.midi.org/techspecs/midimessages.php
