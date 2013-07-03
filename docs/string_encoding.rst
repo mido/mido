@@ -26,7 +26,7 @@ without a time, in which case `time` will be set to 0.
 
 Only these character will ever occur in a string encoded Mido message::
 
-    [a-z][0-9][ =_.]
+    [a-z][0-9][ =_.+()]
 
 This means the message can be embedded in most text formats without
 any form of escaping.
