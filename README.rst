@@ -35,7 +35,7 @@ Messages can be sent and received on ports:
 Blocking and nonblocking receive are supported, as well as blocking
 and non-blocking receive from multiple ports. Ports can be used with
 the `with` statement, and input ports can be iterated over in both a
-blocking and non-blocking way to generate messages.
+blocking and non-blocking way.
 
 See `<docs/tutorial.rst>`_ for more.
 
