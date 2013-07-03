@@ -1,6 +1,10 @@
 Why Mido?
 ==========
 
+
+Messages as Objects
+--------------------
+
 Working with MIDI messages by manipulating the bytes is painful:
 
 .. code:: python
@@ -77,3 +81,23 @@ method:
     TypeError: data byte must be an integer
 
 This means that a Mido message object is always a valid MIDI message.
+
+
+
+Easy to Use and Flexible Ports
+-------------------------------
+
+Mido ports are significally easier to use than the ports in typical C
+libraries. All you need to do to open a port and receive a message is:
+
+.. code:: python
+
+    >>> import mido
+    >>> port = mido.input()
+    >>> port.receive()
+    <note_on message channel=2, note=60, velocity=120, time=0>
+
+Due to Python's duck typing, new port types can be written and used
+with Mido messages without subclassing existing types or registering
+them with Mido.
+

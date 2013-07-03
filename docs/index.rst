@@ -9,6 +9,10 @@ Mido - MIDI Objects for Python
 Mido is a library for working with MIDI messages and ports. It's
 designed to be as straight forward and Pythonic as possible.
 
+Mido is short for MIDi Objects (or Musical Instrument Digital
+Objects). It is pronounced with i and in "little" and o as in
+"object", or in Japanese: ミド.
+
 Contents:
 
 .. toctree::
@@ -17,14 +21,19 @@ Contents:
    why_mido
    tutorial
    message_types
+   parsing_and_encoding
    string_encoding
    port_api
+   about_midi
+   license
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
+
 * :ref:`modindex`
+
 * :ref:`search`
-x
+
