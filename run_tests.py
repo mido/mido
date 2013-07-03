@@ -15,6 +15,10 @@ class TestMessages(unittest.TestCase):
 
         self.assertTrue(msg1 == msg2)
 
+    def test_set_type(self):
+        a = mido.new('note_on')
+        self.assertRaises(AttributeError, setattr, a, 'type', 'sysex')
+
     def test_pitchwheel(self):
         """Check if pitchwheel type check and encoding is working."""
         msg = mido.new('pitchwheel', pitch=mido.messages.MIN_PITCHWHEEL)

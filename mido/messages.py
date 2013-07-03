@@ -43,7 +43,7 @@ class MessageSpec(object):
    
         # Attributes that can be set on the object
         self.valid_attributes = set(self.arguments) | {'time'}
- 
+
     def signature(self):
         """Return call signature for Message constructor for this type.
 
@@ -291,11 +291,16 @@ class Message(object):
         """
         # Get values from this object
         arguments = {}
-        for name in self._spec.arguments + ('time',):
+        for name in self._spec.valid_attributes:
             if name in overrides:
                 arguments[name] = overrides[name]
             else:
                 arguments[name] = getattr(self, name)
+
+        for name in overrides:
+            if name not in self._spec.valid_attributes:
+                text = '{!r} is an invalid argument for this message type'
+                raise ValueError(text.format(name))
 
         return Message(self.type, **arguments)
 
