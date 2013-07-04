@@ -140,6 +140,11 @@ Future Plans
 * Add a library of useful tools, such as delays, an event engine and
   message filters.
 
+* Support `running status
+  <http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/midispec/run.htm>`_
+  (This is currently tricky or impossible with PortMidi, but could be
+  useful for other data sources.)
+
 
 Known Bugs
 -----------
