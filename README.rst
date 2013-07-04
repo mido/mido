@@ -146,8 +146,7 @@ Future Plans
 Known Bugs
 -----------
 
-There are no know stoppers, but PortMidi has a few bugs that can be
-inconvenient:
+* times of type `long` are not accepted in Python 2.
 
 * on OS X, PortMidi usually hangs for a second or two seconds while
   initializing. (It always succeeds.)
