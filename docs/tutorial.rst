@@ -38,7 +38,8 @@ default to `0` (or `()` for sysex data):
     <sysex message data=(), time=0>
 
 This means that it's important to remember to pass the `velocity`
-parameter for `note_on` messages, or the note will be rather quiet.
+parameter for `note_on` messages, or the note will interpreted as a
+`note_off` on many devices.
 
 The parameters for each message type are listed in
 :doc:`message_types`.
