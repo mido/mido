@@ -14,7 +14,7 @@ pitchwheel      channel pitch
 sysex           data
 undefined_f1
 songpos         pos
-song            song
+song_select     song
 undefined_f4
 undefined_f5
 tune_request

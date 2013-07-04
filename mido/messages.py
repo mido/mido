@@ -83,7 +83,7 @@ def get_message_specs():
         MessageSpec(0xf0, 'sysex', ('data',), float('inf')),
         MessageSpec(0xf1, 'undefined_f1', (), 1),
         MessageSpec(0xf2, 'songpos', ('pos',), 3),
-        MessageSpec(0xf3, 'song', ('song',), 2),
+        MessageSpec(0xf3, 'song_select', ('song',), 2),
         MessageSpec(0xf4, 'undefined_f4', (), 1),
         MessageSpec(0xf5, 'undefined_f5', (), 1),
         MessageSpec(0xf6, 'tune_request', (), 1),
