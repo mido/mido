@@ -42,17 +42,17 @@ class Parser(object):
         type_ = self._spec.type
 
         if type_ == 'sysex':
-            return Message('sysex', data=self._bytes[1:])
+            arguments = {'data': self._bytes[1:]}
 
         elif type_ == 'pitchwheel':
             pitch = self._bytes[1]
             pitch |= ((self._bytes[2] << 7) + MIN_PITCHWHEEL)
-            return Message('pitchwheel', pitch=pitch)
+            arguments = {'pitch': pitch}
 
         elif type_ == 'songpos':
             pos = self._bytes[1]
             pos |= (self._bytes[2] << 7)
-            return Message('songpos', pos=pos)
+            arguments = {'pos': pos}
 
         else:
             if self._bytes[0] < 0xf0:
@@ -61,8 +61,11 @@ class Parser(object):
             else:
                 attribute_names = self._spec.arguments
 
-            return Message(type_,
-                           **dict(zip(attribute_names, self._bytes[1:])))
+            arguments = dict(zip(attribute_names, self._bytes[1:]))
+
+        # Note: we're using the status byte here, not type.
+        # If we used type, the channel would be discarded.
+        return Message(self._bytes[0], **arguments)
 
     def _deliver(self, message):
         self._parsed_messages.append(message)

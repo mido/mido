@@ -303,6 +303,11 @@ class TestParser(unittest.TestCase):
         a = mido.parse_all([0xf3, 2, 3])
         b = [mido.new('song', song=2)]
         self.assertEqual(a, b)
+
+    def test_parse_channel(self):
+        """Parser should not discard the channel in channel messages."""
+        self.assertTrue(mido.parse([0x90, 0x00, 0x00]).channel == 0)
+        self.assertTrue(mido.parse([0x92, 0x00, 0x00]).channel == 2)
             
 if __name__ == '__main__':
     unittest.main()
