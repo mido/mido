@@ -11,7 +11,7 @@ To encode a message, simply call `str()` on it:
 
     >>> n = control_change(channel=9, control=1, value=122, time=60)
     >>> str(n)
-    '60 control_change channel=9 control=1 value=122'
+    'control_change channel=9 control=1 value=122 time=60'
 
 
 Format
@@ -19,11 +19,10 @@ Format
 
 The format is simple::
 
-    [TIME] MESSAGE_TYPE [PARAMETER=VALUE ...]
+    MESSAGE_TYPE [PARAMETER=VALUE ...]
 
-`str()` will always generate a time, but the parser accepts lines
-without a time, in which case `time` will be set to 0. The formatter (`str()`)
-will add a time in front of the messages if `time` is != 0.
+These are the same as the arguments to `mido.new()`. The order of
+parameters doesn't matter, but each one can only appear once.
 
 Only these character will ever occur in a string encoded Mido message::
 
@@ -44,20 +43,17 @@ To parse a message, you can use `mido.messages.parse_string()`:
 
 .. code:: python
 
-    >>> parse_string('  control_change   control=1  value=122')
-    <control_change message channel=0, control=1, value=122, time=0>
-
-If the first word in the string is a number, the message's `time` will
-be set to this value:
-
-.. code:: python
-
-    >>> parse_string('0.5 control_change control=1 value=122')
+    >>> parse_string('control_change control=1 value=122 time=0.5')
     <control_change message channel=0, control=1, value=122, time=0.5>
 
 Parameters that are left out are set to their default
 values. `ValueError` is raised if the message could not be
-parsed. Extra whitespace is ignored.
+parsed. Extra whitespace is ignored:
+
+.. code:: python
+
+    >>> parse_string('  control_change   control=1  value=122')
+    <control_change message channel=0, control=1, value=122, time=0>
 
 To parse messages from a stream, you can use
 `mido.messages.parse_string_stream()`.
@@ -82,13 +78,13 @@ strings when iterated over, such as a file or a list.
 start with a # and go to the end of the line). An example of valid input::
 
     # A very short song with an embedded sysex message.
-    0.0 note_on channel=9 note=60 velocity=120
+    note_on channel=9 note=60 velocity=120 time=0
     # Send some data
 
-    0.5 sysex data=(1,2,3)
+    sysex data=(1,2,3) time=0.5
 
-    0.7 pitchwheel pitch=4000  # bend the not a little
-    1.0 note_off channel=9 note=60 velocity=60
+    pitchwheel pitch=4000  # bend the not a little time=0.7
+    note_off channel=9 note=60 velocity=60 time=1.0
 
 
 Examples

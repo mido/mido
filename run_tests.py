@@ -132,19 +132,6 @@ class TestMessages(unittest.TestCase):
 
 
 class TestStringFormat(unittest.TestCase):
-    def test_parse_string_number(self):
-        m = mido.messages
-
-        # _parse_string_number() returns None for anything not
-        # integer of float.
-        self.assertTrue(0 == m._parse_string_number('0'))
-        self.assertTrue(0 == m._parse_string_number(' 0 ')) # Test whitespace.
-        self.assertTrue(0.7 == m._parse_string_number(' 0.7 '))
-        self.assertRaises(TypeError, m._parse_string_number, None)
-        self.assertRaises(TypeError, m._parse_string_number, [])
-        self.assertEqual(None, m._parse_string_number('abc'))
-        self.assertTrue(None == m._parse_string_number(' abc '))
-
     def test_parse_string(self):
         m = mido.messages
 
@@ -154,9 +141,15 @@ class TestStringFormat(unittest.TestCase):
         self.assertEqual(m.parse_string('sysex data=(1,2,3)'),
                          mido.new('sysex', data=(1, 2, 3)))
 
-        a = m.parse_string('0.5 note_on channel=2 note=3')
+        a = m.parse_string('note_on channel=2 note=3 time=0.5')
         b = mido.new('sysex', data=(1, 2, 3), time=0.5)
         self.assertEqual(a.time, b.time)
+
+        # nan and inf should be allowed
+        a = m.parse_string('note_on time=inf')
+        b = m.parse_string('note_on time=nan')
+        self.assertTrue(a.time == float('inf'))
+        self.assertTrue(str(b.time) == 'nan')
 
         # Should raise ValueError if something is wrong with the string.
         # Extra comma after 'channel=2':
@@ -177,16 +170,16 @@ class TestStringFormat(unittest.TestCase):
         f = mido.messages._format_as_string
 
         msg = mido.new('note_on', channel=9)
-        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=0')
+        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=0 time=0')
 
         msg = mido.new('sysex', data=(1, 2, 3))
-        self.assertEqual(f(msg), 'sysex data=(1,2,3)')
+        self.assertEqual(f(msg), 'sysex data=(1,2,3) time=0')
 
         msg = mido.new('sysex', data=())
-        self.assertEqual(f(msg), 'sysex data=()')
+        self.assertEqual(f(msg), 'sysex data=() time=0')
 
         msg = mido.new('continue')
-        self.assertEqual(f(msg), 'continue')
+        self.assertEqual(f(msg), 'continue time=0')
 
     def test_parse_string_stream(self):
         m = mido.messages

@@ -384,7 +384,7 @@ class Message(object):
         return '<{} message {}>'.format(self.type, ', '.join(parts))
 
     def __str__(self):
-        return _format_as_string(self, include_time=True)
+        return _format_as_string(self)
 
     def __eq__(self, other):
         """Compare message to another for equality.
@@ -408,20 +408,11 @@ class Message(object):
             return self._spec.length
 
 
-def _parse_string_number(text):
-    """Parse text as a number.
-
-    Return number or None if text is not a number.
-    """
-
-    for convert in [int, float]:
-        try:
-            return convert(text)
-        except ValueError:
-            continue
-    else:
-        return None
-
+def _parse_string_time(text):
+    try:
+        return int(text)
+    except ValueError:
+        return float(text)
 
 def parse_string(text):
     """Parse a string of text and return a message.
@@ -432,21 +423,9 @@ def parse_string(text):
     Raises ValueError if the string could not be parsed.
     """
     words = text.split()
-    if len(words) < 1:
-        raise ValueError('string is empty')
-
-    time = _parse_string_number(words[0])
-    if time is not None:
-        del words[0]
-        if len(words) < 1:
-            raise ValueError('no message found after number')
 
     message = Message(words[0])
-    if time:
-        message.time = time
-
     arguments = words[1:]
-    valid_arguments = message._spec.arguments
 
     names_seen = set()
 
@@ -469,6 +448,17 @@ def parse_string(text):
             except ValueError:
                 raise ValueError('unable to parse data bytes')
             setattr(message, 'data', data_bytes)
+        elif name == 'time':
+            try:
+                time = _parse_string_time(value)
+            except ValueError:
+                raise ValueError('invalid value for time')
+            try:
+                setattr(message, 'time', time)
+            except AttributeError as err:
+                raise ValueError(err.message)
+            except TypeError as err:
+                raise ValueError(err.message)
         else:
             try:
                 setattr(message, name, int(value))
@@ -502,7 +492,7 @@ def parse_string_stream(stream):
         line_number += 1
 
 
-def _format_as_string(message, include_time=False):
+def _format_as_string(message):
     """Format a message and return as a string.
 
     There is no reason to call this function directly.
@@ -512,10 +502,9 @@ def _format_as_string(message, include_time=False):
         raise ValueError('message must be a mido.Message object')
 
     words = []
-    if include_time and message.time != 0:
-        words.append(str(message.time))
     words.append(message.type)
-    for name in message._spec.arguments:
+
+    for name in message._spec.arguments + ('time',):
         value = getattr(message, name)
         if name == 'data':
             value = '({})'.format(','.join([str(byte) for byte in value]))
