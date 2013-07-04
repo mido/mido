@@ -25,71 +25,76 @@ class Parser(object):
     def __init__(self):
         """Create a new parser."""
         self._parsed_messages = deque()
-        self._status_byte = None
-        self._data_bytes = []  # Data bytes
-        self._bytes_to_go = None
+        self._reset()
+
+    def _reset(self):
+        self._spec = None
+        self._bytes = []
 
     def _build_message(self):
         type_ = self._spec.type
 
         if type_ == 'sysex':
-            return Message('sysex', data=data)
+            return Message('sysex', data=self._bytes[1:])
 
         elif type_ == 'pitchwheel':
-            pitch = self._data_bytes[0] | \
-                ((self._data_bytes[1] << 7) + MIN_PITCHWHEEL)
-            m = Message('pitchwheel', pitch=pitch)
-            return m
+            pitch = self._bytes[1]
+            pitch |= ((self._bytes[2] << 7) + MIN_PITCHWHEEL)
+            return Message('pitchwheel', pitch=pitch)
 
         elif type_ == 'songpos':
-            return Message('songpos',
-                           pos=(self._data_bytes[0] |
-                               (self._data_bytes[1] << 7)))
+            pos = self._bytes[1]
+            pos |= (self._bytes[2] << 7)
+            return Message('songpos', pos=pos)
 
         else:
-            if self._status_byte < 0xf0:
+            if self._bytes[0] < 0xf0:
+                # Channel message. Skip channel.
                 attribute_names = self._spec.arguments[1:]
             else:
                 attribute_names = self._spec.arguments
 
             return Message(type_,
-                           **dict(zip(attribute_names, self._data_bytes)))
+                           **dict(zip(attribute_names, self._bytes[1:])))
+
+    def _deliver(self, message):
+        self._parsed_messages.append(message)
 
     def _handle_status_byte(self, byte):
         if 0xf8 <= byte <= 0xff:
-            # Realtime message are delivered straight away.
-            self._parsed_messages.append(Message(byte))
-
-            if self._status_byte != 0xf0:
+            if self._spec and self._bytes[0] == 0xf0:
+                # Realtime message are delivered straight away.
+                # Todo: should be only inside sysex!
+                self._deliver(Message(byte))
+            else:
                 # Realtime message arrived inside a non-sysex
                 # message. Discard the message we were parsing.
-                self._status_byte = None
+                self._reset()
 
         elif byte == 0xf7:
             # End of sysex
-            if self._status_byte == 0xf0:
+            if self._spec and self._bytes[0] == 0xf0:
                 # We were inside a sysex message. Deliver it.
-                self._parsed_messages.append(Message('sysex',
-                                                     data=self._data_bytes))
-            # Reset parser.
-            self._status_byte = None
-            self._data_bytes = []
+                self._deliver(self._build_message())
+            self._reset()
         else:
             # Start of new message
-            self._status_byte = byte
-            self._data_bytes = []
             self._spec = Message._spec_lookup[byte]
-            self._bytes_to_go = self._spec.length - 1
+            self._bytes = [byte]
 
     def _handle_data_byte(self, byte):
-        self._data_bytes.append(byte)
+        self._bytes.append(byte)
 
-        if self._status_byte:
-            self._bytes_to_go -= 1
-            if self._bytes_to_go == 0:
-                self._parsed_messages.append(self._build_message())
+        if self._spec:
+            if len(self._bytes) == self._spec.length:
+                self._deliver(self._build_message())
+
+                # Delete data bytes, but keep the
+                # status byte around to handle running
+                # status.
+                del self._bytes[1:]
         else:
-            # Ignore stray data byte
+            # Todo: handle delta time.
             pass
 
     def feed_byte(self, byte):
