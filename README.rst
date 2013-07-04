@@ -140,8 +140,6 @@ Future Plans
 * Add a library of useful tools, such as delays, an event engine and
   message filters.
 
-* Support for MIDI files?
-
 
 Known Bugs
 -----------
