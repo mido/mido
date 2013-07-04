@@ -1,9 +1,8 @@
-#!/usr/bin/env python
 from __future__ import print_function
 import sys
 import random
 import unittest
-import StringIO
+from io import StringIO
 import mido
 
 # http://docs.python.org/2/library/unittest.html
@@ -190,22 +189,22 @@ class TestStringFormat(unittest.TestCase):
         m = mido.messages
 
         # Correct input.
-        stream = StringIO.StringIO("""
+        stream = StringIO(u"""
              note_on channel=1  # Ignore this
              # and this
              continue
         """)
         gen = m.parse_string_stream(stream)
-        self.assertEqual(gen.next(), (mido.new('note_on', channel=1), None))
-        self.assertEqual(gen.next(), (mido.new('continue'), None))
+        self.assertEqual(next(gen), (mido.new('note_on', channel=1), None))
+        self.assertEqual(next(gen), (mido.new('continue'), None))
 
         # Invalid input. It should catch the ValueError
         # from parse_string() and return (None, 'Error message').
-        stream = StringIO.StringIO('ijsoijfdsf\noiajoijfs')
+        stream = StringIO(u'ijsoijfdsf\noiajoijfs')
         gen = m.parse_string_stream(stream)
-        self.assertEqual(gen.next()[0], None)
-        self.assertEqual(gen.next()[0], None)
-        self.assertRaises(StopIteration, gen.next)
+        self.assertEqual(next(gen)[0], None)
+        self.assertEqual(next(gen)[0], None)
+        self.assertRaises(StopIteration, next, gen)
 
     def test_parse_string_time(self):
         parse_time = mido.messages.parse_time
