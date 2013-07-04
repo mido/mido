@@ -2,12 +2,16 @@ from __future__ import print_function
 import sys
 import random
 import unittest
-from io import StringIO
 import mido
 
 # http://docs.python.org/2/library/unittest.html
 
 python2 = (sys.version_info.major == 2)
+
+if python2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 class TestMessages(unittest.TestCase):
     def test_msg_equality(self):
@@ -189,7 +193,7 @@ class TestStringFormat(unittest.TestCase):
         m = mido.messages
 
         # Correct input.
-        stream = StringIO(u"""
+        stream = StringIO("""
              note_on channel=1  # Ignore this
              # and this
              continue
@@ -200,7 +204,7 @@ class TestStringFormat(unittest.TestCase):
 
         # Invalid input. It should catch the ValueError
         # from parse_string() and return (None, 'Error message').
-        stream = StringIO(u'ijsoijfdsf\noiajoijfs')
+        stream = StringIO('ijsoijfdsf\noiajoijfs')
         gen = m.parse_string_stream(stream)
         self.assertEqual(next(gen)[0], None)
         self.assertEqual(next(gen)[0], None)
