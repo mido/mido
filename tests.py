@@ -279,6 +279,19 @@ class TestParser(unittest.TestCase):
             byte = random.randrange(256)
             parser.feed_byte(byte)
 
+    def test_running_status(self):
+        # Two note_on messages. (The second has no status byte,
+        # so the last seen status byte is used instead.)
+        a = mido.parse_all([0x90, 0x01, 0x02, 0x01, 0x02])
+        b = [mido.new('note_on', note=1, velocity=2)] * 2
+        self.assertEqual(a, b)
+
+        # System common messages should cancel running status.
+        # (0xf3 is 'songpos'. This should be 'song song=2'
+        # followed by a stray data byte.
+        a = mido.parse_all([0xf3, 2, 3])
+        b = [mido.new('song', song=2)]
+        self.assertEqual(a, b)
             
 if __name__ == '__main__':
     unittest.main()

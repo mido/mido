@@ -5,6 +5,13 @@ There is no need to use this module directly. All you need is
 available in the toplevel module.
 """
 
+#
+# About running status:
+#
+# http://home.roadrunner.com/~jgglatt/tech/midispec/run.htm
+# http://stackoverflow.com/questions/3660964/get-note-data-from-midi-file
+#
+
 import sys
 from collections import deque
 from .messages import Message, MIN_PITCHWHEEL
@@ -89,10 +96,14 @@ class Parser(object):
             if len(self._bytes) == self._spec.length:
                 self._deliver(self._build_message())
 
-                # Delete data bytes, but keep the
-                # status byte around to handle running
-                # status.
-                del self._bytes[1:]
+                if self._bytes[0] < 0xf0:
+                    # Delete data bytes, but keep the
+                    # status byte around to handle running
+                    # status.
+                    del self._bytes[1:]
+                else:
+                    # System common messages have no running status.
+                    self._reset()
         else:
             # Todo: handle delta time.
             pass
