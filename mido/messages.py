@@ -308,7 +308,7 @@ class Message(object):
                 text = '{!r} is an invalid argument for this message type'
                 raise ValueError(text.format(name))
 
-        return Message(self.type, **arguments)
+        return self.__class__(self.type, **arguments)
 
     def _set(self, name, value):
         """Sets an attribute directly, bypassing all type and value checks"""
