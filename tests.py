@@ -138,6 +138,15 @@ class TestMessages(unittest.TestCase):
         # Check endian
         self.assertEqual([16, 78], m.encode_pos(10000))
 
+    def test_get_spec(self):
+        get_spec = mido.messages.get_spec
+
+        self.assertTrue(get_spec('note_on').type == 'note_on')
+        self.assertTrue(get_spec(0x80).type == 'note_off')
+        self.assertTrue(get_spec(0x82).type == 'note_off')
+
+        self.assertRaises(LookupError, get_spec, 0)
+
 
 class TestStringFormat(unittest.TestCase):
     def test_parse_string(self):

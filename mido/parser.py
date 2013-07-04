@@ -14,7 +14,7 @@ available in the toplevel module.
 
 import sys
 from collections import deque
-from .messages import Message, MIN_PITCHWHEEL
+from .messages import Message, MIN_PITCHWHEEL, get_spec
 
 python2 = (sys.version_info.major == 2)
 
@@ -86,7 +86,7 @@ class Parser(object):
             self._reset()
         else:
             # Start of new message
-            self._spec = Message._spec_lookup[byte]
+            self._spec = get_spec(byte)
             self._bytes = [byte]
 
     def _handle_data_byte(self, byte):

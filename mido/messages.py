@@ -122,6 +122,17 @@ def build_spec_lookup(message_specs):
     return lookup
 
 
+def get_spec(type_or_status_byte):
+    """Get message specification from status byte or message type name.
+
+    For use in writing parsers.
+    """
+    try:
+        return Message._spec_lookup[type_or_status_byte]
+    except KeyError:
+        raise LookupError('unknown type or status byte')
+
+
 def check_time(time):
     """Check type and value of time.
     
