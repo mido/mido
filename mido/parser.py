@@ -100,7 +100,9 @@ class Parser(object):
                     # Delete data bytes, but keep the
                     # status byte around to handle running
                     # status.
-                    del self._bytes[1:]
+                   
+                    self._reset()
+                    #del self._bytes[1:]
                 else:
                     # System common messages have no running status.
                     self._reset()
