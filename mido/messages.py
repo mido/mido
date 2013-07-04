@@ -8,6 +8,9 @@ Table of MIDI messages:
 
     http://www.midi.org/techspecs/midimessages.php
 """
+import sys
+
+python2 = (sys.version_info.major == 2)
 
 # Pitchwheel is a 14 bit signed integer
 MIN_PITCHWHEEL = -8192
@@ -124,6 +127,9 @@ def check_time(time):
     
     Raises TypeError if value is not an integer or a float
     """
+    if python2 and isinstance(time, long):
+        return
+
     if not (isinstance(time, int) or isinstance(time, float)):
         raise TypeError('time must be an integer or float')
 
@@ -408,11 +414,23 @@ class Message(object):
             return self._spec.length
 
 
-def _parse_string_time(text):
-    try:
-        return int(text)
-    except ValueError:
-        return float(text)
+def parse_time(text):
+    if text.endswith('L'):
+        raise ValueError('L is not allowed in time')
+
+    if python2:
+        converters = [int, long, float]
+    else:
+        converters = [int, float]
+
+    for convert in converters:
+        try:
+            return convert(text)
+        except ValueError:
+            pass
+
+    raise ValueError('invalid format for time')
+
 
 def parse_string(text):
     """Parse a string of text and return a message.
@@ -450,7 +468,7 @@ def parse_string(text):
             setattr(message, 'data', data_bytes)
         elif name == 'time':
             try:
-                time = _parse_string_time(value)
+                time = parse_time(value)
             except ValueError:
                 raise ValueError('invalid value for time')
             try:
@@ -508,6 +526,10 @@ def _format_as_string(message):
         value = getattr(message, name)
         if name == 'data':
             value = '({})'.format(','.join([str(byte) for byte in value]))
+        elif name == 'time':
+            # Python 2 formats longs as '983989385L'. This is not allowed.
+            value = str(value)
+            value = value.replace('L', '')
         words.append('{}={}'.format(name, value))
     
     return ' '.join(words)

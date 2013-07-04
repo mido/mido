@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 from __future__ import print_function
+import sys
 import random
 import unittest
 import StringIO
 import mido
 
 # http://docs.python.org/2/library/unittest.html
+
+python2 = (sys.version_info.major == 2)
 
 class TestMessages(unittest.TestCase):
     def test_msg_equality(self):
@@ -58,6 +61,8 @@ class TestMessages(unittest.TestCase):
         # 'time' field only allows int and float.
         m.check_time(1)
         m.check_time(1.5)
+        if python2:
+            m.check_time(long('9829389283L'))
         self.assertRaises(TypeError, m.check_time, None)
         self.assertRaises(TypeError, m.check_time, 'abc')
 
@@ -201,6 +206,26 @@ class TestStringFormat(unittest.TestCase):
         self.assertEqual(gen.next()[0], None)
         self.assertEqual(gen.next()[0], None)
         self.assertRaises(StopIteration, gen.next)
+
+    def test_parse_string_time(self):
+        parse_time = mido.messages.parse_time
+
+        # These should work:
+        parse_time('0')
+        parse_time('12')
+        parse_time('-9')
+        parse_time('0.5')
+        parse_time('10e10')
+        parse_time('inf')
+        parse_time('-inf')
+        parse_time('nan')
+        parse_time('2389284878375')  # Will be a long in Python 2
+
+        # These should not
+        self.assertRaises(ValueError, parse_time, 'banana')
+        self.assertRaises(ValueError, parse_time, 'None')
+        self.assertRaises(ValueError, parse_time, '-')
+        self.assertRaises(ValueError, parse_time, '938938958398593L')
 
 class TestParser(unittest.TestCase):
     
