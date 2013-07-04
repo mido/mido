@@ -75,8 +75,8 @@ def get_message_specs():
         MessageSpec(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
         MessageSpec(0xb0, 'control_change',
                     ('channel', 'control', 'value'), 3),
-        MessageSpec(0xc0, 'program_change', ('channel', 'program',), 3),
-        MessageSpec(0xd0, 'aftertouch', ('channel', 'value',), 3),
+        MessageSpec(0xc0, 'program_change', ('channel', 'program',), 2),
+        MessageSpec(0xd0, 'aftertouch', ('channel', 'value',), 2),
         MessageSpec(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
 
         # System common messages
