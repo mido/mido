@@ -237,7 +237,14 @@ def encode_pos(pos):
     return [pos & 0x7f, pos >> 7]
 
 
-class Message(object):
+class BaseMessage(object):
+    """Base class for MIDI messages.
+
+    Can be subclassed to create meta messages, for example.
+    """
+    pass
+
+class Message(BaseMessage):
     """
     MIDI message class.
     """
