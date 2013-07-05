@@ -7,6 +7,7 @@ available in the toplevel module.
 import time
 
 from .parser import Parser
+from .messages import Message
 from . import portmidi_init as pm
 
 _initialized = False
@@ -370,6 +371,9 @@ class Output(Port):
 
     def send(self, message):
         """Send a message."""
+        if not isinstance(message, Message):
+            raise TypeError('argument to send() must be a Message')
+
         if self.closed:
             raise ValueError('send() called on closed port')
 
