@@ -47,7 +47,6 @@ def _check_error(return_value):
 
     The exception will be raised with the error message from PortMidi.
     """
-    print(return_value)
     if return_value < 0:
         raise IOError(pm.lib.Pm_GetErrorText(return_value))
 
