@@ -3,6 +3,9 @@ Input and Output ports for PortMidi.
 
 There is no need to use this module directly. All you need is
 available in the toplevel module.
+
+PortMidi documentation:
+http://portmedia.sourceforge.net/portmidi/doxygen/
 """
 import time
 
