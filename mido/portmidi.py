@@ -8,10 +8,36 @@ import time
 
 from .parser import Parser
 from .messages import Message
-from . import portmidi_init as pm
 
-_initialized = False
+class PortMidiInitializer:
+    """
+    This class is responsible for loading PortMidi on demand. It
+    camouflages in the global name space as a module, and forwards all
+    attribute access to the real module.
 
+    For testing, this mock module can be replaced with another mock
+    module.
+    """
+    def __init__(self):
+        self.pm = None
+
+    def __getattr__(self, attr):
+        # print('initializer was asked for', attr)
+        if self.pm is None:
+            # print('Initializing PortMidi...')
+            from . import portmidi_init as pm
+            self.pm = pm
+            self.pm.lib.Pm_Initialize()
+
+        return getattr(self.pm, attr)
+
+    def __del__(self):
+        if self.pm is not None:
+            # print('Terminating PortMidi...')
+            self.pm.lib.Pm_Terminate()
+            self.pm = None
+
+pm = PortMidiInitializer()
 
 def _check_error(return_value):
     """Raise IOError if return_value < 0.
@@ -20,43 +46,6 @@ def _check_error(return_value):
     """
     if return_value < 0:
         raise IOError(pm.lib.Pm_GetErrorText(return_value))
-
-
-def _initialize():
-    """Initialize PortMidi.
-
-    This is called by constructors and functions in this module as
-    needed.
-
-    If PortMidi is already initialized, it will do nothing.
-    """
-    global _initialized
-
-    if _initialized:
-        pm.lib.Pm_Initialize()
-
-        _initialized = True
-
-        # This screws up __del__() for ports,
-        # so it's left out for now:
-        # atexit.register(_terminate)
-
-
-def _terminate():
-    """Terminate PortMidi.
-
-    Note: This function is never called.
-
-    It was meant to be used as an atexit handler, but it ended up
-    being called before the port object constructors, resulting in a
-    PortMidi reporting "invalid stream ID", so it's just never called
-    until a solution is found.
-    """
-    global _initialized
-
-    if _initialized:
-        pm.lib.Pm_Terminate()
-        _initialized = False
 
 
 class DeviceInfo(object):
@@ -72,7 +61,6 @@ class DeviceInfo(object):
 
     def __init__(self, device_id):
         """Create a new DeviceInfo object."""
-
         info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
         if not info_pointer:
             raise IOError('PortMidi device with id={} not found'.format(
@@ -138,8 +126,6 @@ class Port(object):
         self.closed = True
         self._stream = pm.PortMidiStreamPtr()
         self.device = None
-
-        _initialize()
 
         opening_input = (self.__class__ is Input)
 
