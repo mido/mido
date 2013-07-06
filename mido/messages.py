@@ -356,7 +356,8 @@ class Message(BaseMessage):
     def __delattr__(self, name):
         raise AttributeError('attribute can not be deleted')
 
-    def _get_status_byte(self):
+    @property
+    def status_byte(self):
         """Compute and return status byte.
 
         For channel messages, the returned status byte
@@ -368,9 +369,6 @@ class Message(BaseMessage):
             # Those bits in spec.status_byte are always 0.
             byte |= self.channel
         return byte
-
-    status_byte = property(fget=_get_status_byte)
-    del _get_status_byte
 
     def bytes(self):
         """Encode message and return as a list of integers."""
