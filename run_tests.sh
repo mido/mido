@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PYTHONPATH=$(pwd):$PYTHONPATH
+
 # 'python2' doesn't exist in OS X, so we need some tests here.
 if [ -z $(which python2) ]
 then
@@ -15,4 +17,4 @@ else
     python3=python3
 fi
 
-$python2 tests.py && $python3 tests.py
+$python2 test/tests.py && $python3 test/tests.py
