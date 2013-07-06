@@ -268,6 +268,24 @@ class TestParser(unittest.TestCase):
         msg2 = mido.parse(msg1.bytes())
         self.assertTrue(msg1 == msg2)
 
+    def test_encode_and_parse_all(self):
+        """Encode and then parse all message types.
+
+        This checks mostly for errors in the parser.
+        """
+        p = mido.Parser()
+        for spec in mido.messages.get_message_specs():
+            if spec.type == 'sysex_end':
+                # This is considered a part of 'sysex_start'.
+                continue
+
+            msg = mido.new(spec.type)
+            p.feed(msg.bytes())
+            outmsg = p.get_message()
+            self.assertTrue(outmsg is not True)
+            self.assertTrue(outmsg.type == spec.type)
+
+
     def test_feed_byte(self):
         """Put various things into feed_byte()."""
         import mido.parser

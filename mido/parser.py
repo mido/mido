@@ -72,14 +72,16 @@ class Parser(object):
 
     def _handle_status_byte(self, byte):
         if 0xf8 <= byte <= 0xff:
-            if self._spec and self._bytes[0] == 0xf0:
-                # Realtime message are delivered straight away.
-                # Todo: should be only inside sysex!
-                self._deliver(Message(byte))
+            if self._spec:
+                if self._bytes[0] == 0xf0:
+                    self._deliver(Message(byte))
+                else:
+                    # Realtime message arrived inside a non-sysex
+                    # message. Discard the message we were parsing.
+                    self._reset()
             else:
-                # Realtime message arrived inside a non-sysex
-                # message. Discard the message we were parsing.
-                self._reset()
+                self._spec = get_spec(byte)
+                self._bytes = [byte]
 
         elif byte == 0xf7:
             # End of sysex
