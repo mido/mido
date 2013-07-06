@@ -130,20 +130,22 @@ the same name.
 Future Plans
 -------------
 
-* Support more MIDI libraries, either distibuted with Mido or as
+* support more MIDI libraries, either distibuted with Mido or as
   separate packages. (A wrapper for `python-rtmidi
   <http://pypi.python.org/pypi/python-rtmidi/>`_ is almost complete.)
   It is unclear how or even if new backends will be integrated with
   Mido, but in the meantime they can be used by calling
   `rtmido.input()`, `alsamido.input()` etc.
 
-* Add a library of useful tools, such as delays, an event engine and
+* add a library of useful tools, such as delays, an event engine and
   message filters.
 
-* Support `running status
+* support `running status
   <http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/midispec/run.htm>`_
   (This is currently tricky or impossible with PortMidi, but could be
   useful for other data sources.)
+
+* support time code quarter frame (status byte 0xf1).
 
 
 Known Bugs
