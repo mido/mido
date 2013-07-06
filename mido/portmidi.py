@@ -44,6 +44,7 @@ def _check_error(return_value):
 
     The exception will be raised with the error message from PortMidi.
     """
+    print(return_value)
     if return_value < 0:
         raise IOError(pm.lib.Pm_GetErrorText(return_value))
 
@@ -135,6 +136,14 @@ class Port(object):
             self.device = self._get_named_device(name, opening_input)
         self.name = self.device.name
 
+        if self.device.opened:
+            if opening_input:
+                devtype = 'input'
+            else:
+                devtype = 'output'
+            raise IOError('{} port {!r} is already open'.format(devtype,
+                                                                self.name))
+        
         # Make a shortcut, since this is so long
         device_id = self.device.device_id
 
