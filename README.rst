@@ -145,6 +145,9 @@ Future Plans
   (This is currently tricky or impossible with PortMidi, but could be
   useful for other data sources.)
 
+* support time codes (0xf1). (These have one data bytes divided into 3
+  bits type and 4 bits values. It's unclear how to handle this.)
+
 
 Known Bugs
 -----------
