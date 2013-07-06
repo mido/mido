@@ -145,8 +145,6 @@ Future Plans
   (This is currently tricky or impossible with PortMidi, but could be
   useful for other data sources.)
 
-* support time code quarter frame (status byte 0xf1).
-
 
 Known Bugs
 -----------

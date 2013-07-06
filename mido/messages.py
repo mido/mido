@@ -81,8 +81,7 @@ def get_message_specs():
 
         # System common messages
         MessageSpec(0xf0, 'sysex', ('data',), float('inf')),
-        MessageSpec(0xf1, 'undefined_f1', ('value'), 1),  # Todo: implement
-        # MessageSpec(0xf1, 'time_code', ('value'), 2),   # ('type', 'values')?
+        MessageSpec(0xf1, 'time_code', ('value'), 2),
         MessageSpec(0xf2, 'songpos', ('pos',), 3),
         MessageSpec(0xf3, 'song_select', ('song',), 2),
         MessageSpec(0xf4, 'undefined_f4', (), 1),
