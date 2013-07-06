@@ -308,6 +308,12 @@ class TestParser(unittest.TestCase):
         """Parser should not discard the channel in channel messages."""
         self.assertTrue(mido.parse([0x90, 0x00, 0x00]).channel == 0)
         self.assertTrue(mido.parse([0x92, 0x00, 0x00]).channel == 2)
-            
+           
+    def test_one_byte_message(self):
+        """Messages that are one byte long should not wait for data bytes."""
+        messages = mido.parse_all([0xf6])  # Tune request.
+        self.assertTrue(len(messages) == 1)
+        self.assertTrue(messages[0].type == 'tune_request')
+ 
 if __name__ == '__main__':
     unittest.main()

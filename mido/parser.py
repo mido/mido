@@ -89,8 +89,14 @@ class Parser(object):
             self._reset()
         else:
             # Start of new message
-            self._spec = get_spec(byte)
-            self._bytes = [byte]
+            spec = get_spec(byte)
+
+            if spec.length == 1: 
+                # Don't wait for data bytes. Deliver straight away.
+                self._deliver(Message(byte))
+            else:
+                self._spec = spec
+                self._bytes = [byte]
 
     def _handle_data_byte(self, byte):
         self._bytes.append(byte)
