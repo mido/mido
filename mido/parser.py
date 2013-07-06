@@ -89,32 +89,14 @@ class Parser(object):
             self._reset()
         else:
             # Start of new message
-            spec = get_spec(byte)
-
-            if spec.length == 1: 
-                # Don't wait for data bytes. Deliver straight away.
-                self._deliver(Message(byte))
-            else:
-                self._spec = spec
-                self._bytes = [byte]
+            self._spec = get_spec(byte)
+            self._bytes = [byte]
 
     def _handle_data_byte(self, byte):
         self._bytes.append(byte)
 
         if self._spec:
-            if len(self._bytes) == self._spec.length:
-                self._deliver(self._build_message())
-
-                if self._bytes[0] < 0xf0:
-                    # Delete data bytes, but keep the
-                    # status byte around to handle running
-                    # status.
-                   
-                    self._reset()
-                    #del self._bytes[1:]
-                else:
-                    # System common messages have no running status.
-                    self._reset()
+            pass
         else:
             # Todo: handle delta time.
             pass
@@ -136,6 +118,22 @@ class Parser(object):
             self._handle_status_byte(byte)
         else:
             self._handle_data_byte(byte)
+
+        # If we have a complete messages, deliver it.
+        if self._spec and len(self._bytes) == self._spec.length:
+            self._deliver(self._build_message())
+
+            if self._bytes[0] < 0xf0:
+                # Delete data bytes, but keep the
+                # status byte around to handle running
+                # status.
+
+                self._reset()
+                #del self._bytes[1:]
+            else:
+                # System common messages have no running status.
+                self._reset()
+
 
     def feed(self, data):
         """Feed MIDI data to the parser.
