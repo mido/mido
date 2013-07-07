@@ -52,8 +52,7 @@ Features
   bytes, bytearrays, hex strings and text strings.)
 
 * Includes a flexible MIDI parser which can be used to parse MIDI from
-  any source or format by feeding it bytes and fetching the produced
-  messages.)
+  any source by feeding it bytes and fetching the produced messages.)
 
 * Custom port types and wrappers for other MIDI libraries can be
   written and used with Mido by implementing the simple port
