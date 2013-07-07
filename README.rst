@@ -61,11 +61,6 @@ Features
 * Text serialization format for messages. (Can be safely embedded in
   most text file formats and protocols without escaping.)
 
-* Fully documented, with tutorial.
-
-* Includes a fairly complete unit test suite. (Ports are not tested
-  yet.)
-
 
 Status
 -------
