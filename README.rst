@@ -158,14 +158,11 @@ Known Bugs
   See tmp/segfault.py.
 
 
-More About MIDI
-----------------
-
-http://www.midi.org/
-
 Mido is short for MIDi Objects (or Musical Instrument Digital
 Objects). It is pronounced with i and in "little" and o as in
 "object", or in Japanese: ミド.
+
+More about MIDI: http://www.midi.org/
 
 Latest version of the code: http://github.com/olemb/mido/ .
 
