@@ -13,7 +13,7 @@ else:
     portname = None  # Use default port
 
 try:
-    with mido.input(portname) as port:
+    with mido.open_input(portname) as port:
         print('Using {}'.format(port))
         print('Waiting for messages...')
         for message in port:

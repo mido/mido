@@ -52,7 +52,7 @@ when you assign to an attribute:
 
 .. code:: python
 
-    >>> n = mido.new('note_on')
+    >>> n = mido.Message('note_on')
     >>> n.channel = 2092389483249829834
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>

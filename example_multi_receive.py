@@ -5,7 +5,7 @@ Receive messages from multiple ports.
 import mido
 
 # Open all available inputs.
-ports = [mido.input(name) for name in mido.input_names()]
+ports = [mido.open_input(name) for name in mido.get_input_names()]
 for port in ports:
     print('Using {}'.format(port))
 print('Waiting for messages...')

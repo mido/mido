@@ -21,7 +21,7 @@ The format is simple::
 
     MESSAGE_TYPE [PARAMETER=VALUE ...]
 
-These are the same as the arguments to `mido.new()`. The order of
+These are the same as the arguments to `mido.Message()`. The order of
 parameters doesn't matter, but each one can only appear once.
 
 Only these character will ever occur in a string encoded Mido message::

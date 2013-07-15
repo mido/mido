@@ -14,7 +14,7 @@ else:
     portname = None  # Use default port
 
 try:
-    with mido.input(portname) as port:
+    with mido.open_input(portname) as port:
         print('Using {}'.format(port))
         while 1:
             # Iterate through all messages

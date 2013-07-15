@@ -19,17 +19,17 @@ else:
 notes = [60, 62, 64, 67, 69, 72]
 
 try:
-    with mido.output(portname) as port:
+    with mido.open_output(portname) as port:
         print('Using {}'.format(port))
         while 1:
             note = random.choice(notes)
 
-            message = mido.new('note_on', note=note, velocity=100)
+            message = mido.Message('note_on', note=note, velocity=100)
             print('Sending {}'.format(message))
             port.send(message)
             time.sleep(0.05)
             
-            message = mido.new('note_off', note=note, velocity=100)
+            message = mido.Message('note_off', note=note, velocity=100)
             print('Sending {}'.format(message))
             port.send(message)
             time.sleep(0.1)
@@ -37,4 +37,4 @@ except KeyboardInterrupt:
     print()
 finally:
     # Send 'All Notes Off'
-    port.send(mido.new('control_change', control=123, value=0))
+    port.send(mido.Message('control_change', control=123, value=0))

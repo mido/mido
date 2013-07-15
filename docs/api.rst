@@ -8,15 +8,13 @@ Creating Message and Opening Ports
 
 .. module:: mido
 
-.. autofunction:: new
+.. autofunction:: open_input
+.. autofunction:: open_output
+.. autofunction:: open_ioport
 
-.. autofunction:: input
-.. autofunction:: output
-.. autofunction:: ioport
-
-.. autofunction:: input_names
-.. autofunction:: output_names
-.. autofunction:: ioport_names
+.. autofunction:: get_input_names
+.. autofunction:: get_output_names
+.. autofunction:: get_ioport_names
 
 
 Parsing and Parser class
@@ -52,7 +50,7 @@ Port Objects
 IOPort Objects
 ---------------
 
-`IOPort` contain an `Input` and an `Output` object, and forward all
+`IOPort` contain an `Input` and an `Output` object, and forwards all
 method calls to these.
 
 .. autoclass:: mido.ports.IOPort

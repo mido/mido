@@ -14,5 +14,5 @@ def print_ports(heading, port_names):
     print()
 
 print()
-print_ports('Input Ports:', mido.input_names())
-print_ports('Output Ports:', mido.output_names())
+print_ports('Input Ports:', mido.get_input_names())
+print_ports('Output Ports:', mido.get_output_names())

@@ -25,10 +25,12 @@ else:
     portname = None   # Use default port
 
 try:
-    with mido.input(portname) as port:
+    with mido.open_input(portname) as port:
         print('Using {}'.format(port))
+
         print("Ignoring everything but 'note_on' and 'note_off'.")
         print('Waiting for notes...')
+
         for message in accept_notes(port):
             print('Received {}'.format(message))
 except KeyboardInterrupt:

@@ -10,7 +10,7 @@ writer, there is little use for this.
 
 Message objects have a few methods that make encoding easy:
 
-    >>> n = note_on(channel=2, note=60, velocity=100, time=3)
+    >>> n = Message('note_on', channel=2, note=60, velocity=100, time=3)
     >>> n.bytes()
     [146, 60, 100]
     >>> n.hex()
@@ -22,7 +22,7 @@ Message objects have a few methods that make encoding easy:
 
 System Exclusive messages include the end byte (0xf7):
 
-    >>> sysex(data=[1, 2, 3]).hex()
+    >>> Message('sysex', data=[1, 2, 3]).hex()
     'F0 01 02 03 F7'
 
 This means, the sysex_end() message type is needed.
@@ -76,7 +76,8 @@ be gotten.
     p.feed([0x90, 0x10, 0x20])
     p.feed((i for i in range(256)))
 
-The messages will stay in an internal queue intil you pull them out with `get_message()`.
+The messages will stay in an internal queue intil you pull them out
+with `get_message()` or `for message in parser:`.
 
 The parser will skip and stray status bytes or data bytes, so you can
 safely feed it random data and see what comes out the other end.

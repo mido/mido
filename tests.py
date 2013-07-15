@@ -3,6 +3,7 @@ import sys
 import random
 import unittest
 import mido
+from mido import Message
 
 # http://docs.python.org/2/library/unittest.html
 
@@ -16,28 +17,28 @@ else:
 class TestMessages(unittest.TestCase):
     def test_msg_equality(self):
         """Two messages created with same parameters should be equal."""
-        msg1 = mido.new('note_on', channel=1, note=2, velocity=3)
-        msg2 = mido.new('note_on', channel=1, note=2, velocity=3)
+        msg1 = Message('note_on', channel=1, note=2, velocity=3)
+        msg2 = Message('note_on', channel=1, note=2, velocity=3)
 
         self.assertTrue(msg1 == msg2)
 
     def test_set_type(self):
-        a = mido.new('note_on')
+        a = Message('note_on')
         self.assertRaises(AttributeError, setattr, a, 'type', 'sysex')
 
     def test_pitchwheel(self):
         """Check if pitchwheel type check and encoding is working."""
-        msg = mido.new('pitchwheel', pitch=mido.messages.MIN_PITCHWHEEL)
+        msg = Message('pitchwheel', pitch=mido.messages.MIN_PITCHWHEEL)
         bytes = msg.bytes()
         self.assertTrue(bytes[1] == bytes[2] == 0)
 
-        msg = mido.new('pitchwheel', pitch=mido.messages.MAX_PITCHWHEEL)
+        msg = Message('pitchwheel', pitch=mido.messages.MAX_PITCHWHEEL)
         bytes = msg.bytes()
         self.assertTrue(bytes[1] == bytes[2] == 127)
 
     def test_pitchwheel_encode_parse(self):
         """Encode and parse pitchwheel with value=0."""
-        a = mido.new('pitchwheel', pitch=0)
+        a = Message('pitchwheel', pitch=0)
         b = mido.parse(a.bytes())
 
         self.assertTrue(a == b)
@@ -45,15 +46,15 @@ class TestMessages(unittest.TestCase):
     def test_channel_value(self):
         """See if the channel masking and overrides work in init."""
 
-        self.assertTrue(mido.new('note_on').channel == 0)
-        self.assertTrue(mido.new('note_on', channel=1).channel == 1)
+        self.assertTrue(Message('note_on').channel == 0)
+        self.assertTrue(Message('note_on', channel=1).channel == 1)
 
-        self.assertTrue(mido.new(0x90).channel == 0)
-        self.assertTrue(mido.new(0x91).channel == 1)
-        self.assertTrue(mido.new(0x90, channel=1).channel == 1)
+        self.assertTrue(Message(0x90).channel == 0)
+        self.assertTrue(Message(0x91).channel == 1)
+        self.assertTrue(Message(0x90, channel=1).channel == 1)
 
     def test_sysex(self):
-        original = mido.new('sysex', data=(1, 2, 3, 4, 5))
+        original = Message('sysex', data=(1, 2, 3, 4, 5))
         parsed = mido.parse(original.bytes())
         self.assertTrue(original == parsed)
 
@@ -153,13 +154,13 @@ class TestStringFormat(unittest.TestCase):
         m = mido.messages
 
         self.assertEqual(m.parse_string('note_on channel=2 note=3'),
-                         mido.new('note_on', channel=2, note=3))
+                         Message('note_on', channel=2, note=3))
 
         self.assertEqual(m.parse_string('sysex data=(1,2,3)'),
-                         mido.new('sysex', data=(1, 2, 3)))
+                         Message('sysex', data=(1, 2, 3)))
 
         a = m.parse_string('note_on channel=2 note=3 time=0.5')
-        b = mido.new('sysex', data=(1, 2, 3), time=0.5)
+        b = Message('sysex', data=(1, 2, 3), time=0.5)
         self.assertEqual(a.time, b.time)
 
         # nan and inf should be allowed
@@ -186,16 +187,16 @@ class TestStringFormat(unittest.TestCase):
     def test_format_as_string(self):
         f = mido.messages._format_as_string
 
-        msg = mido.new('note_on', channel=9)
+        msg = Message('note_on', channel=9)
         self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=0 time=0')
 
-        msg = mido.new('sysex', data=(1, 2, 3))
+        msg = Message('sysex', data=(1, 2, 3))
         self.assertEqual(f(msg), 'sysex data=(1,2,3) time=0')
 
-        msg = mido.new('sysex', data=())
+        msg = Message('sysex', data=())
         self.assertEqual(f(msg), 'sysex data=() time=0')
 
-        msg = mido.new('continue')
+        msg = Message('continue')
         self.assertEqual(f(msg), 'continue time=0')
 
     def test_parse_string_stream(self):
@@ -208,8 +209,8 @@ class TestStringFormat(unittest.TestCase):
              continue
         """)
         gen = m.parse_string_stream(stream)
-        self.assertEqual(next(gen), (mido.new('note_on', channel=1), None))
-        self.assertEqual(next(gen), (mido.new('continue'), None))
+        self.assertEqual(next(gen), (Message('note_on', channel=1), None))
+        self.assertEqual(next(gen), (Message('continue'), None))
 
         # Invalid input. It should catch the ValueError
         # from parse_string() and return (None, 'Error message').
@@ -242,9 +243,9 @@ class TestStringFormat(unittest.TestCase):
 class TestParser(unittest.TestCase):
     
     def test_parse(self):
-        """Parse a note_on msg and compare it to one created with new()."""
+        """Parse a note_on msg and compare it to one created with Message()."""
         parsed = mido.parse(b'\x90\x4c\x20')
-        other = mido.new('note_on', channel=0, note=76, velocity=32)
+        other = Message('note_on', channel=0, note=76, velocity=32)
         self.assertTrue(parsed == other)
 
     def test_parse_stray_data(self):
@@ -264,7 +265,7 @@ class TestParser(unittest.TestCase):
 
         Should return the same message.
         """
-        msg1 = mido.new('note_on')
+        msg1 = Message('note_on')
         msg2 = mido.parse(msg1.bytes())
         self.assertTrue(msg1 == msg2)
 
@@ -279,7 +280,7 @@ class TestParser(unittest.TestCase):
                 # This is considered a part of 'sysex_start'.
                 continue
 
-            msg = mido.new(spec.type)
+            msg = Message(spec.type)
             p.feed(msg.bytes())
             outmsg = p.get_message()
             self.assertTrue(outmsg is not True)
@@ -312,14 +313,14 @@ class TestParser(unittest.TestCase):
         # Two note_on messages. (The second has no status byte,
         # so the last seen status byte is used instead.)
         a = mido.parse_all([0x90, 0x01, 0x02, 0x01, 0x02])
-        b = [mido.new('note_on', note=1, velocity=2)] * 2
+        b = [Message('note_on', note=1, velocity=2)] * 2
         self.assertEqual(a, b)
 
         # System common messages should cancel running status.
         # (0xf3 is 'songpos'. This should be 'song song=2'
         # followed by a stray data byte.
         a = mido.parse_all([0xf3, 2, 3])
-        b = [mido.new('song', song=2)]
+        b = [Message('song', song=2)]
         self.assertEqual(a, b)
 
     def test_parse_channel(self):

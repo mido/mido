@@ -16,7 +16,7 @@ need to use `send()`, this is a valid port:
 
     myport = MyPrintOutput()
 
-    for msg in mido.input():
+    for msg in mido.open_input():
         myport.send(msg)
 
 The full port API is listed below. (I considering adding some classes
@@ -112,7 +112,7 @@ Methods Specific to Input Ports
 
 .. code:: python
 
-    for message in mido.input():
+    for message in mido.open_input():
         print(message)
         
         if we_need_to_exit():

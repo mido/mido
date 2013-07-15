@@ -11,30 +11,23 @@ create a new message, you can do:
 
     >>> import mido
     >>> 
-    >>> mido.new('note_on', note=60, velocity=100)
+    >>> mido.Message('note_on', note=60, velocity=100)
     <note_on message channel=0, note=60, velocity=100, time=0>
 
-or you can use shortcuts:
+In this tutorial, we'll import `Message`:
 
-.. code:: python
-
-    >>> from mido.shortcuts import *
-    >>> 
-    >>> note_on(note=60, velocity=100)
+    >>> from mido import Message
+    >>> Message('note_on', note=60, velocity=100)
     <note_on message channel=0, note=60, velocity=100, time=0>
-
-These two methods are equivalent, and which one to use is up to
-you. In this tutorial, we will use the shortcuts to make the examples
-a little easier to read.
 
 All message parameters are optional, and if not explicitly set, will
 default to `0` (or `()` for sysex data):
 
 .. code:: python
 
-    >>> note_on()
+    >>> Message('note_on')
     <note_on message channel=0, note=0, velocity=0, time=0>
-    >>> sysex()
+    >>> Message('sysex')
     <sysex message data=(), time=0>
 
 This means that it's important to remember to pass the `velocity`
@@ -53,7 +46,7 @@ attributes:
 
 .. code:: python
 
-    >>> n = note_off(channel=1, note=60, velocity=50)
+    >>> n = Message('note_off', channel=1, note=60, velocity=50)
     >>> dir(n)
     [..., 'channel', 'note', 'time', 'type', 'velocity']
     >>> n.type
@@ -107,7 +100,7 @@ You can compare two messages to see if they are identical:
     True
     >>> n == n.copy(note=100)
     False
-    >>> note_on() == note_off()
+    >>> Message('note_on') == note_off()
     False
 
 The `time` parameter (see below) is ignored when comparing messages:
@@ -139,11 +132,11 @@ iterated over. This is converted internally into a tuple of integers:
 
 .. code:: python
 
-    >>> sysex()
+    >>> Message('sysex')
     <sysex message data=(), time=0>
-    >>> sysex(data=[1, 2, 3])
+    >>> Message('sysex', data=[1, 2, 3])
     <sysex message data=(1, 2, 3), time=0>
-    >>> sysex(data=bytearray('abc'))
+    >>> Message('sysex', data=bytearray('abc'))
     <sysex message data=(97, 98, 99), time=0>
 
 Sysex messages inlude the `sysex_end` byte when sent and received, so
@@ -151,7 +144,7 @@ while there is a `sysex_end` message type, it is never used:
 
 .. code:: python
 
-    >>> s = sysex(data=[1, 2, 3])
+    >>> s = Message('sysex', data=[1, 2, 3])
     >>> s.hex()
     'F0 01 02 03 F7'
 
@@ -175,12 +168,12 @@ I/O ports. They are created with:
 
 .. code:: python
 
-    mido.input(name=None)
-    mido.output(name=None)
-    mido.ioport(name=None)
+    mido.open_input(name=None)
+    mido.open_output(name=None)
+    mido.open_ioport(name=None)
 
-(`mido.ioport` will return a port which is a thin wrapper around an
-input port and an output port, and allows you to use the methods of
+(`mido.open_ioport` will return a port which is a thin wrapper around
+an input port and an output port, and allows you to use the methods of
 both. This can be used for two-way communication with a device.
 
 You can pass the name of the port, or leave it out to open the default
@@ -188,26 +181,28 @@ port.
 
 .. code:: python
 
-    mido.input('SH-201')  # Open the port 'SH-201'.
-    mido.input()  # Open the default input port.
+    mido.open_input('SH-201')  # Open the port 'SH-201'.
+    mido.open_input()  # Open the default input port.
 
 To get a list of names of available ports, you can call one of these
 functions:
 
 .. code:: python
 
-    >>> >>> mido.input_names()
+    >>> >>> mido.get_input_names()
     ['Midi Through Port-0', 'SH-201']
-    >>> mido.output_names()
+    >>> 
+    >>> mido.get_output_names()
     ['Midi Through Port-0', 'SH-201']
-    >>> mido.ioport_names()
+    >>> 
+    >>> mido.get_ioport_names()
     ['Midi Through Port-0', 'SH-201']
 
 In this case, all ports can be opened as inputs and
 outputs. (*Important:* If a port is open, it will still be listed
 here.)
 
-    >>> mido.input()
+    >>> mido.open_input()
     <open input port 'Midi Through Port-0' (ALSA)>
 
 
@@ -225,7 +220,7 @@ the block automatically when the block is over:
 
 .. code:: python
 
-    with mido.output() as port:
+    with mido.open_output() as port:
         ...
 
 The `closed` attribute will be `True` if the port is closed.
@@ -290,7 +285,7 @@ Messages will be queued up inside the port object until you call
 `receive()` or `iter_pending()`.
 
 If you want to receive messages from multiple ports, you can use
-`ports.multi_receive()`:
+`multi_receive()`:
 
 .. code:: python
 

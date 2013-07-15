@@ -92,7 +92,7 @@ If you want to use message ports, you will need `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
 your system. Mido loads `libportmidi.so` / `.dll` on demand when you
 open a port or call one of the I/O functions like
-`mido.input_names()`. The wrapper module is written with ctypes and
+`mido.get_input_names()`. The wrapper module is written with ctypes and
 requires no compilation.
 
 
