@@ -39,13 +39,6 @@ up the documentation and nitpick the code a bit.
 I am aiming for a release sometime in July 2013.
 
 
-License
---------
-
-Mido is released under the terms of the `MIT license
-<http://en.wikipedia.org/wiki/MIT_License>`_.
-
-
 Requirements
 -------------
 
@@ -119,6 +112,12 @@ Future Plans
 * support time codes (0xf1). (These have one data bytes divided into 3
   bits type and 4 bits values. It's unclear how to handle this.)
 
+
+License
+--------
+
+Mido is released under the terms of the `MIT license
+<http://en.wikipedia.org/wiki/MIT_License>`_.
 
 Latest version of the code: http://github.com/olemb/mido/ .
 
