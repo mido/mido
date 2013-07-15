@@ -46,18 +46,18 @@ attributes:
 
 .. code:: python
 
-    >>> n = Message('note_off', channel=1, note=60, velocity=50)
-    >>> dir(n)
+    >>> msg = Message('note_off', channel=1, note=60, velocity=50)
+    >>> dir(msg)
     [..., 'channel', 'note', 'time', 'type', 'velocity']
-    >>> n.type
+    >>> msg.type
     'note_on'
-    >>> n.channel
+    >>> msg.channel
     1
-    >>> n.note
+    >>> msg.note
     60
-    >>> n.channel = 2
-    >>> n.note = 62
-    >>> n
+    >>> msg.channel = 2
+    >>> msg.note = 62
+    >>> msg
     <note_off message channel=2, note=62, velocity=50, time=0>
 
 You can copy a message, optionally passing keyword arguments to
@@ -65,9 +65,9 @@ override attributes:
 
 .. code:: python
 
-    >>> n.copy()  # Make an identical copy.
+    >>> msg.copy()  # Make an identical copy.
     <note_on message channel=2, note=62, velocity=50, time=0>
-    >>> n.copy(channel=4)
+    >>> msg.copy(channel=4)
     <note_on message channel=4, note=62, velocity=50, time=0>
 
 This is useful when you pass messages around in a large system, and
@@ -78,15 +78,12 @@ Changing the type of a message is not allowed:
 
 .. code:: python
 
-    >>> n.type = 'note_off'
+    >>> msg.type = 'note_off'
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
       File "mido/messages.py", line 320, in __setattr__
         raise AttributeError('{} attribute is read only'.format(name))
     AttributeError: type attribute is read only
-    >>> n.copy(type='note_off')
-    (There is currently a bug here: 'type' is allowd as an argument,
-    but it is ignored.)
 
 
 Comparing Messages
@@ -96,18 +93,18 @@ You can compare two messages to see if they are identical:
 
 .. code:: python
 
-    >>> n == n.copy()
+    >>> Message('note_on', note=22) == Message('note_on', note=22)
     True
-    >>> n == n.copy(note=100)
+    >>> Message('note_on') == Message('note_off')
     False
-    >>> Message('note_on') == note_off()
+    >>> msg == msg.copy(note=100)
     False
 
 The `time` parameter (see below) is ignored when comparing messages:
 
 .. code:: python
 
-    >>> n == n.copy(time=10000)
+    >>> msg == msg.copy(time=10000)
 
 This allows you to compare messages that come from different sources
 and have different time stamps. If you want to include time in the comparison,
@@ -115,11 +112,11 @@ you can do:
 
 .. code:: python
 
-    >>> a = note_on(time=2)
-    >>> b = note_on(time=3)
-    >>> a == b
+    >>> msg1 = note_on(time=2)
+    >>> msg2 = note_on(time=3)
+    >>> msg1 == msg2
     True
-    >>> (a, a.time) == (b, b.time)
+    >>> (msg1, msg1.time) == (msg2, msg2.time)
     False
 
 
@@ -144,8 +141,8 @@ while there is a `sysex_end` message type, it is never used:
 
 .. code:: python
 
-    >>> s = Message('sysex', data=[1, 2, 3])
-    >>> s.hex()
+    >>> msg = Message('sysex', data=[1, 2, 3])
+    >>> msg.hex()
     'F0 01 02 03 F7'
 
 
@@ -189,21 +186,16 @@ functions:
 
 .. code:: python
 
-    >>> >>> mido.get_input_names()
+    >>> mido.get_input_names()
     ['Midi Through Port-0', 'SH-201']
-    >>> 
+
     >>> mido.get_output_names()
     ['Midi Through Port-0', 'SH-201']
-    >>> 
+
     >>> mido.get_ioport_names()
     ['Midi Through Port-0', 'SH-201']
 
-In this case, all ports can be opened as inputs and
-outputs. (*Important:* If a port is open, it will still be listed
-here.)
-
-    >>> mido.open_input()
-    <open input port 'Midi Through Port-0' (ALSA)>
+*Note:* If a port is open, it will still be listed here.
 
 
 Closing Ports
@@ -234,7 +226,7 @@ method:
 
 .. code:: python
 
-    port.send(pitchwheel(channel=2, pitch=4000))
+    port.send(Message('pitchwheel', channel=2, pitch=4000))
 
 The message will be sent immediately.
 
