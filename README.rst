@@ -71,20 +71,31 @@ or::
 The PortMidi wrapper is written with `ctypes`, so no compilation is
 required.
 
-
-Installing PortMidi
---------------------
-
-In Ubuntu::
+Installing PortMidi in Ubuntu::
 
     $ sudo apt-get install libportmidi-dev
 
-I installed it on OS X in `MacPorts <http://www.macports.org/>`_ with::
+or with `MacPorts <http://www.macports.org/>`_ on OS X::
 
     $ sudo port install portmidi
 
-It's available in `Homebrew <http://mxcl.github.io/homebrew/>`_ under
-the same name.
+PortMidi is available in `Homebrew <http://mxcl.github.io/homebrew/>`_
+under the same name.
+
+
+Known Bugs
+-----------
+
+* on OS X, PortMidi usually hangs for a second or two seconds while
+  initializing. (It always succeeds.)
+
+* libportmidi prints out error messages instead of returning err and
+  setting the error message string. Thus, Mido can't catch errors and
+  raise the proper exception. (This can be seen if you try to open a
+  port with a given name twice.)
+
+* there is an obscure bug involving the OS X application Midi Keys.
+  See tmp/segfault.py.
 
 
 Future Plans
@@ -109,20 +120,6 @@ Future Plans
   bits type and 4 bits values. It's unclear how to handle this.)
 
 
-Known Bugs
------------
-
-* on OS X, PortMidi usually hangs for a second or two seconds while
-  initializing. (It always succeeds.)
-
-* libportmidi prints out error messages instead of returning err and
-  setting the error message string. Thus, Mido can't catch errors and
-  raise the proper exception. (This can be seen if you try to open a
-  port with a given name twice.)
-
-* there is an obscure bug involving the OS X application Midi Keys.
-  See tmp/segfault.py.
-
 Latest version of the code: http://github.com/olemb/mido/ .
 
-Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
+Author: Ole Martin Bjørndalen - ombdalen@gmail.com
