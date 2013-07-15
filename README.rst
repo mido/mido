@@ -7,30 +7,22 @@ designed to be as straight forward and Pythonic as possible.
 .. code:: python
 
     >>> import mido
-    >>> m = mido.Message('note_on', note=60, velocity=100)
+    >>> output = mido.open_output()
+    >>> output.send(mido.Message('note_on', note=60, velocity=64))
 
 .. code:: python
 
-    >>> m.type
-    'note_on'
-    >>> m.channel = 2
-    >>> m.copy(note=62, velocity=73)
-    <note_on message channel=2, note=62, velocity=73, time=0>
-
-Messages can be sent and received on ports:
+    >>> with input as mido.open_input('SH-201'):
+    ...     for msg in input:
+    ...         print(msg)
 
 .. code:: python
 
-    input = mido.open_input()  # Default input
-    output = mido.open_output('SH-201')
-
-    for message in input:
-        output.send(message)
-
-Blocking and nonblocking receive are supported, as well as blocking
-and non-blocking receive from multiple ports. Ports can be used with
-the `with` statement, and input ports can be iterated over in both a
-blocking and non-blocking way.
+    >>> msg = mido.Message('program_change', program=10)
+    >>> msg.type
+    'program_change'
+    >>> msg.channel = 2
+    >>> msg2 = msg.copy(program=9)
 
 See `<docs/tutorial.rst>`_ for more.
 
@@ -150,18 +142,6 @@ Known Bugs
 * there is an obscure bug involving the OS X application Midi Keys.
   See tmp/segfault.py.
 
-
-Mido is short for MIDi Objects (or Musical Instrument Digital
-Objects). It is pronounced with i and in "little" and o as in
-"object", or in Japanese: ミド.
-
-More about MIDI: http://www.midi.org/
-
 Latest version of the code: http://github.com/olemb/mido/ .
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com - http://nerdly.info/ole/
-
-The PortMidi wrapper is based on portmidizero by Grant Yoshida.
-
-Thanks to tialpoy on Reddit for extensive code review and helpful
-suggestions.
