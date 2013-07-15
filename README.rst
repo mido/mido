@@ -49,8 +49,8 @@ Mido is released under the terms of the `MIT license
 Requirements
 -------------
 
-Mido is written for Python 2.7 and 3.2, and runs on Ubuntu and Mac
-OS X. May also run on other systems.
+Mido targets Python 2.7 and 3.2 and runs on Ubuntu and Mac OS X. May
+also run on other systems.
 
 If you want to use message ports, you will need `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
