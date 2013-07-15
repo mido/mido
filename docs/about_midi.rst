@@ -7,14 +7,14 @@ and other electronic music equipment.
 It was developed in 1981 by Dave Smith and Chet Wood of Sequential
 Circuits with the assistance of Ikutaro Kakehashi of Roland. MIDI was
 quickly embraced by all the major synth manufacturers, and led to
-developents such as microcomputer sequencers, and with them the
+developments such as microcomputer sequencers, and with them the
 electronic home studio. Although many attempts have been made to
-replace it, it is still the industy standard.
+replace it, it is still the industry standard.
 
-MIDI was designed for the 8-bit microcontrollers found in synthesizers
+MIDI was designed for the 8-bit micro controllers found in synthesizers
 at the beginning of the 80's. As such, it is a very minimal
 byte-oriented protocol. The message for turning a note on is only
-three bytes long (here shown in hexidecimal)::
+three bytes long (here shown in hexadecimal)::
 
     92 3C 64
 
@@ -43,7 +43,7 @@ Messages can be divided into four groups:
 
 * System common messages.
 
-* System realtime messages, the include start, stop, continue, song
+* System real time messages, the include start, stop, continue, song
   position (for playback of songs) and reset.
 
 * System Exclusive messages (often called Sysex messages). These are
@@ -75,7 +75,7 @@ More About MIDI
 
 * `Wikipedia's page on MIDI <https://en.wikipedia.org/wiki/Midi>`_
 
-* `MIDI Manufacturers Assiciation <http://www.midi.org/>`_
+* `MIDI Manufacturers Association <http://www.midi.org/>`_
 
 * `A full table of MIDI messages <http://www.midi.org/techspecs/midimessages.php>`_
 

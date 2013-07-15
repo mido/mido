@@ -2,7 +2,7 @@
 MIDI Parser
 
 There is no need to use this module directly. All you need is
-available in the toplevel module.
+available in the top level module.
 """
 
 #
@@ -26,7 +26,7 @@ class Parser(object):
     Parses a stream of bytes and produces messages.
 
     Data can be put into the parser in the form of
-    integers, bytearrays or byte strings.
+    integers, byte arrays or byte strings.
     """
 
     def __init__(self):

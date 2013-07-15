@@ -2,7 +2,7 @@
 MIDI messages
 
 There is no need to use this module directly. All you need is
-available in the toplevel module.
+available in the top level module.
 """
 import sys
 
@@ -90,7 +90,7 @@ def get_message_specs():
         MessageSpec(0xf6, 'tune_request', (), 1),
         MessageSpec(0xf7, 'sysex_end', (), 1),
 
-        # System realtime messages
+        # System real time messages
         MessageSpec(0xf8, 'clock', (), 1),
         MessageSpec(0xf9, 'undefined_f9', (), 1),
         MessageSpec(0xfa, 'start', (), 1),
@@ -306,7 +306,7 @@ class Message(BaseMessage):
         """Return a copy of the message.
 
         Attributes will be overriden by the passed keyword arguments.
-        Only message specific attributes can be overriden. The message
+        Only message specific attributes can be overridden. The message
         type can not be changed.
 
         Example:

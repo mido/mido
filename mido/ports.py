@@ -51,10 +51,9 @@ def multi_iter_pending(ports):
 class IOPort(object):
     """Input / output port.
 
-    This is a convenient wrapper around an input port and
-    and an output port which provides the functionality of
-    both. Every method call is forwarded to the appropriate
-    port.
+    This is a convenient wrapper around an input port and an output
+    port which provides the functionality of both. Every method call
+    is forwarded to the appropriate port.
     """
 
     def __init__(self, input, output):
