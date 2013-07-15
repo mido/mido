@@ -6,7 +6,7 @@ available in the toplevel module.
 """
 import sys
 
-python2 = (sys.version_info.major == 2)
+PY2 = (sys.version_info.major == 2)
 
 # Pitchwheel is a 14 bit signed integer
 MIN_PITCHWHEEL = -8192
@@ -139,7 +139,7 @@ def check_time(time):
     
     Raises TypeError if value is not an integer or a float
     """
-    if python2 and isinstance(time, long):
+    if PY2 and isinstance(time, long):
         return
 
     if not (isinstance(time, int) or isinstance(time, float)):
@@ -428,7 +428,7 @@ def parse_time(text):
     if text.endswith('L'):
         raise ValueError('L is not allowed in time')
 
-    if python2:
+    if PY2:
         converters = [int, long, float]
     else:
         converters = [int, float]

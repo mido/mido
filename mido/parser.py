@@ -16,7 +16,7 @@ import sys
 from collections import deque
 from .messages import Message, MIN_PITCHWHEEL, get_spec
 
-python2 = (sys.version_info.major == 2)
+PY2 = (sys.version_info.major == 2)
 
 
 class Parser(object):
@@ -150,7 +150,7 @@ class Parser(object):
             bytearray()
             b''  # Will be converted to integers in Python 2.
         """
-        if python2 and isinstance(data, str):
+        if PY2 and isinstance(data, str):
             # Byte strings in Python 2 need extra attention.
             for char in data:
                 self.feed_byte(ord(char))

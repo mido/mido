@@ -7,9 +7,9 @@ from mido import Message
 
 # http://docs.python.org/2/library/unittest.html
 
-python2 = (sys.version_info.major == 2)
+PY2 = (sys.version_info.major == 2)
 
-if python2:
+if PY2:
     from StringIO import StringIO
 else:
     from io import StringIO
@@ -65,7 +65,7 @@ class TestMessages(unittest.TestCase):
         # 'time' field only allows int and float.
         m.check_time(1)
         m.check_time(1.5)
-        if python2:
+        if PY2:
             m.check_time(long('9829389283L'))
         self.assertRaises(TypeError, m.check_time, None)
         self.assertRaises(TypeError, m.check_time, 'abc')
