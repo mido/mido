@@ -28,26 +28,6 @@ designed to be as straight forward and Pythonic as possible.
 See `<docs/tutorial.rst>`_ for more.
 
 
-Features
----------
-
-* Full implementation of all standard MIDI messages.
-
-* Full name, type and value checking of keyword arguments
-  and attributes ensures that you always have a valid message.
-
-* Support for Python 2 and 3.
-
-* Messages can be encoded to and decoded from many formats, including
-  lists of bytes, bytearrays, hex strings and text strings.
-
-* The MIDI parser can be used to parse MIDI from any source by feeding
-  it bytes and fetching the produced messages.)
-
-* Text serialization format for messages. (Can be safely embedded in
-  most text file formats and protocols without escaping.)
-
-
 Status
 -------
 
@@ -69,15 +49,12 @@ Mido is released under the terms of the `MIT license
 Requirements
 -------------
 
-Requires Python 2.7 or 3.2. Runs on Ubuntu and Mac OS X. May also run
-on other systems.
+Mido is written for Python 2.7 and 3.2, and runs on Ubuntu and Mac
+OS X. May also run on other systems.
 
 If you want to use message ports, you will need `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
-your system. Mido loads `libportmidi.so` / `.dll` on demand when you
-open a port or call one of the I/O functions like
-`mido.get_input_names()`. The wrapper module is written with ctypes and
-requires no compilation.
+your system. The PortMidi library is loaded on demand, so you can use the parser and messages without it.
 
 
 Installing
@@ -90,6 +67,9 @@ In the Linux / OS X terminal::
 or::
 
     $ sudo python3 setup.py install
+
+The PortMidi wrapper is written with `ctypes`, so no compilation is
+required.
 
 
 Installing PortMidi
