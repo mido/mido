@@ -16,6 +16,8 @@ create a new message, you can do:
 
 In this tutorial, we'll import `Message`:
 
+.. code:: python
+
     >>> from mido import Message
     >>> Message('note_on', note=60, velocity=100)
     <note_on message channel=0, note=60, velocity=100, time=0>
