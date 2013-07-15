@@ -4,8 +4,6 @@ Mido - MIDI Objects for Python
 Mido is a library for working with MIDI messages and ports. It's
 designed to be as straight forward and Pythonic as possible.
 
-*Note:* I recently renamed some functions to make the API clearer.
-
 .. code:: python
 
     >>> import mido
@@ -55,10 +53,6 @@ Features
 
 * The MIDI parser can be used to parse MIDI from any source by feeding
   it bytes and fetching the produced messages.)
-
-* Custom port types and wrappers for other MIDI libraries can be
-  written and used with Mido by implementing the simple port
-  API. (Uses duck typing.)
 
 * Text serialization format for messages. (Can be safely embedded in
   most text file formats and protocols without escaping.)
