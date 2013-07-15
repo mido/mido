@@ -105,6 +105,7 @@ The `time` parameter (see below) is ignored when comparing messages:
 .. code:: python
 
     >>> msg == msg.copy(time=10000)
+    True
 
 This allows you to compare messages that come from different sources
 and have different time stamps. If you want to include time in the comparison,
@@ -114,8 +115,6 @@ you can do:
 
     >>> msg1 = note_on(time=2)
     >>> msg2 = note_on(time=3)
-    >>> msg1 == msg2
-    True
     >>> (msg1, msg1.time) == (msg2, msg2.time)
     False
 
