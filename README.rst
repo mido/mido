@@ -23,8 +23,8 @@ Messages can be sent and received on ports:
 
 .. code:: python
 
-    input = mido.input()  # Default input
-    output = mido.output('SH-201')
+    input = mido.open_input()  # Default input
+    output = mido.open_output('SH-201')
 
     for message in input:
         output.send(message)
@@ -131,7 +131,7 @@ Future Plans
   <http://pypi.python.org/pypi/python-rtmidi/>`_ is almost complete.)
   It is unclear how or even if new backends will be integrated with
   Mido, but in the meantime they can be used by calling
-  `rtmido.input()`, `alsamido.input()` etc.
+  `rtmido.Input()`, `alsamido.Input()` etc.
 
 * add a library of useful tools, such as delays, an event engine and
   message filters.
