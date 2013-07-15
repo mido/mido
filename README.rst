@@ -4,10 +4,12 @@ Mido - MIDI Objects for Python
 Mido is a library for working with MIDI messages and ports. It's
 designed to be as straight forward and Pythonic as possible.
 
+*Note:* There will be some small API changes before release. Sorry.
+
 .. code:: python
 
     >>> import mido
-    >>> m = mido.new('note_on', note=60, velocity=100)
+    >>> m = mido.Message('note_on', note=60, velocity=100)
 
 .. code:: python
 
@@ -66,9 +68,9 @@ Status
 -------
 
 Mido is nearly ready for its first official release. All of the basic
-functionality is in place, and the API is unlikely to change from this
-point. What remains is mostly to polish up the documentation and
-nitpick the code a bit.
+functionality is in place. There will be some tweaking of the API to
+make it little bit clearer. What remains is mostly to polish up the
+documentation and nitpick the code a bit.
 
 I am aiming for a release sometime in July 2013.
 
