@@ -43,13 +43,10 @@ Features
 * Full name, type and value checking of keyword arguments
   and attributes ensures that you always have a valid message.
 
-* Sysex is supported, with data bytes as a tuple of integers.
-
 * Support for Python 2 and 3.
 
-* Can easily be integrated with other libraries and tools. (Messages
-  can be encoded to and decoded from many formats, including lists of
-  bytes, bytearrays, hex strings and text strings.)
+* Messages can be encoded to and decoded from many formats, including
+  lists of bytes, bytearrays, hex strings and text strings.
 
 * The MIDI parser can be used to parse MIDI from any source by feeding
   it bytes and fetching the produced messages.)
