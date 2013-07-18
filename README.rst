@@ -84,8 +84,8 @@ Known Bugs
 
 * libportmidi prints out error messages instead of returning err and
   setting the error message string. Thus, Mido can't catch errors and
-  raise the proper exception. (This can be seen if you try to open a
-  port with a given name twice.)
+  raise the proper exception. (I've been able to work around this when
+  opening ports, so don't know if this is still a problem.)
 
 * there is an obscure bug involving the OS X application Midi Keys.
   See tmp/segfault.py.
