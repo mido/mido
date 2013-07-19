@@ -17,4 +17,4 @@ else
     python3=python3
 fi
 
-$python2 tests.py && $python3 tests.py
+$python2 test_mido.py && $python3 test_mido.py

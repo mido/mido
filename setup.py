@@ -14,8 +14,9 @@ except ImportError:
 #     os.system("python setup.py sdist upload")
 #     sys.exit()
 
+# Todo: what about python 3?
 if sys.argv[-1] == "test":
-    os.system("python -m pytest")
+    os.system("python tests.py")
     sys.exit()
 
 required = []
@@ -23,18 +24,16 @@ required = []
 setup(
     name='mido',
     version=mido.__version__,
-    description='library for writing MIDI applications',
+    description='MIDI Objects for Python',
     long_description=open('README.rst').read(),
     author=mido.__author__,
-    email=mido.__email__,
-    url=mido.__url__,
-    packages=[
-        'mido',
-    ],
-    py_modules=[
-    ],
+    author_email=mido.__email__,
+    package_data={'': ['LICENSE']},
+    package_dir={'requests': 'requests'},
+    include_package_data=True,
+    # url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3
-    license='MIT',
+    license=open('LICENSE').read(),
     classifiers=(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

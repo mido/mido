@@ -57,27 +57,25 @@ write new port types.
 Installing
 -----------
 
-In the Linux / OS X terminal::
+To install, simply run::
 
-    $ sudo python setup.py install
+    $ pip install mido
 
-or::
-
-    $ sudo python3 setup.py install
+(Mido is not yet available on PyPi, so this should install from the
+local package directory, if I've understood this correctly.)
 
 The PortMidi wrapper is written with `ctypes`, so no compilation is
 required.
 
-Installing PortMidi in Ubuntu::
+If you want to use ports, you need the PortMidi shared library. The
+Ubuntu package is called ``libportmidi-dev``.  PortMidi is also
+available in `MacPorts <http://www.macports.org/>`_ and `Homebrew
+<http://mxcl.github.io/homebrew/>`_ under the name ``portmidi``.
 
-    $ sudo apt-get install libportmidi-dev
+Documentation
+--------------
 
-or with `MacPorts <http://www.macports.org/>`_ on OS X::
-
-    $ sudo port install portmidi
-
-PortMidi is available in `Homebrew <http://mxcl.github.io/homebrew/>`_
-under the same name.
+Documentation is available at http://mido.readthedocs.org/
 
 
 Known Bugs
