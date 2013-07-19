@@ -13,9 +13,7 @@ Duck Typing
 ------------
 
 The simplest way is to just create an object that has the methods
-that you know will be called, for example:
-
-.. code:: python
+that you know will be called, for example::
 
     class PrintPort:
         """Port that prints out messages instead of sending them."""
@@ -31,9 +29,7 @@ Subclassing
 ------------
 
 If you want the full range of behaviour, you can subclass the abstract
-port classes in `mido.ports`. Here's a very minimal example:
-
-.. code:: python
+port classes in `mido.ports`. Here's a very minimal example::
 
     from mido.ports import BaseInput, BaseOutput
 
@@ -75,4 +71,3 @@ before calling your implementation specific method. It also means you
 don't have to worry about adding doc strings.
 
 See `mido.portmidi.py` and `extras/rtmido.py` for full examples.
-

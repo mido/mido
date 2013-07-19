@@ -8,7 +8,7 @@ The input and output ports will decode and encode messages for you, so
 unless you're implementing a new MIDI backend or a file reader /
 writer, there is little use for this.
 
-Message objects have a few methods that make encoding easy:
+Message objects have a few methods that make encoding easy::
 
     >>> n = Message('note_on', channel=2, note=60, velocity=100, time=3)
     >>> n.bytes()
@@ -20,7 +20,7 @@ Message objects have a few methods that make encoding easy:
     >>> n.bin()
     bytearray(b'\x92<d')
 
-System Exclusive messages include the end byte (0xf7):
+System Exclusive messages include the end byte (0xf7)::
 
     >>> Message('sysex', data=[1, 2, 3]).hex()
     'F0 01 02 03 F7'
@@ -38,9 +38,7 @@ If you're implementing a new port type or support for a binary file
 format, you may need to parse binary MIDI messages. Mido has a few
 functions and one class that make this easy.
 
-To parse a single message:
-
-.. code:: python
+To parse a single message::
 
     >>> mido.parse([0x92, 0x10, 0x20])
     <note_on message channel=0, note=16, velocity=32, time=0>
@@ -50,9 +48,7 @@ get all messages, use `parse_all()`.
 
 The functions are just shortcuts for the full `Parser` class. This is
 the parser used inside input ports to parse incoming messages. Here
-are a few examples of how it can be used:
-
-.. code:: python
+are a few examples of how it can be used::
 
     >>> p = mido.Parser()
     >>> p.feed([0x90, 0x10, 0x20])
@@ -69,9 +65,8 @@ are a few examples of how it can be used:
 `get_message()` will return `None` if there are no messages ready to
 be gotten.
 
-`feed()` accepts any iterable that generates integers in 0..255. This includes:
-
-.. code:: python
+`feed()` accepts any iterable that generates integers in 0..255. This
+includes::
 
     p.feed([0x90, 0x10, 0x20])
     p.feed((i for i in range(256)))

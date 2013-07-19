@@ -5,9 +5,7 @@ Mido messages can be serialized to a text format, which can be used to
 safely store messages in text files, send them across sockets or embed
 them in JSON, among other things.
 
-To encode a message, simply call `str()` on it:
-
-.. code:: python
+To encode a message, simply call ``str()`` on it::
 
     >>> n = control_change(channel=9, control=1, value=122, time=60)
     >>> str(n)
@@ -39,26 +37,20 @@ any form of escaping.
 Parsing
 --------
 
-To parse a message, you can use `mido.messages.parse_string()`:
-
-.. code:: python
+To parse a message, you can use `mido.messages.parse_string()`::
 
     >>> parse_string('control_change control=1 value=122 time=0.5')
     <control_change message channel=0, control=1, value=122, time=0.5>
 
 Parameters that are left out are set to their default
 values. `ValueError` is raised if the message could not be
-parsed. Extra whitespace is ignored:
-
-.. code:: python
+parsed. Extra whitespace is ignored::
 
     >>> parse_string('  control_change   control=1  value=122')
     <control_change message channel=0, control=1, value=122, time=0>
 
 To parse messages from a stream, you can use
-`mido.messages.parse_string_stream()`.
-
-.. code:: python
+`mido.messages.parse_string_stream()`::
 
     for (message, error) in parse_string_stream(open('some_music.text')):
         if error:

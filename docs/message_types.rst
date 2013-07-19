@@ -57,9 +57,7 @@ The `time` parameter is not included in the encoded message, and is
 purpose you wish.
 
 The `data` parameter accepts any iterable that generates numbers in
-0..127. This includes:
-
-.. code:: python
+0..127. This includes::
 
     mido.Message('sysex', data=[1, 2, 3])
     mido.Message('sysex', data=range(10))

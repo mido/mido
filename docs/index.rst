@@ -7,9 +7,8 @@ Mido - MIDI Objects for Python
 ===============================
 
 Mido is a library for working with MIDI messages and ports. It's
-designed to be as straight forward and Pythonic as possible.
-
-.. code:: python
+designed to be as straight forward and Pythonic as possible. A quick
+example::
 
     >>> import mido
     >>> output = mido.open_output()
@@ -30,8 +29,6 @@ Contents:
    about_midi
    license
    acknowledgements
-
-
 
 
 Indices and tables

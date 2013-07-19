@@ -5,9 +5,7 @@ Why Mido?
 Messages as Objects
 --------------------
 
-Working with MIDI messages by manipulating the bytes is painful:
-
-.. code:: python
+Working with MIDI messages by manipulating the bytes is painful::
 
     NOTE_OFF = 0x80
     NOTE_ON = 0x90
@@ -28,9 +26,7 @@ This doesn't look much like Python! You could make some utility
 functions on top of this to make it a little bit better, but it won't
 get you far.
 
-With Mido, you can instead do:
-
-.. code:: python
+With Mido, you can instead do::
 
     message = port.receive()
     if message.type in ['note_on', 'note_off']:
@@ -48,9 +44,7 @@ until it blows up some seemingly unrelated part of your system. These
 kinds of errors are tricky to track down.
 
 Mido messages come with type and value checking built in. This happens
-when you assign to an attribute:
-
-.. code:: python
+when you assign to an attribute::
 
     >>> n = mido.Message('note_on')
     >>> n.channel = 2092389483249829834
@@ -63,9 +57,7 @@ when you assign to an attribute:
     ValueError: channel must be in range 0..15
 
 and when you pass a keyword argument to the constructor or the copy()
-method:
-
-.. code:: python
+method::
 
     >>> n.copy(note=['This', 'is', 'wrong'])
     Traceback (most recent call last):
