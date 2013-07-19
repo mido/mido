@@ -37,7 +37,7 @@ port classes in `mido.ports`. Here's a very minimal example:
 
     from mido.ports import BaseInput, BaseOutput
 
-    class Port(object):
+    class PortCommon(object):
         # Mixin for things that are common to your Input and Output
         # ports (so you don't need a lot of duplicate code.
 
@@ -48,13 +48,13 @@ port classes in `mido.ports`. Here's a very minimal example:
         def _close(self):
             # Close the underlying device.
 
-    class Input(BaseInput, Port):
+    class Input(PortCommon, BaseInput):
         def pending(self):
             # Check for new messages, feed them
             # to the parser and return how many messages
             # are now available.
 
-    class Output(BaseOutput, Port):
+    class Output(PortCommon, BaseOutput):
         def send(self, message):
             # Send the message via the underlying device.
 

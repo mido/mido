@@ -28,7 +28,7 @@ class PortMidiInitializer:
     def __getattr__(self, attr):
         # print('initializer was asked for', attr)
         if self.pm is None:
-            print('Initializing PortMidi...')
+            # print('Initializing PortMidi...')
             from . import portmidi_init as pm
             self.pm = pm
             self.pm.lib.Pm_Initialize()
@@ -37,7 +37,7 @@ class PortMidiInitializer:
 
     def __del__(self):
         if self.pm is not None:
-            print('Terminating PortMidi...')
+            # print('Terminating PortMidi...')
             self.pm.lib.Pm_Terminate()
             self.pm = None
 
@@ -141,7 +141,7 @@ def open_ioport(name=None):
     return IOPort(Input(name), Output(name))
 
 
-class Port(object):
+class PortCommon(object):
     """
     Mixin with common things from 
     """
@@ -189,8 +189,8 @@ class Port(object):
 
         self.device.opened = True
 
-    def _get_device_name(self):
-        return self.device.name
+    def _get_device_type(self):
+        return self.device.interface
 
     def _get_default_device(self, get_input):
         if get_input:
@@ -228,7 +228,7 @@ class Port(object):
         _check_error(pm.lib.Pm_Close(self._stream))
         self.device.opened = False
 
-class Input(BaseInput, Port):
+class Input(PortCommon, BaseInput):
     """
     PortMidi Input port
     """
@@ -280,7 +280,7 @@ class Input(BaseInput, Port):
         return self._parser.pending()
 
 
-class Output(BaseInput, Port):
+class Output(PortCommon, BaseOutput):
     """
     PortMidi output port
     """

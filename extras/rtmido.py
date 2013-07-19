@@ -58,7 +58,7 @@ import mido
 import rtmidi
 from mido.ports import BaseInput, BaseOutput, IOPort
 
-class Port(object):
+class PortCommon(object):
     def _open(self):
         opening_input = isinstance(self, Input)
 
@@ -82,11 +82,11 @@ class Port(object):
     def _close(self):
         del self.rt
 
-    def _get_device_name(self):
-        return 'rtmidi'
+    def _get_device_type(self):
+        return 'RtMidi'
 
 
-class Input(BaseInput, Port):
+class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
     def pending(self):
         if self._parser.pending():
@@ -101,7 +101,7 @@ class Input(BaseInput, Port):
  
         return self._parser.pending()
 
-class Output(BaseOutput, Port):
+class Output(PortCommon, BaseOutput):
     def send(self, message):
         self.rt.send_message(message.bytes())
 

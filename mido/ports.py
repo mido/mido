@@ -26,9 +26,6 @@ class BasePort(object):
         self.closed = False
         self._parser = Parser()
 
-    def _get_device_name(self):
-        return 'none'
-
     def close(self):
         """Close the port.
 
@@ -40,6 +37,9 @@ class BasePort(object):
         if not self.closed:
             self._close()
             self.closed = True
+
+    def _get_device_type(self):
+        return 'Unknown'
 
     def __del__(self):
         self.close()
@@ -63,7 +63,7 @@ class BasePort(object):
         else:
             port_type = 'I/O'  # Todo: this is wrong
 
-        device_name = self._get_device_name()
+        device_name = self._get_device_type()
 
         return "<{state} {port_type} port '{self.name}'" \
                " ({device_name})>".format(**locals())
@@ -83,8 +83,8 @@ class BaseInput(BasePort):
         name is the port name, as returned by input_names(). If
         name is not passed, the default input is used instead.
         """
-        BasePort.__init__(self, name)
         self._parser = Parser()
+        BasePort.__init__(self, name)
 
     def _pending(self):
         pass
@@ -161,7 +161,7 @@ class BaseOutput(BasePort):
         name is the port name, as returned by output_names(). If
         name is not passed, the default output is used instead.
         """
-        Port.__init__(self, name)
+        BasePort.__init__(self, name)
 
     def _send(self, message):
         pass
@@ -227,7 +227,7 @@ class IOPort(object):
             state = 'open'
 
         return "<{} I/O port '{}' ({})>".format(
-            state, self.name, self.input.device.interface)
+            state, self.name, self.input._get_device_type())
 
 
 def multi_receive(ports):
