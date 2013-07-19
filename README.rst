@@ -64,7 +64,9 @@ To install::
     $ pip install mido
 
 Mido is not yet available on PyPi, but this should install from the
-source directory, if I've understood this correctly.
+source directory, if I've understood this correctly. (I clearly
+haven't, since it doesn't work. I have some reading to do this
+weekend, I guess. :)
 
 The PortMidi wrapper is written with `ctypes`, so no compilation is
 required.
