@@ -15,9 +15,6 @@ designed to be as straight forward and Pythonic as possible.
     >>> output = mido.open_output()
     >>> output.send(mido.Message('note_on', note=60, velocity=64))
 
-Mido is short for MIDi Objects (or Musical Instrument Digital
-Objects).
-
 Contents:
 
 .. toctree::
@@ -28,6 +25,7 @@ Contents:
    message_types
    parsing_and_encoding
    string_encoding
+   new_port_types
    about_midi
    license
    acknowledgements
@@ -39,8 +37,7 @@ API Documentation
 .. toctree::
    :maxdepth: 2
 
-   api
-
+   lib
 
 
 Indices and tables

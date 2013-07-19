@@ -1,6 +1,6 @@
 .. _api:
 
-Developer Interface
+Library Reference
 ====================
 
 Creating Message and Opening Ports
