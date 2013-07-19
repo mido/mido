@@ -34,15 +34,6 @@ Contents:
    acknowledgements
 
 
-Ideas for Future Versions
---------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   supporting_multiple_backends
-
-
 API Documentation
 -----------------
 
