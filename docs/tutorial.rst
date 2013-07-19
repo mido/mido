@@ -12,24 +12,24 @@ create a new message, you can do::
     >>> mido.Message('note_on', note=60, velocity=100)
     <note_on message channel=0, note=60, velocity=100, time=0>
 
-In this tutorial, we'll import `Message`::
+In this tutorial, we'll import :class:`Message`::
 
     >>> from mido import Message
 
 All message parameters are optional, and if not explicitly set, will
-default to `0` (or `()` for sysex data)::
+default to ``0`` (or ``()`` for sysex data)::
 
     >>> Message('note_on')
     <note_on message channel=0, note=0, velocity=0, time=0>
     >>> Message('sysex')
     <sysex message data=(), time=0>
 
-This means that it's important to remember to pass the `velocity`
-parameter for `note_on` messages, or the note will interpreted as a
-`note_off` on many devices.
+This means that it's important to remember to pass the ``velocity``
+parameter for ``note_on`` messages, or the note will interpreted as a
+``note_off`` on many devices.
 
 The parameters for each message type are listed in
-:doc:`message_types`.
+:doc:``message_types``.
 
 
 Modifying and Copying Messages
@@ -86,7 +86,7 @@ You can compare two messages to see if they are identical::
     >>> msg == msg.copy(note=100)
     False
 
-The `time` parameter (see below) is ignored when comparing messages::
+The ``time`` parameter (see below) is ignored when comparing messages::
 
     >>> msg == msg.copy(time=10000)
     True
@@ -104,8 +104,8 @@ you can do::
 System Exclusive (sysex) Messages
 ----------------------------------
 
-Sysex messages have a `data` parameter, which is a sequence of bytes.
-The `data` parameter takes any object that generates bytes when
+Sysex messages have a ``data`` parameter, which is a sequence of bytes.
+The ``data`` parameter takes any object that generates bytes when
 iterated over. This is converted internally into a tuple of integers::
 
     >>> Message('sysex')
@@ -115,8 +115,8 @@ iterated over. This is converted internally into a tuple of integers::
     >>> Message('sysex', data=bytearray('abc'))
     <sysex message data=(97, 98, 99), time=0>
 
-Sysex messages inlude the `sysex_end` byte when sent and received, so
-while there is a `sysex_end` message type, it is never used::
+Sysex messages inlude the ``sysex_end`` byte when sent and received, so
+while there is a ``sysex_end`` message type, it is never used::
 
     >>> msg = Message('sysex', data=[1, 2, 3])
     >>> msg.hex()
@@ -126,12 +126,12 @@ while there is a `sysex_end` message type, it is never used::
 Time
 -----
 
-All messages also have an extra parameter `time`, which you can use
+All messages also have an extra parameter ``time``, which you can use
 for anything you want. Typically this is used to tag messages with
 time when storing them in files or sending them around in the
-system. `time` can have any value as long as it's a `float` or an `int`.
+system. ``time`` can have any value as long as it's a ``float`` or an ``int``.
 
-`copy()` will copy the `time` attribute.
+``copy()`` will copy the ``time`` attribute.
 
 
 Opening Ports
@@ -144,7 +144,7 @@ I/O ports. They are created with::
     mido.open_output(name=None)
     mido.open_ioport(name=None)
 
-(`mido.open_ioport` will return a port which is a thin wrapper around
+(``mido.open_ioport`` will return a port which is a thin wrapper around
 an input port and an output port, and allows you to use the methods of
 both. This can be used for two-way communication with a device.
 
@@ -172,23 +172,23 @@ functions::
 Closing Ports
 --------------
 
-A port can be closed by calling the `close()` method::
+A port can be closed by calling the ``close()`` method::
 
     port.close()
 
-but often it is better to use the `with` statement, which will close
+but often it is better to use the ``with`` statement, which will close
 the block automatically when the block is over::
 
     with mido.open_output() as port:
         ...
 
-The `closed` attribute will be `True` if the port is closed.
+The ``closed`` attribute will be ``True`` if the port is closed.
 
 
 Sending Messages
 -----------------
 
-Messages can be sent on output or I/O ports by calling the `send()`
+Messages can be sent on output or I/O ports by calling the ``send()``
 method::
 
     port.send(Message('pitchwheel', channel=2, pitch=4000))
@@ -200,7 +200,7 @@ Receiving Messages
 -------------------
 
 There are several different ways to receive messages. The basic one is
-to call `receive()`::
+to call ``receive()``::
 
     message = port.receive()
 
@@ -210,7 +210,7 @@ receive messages in a loop, you can do::
     for message in port:
         ...
 
-If you don't want to block, you can use `pending()` to see how many
+If you don't want to block, you can use ``pending()`` to see how many
 messages are available::
 
     >>> port.pending()
@@ -222,7 +222,7 @@ messages are available::
     >>> port.receive()
         *** blocks until the next message arrives ***
 
-It is often easier to use `iter_pending()`::
+It is often easier to use ``iter_pending()``::
 
     while 1:
         for message in port.iter_pending():
@@ -231,10 +231,10 @@ It is often easier to use `iter_pending()`::
         ... Do other stuff.
 
 Messages will be queued up inside the port object until you call
-`receive()` or `iter_pending()`.
+``receive()`` or ``iter_pending()``.
 
 If you want to receive messages from multiple ports, you can use
-`multi_receive()`::
+``multi_receive()``::
 
     from mido.ports import multi_receive
     

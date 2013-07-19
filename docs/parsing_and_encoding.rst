@@ -43,12 +43,12 @@ To parse a single message::
     >>> mido.parse([0x92, 0x10, 0x20])
     <note_on message channel=0, note=16, velocity=32, time=0>
 
-`parse()` will only return the first message in the byte stream. To
-get all messages, use `parse_all()`.
+``parse()`` will only return the first message in the byte stream. To
+get all messages, use ``parse_all()``.
 
-The functions are just shortcuts for the full `Parser` class. This is
-the parser used inside input ports to parse incoming messages. Here
-are a few examples of how it can be used::
+The functions are just shortcuts for the full :class:`Parser`
+class. This is the parser used inside input ports to parse incoming
+messages. Here are a few examples of how it can be used::
 
     >>> p = mido.Parser()
     >>> p.feed([0x90, 0x10, 0x20])

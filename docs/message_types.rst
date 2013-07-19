@@ -49,14 +49,14 @@ pos       0..16383                0
 time      any integer or float    0
 ========  ======================  ================
 
-`velocity` for `note_off` is release velocity, that is how quickly the
+``velocity`` for ``note_off`` is release velocity, that is how quickly the
 note was released. Few instruments support this.
 
-The `time` parameter is not included in the encoded message, and is
+The ``time`` parameter is not included in the encoded message, and is
 (currently) not used by Mido in any way. You can use it for whatever
 purpose you wish.
 
-The `data` parameter accepts any iterable that generates numbers in
+The ``data`` parameter accepts any iterable that generates numbers in
 0..127. This includes::
 
     mido.Message('sysex', data=[1, 2, 3])
