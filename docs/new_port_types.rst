@@ -37,9 +37,13 @@ port classes in ``mido.ports``::
         # Mixin for things that are common to your Input and Output
         # ports (so you don't need a lot of duplicate code.
 
-        def _open(self):
-            # Called by BasePort__init__(). This is where you actually
-            # open the underlying device.
+        def _open(self, **kwargs): 
+            # This is where you actually # open
+            # the underlying device.
+
+            # Called by BasePort__init__(), with whatever
+            # keyword arguments were passed to it. (The name
+            # argument has been assigned to self.name by now.)
 
         def _close(self):
             # Close the underlying device.

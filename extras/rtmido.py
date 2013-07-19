@@ -59,7 +59,7 @@ import rtmidi
 from mido.ports import BaseInput, BaseOutput, IOPort
 
 class PortCommon(object):
-    def _open(self):
+    def _open(self, **kwargs):
         opening_input = isinstance(self, Input)
 
         if opening_input:

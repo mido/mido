@@ -145,7 +145,7 @@ class PortCommon(object):
     """
     Mixin with common things for input and output ports.
     """
-    def _open(self):
+    def _open(self, **kwargs):
         self._stream = pm.PortMidiStreamPtr()
         self.device = None
 

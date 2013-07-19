@@ -20,14 +20,14 @@ class BasePort(object):
     Abstract base class for Input and Output ports.
     """
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, **kwargs):
         self.name = name
         self.closed = True
-        self._open()
+        self._open(**kwargs)
         self.closed = False
         self._parser = Parser()
 
-    def _open(self):
+    def _open(self, **kwargs):
         raise ValueError('_open() not implemented')
 
     def _close(self):
