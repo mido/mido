@@ -25,7 +25,7 @@ designed to be as straight forward and Pythonic as possible:
     >>> msg2 = msg.copy(program=9)
     <program_change message channel=2, program=9, time=0>
 
-Full documentation at http://mido.readthedocs.org/en/latest/
+Full documentation at http://mido.readthedocs.org/
 
 
 Status
