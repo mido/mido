@@ -104,7 +104,10 @@ class BaseInput(BasePort):
         the port was opened, but no new messages will be returned
         once the buffered ones run out.
         """
-        return self._pending()
+        if self.closed:
+            return self._parser.pending()
+        else:
+            return self._pending()
 
     def iter_pending(self):
         """Iterate through pending messages."""

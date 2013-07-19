@@ -89,16 +89,13 @@ class PortCommon(object):
 class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
     def _pending(self):
-        if self._parser.pending():
-            return self._parser.get_message()
-
-        if self.closed:
-            raise ValueError('pending() called on closed port')
-
-        message = self.rt.get_message()
-        if message:
-            self._parser.feed(message[0])
- 
+        while 1:
+            message = self.rt.get_message()
+            if message is None:
+                break
+            else:
+                self._parser.feed(message[0])
+            
         return self._parser.pending()
 
 class Output(PortCommon, BaseOutput):

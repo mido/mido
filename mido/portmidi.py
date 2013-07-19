@@ -187,8 +187,6 @@ class PortCommon(object):
                          pm.null,    # Time info
                          0))         # Latency
 
-        self.device.opened = True
-
     def _get_device_type(self):
         return self.device.interface
 
@@ -234,9 +232,6 @@ class Input(PortCommon, BaseInput):
     """
 
     def _pending(self):
-        if self.closed:
-            return self._parser.pending()
-
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
         # resort to calling Pm_Read() in a loop until there are no
         # more pending events.
@@ -277,12 +272,6 @@ class Output(PortCommon, BaseOutput):
     """
 
     def _send(self, message):
-        if not isinstance(message, Message):
-            raise TypeError('argument to send() must be a Message')
-
-        if self.closed:
-            raise ValueError('send() called on closed port')
-
         if message.type == 'sysex':
             # Sysex messages are written as a string.
             string = pm.c_char_p(bytes(message.bin()))
