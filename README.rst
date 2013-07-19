@@ -49,6 +49,10 @@ If you want to use message ports, you will need `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
 your system. The PortMidi library is loaded on demand, so you can use the parser and messages without it.
 
+Experimental support for RtMidi is available in the
+`<extras/rtmido.py>`_. This module is also a good example of how to
+write new port types.
+
 
 Installing
 -----------
@@ -93,13 +97,6 @@ Known Bugs
 
 Future Plans
 -------------
-
-* support more MIDI libraries, either distibuted with Mido or as
-  separate packages. (A wrapper for `python-rtmidi
-  <http://pypi.python.org/pypi/python-rtmidi/>`_ is almost complete.)
-  It is unclear how or even if new backends will be integrated with
-  Mido, but in the meantime they can be used by calling
-  `rtmido.Input()`, `alsamido.Input()` etc.
 
 * add a library of useful tools, such as delays, an event engine and
   message filters.
