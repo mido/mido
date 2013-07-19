@@ -28,7 +28,6 @@ Contents:
    message_types
    parsing_and_encoding
    string_encoding
-   port_api
    about_midi
    license
    acknowledgements

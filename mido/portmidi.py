@@ -11,6 +11,7 @@ import time
 
 from .parser import Parser
 from .messages import Message
+from .ports import BaseInput, BaseOutput, IOPort
 
 class PortMidiInitializer:
     """
@@ -27,7 +28,7 @@ class PortMidiInitializer:
     def __getattr__(self, attr):
         # print('initializer was asked for', attr)
         if self.pm is None:
-            # print('Initializing PortMidi...')
+            print('Initializing PortMidi...')
             from . import portmidi_init as pm
             self.pm = pm
             self.pm.lib.Pm_Initialize()
@@ -36,7 +37,7 @@ class PortMidiInitializer:
 
     def __del__(self):
         if self.pm is not None:
-            # print('Terminating PortMidi...')
+            print('Terminating PortMidi...')
             self.pm.lib.Pm_Terminate()
             self.pm = None
 
@@ -120,23 +121,41 @@ def get_output_names():
     return list(sorted(names))
 
 
+def get_ioport_names():
+    """Return the names of all ports that allow input and output."""
+    return sorted(set(get_input_names()) & set(get_output_names()))
+
+
+def open_input(name=None):
+    """Open an input port."""
+    return Input(name)
+
+
+def open_output(name=None):
+    """Open an output port."""
+    return Output(name)
+
+
+def open_ioport(name=None):
+    """Open a port for input and output."""
+    return IOPort(Input(name), Output(name))
+
+
 class Port(object):
     """
-    Abstract base class for PortMidi Input and Output ports.
+    Mixin with common things from 
     """
-
-    def __init__(self, name=None):
-        self.closed = True
+    def _open(self):
         self._stream = pm.PortMidiStreamPtr()
         self.device = None
 
         opening_input = (self.__class__ is Input)
 
-        if name is None:
+        if self.name is None:
             self.device = self._get_default_device(opening_input)
+            self.name = self.device.name
         else:
-            self.device = self._get_named_device(name, opening_input)
-        self.name = self.device.name
+            self.device = self._get_named_device(self.name, opening_input)
 
         if self.device.opened:
             if opening_input:
@@ -168,8 +187,10 @@ class Port(object):
                          pm.null,    # Time info
                          0))         # Latency
 
-        self.closed = False
         self.device.opened = True
+
+    def _get_device_name(self):
+        return self.device.name
 
     def _get_default_device(self, get_input):
         if get_input:
@@ -203,63 +224,14 @@ class Port(object):
         else:
             raise IOError('unknown port: {!r}'.format(name))
 
-    def close(self):
-        """Close the port.
+    def _close(self):
+        _check_error(pm.lib.Pm_Close(self._stream))
+        self.device.opened = False
 
-        If the port is already closed, nothing will happen.
-        The port is automatically closed when the object goes
-        out of scope or is garbage collected.
-        """
-
-        if not self.closed:
-            # Todo: Abort is not implemented for ALSA,
-            # so we get a warning here.
-            # But is it really needed?
-            # _check_error(pm.lib.Pm_Abort(self._stream))
-
-            _check_error(pm.lib.Pm_Close(self._stream))
-
-            self.closed = True
-            self.device.opened = False
-
-    def __del__(self):
-        self.close()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.close()
-        return False
-
-    def __repr__(self):
-        if self.closed:
-            state = 'closed'
-        else:
-            state = 'open'
-
-        if self.__class__ is Input:
-            port_type = 'input'
-        else:
-            port_type = 'output'
-
-        return "<{state} {port_type} port '{self.name}'" \
-               " ({self.device.interface})>".format(**locals())
-
-
-class Input(Port):
+class Input(BaseInput, Port):
     """
     PortMidi Input port
     """
-
-    def __init__(self, name=None):
-        """Create an input port.
-
-        name is the port name, as returned by get_input_names(). If
-        name is not passed, the default input is used instead.
-        """
-        Port.__init__(self, name)
-        self._parser = Parser()
 
     def pending(self):
         """Return how many messages are ready to be received.
@@ -307,65 +279,11 @@ class Input(Port):
 
         return self._parser.pending()
 
-    def iter_pending(self):
-        """Iterate through pending messages."""
-        for _ in range(self.pending()):
-            yield self.receive()
 
-    def receive(self):
-        """Return the next message.
-
-        This will block until a message arrives. For non-blocking
-        behavior, you can use pending() to see how many messages can
-        safely be received without blocking:
-
-            for _ in range(port.pending()):
-                message = port.receive()
-
-        NOTE: Blocking is currently implemented with polling and
-        time.sleep(). This is inefficient, but the proper way doesn't
-        work yet, so it's better than nothing.
-
-        Todo: What should happen when the port is closed?
-        - raise exception?
-        - return pending messages until we run out, then
-          raise exception?
-        """
-
-        # If there is a message pending, return it right away.
-        message = self._parser.get_message()
-        if message:
-            return message
-
-        if self.closed:
-            raise ValueError('receive() called on closed port')
-
-        # Wait for a message to arrive.
-        while 1:
-            time.sleep(0.001)
-            if self.pending():
-                # pending() has read at least one message from the
-                # device. Return the first message.
-                return self._parser.get_message()
-
-    def __iter__(self):
-        """Iterate through messages as they arrive on the port."""
-        while 1:
-            yield self.receive()
-
-
-class Output(Port):
+class Output(BaseInput, Port):
     """
     PortMidi output port
     """
-
-    def __init__(self, name=None):
-        """Create an output port
-        
-        name is the port name, as returned by get_output_names(). If
-        name is not passed, the default output is used instead.
-        """
-        Port.__init__(self, name)
 
     def send(self, message):
         """Send a message."""
