@@ -116,21 +116,16 @@ class BaseInput(BasePort):
 
         This will block until a message arrives. For non-blocking
         behavior, you can use pending() to see how many messages can
-        safely be received without blocking:
-
-            for _ in range(port.pending()):
-                message = port.receive()
-
+        safely be received without blocking.
+                
         NOTE: Blocking is currently implemented with polling and
         time.sleep(). This is inefficient, but the proper way doesn't
         work yet, so it's better than nothing.
 
         Todo: What should happen when the port is closed?
         - raise exception?
-        - return pending messages until we run out, then
-          raise exception?
+        - return pending messages until we run out, then raise exception?
         """
-
         # If there is a message pending, return it right away.
         message = self._parser.get_message()
         if message:

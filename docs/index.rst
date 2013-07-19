@@ -22,6 +22,7 @@ Contents:
 
    why_mido
    tutorial
+   lib
    message_types
    parsing_and_encoding
    string_encoding
@@ -31,13 +32,6 @@ Contents:
    acknowledgements
 
 
-API Documentation
------------------
-
-.. toctree::
-   :maxdepth: 2
-
-   lib
 
 
 Indices and tables

@@ -234,10 +234,6 @@ class Input(PortCommon, BaseInput):
     """
 
     def _pending(self):
-        """Read from device return number of pending messages.
-        Called by self.pending()
-        """
-
         if self.closed:
             return self._parser.pending()
 
@@ -281,8 +277,6 @@ class Output(PortCommon, BaseOutput):
     """
 
     def _send(self, message):
-        """Actually send message. Called by self.pending()."""
-
         if not isinstance(message, Message):
             raise TypeError('argument to send() must be a Message')
 

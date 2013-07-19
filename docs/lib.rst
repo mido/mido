@@ -1,7 +1,7 @@
 .. _api:
 
 Library Reference
-====================
+==================
 
 Creating Message and Opening Ports
 -----------------------------------
@@ -30,49 +30,36 @@ Parsing and Parser class
 Message Objects
 ----------------
 
-.. autoclass:: mido.Message
+.. autoclass:: Message
    :members:
    :inherited-members:
-
-
-Port Objects
--------------
-
-.. autoclass:: mido.portmidi.Input
-   :members:
-   :inherited-members:
-
-.. autoclass:: mido.portmidi.Output
-   :members:
-   :inherited-members:
-
-
-IOPort Objects
----------------
-
-`IOPort` contain an `Input` and an `Output` object, and forwards all
-method calls to these.
-
-.. autoclass:: mido.ports.IOPort
-   :members:
-   :inherited-members:
-
-
-Useful Port Functions
-----------------------
-
-.. module:: mido.ports
-
-.. autofunction:: multi_receive
-.. autofunction:: multi_iter_pending
 
 
 String Serialization
 ---------------------
 
-.. module:: mido
-
 There is not `format_as_string()`, but you can use `str(message)`.
 
 .. autofunction:: parse_string
 .. autofunction:: parse_string_stream
+
+
+Ports
+------
+
+.. module:: mido.ports
+
+.. autoclass:: BaseInput
+   :members:
+   :inherited-members:
+
+.. autoclass:: BaseOutput
+   :members:
+   :inherited-members:
+
+.. autoclass:: IOPort
+   :members:
+   :inherited-members:
+
+.. autofunction:: multi_receive
+.. autofunction:: multi_iter_pending
