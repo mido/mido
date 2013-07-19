@@ -143,7 +143,7 @@ def open_ioport(name=None):
 
 class PortCommon(object):
     """
-    Mixin with common things from 
+    Mixin with common things for input and output ports.
     """
     def _open(self):
         self._stream = pm.PortMidiStreamPtr()
@@ -233,16 +233,11 @@ class Input(PortCommon, BaseInput):
     PortMidi Input port
     """
 
-    def pending(self):
-        """Return how many messages are ready to be received.
-
-        This can be used for non-blocking receive(), for example:
-
-             for _ in range(port.pending()):
-                 message = port.receive()
-
-        Todo: return 0 or raise exception if the port is closed?
+    def _pending(self):
+        """Read from device return number of pending messages.
+        Called by self.pending()
         """
+
         if self.closed:
             return self._parser.pending()
 
@@ -285,8 +280,9 @@ class Output(PortCommon, BaseOutput):
     PortMidi output port
     """
 
-    def send(self, message):
-        """Send a message."""
+    def _send(self, message):
+        """Actually send message. Called by self.pending()."""
+
         if not isinstance(message, Message):
             raise TypeError('argument to send() must be a Message')
 

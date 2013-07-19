@@ -13,6 +13,7 @@ import time
 import random
 from collections import deque
 from .parser import Parser
+from .messages import Message
 
 class BasePort(object):
     """
@@ -26,6 +27,15 @@ class BasePort(object):
         self.closed = False
         self._parser = Parser()
 
+    def _open(self):
+        raise ValueError('_open() not implemented')
+
+    def _close(self):
+        raise ValueError('_close() not implemented')
+
+    def _get_device_type(self):
+        return 'Unknown'
+
     def close(self):
         """Close the port.
 
@@ -37,9 +47,6 @@ class BasePort(object):
         if not self.closed:
             self._close()
             self.closed = True
-
-    def _get_device_type(self):
-        return 'Unknown'
 
     def __del__(self):
         self.close()
@@ -85,9 +92,6 @@ class BaseInput(BasePort):
         """
         self._parser = Parser()
         BasePort.__init__(self, name)
-
-    def _pending(self):
-        pass
 
     def pending(self):
         """Return how many messages are ready to be received.
@@ -164,14 +168,17 @@ class BaseOutput(BasePort):
         BasePort.__init__(self, name)
 
     def _send(self, message):
-        pass
+        raise ValueError('_send() is not implemented')
 
     def send(self, message):
         """Send a message."""
+        if not isinstance(message, Message):
+            raise ValueError('argument to send() must be a Message')
+
         if self.closed:
             raise ValueError('send() called on closed port')
 
-        self._send()
+        self._send(message)
 
 class IOPort(object):
     """Input / output port.

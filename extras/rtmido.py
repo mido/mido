@@ -88,7 +88,7 @@ class PortCommon(object):
 
 class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
-    def pending(self):
+    def _pending(self):
         if self._parser.pending():
             return self._parser.get_message()
 
@@ -102,7 +102,7 @@ class Input(PortCommon, BaseInput):
         return self._parser.pending()
 
 class Output(PortCommon, BaseOutput):
-    def send(self, message):
+    def _send(self, message):
         self.rt.send_message(message.bytes())
 
 

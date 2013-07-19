@@ -48,18 +48,31 @@ port classes in `mido.ports`. Here's a very minimal example:
         def _close(self):
             # Close the underlying device.
 
+        def _get_device_type(self):
+            # A text representation of the type of device,
+            # for example 'CoreMidi' or 'ALSA'. This is
+            # used by __repr__(). Defaults to 'Unknown'.
+            return 'CoreMidi'
+
+
     class Input(PortCommon, BaseInput):
-        def pending(self):
+        def _pending(self):
             # Check for new messages, feed them
             # to the parser and return how many messages
             # are now available.
 
     class Output(PortCommon, BaseOutput):
-        def send(self, message):
+        def _send(self, message):
             # Send the message via the underlying device.
 
 The base classes will take care of everything else. You may still
 override selected methods if you need to.
+
+All the methods you need to override start with an underscore and is
+are called by the corresponding method without an underscore. This
+allows the base class to do some type and value checking for you
+before calling your implementation specific method. It also means you
+don't have to worry about adding doc strings.
 
 See `mido.portmidi.py` and `extras/rtmido.py` for full examples.
 
