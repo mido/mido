@@ -74,4 +74,4 @@ allows the base class to do some type and value checking for you
 before calling your implementation specific method. It also means you
 don't have to worry about adding doc strings.
 
-See ``mido.portmidi.py`` and ``extras/rtmido.py`` for full examples.
+See ``mido.portmidi.py`` and ``extras/mido_rtmidi.py`` for full examples.

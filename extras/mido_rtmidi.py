@@ -5,16 +5,16 @@ https://pypi.python.org/pypi/python-rtmidi/
 Used just like the portmidi ports:
 
 import mido
-import rtmido
+import mido_rtmidi
 
-with rtmido.open_output():
-    rtmido.send(mido.Messsage('note_on'))
+with mido_rtmidi.open_output() as port:
+    port.send(mido.Messsage('note_on'))
 
 
 This module only supports a limited number of MIDI message types,
 as listed below. (I am not sure where this limitation arises.)
 
-rtmido => rtmido
+rtmidi => rtmidi
 -----------------
 note_off channel=0 note=0 velocity=0 time=0
 note_on channel=0 note=0 velocity=0 time=0
@@ -26,7 +26,7 @@ pitchwheel channel=0 pitch=0 time=0
 songpos pos=0 time=0
 song_select song=0 time=0
 
-rtmido => portmido
+rtmidi => portmidi
 -------------------
 Received note_off channel=0 note=0 velocity=0 time=0
 Received note_on channel=0 note=0 velocity=0 time=0
@@ -39,7 +39,7 @@ Received sysex data=() time=0    !
 Received songpos pos=0 time=0
 Received song_select song=0 time=0
 
-portmido => rtmido
+portmidi => rtmidi
 -------------------
 
 note_off channel=0 note=0 velocity=0 time=0
