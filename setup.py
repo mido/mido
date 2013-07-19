@@ -30,6 +30,7 @@ setup(
     author_email=mido.__email__,
     package_data={'': ['LICENSE']},
     package_dir={'requests': 'requests'},
+    packages = ['mido'],
     include_package_data=True,
     # url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3
