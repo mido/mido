@@ -39,11 +39,10 @@ class BasePort(object):
     def close(self):
         """Close the port.
 
-        If the port is already closed, nothing will happen.
-        The port is automatically closed when the object goes
-        out of scope or is garbage collected.
+        If the port is already closed, nothing will happen.  The port
+        is automatically closed when the object goes out of scope or
+        is garbage collected.
         """
-
         if not self.closed:
             self._close()
             self.closed = True
@@ -101,7 +100,9 @@ class BaseInput(BasePort):
              for _ in range(port.pending()):
                  message = port.receive()
 
-        Todo: return 0 or raise exception if the port is closed?
+        If this is called on a closed port, it will work as if
+        the port was opened, but no new messages will be returned
+        once the buffered ones run out.
         """
         return self._pending()
 
@@ -171,7 +172,9 @@ class BaseOutput(BasePort):
         raise ValueError('_send() is not implemented')
 
     def send(self, message):
-        """Send a message."""
+        """Send a message on the port.
+
+        The message is sent immediately."""
         if not isinstance(message, Message):
             raise ValueError('argument to send() must be a Message')
 
@@ -196,25 +199,29 @@ class IOPort(object):
         # Todo: what if they have different names?
         self.name = self.input.name
 
-    def send(self, message):
-        return self.output.send(message)
-
-    def receive(self):
-        return self.input.receive()
-
-    def pending(self):
-        return self.input.pending()
-
-    def iter_pending(self):
-        """Iterate through pending messages."""
-        for message in self.input.iter_pending():
-            yield message
-
     def close(self):
         if not self.closed:
             self.input.close()
             self.output.close()
             self.closed = True
+    close.__doc__ = BasePort.close.__doc__
+
+    def send(self, message):
+        return self.output.send(message)
+    send.__doc__ = BaseOutput.send.__doc__
+
+    def receive(self):
+        return self.input.receive()
+    receive.__doc__ = BaseInput.receive.__doc__
+
+    def pending(self):
+        return self.input.pending()
+    pending.__doc__ = BaseInput.pending.__doc__
+
+    def iter_pending(self):
+        for message in self.input.iter_pending():
+            yield message
+    iter_pending.__doc__ = BaseInput.iter_pending.__doc__
 
     def __iter__(self):
         for message in self.input:
