@@ -154,7 +154,7 @@ def build_message(bytes, spec=None):
 
 
 
-class File:
+class MidiFile:
     def __init__(self, filename):
         self.filename = filename
         self.tracks = []
