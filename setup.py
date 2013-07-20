@@ -34,7 +34,7 @@ setup(
     include_package_data=True,
     url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3
-    license=open('LICENSE').read(),
+    license='MIT',
     classifiers=(
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

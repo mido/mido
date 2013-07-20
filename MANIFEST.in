@@ -1,5 +1,4 @@
-include README.rst LICENSE test_mido.py run_tests.py
+include README.rst LICENSE test_mido.py run_tests.sh
 include examples/*.py
 include extras/*.py
-include docs/
 include tmp/segfault.py
