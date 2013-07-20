@@ -36,11 +36,13 @@ http://github.com/olemb/mido/
 
 Community and Contacting the Author:
 
-I have set up an IRC channel on freenode.net. You're welcome to come
-over there an discuss all things Mido.
+IRC channel #mido on freenode.net (as olemb)
 
-You can reach me on Reddit as /u/halloi or just email me directly at
-ombdalen@gmail.com.
+http://reddit.com/r/midopy/ (as halloi)
+
+ombdalen@gmail.com
+
+I check messages at least once a day, except when I'm on vacation.
 
 
 Contents:
