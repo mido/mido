@@ -31,12 +31,8 @@ Full documentation at http://mido.readthedocs.org/
 Status
 -------
 
-Mido is nearly ready for its first official release. All of the basic
-functionality is in place. There will be some tweaking of the API to
-make it little bit clearer. Other than that, what remains is to polish
-up the documentation and nitpick the code a bit.
-
-I am aiming for a release sometime in July 2013.
+This is the first stable release. All basic functionality is in place.
+(Messages, ports and parser.)
 
 
 Requirements
