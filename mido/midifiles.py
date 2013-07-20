@@ -27,7 +27,7 @@ import mido
 from collections import deque
 from .messages import BaseMessage
 
-class ByteReader:
+class ByteReader(object):
     def __init__(self, stream):
         self.stream = stream
         self.data = deque()
@@ -108,13 +108,14 @@ class EndOfTrack(IOError):
 
 class MetaMessage(BaseMessage):
     def __init__(self, type, data):
-        self.time = 0
-        self.type = type
+        self.type = 'meta'
+        self.meta_type = type
         self.data = data
+        self.time = 0
 
     def __repr__(self):
         return '<meta message type={}, data={!r}, time={}>'.format(
-            self.type, self.data, self.time)
+            self.meta_type, self.data, self.time)
 
 # Todo: This should use build_message() from mido.parser
 
@@ -314,11 +315,6 @@ class File:
             # dbg('      {} of {})'.format(i, self.number_of_tracks))
             pass
         # print(self.file.tell())
-
-if __name__ == '__main__':
-    filename = sys.argv[1]
-    midi_file = File(filename)
-    midi_file._print_tracks()
 
 # mid1/acso3op2.mid:
 # 00008b0: 00c0 0604 b05b 5400 5d5d 8168 0a58 0307
