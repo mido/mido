@@ -43,7 +43,7 @@ until it blows up some seemingly unrelated part of your system. These
 kinds of errors are tricky to track down.
 
 Mido messages come with type and value checking built in. This happens
-when you assign to an attribute::
+when you assign an out of range value to an attribute::
 
     >>> n = mido.Message('note_on')
     >>> n.channel = 2092389483249829834
@@ -55,8 +55,8 @@ when you assign to an attribute::
         raise ValueError('channel must be in range 0..15')
     ValueError: channel must be in range 0..15
 
-and when you pass a keyword argument to the constructor or the copy()
-method::
+and when you pass some nonsense as a keyword argument to the
+constructor or the copy() method::
 
     >>> n.copy(note=['This', 'is', 'wrong'])
     Traceback (most recent call last):

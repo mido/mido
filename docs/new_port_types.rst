@@ -34,36 +34,35 @@ port classes in ``mido.ports``::
     from mido.ports import BaseInput, BaseOutput
 
     class PortCommon(object):
-        # Mixin for things that are common to your Input and Output
-        # ports (so you don't need a lot of duplicate code.
+        ... Mixin for things that are common to your Input and Output
+        ... ports (so you don't need a lot of duplicate code.
 
         def _open(self, **kwargs): 
-            # This is where you actually # open
-            # the underlying device.
-
-            # Called by BasePort__init__(), with whatever
-            # keyword arguments were passed to it. (The name
-            # argument has been assigned to self.name by now.)
+            ... This is where you actually # open
+            ... the underlying device.
+            ...
+            ... self.name will be set to the name that was passed
+            ... **kwargs will be passed to you by __init__()
 
         def _close(self):
-            # Close the underlying device.
+            ... Close the underlying device.
 
         def _get_device_type(self):
-            # A text representation of the type of device,
-            # for example 'CoreMidi' or 'ALSA'. This is
-            # used by __repr__(). Defaults to 'Unknown'.
-            return 'CoreMidi'
+            ... A text representation of the type of device,
+            ... for example 'CoreMidi' or 'ALSA'. This is
+            ... used by __repr__(). Defaults to 'Unknown'.
+            return 'CoreMidi'  # For example.
 
 
     class Input(PortCommon, BaseInput):
         def _pending(self):
-            # Check for new messages, feed them
-            # to the parser and return how many messages
-            # are now available.
+            ... Check for new messages, feed them
+            ... to the parser and return how many messages
+            ... are now available.
 
     class Output(PortCommon, BaseOutput):
         def _send(self, message):
-            # Send the message via the underlying device.
+            ... Send the message via the underlying device.
 
 The base classes will take care of everything else. You may still
 override selected methods if you need to.

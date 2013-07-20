@@ -42,8 +42,6 @@ http://reddit.com/r/midopy/ (as halloi)
 
 ombdalen@gmail.com
 
-I check messages at least once a day, except when I'm on vacation.
-
 
 Contents:
 
