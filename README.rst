@@ -57,16 +57,17 @@ write new port types.
 Installing
 -----------
 
-To install::
+Mido is not yet available on PyPi, but if I've understood this
+correctly, this is how to install it from the source directory::
 
     $ git clone http://github.com/olemb/mido/
     $ cd mido
-    $ pip install mido
+    $ pip install .
 
-Mido is not yet available on PyPi, but this should install from the
-source directory, if I've understood this correctly. (I clearly
-haven't, since it doesn't work. I have some reading to do this
-weekend, I guess. :)
+I am new to pip, so I need to do some reading to see how this should
+be done. On my system, I had to do::
+
+    $ sudo pip install .
 
 The PortMidi wrapper is written with `ctypes`, so no compilation is
 required.
