@@ -7,14 +7,10 @@ Creating Messages
 Mido allows you to work with MIDI messages as Python objects. To
 create a new message, you can do::
 
-    >>> import mido
-    >>> 
-    >>> mido.Message('note_on', note=60, velocity=100)
-    <note_on message channel=0, note=60, velocity=100, time=0>
-
-In this tutorial, we'll import :class:`Message`::
-
     >>> from mido import Message
+    >>> 
+    >>> Message('note_on', note=60, velocity=100)
+    <note_on message channel=0, note=60, velocity=100, time=0>
 
 All message parameters are optional, and if not explicitly set, will
 default to ``0`` (or ``()`` for sysex data)::
@@ -29,7 +25,7 @@ parameter for ``note_on`` messages, or the note will interpreted as a
 ``note_off`` on many devices.
 
 The parameters for each message type are listed in
-:doc:``message_types``.
+:doc:`message_types`.
 
 
 Modifying and Copying Messages
