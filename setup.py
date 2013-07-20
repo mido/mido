@@ -36,8 +36,7 @@ setup(
     # install_requires=required,  # Unknown option in Python 3
     license='MIT',
     classifiers=(
-        # 'Development Status :: 5 - Production/Stable',
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'License :: OSI Approved :: MIT License',
