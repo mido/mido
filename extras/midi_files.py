@@ -24,6 +24,8 @@ http://www.sonicspot.com/guide/midifiles.html
 from __future__ import print_function
 import sys
 import mido
+from collections import deque
+from mido.messages import BaseMessage
 
 class ByteReader:
     def __init__(self, stream):
@@ -74,7 +76,6 @@ class ByteReader:
 
 
 def dbg(*args):
-    #if debug:
     print(*args)
 
 
@@ -85,12 +86,12 @@ def dbg2(*args):
 class FileReader(ByteReader):
     def read_byte(self):
         byte = ByteReader.read_byte(self)
-        dbg('{:02x} @ {:02x}'.format(byte, self.tell()))
+        # dbg('{:02x} @ {:02x}'.format(byte, self.tell()))
         return byte
 
     def put_back_byte(self, byte):
         byte = ByteReader.put_byte_back(self, byte)
-        dbg('{:02x} put back'.format(byte))
+        # dbg('{:02x} put back'.format(byte))
 
     def read_short(self):
         a, b = [self.read_byte() for i in range(2)]
@@ -105,14 +106,14 @@ class EndOfTrack(IOError):
     pass
 
 
-class MetaEvent:
+class MetaMessage(BaseMessage):
     def __init__(self, type, data):
-        self.time = None
+        self.time = 0
         self.type = type
         self.data = data
 
     def __repr__(self):
-        return '<meta event type={}, data={!r}, time={}>'.format(
+        return '<meta message type={}, data={!r}, time={}>'.format(
             self.type, self.data, self.time)
 
 # Todo: This should use build_message() from mido.parser
@@ -172,13 +173,10 @@ class File:
             self.number_of_tracks = self.file.read_short()
             self.ticks_per_quarter_note = self.file.read_short()
 
-            dbg('--- File format: {}'.format(self.file_format))
+            # dbg('--- File format: {}'.format(self.file_format))
 
             self._read_tracks()
         
-        if debug:
-            self._print_tracks()
-
     def _print_tracks(self):
         for i, track in enumerate(self.tracks):
             print('=== Track {}'.format(i))
@@ -194,7 +192,7 @@ class File:
             if not byte & 0x80:
                 break
 
-        dbg('    delta time', delta)
+        # dbg('    delta time', delta)
         return delta
 
     def _read_meta_event(self):
@@ -202,23 +200,23 @@ class File:
         length = self.file.read_byte()
         data = self.file.read_bytes(length)
 
-        dbg('    meta event {:02x} {} {!r}'.format(type, length, data))
-        event = MetaEvent(type, data)
+        # dbg('    meta event {:02x} {} {!r}'.format(type, length, data))
+        event = MetaMessage(type, data)
         if type == 0x2f:
-            dbg('    found end of track')
+            # dbg('    found end of track')
             raise EndOfTrack('end of track found')
 
         return event
 
 
     def _read_message(self, status_byte):
-        dbg('+')
+        # dbg('+')
 
         # Todo: not all messages have running status
         if status_byte < 0x80:
-            dbg('    --- {}'.format('running status'))
+            # dbg('    --- {}'.format('running status'))
             if self._running_status is None:
-                dbg('    *** {}'.format('no previous status byte!'))
+                # dbg('    *** {}'.format('no previous status byte!'))
                 return
             status_byte = self._running_status
             # self.file.put_back_byte(status_byte)
@@ -228,7 +226,7 @@ class File:
         try:
             spec = mido.messages.get_spec(status_byte)
         except LookupError:
-            dbg2('    *** unknown status byte {:02x}'.format(status_byte))
+            # dbg2('    *** unknown status byte {:02x}'.format(status_byte))
             sys.exit(1)
 
         bytes = [status_byte]
@@ -236,11 +234,11 @@ class File:
         for i in range(spec.length - 1):
             bytes.append(self.file.read_byte())
 
-        dbg('    bytes for message: {}'.format(bytes))
+        # dbg('    bytes for message: {}'.format(bytes))
 
         # message = mido.parse(bytes)
         message = build_message(bytes)
-        dbg('    {}'.format(message))
+        # dbg('    {}'.format(message))
 
         return message
 
@@ -251,8 +249,8 @@ class File:
         if data[-1] == 0xf7:
             data = data[:-1]
 
-        message = mido.new('sysex', data=data)
-        dbg('    {}'.format(message))
+        message = mido.Message('sysex', data=data)
+        # dbg('    {}'.format(message))
 
         return message
 
@@ -284,7 +282,7 @@ class File:
 
         length = self.file.read_long()  # Ignore this.
 
-        dbg('******** found track of length', length)
+        # dbg('******** found track of length', length)
 
         self._current_track = []
         self._running_status = None
@@ -297,7 +295,7 @@ class File:
                 if self.file.tell() - start == length:
                     break
 
-                dbg('    !{} {}'.format(length, self.file.tell() - start))
+                # dbg('    !{} {}'.format(length, self.file.tell() - start))
                 delta = self._read_delta_time()
                 self._read_event(delta)
             except EndOfTrack:
@@ -311,15 +309,16 @@ class File:
             for i in range(self.number_of_tracks):
                 self._read_track()
         except EOFError:
-            dbg('    wrong number of tracks (reached end of file')
-            dbg('    while reading track ')
-            dbg('      {} of {})'.format(i, self.number_of_tracks))
-            # pass
-        print(self.file.tell())
+            # dbg('    wrong number of tracks (reached end of file')
+            # dbg('    while reading track ')
+            # dbg('      {} of {})'.format(i, self.number_of_tracks))
+            pass
+        # print(self.file.tell())
 
 if __name__ == '__main__':
     filename = sys.argv[1]
-    file = File(filename)
+    midi_file = File(filename)
+    midi_file._print_tracks()
 
 # mid1/acso3op2.mid:
 # 00008b0: 00c0 0604 b05b 5400 5d5d 8168 0a58 0307
