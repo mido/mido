@@ -25,7 +25,7 @@ from __future__ import print_function
 import sys
 import mido
 from collections import deque
-from mido.messages import BaseMessage
+from .messages import BaseMessage
 
 class ByteReader:
     def __init__(self, stream):

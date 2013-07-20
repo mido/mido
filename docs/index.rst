@@ -34,6 +34,15 @@ The latest version of the source code is available at:
 http://github.com/olemb/mido/
 
 
+Community and Contacting the Author:
+
+I have set up an IRC channel on freenode.net. You're welcome to come
+over there an discuss all things Mido.
+
+You can reach me on Reddit as /u/halloi or just email me directly at
+ombdalen@gmail.com.
+
+
 Contents:
 
 .. toctree::
