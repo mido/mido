@@ -34,13 +34,11 @@ The latest version of the source code is available at:
 http://github.com/olemb/mido/
 
 
-Community and Contacting the Author:
+Community:
 
-IRC channel #mido on freenode.net (as olemb)
+http://reddit.com/r/midopy/
 
-http://reddit.com/r/midopy/ (as halloi)
-
-ombdalen@gmail.com
+IRC channel #mido on freenode.net
 
 
 Contents:
@@ -50,6 +48,7 @@ Contents:
 
    why_mido
    tutorial
+   installing
    lib
    message_types
    parsing_and_encoding
@@ -57,6 +56,7 @@ Contents:
    new_port_types
    about_midi
    license
+   author
    acknowledgements
 
 

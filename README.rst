@@ -47,27 +47,16 @@ also run on other systems.
 
 If you want to use message ports, you will need `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
-your system. The PortMidi library is loaded on demand, so you can use the parser and messages without it.
-
-Experimental support for RtMidi is available in the
-`<extras/rtmido.py>`_. This module is also a good example of how to
-write new port types.
+your system. The PortMidi library is loaded on demand, so you can use
+the parser and messages without it.
 
 
 Installing
 -----------
 
-Mido is not yet available on PyPi, but if I've understood this
-correctly, this is how to install it from the source directory::
+To install::
 
-    $ git clone http://github.com/olemb/mido/
-    $ cd mido
-    $ pip install .
-
-I am new to pip, so I need to do some reading to see how this should
-be done. On my system, I had to do::
-
-    $ sudo pip install .
+    $ pip install mido
 
 The PortMidi wrapper is written with `ctypes`, so no compilation is
 required.
