@@ -10,9 +10,9 @@ except ImportError:
 
 
 
-# if sys.argv[-1] == "publish":
-#     os.system("python setup.py sdist upload")
-#     sys.exit()
+if sys.argv[-1] == "publish":
+    os.system("python setup.py sdist upload")
+    sys.exit()
 
 # Todo: what about python 3?
 if sys.argv[-1] == "test":
@@ -32,11 +32,11 @@ setup(
     package_dir={'requests': 'requests'},
     packages = ['mido'],
     include_package_data=True,
-    # url=mido.__url__,
+    url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3
     license=open('LICENSE').read(),
     classifiers=(
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'License :: OSI Approved :: MIT License',
