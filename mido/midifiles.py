@@ -23,9 +23,10 @@ http://www.sonicspot.com/guide/midifiles.html
 
 from __future__ import print_function
 import sys
-import mido
+import time
 from collections import deque, namedtuple
 from .messages import BaseMessage
+from . import messages, Message
 
 PY2 = (sys.version_info.major == 2)
 
@@ -135,36 +136,58 @@ class MetaMessage(BaseMessage):
         0x51 : 'set_tempo', 
         }
 
-    def __init__(self, type_byte, data):
-        try:
-            type_name = self._type_name_lookup[type_byte]
-        except KeyError:
-            print('  *** Unknown meta message type 0x{:02x}'.format(type_byte))
-            type_name = None  # Todo: we just ignore this for now
-
-        self.type = type_name
-        self._data = data
+    def __init__(self, type_, data=None, **kwargs):
         self.time = 0  # Todo: will this be set by the parser?
 
-        try:
-            decode = globals()['decode_{}'.format(self.type)]
-            decode(self, data)
-        except LookupError:
-            pass  # Ignore unknown type.
+        if isinstance(type_, int):
+            try:
+                self.type = self._type_name_lookup[type_]
+            except KeyError:
+                print('  *** Unknown meta message type 0x{:02x}'.format(
+                        type_byte))
+                self.type = None  # Todo: we just ignore this for now
+            self._data = data
+
+            try:
+                decode = globals()['decode_{}'.format(self.type)]
+                decode(self, data)
+            except LookupError:
+                pass  # Ignore unknown type.
+
+        else:
+            # This is a copy.
+            self.type = type_
+            self.__dict__.update(kwargs)
+
+    def _get_values(self):
+        values = self.__dict__.copy()
+        for key in ['_data', 'type']:
+            if key in values:
+                del values[key]
+        
+        return values
+
+    def copy(self, **overrides):
+        """Return a copy of the meta message.
+
+        Attributes can be overriden with keyword arguments.
+h        """
+        values = self._get_values()
+        values.update(overrides)
+        return MetaMessage(self.type, **values)
 
     def __repr__(self):
         # Todo: this needs to be changed, but don't worry about it for now.
         #return '<meta message type={}, data={!r}, time={}>'.format(
         #    self.type, self._data, self.time)
-        values = self.__dict__.copy()
-        del values['_data'], values['type']
-        return '{} {!r}'.format(self.type, values)
+        values = self._get_values()
+        return '{} {!r}'.format(self.type, self._get_values())
 
 # Todo: This should use build_message() from mido.parser
 
 def build_message(bytes, spec=None):
     if spec is None:
-        spec = mido.messages.get_spec(bytes[0])
+        spec = messages.get_spec(bytes[0])
 
     type_ = spec.type
 
@@ -192,7 +215,7 @@ def build_message(bytes, spec=None):
 
     # Note: we're using the status byte here, not type.
     # If we used type, the channel would be discarded.
-    return mido.Message(bytes[0], **arguments)
+    return Message(bytes[0], **arguments)
 
 
 
@@ -262,7 +285,7 @@ class MidiFile:
             self._running_status = status_byte
 
         try:
-            spec = mido.messages.get_spec(status_byte)
+            spec = messages.get_spec(status_byte)
         except LookupError:
             # dbg2('    *** unknown status byte {:02x}'.format(status_byte))
             sys.exit(1)
@@ -274,7 +297,7 @@ class MidiFile:
 
         # dbg('    bytes for message: {}'.format(bytes))
 
-        # message = mido.parse(bytes)
+        # message = parse(bytes)
         message = build_message(bytes)
         # dbg('    {}'.format(message))
 
@@ -287,7 +310,7 @@ class MidiFile:
         if data[-1] == 0xf7:
             data = data[:-1]
 
-        message = mido.Message('sysex', data=data)
+        message = Message('sysex', data=data)
         # dbg('    {}'.format(message))
 
         return message
@@ -353,6 +376,58 @@ class MidiFile:
             # dbg('      {} of {})'.format(i, self.number_of_tracks))
             pass
         # print(self.file.tell())
+
+    def play(self, yield_meta_messages=False):
+        """Play back all tracks.
+
+        Yields all messages in all tracks in temporal order, with
+        correct timing. (It pauses with time.sleep() between each
+        message according to delta times and current tempo.)
+
+        Each message returned will be a copy of the one in the
+        track, so you can safely modify it without ruining the
+        tracks. The time attribute will be set to 0.
+        """
+
+        # Todo: delta time is not converted correctly.
+        # The unit is MIDI ticks, whose duration depend on time signature.
+        # This is a little too complex for the first implementation.
+        
+        # Make a copy of the tracks, since we'll be removing from them.
+        tracks = [deque(track) for track in self.tracks]
+        messages_left = sum(map(len, tracks))
+
+        # The default tempo is 120 BPM.
+        tempo = 500000  # Microseconds per beat.
+        
+        while tracks:
+            # Remove empty tracks.
+            tracks = [track for track in tracks if track]
+            if not tracks:
+                break  # We ran out of messages.
+            
+            # Find the message with the smallest delta time.
+            __, track = min([(track[0].time, track) for track in tracks])
+            message = track.popleft()
+
+            if message.time:
+                sleep_time = (tempo * message.time) / 1000000000.0
+                time.sleep(sleep_time)
+
+            if isinstance(message, MetaMessage) and not yield_meta_messages:
+                pass  # Skip meta message.
+            else:
+                yield message.copy(time=0)
+
+            if message.type == 'set_tempo':
+                tempo = message.tempo
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        return False
+
 
 # mid1/acso3op2.mid:
 # 00008b0: 00c0 0604 b05b 5400 5d5d 8168 0a58 0307
