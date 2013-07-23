@@ -24,8 +24,10 @@ http://www.sonicspot.com/guide/midifiles.html
 from __future__ import print_function
 import sys
 import mido
-from collections import deque
+from collections import deque, namedtuple
 from .messages import BaseMessage
+
+PY2 = (sys.version_info.major == 2)
 
 class ByteReader(object):
     def __init__(self, stream):
@@ -37,14 +39,11 @@ class ByteReader(object):
 
         self._pos = 0
 
-    def read_list(self, n):
+    def read_bytes(self, n):
         return [self.read_byte() for _ in range(n)]
 
-    def read_bytes(self, n):
-        return bytes(self.read_list(n))
-
     def read_bytearray(self, n):
-        return bytearray(self.read_list(n))
+        return bytearray(self.read_bytes(n))
 
     def read_byte(self):
         """Get the next byte from."""
@@ -106,16 +105,60 @@ class EndOfTrack(IOError):
     pass
 
 
+def decode_set_tempo(message, data):
+    # Tempo is in microseconds per beat.
+    # Convert big endian 3 bytes with 7 bit bytes into
+    # and integer.
+    message.tempo = data[0] | data[1] << 7 | data[2] << 14
+
+
+def decode_text(message, data):
+    # Todo: which encoding?
+
+    text = ''.join([chr(byte) for byte in data])
+    if PY2:
+        text = unicode(text, 'ascii')
+
+    message.text = text
+
+
+def decode_end_of_track(message, data):
+    pass  # No data.
+
+
 class MetaMessage(BaseMessage):
-    def __init__(self, type, data):
-        self.type = 'meta'
-        self.meta_type = type
-        self.data = data
-        self.time = 0
+    _type_name_lookup = {
+        # Todo: this needs to be a two_way lookup when we implement
+        # saving of files.
+        0x01 : 'text',
+        0x2f : 'end_of_track',
+        0x51 : 'set_tempo', 
+        }
+
+    def __init__(self, type_byte, data):
+        try:
+            type_name = self._type_name_lookup[type_byte]
+        except KeyError:
+            print('  *** Unknown meta message type 0x{:02x}'.format(type_byte))
+            type_name = None  # Todo: we just ignore this for now
+
+        self.type = type_name
+        self._data = data
+        self.time = 0  # Todo: will this be set by the parser?
+
+        try:
+            decode = globals()['decode_{}'.format(self.type)]
+            decode(self, data)
+        except LookupError:
+            pass  # Ignore unknown type.
 
     def __repr__(self):
-        return '<meta message type={}, data={!r}, time={}>'.format(
-            self.meta_type, self.data, self.time)
+        # Todo: this needs to be changed, but don't worry about it for now.
+        #return '<meta message type={}, data={!r}, time={}>'.format(
+        #    self.type, self._data, self.time)
+        values = self.__dict__.copy()
+        del values['_data'], values['type']
+        return '{} {!r}'.format(self.type, values)
 
 # Todo: This should use build_message() from mido.parser
 
@@ -202,13 +245,7 @@ class MidiFile:
         data = self.file.read_bytes(length)
 
         # dbg('    meta event {:02x} {} {!r}'.format(type, length, data))
-        event = MetaMessage(type, data)
-        if type == 0x2f:
-            # dbg('    found end of track')
-            raise EndOfTrack('end of track found')
-
-        return event
-
+        return MetaMessage(type, data)
 
     def _read_message(self, status_byte):
         # dbg('+')
@@ -246,7 +283,7 @@ class MidiFile:
 
     def _read_sysex(self):
         length = self.file.read_byte()
-        data = self.file.read_list(length)
+        data = self.file.read_bytes(length)
         if data[-1] == 0xf7:
             data = data[:-1]
 
@@ -274,7 +311,8 @@ class MidiFile:
         if event is not None:
             event.time = delta
             self._current_track.append(event)
-
+            if event.type == 'end_of_track':
+                raise EndOfTrack()
 
     def _read_track(self):
         magic = self.file.read_bytearray(4)
