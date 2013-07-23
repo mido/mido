@@ -298,9 +298,9 @@ class MidiFile:
 
                 # dbg('    !{} {}'.format(length, self.file.tell() - start))
                 delta = self._read_delta_time()
-                self._read_event(delta)
+                self._read_event (delta)
             except EndOfTrack:
-                pass
+                break
 
         self.tracks.append(self._current_track)
         self._current_track = []
