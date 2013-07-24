@@ -243,7 +243,34 @@ class BaseMessage(object):
 
     Can be subclassed to create meta messages, for example.
     """
-    pass
+
+    def bytes(self):
+        raise ValueError('bytes() is not implemented in this class')
+
+    def bin(self):
+        """Encode message and return as a bytearray.
+
+        This can be used to write the message to a file.
+        """
+        return bytearray(self.bytes())
+
+    def hex(self, sep=' '):
+        """Encode message and return as a string of hex numbers,
+
+        Each number is separated by the string sep.
+        """
+        return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
+
+    def __eq__(self, other):
+        """Compare message to another for equality.
+        
+        Key for comparison: (msg.type, msg.channel, msg.note, msg.velocity).
+        """
+        if not isinstance(other, BaseMessage):
+            raise TypeError('comparison between message and another type')
+
+        return self.bytes() == other.bytes()
+
 
 class Message(BaseMessage):
     """
@@ -377,20 +404,6 @@ class Message(BaseMessage):
 
         return message_bytes
 
-    def bin(self):
-        """Encode message and return as a bytearray.
-
-        This can be used to write the message to a file.
-        """
-        return bytearray(self.bytes())
-
-    def hex(self, sep=' '):
-        """Encode message and return as a string of hex numbers,
-
-        Each number is separated by the string sep.
-        """
-        return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
-
     def __repr__(self):
         parts = []
 
@@ -401,21 +414,6 @@ class Message(BaseMessage):
 
     def __str__(self):
         return _format_as_string(self)
-
-    def __eq__(self, other):
-        """Compare message to another for equality.
-        
-        Key for comparison: (msg.type, msg.channel, msg.note, msg.velocity).
-        """
-        if not isinstance(other, Message):
-            raise TypeError('comparison between Message and another type')
-
-        def key(msg):
-            """Return a key for comparison."""
-            return [msg.type] + [
-                getattr(msg, arg) for arg in msg._spec.arguments]
-
-        return key(self) == key(other)
 
     def __len__(self):
         if self.type == 'sysex':
