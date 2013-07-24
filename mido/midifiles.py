@@ -49,12 +49,13 @@ class ByteReader(object):
     def read_byte(self):
         """Get the next byte from."""
         try:
+            byte = self.data.popleft()
             self._pos += 1
-            return self.data.popleft()
+            return byte
         except IndexError:
             raise EOFError('end of file reached')
 
-    def put_back_byte(self, byte):
+    def unread_byte(self, byte):
         """Put a byte back.
 
         This can be used for look-ahead."""
@@ -75,24 +76,7 @@ class ByteReader(object):
             yield self.data.popleft()
 
 
-def dbg(*args):
-    print(*args)
-
-
-def dbg2(*args):
-    print(*args)
-
-
 class FileReader(ByteReader):
-    def read_byte(self):
-        byte = ByteReader.read_byte(self)
-        # dbg('{:02x} @ {:02x}'.format(byte, self.tell()))
-        return byte
-
-    def put_back_byte(self, byte):
-        byte = ByteReader.put_byte_back(self, byte)
-        # dbg('{:02x} put back'.format(byte))
-
     def read_short(self):
         a, b = [self.read_byte() for i in range(2)]
         return a << 8 | b
@@ -138,8 +122,6 @@ class MetaMessage(BaseMessage):
 
     def __init__(self, type_, data=None, **kwargs):
         self.time = 0  # Todo: will this be set by the parser?
-
-        print(hex(type_))
 
         if isinstance(type_, int):
             try:
@@ -242,26 +224,31 @@ class MidiFile:
             self.number_of_tracks = self.file.read_short()
             self.ticks_per_quarter_note = self.file.read_short()
 
-            # dbg('--- File format: {}'.format(self.file_format))
-
             self._read_tracks()
         
     def _print_tracks(self):
         for i, track in enumerate(self.tracks):
-            print('=== Track {}'.format(i))
+            sys.stdout.write('=== Track {}\n'.format(i))
             for event in track:
-                print('  ', repr(event))
+                sys.stdout.write('  {!r}\n'.format(event))
 
     def _read_delta_time(self):
         delta = 0
 
         while 1:
             byte = self.file.read_byte()
-            delta = (delta << 7) | (byte & 0x7)
+            delta = (delta << 7) | (byte & 0x7f)
             if not byte & 0x80:
                 break
 
-        # dbg('    delta time', delta)
+        while 1:
+            byte = self.file.read_byte()
+            if byte != 0:
+                self.file.unread_byte(byte)
+                break
+            else:
+                pass
+
         return delta
 
     def _read_meta_event(self):
@@ -269,27 +256,21 @@ class MidiFile:
         length = self.file.read_byte()
         data = self.file.read_bytes(length)
 
-        # dbg('    meta event {:02x} {} {!r}'.format(type, length, data))
         return MetaMessage(type, data)
 
     def _read_message(self, status_byte):
-        # dbg('+')
-
         # Todo: not all messages have running status
         if status_byte < 0x80:
-            # dbg('    --- {}'.format('running status'))
             if self._running_status is None:
-                # dbg('    *** {}'.format('no previous status byte!'))
                 return
             status_byte = self._running_status
-            # self.file.put_back_byte(status_byte)
+            # self.file.unread_byte(status_byte)
         else:
             self._running_status = status_byte
 
         try:
             spec = messages.get_spec(status_byte)
         except LookupError:
-            # dbg2('    *** unknown status byte {:02x}'.format(status_byte))
             sys.exit(1)
 
         bytes = [status_byte]
@@ -297,11 +278,8 @@ class MidiFile:
         for i in range(spec.length - 1):
             bytes.append(self.file.read_byte())
 
-        # dbg('    bytes for message: {}'.format(bytes))
-
         # message = parse(bytes)
         message = build_message(bytes)
-        # dbg('    {}'.format(message))
 
         return message
 
@@ -313,13 +291,17 @@ class MidiFile:
             data = data[:-1]
 
         message = Message('sysex', data=data)
-        # dbg('    {}'.format(message))
 
         return message
 
 
     def _read_event(self, delta):
         status_byte = self.file.read_byte()
+        if status_byte >= 0x80:
+            self._running_status = status_byte
+        else:
+            self.file.unread_byte(status_byte)
+            status_byte = self._running_status
 
         if status_byte == 0xff:
             event = self._read_meta_event()
@@ -346,8 +328,6 @@ class MidiFile:
 
         length = self.file.read_long()  # Ignore this.
 
-        # dbg('******** found track of length', length)
-
         self._current_track = []
         self._running_status = None
 
@@ -359,9 +339,8 @@ class MidiFile:
                 if self.file.tell() - start == length:
                     break
 
-                # dbg('    !{} {}'.format(length, self.file.tell() - start))
                 delta = self._read_delta_time()
-                self._read_event (delta)
+                self._read_event(delta)
             except EndOfTrack:
                 break
 
@@ -373,11 +352,7 @@ class MidiFile:
             for i in range(self.number_of_tracks):
                 self._read_track()
         except EOFError:
-            # dbg('    wrong number of tracks (reached end of file')
-            # dbg('    while reading track ')
-            # dbg('      {} of {})'.format(i, self.number_of_tracks))
             pass
-        # print(self.file.tell())
 
     def play(self, yield_meta_messages=False):
         """Play back all tracks.
