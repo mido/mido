@@ -384,8 +384,9 @@ class MidiFile:
                 break  # We ran out of messages.
             
             # Find the message with the smallest delta time.
-            __, track = min([(track[0].time, track) for track in tracks])
-            message = track.popleft()
+            __, i = min([(track[0].time, i) \
+                                 for i, track in enumerate(tracks)])
+            message = tracks[i].popleft()
 
             if message.time:
                 sleep_time = (tempo * message.time) / 1000000000.0

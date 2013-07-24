@@ -12,8 +12,22 @@ import mido
 from mido.midifiles import MidiFile
 
 with mido.open_output(sys.argv[1]) as output:
-    print(output)
-    with MidiFile(sys.argv[2]) as midi_file:
-        for message in midi_file.play():
-            print(message)
-            output.send(message)
+    try:
+        print(output)
+        with MidiFile(sys.argv[2]) as midi_file:
+            for message in midi_file.play():
+                print(message)
+                output.send(message)
+    except KeyboardInterrupt:
+        print()
+    finally:
+        print('Reset!')
+        # Send 'All Notes Off' and 'Reset all Controllers' on
+        # all channels.
+        for channel in range(16):
+            for control in [121, 123]:
+                message = mido.Message('control_change',
+                                       channel=channel,
+                                       control=control, value=0)
+                print(message)
+                output.send(message)
