@@ -139,12 +139,14 @@ class MetaMessage(BaseMessage):
     def __init__(self, type_, data=None, **kwargs):
         self.time = 0  # Todo: will this be set by the parser?
 
+        print(hex(type_))
+
         if isinstance(type_, int):
             try:
                 self.type = self._type_name_lookup[type_]
             except KeyError:
                 print('  *** Unknown meta message type 0x{:02x}'.format(
-                        type_byte))
+                        type_))
                 self.type = None  # Todo: we just ignore this for now
             self._data = data
 
