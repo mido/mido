@@ -1,6 +1,6 @@
 from mido import sockets
 
-server = sockets.Server('localhost', 8080)
+server = sockets.PortServer('localhost', 8080)
 
 while 1:
     conn = server.accept()

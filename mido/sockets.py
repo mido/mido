@@ -8,7 +8,7 @@ from .parser import Parser
 from .ports import BaseInput, BaseOutput
 from .messages import parse_string
 
-class Server:
+class PortServer:
     # Todo: queue size.
 
     def __init__(self, host, port, backlog=1):
