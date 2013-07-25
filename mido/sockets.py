@@ -11,7 +11,7 @@ from .messages import parse_string
 class Server:
     # Todo: queue size.
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, backlog=1):
         self.host = host
         self.port = port
 
@@ -23,7 +23,7 @@ class Server:
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self.socket.setblocking(True)
         self.socket.bind((self.host, self.port))
-        self.socket.listen(True)
+        self.socket.listen(backlog)
         
         self.file = self.socket.makefile('r+')
 
