@@ -155,7 +155,7 @@ class MetaMessage(BaseMessage):
         """Return a copy of the meta message.
 
         Attributes can be overriden with keyword arguments.
-h        """
+        """
         values = self._get_values()
         values.update(overrides)
         return MetaMessage(self.type, **values)
