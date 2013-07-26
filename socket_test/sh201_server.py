@@ -6,7 +6,14 @@ sh201 = mido.open_output('SH-201')
 
 while 1:
     conn = server.accept()
-    for message in conn:
-        print(message)
-        sh201.send(message)
+    print('New connection!')
 
+    while 1:
+        if conn.closed:
+            break
+
+        for message in conn.iter_pending():
+            print(message)
+            sh201.send(message)
+
+    print('End of connection')
