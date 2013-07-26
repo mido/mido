@@ -92,24 +92,36 @@ def read_events(device_name):
 
 
 def play_scale(dev, out):
+    # Major scale.
     scale = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19]
 
-    out.send(mido.Message('program_change', program=16))
+    # program = 16  # Organ
+    program = 74
+    out.send(mido.Message('program_change', program=program))
 
     while 1:
         event = read_event(dev)
+
+        if event['init']:
+            continue  # Skip init events.
+
         if event['type'] == 'button':
+            # Convert to D-major scale starting at middle D.
             note = 62 + 12 + scale[event['number']]
             if event['value']:
-                out.send(mido.Message('note_on', note=note, velocity=64))
+                type_ = 'note_on'
             else:
-                out.send(mido.Message('note_off', note=note, velocity=64))
+                type_ = 'note_off'
 
-        elif event['type'] == 'axis':
-            if event['number'] == 0:
-                pitch_scale = mido.messages.MAX_PITCHWHEEL
-                pitch = int(event['normalized_value'] * pitch_scale)
-                out.send(mido.Message('pitchwheel', pitch=pitch))
+            message = mido.Message(type_, note=note, velocity=64)
+            print(message)
+            out.send(message)
+
+        # elif event['type'] == 'axis':
+        #     if event['number'] == 0:
+        #         pitch_scale = mido.messages.MAX_PITCHWHEEL
+        #         pitch = int(event['normalized_value'] * pitch_scale)
+        #         out.send(mido.Message('pitchwheel', pitch=pitch))
 
 def play_drums(dev, out):
     # http://www.midi.org/techspecs/gm1sound.php
