@@ -25,7 +25,6 @@ class BasePort(object):
         self.closed = True
         self._open(**kwargs)
         self.closed = False
-        self._parser = Parser()
 
     def _open(self, **kwargs):
         raise ValueError('_open() not implemented')
@@ -90,6 +89,7 @@ class BaseInput(BasePort):
         name is not passed, the default input is used instead.
         """
         self._parser = Parser()
+        self._messages = self._parser._parsed_messages  # Shortcut.
         BasePort.__init__(self, name)
 
     def pending(self):
@@ -105,7 +105,7 @@ class BaseInput(BasePort):
         once the buffered ones run out.
         """
         if self.closed:
-            return self._parser.pending()
+            return len(self._messages)
         else:
             return self._pending()
 
@@ -130,10 +130,9 @@ class BaseInput(BasePort):
         - return pending messages until we run out, then raise exception?
         """
         # If there is a message pending, return it right away.
-        message = self._parser.get_message()
-        if message:
-            return message
-
+        if self._messages:
+            return self._messages.popleft()
+            
         if self.closed:
             raise ValueError('receive() called on closed port')
 
@@ -143,7 +142,7 @@ class BaseInput(BasePort):
             if self.pending():
                 # pending() has read at least one message from the
                 # device. Return the first message.
-                return self._parser.get_message()
+                return self._messages.popleft()
 
     def __iter__(self):
         """Iterate through messages as they arrive on the port."""

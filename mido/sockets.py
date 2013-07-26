@@ -4,6 +4,7 @@ Experimental MIDI over TCP/IP.
 
 import socket
 import select
+from collections import deque
 from .parser import Parser
 from .ports import BaseInput, BaseOutput
 from .messages import parse_string
@@ -36,6 +37,7 @@ class PortServer:
 class SocketPort(BaseInput, BaseOutput):
     def __init__(self, host, port, conn=None):
         self.closed = False
+        self._messages = deque()
 
         if conn is None:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,11 +46,7 @@ class SocketPort(BaseInput, BaseOutput):
         else:
             self.socket = conn
 
-        self.messages = []
         self.file = self.socket.makefile('r+')
-
-        # Todo: This shouldn't be necessary.
-        self._parser = Parser()
 
     def _pending(self):
         while 1:
@@ -59,10 +57,16 @@ class SocketPort(BaseInput, BaseOutput):
             if not rlist:
                 break
 
-            message = parse_string(self.file.readline())
-            self._parser._parsed_messages.append(message)
+            line = self.file.readline()
+            if line == '':
+                # End of stream.
+                self.close()
+                return
+            else:
+                message = parse_string(line)
+                self._messages.append(message)
 
-        return len(self._parser._parsed_messages)
+        return len(self._messages)
 
     def _send(self, message):
         self.file.write('{}\n'.format(message))
@@ -73,4 +77,3 @@ class SocketPort(BaseInput, BaseOutput):
 
 def connect(host, port):
     return SocketPort(host, port)
-
