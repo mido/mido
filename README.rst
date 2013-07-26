@@ -95,6 +95,11 @@ Known Bugs
 Future Plans
 -------------
 
+* include multiple backends, and provide a way to choose which one to
+  use, perhaps with `MIDO_BACKEND=portmidi` or some other mechanism.
+
+* support for writing MIDI files.
+
 * add a library of useful tools, such as delays, an event engine and
   message filters.
 
