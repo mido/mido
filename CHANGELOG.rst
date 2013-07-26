@@ -1,7 +1,11 @@
 Change Log for Mido
 ====================
 
-1.0.0 - 2013-07-20 - initial release
+1.1 - (tentative release date: late August)
+----
+
+
+1.0 - 2013-07-20 - initial release
 -------------------------------------
 
 Complete implementation of all basic functionality: messages, ports
