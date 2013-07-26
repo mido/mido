@@ -50,6 +50,9 @@ If you want to use message ports, you will need `PortMidi
 your system. The PortMidi library is loaded on demand, so you can use
 the parser and messages without it.
 
+Alternative backends for pygame.midi and python-rtmidi are included in
+the extras directory.
+
 
 Installing
 -----------
