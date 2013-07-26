@@ -83,9 +83,6 @@ Known Bugs
 * there is an obscure bug involving the OS X application Midi Keys.
   See tmp/segfault.py.
 
-* Sometimes a note_off message gets stuck in a SocketPort, but is dislodged
-  by the next message. This must be due to some buffering.
-
 
 Future Plans
 -------------
