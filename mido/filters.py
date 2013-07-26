@@ -1,5 +1,49 @@
+"""
+Input filters typically wrap a generator around the iterator:
+
+    for message in only_notes(port):
+        ...
+
+    for message in transpose(port.iter_pending(), amount=12):
+        ...
+
+Output filters can filter or add messages before they are sent on a
+port. There are two ways of using these filters. The first is to
+attach them to a port object:
+
+    # Replaces the send() method with a wrapper.
+    port.send = monophonic(port.send)
+
+    # Filters can be stacked.
+    port.send = other(filters(port.send))
+
+    # Remove all filters from the port.
+    del port.send
+
+The other, and less intrusive way is:
+
+    mono = monophonic(port.send)
+
+    port.send()         # send a polyphonic message
+    mono.send(message)  # send a monophonic message
+
+Note that these will wrap any function that takes a message as its
+only argument.
+
+Some possible input and output filters:
+
+    - change channel
+    - drop certain channels
+    - drop certain messages
+    - custom filter callback
+"""
+
 import random
 from .messages import Message
+
+
+
+
 
 class monophonic(object):
     """
@@ -11,6 +55,10 @@ class monophonic(object):
     
         # Wrap around only the send method.
         port.send = monophonic(port.send)
+
+    To remove the filter:
+
+        del port.send
 
     channel=0  -- the channel to apply the effect to.
     select=max  -- how to select the note to be played, when more than
