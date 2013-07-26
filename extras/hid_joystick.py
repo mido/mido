@@ -106,13 +106,15 @@ def panic(port):
 class Monophonic:
     # Todo: this assumes everything is on channel 0!
 
-    def __init__(self, output):
+    def __init__(self, output, channel=0):
         self.output = output
         self.notes = set()
         self.current_note = None
+        self.channel = channel
 
     def send(self, message):
-        if message.type not in ['note_on', 'note_off']:
+        if message.type not in ['note_on', 'note_off'] or \
+                message.channel != self.channel:
             self.output.send(message)
             return
 
@@ -150,7 +152,7 @@ class Monophonic:
 
 
 def play_scale(dev, out):
-    # out = Monophonic(out)
+    # out = Monophonic(out, channel=0)
 
     # Major scale.
     scale = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19]
