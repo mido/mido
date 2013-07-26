@@ -180,7 +180,6 @@ class BaseOutput(BasePort):
             raise ValueError('send() called on closed port')
 
         self._send(message)
-        print(message)
 
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels
