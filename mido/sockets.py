@@ -25,8 +25,6 @@ class PortServer:
         self.socket.setblocking(True)
         self.socket.bind((self.host, self.port))
         self.socket.listen(backlog)
-        
-        self.file = self.socket.makefile('r+')
 
     def accept(self):
         conn, (host, port) = self.socket.accept()
@@ -48,7 +46,10 @@ class SocketPort(BaseInput, BaseOutput):
         else:
             self.socket = conn
 
-        self.file = self.socket.makefile('r+')
+        if self.string_protocol:
+            self.file = self.socket.makefile('r+')
+        else:
+            self.file = self.socket.makefile('r+', bufsize=0)
 
     def _pending(self):
         while 1:
