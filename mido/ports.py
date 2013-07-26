@@ -147,6 +147,11 @@ class BaseInput(BasePort):
     def __iter__(self):
         """Iterate through messages as they arrive on the port."""
         while 1:
+            if self.closed and len(self._messages) == 0:
+                # End iteration when port is closed.
+                # (Used by SocketPort.)
+                return
+
             yield self.receive()
 
 class BaseOutput(BasePort):
