@@ -82,10 +82,11 @@ Known Bugs
 * on OS X, PortMidi usually hangs for a second or two seconds while
   initializing. (It always succeeds.)
 
-* libportmidi prints out error messages instead of returning err and
-  setting the error message string. Thus, Mido can't catch errors and
-  raise the proper exception. (I've been able to work around this when
-  opening ports, so don't know if this is still a problem.)
+* (this is no longer a problem:) libportmidi prints out error messages
+  instead of returning err and setting the error message string. Thus,
+  Mido can't catch errors and raise the proper exception. I've been
+  able to work around this when opening ports, which is the only place
+  where this was a problem, as far as I know.
 
 * there is an obscure bug involving the OS X application Midi Keys.
   See tmp/segfault.py.
