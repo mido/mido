@@ -198,7 +198,7 @@ class BaseOutput(BasePort):
         Useful when notes are hanging, and nothing else helps.
         """
         ALL_SOUNDS_OFF = 120
-        message = Message('control_change')
+        message = Message('control_change', control=ALL_SOUNDS_OFF)
         for message.channel in range(16):
             self.send(message)
 
