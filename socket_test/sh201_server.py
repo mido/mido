@@ -9,4 +9,3 @@ while 1:
     for message in conn:
         print(message)
         sh201.send(message)
-

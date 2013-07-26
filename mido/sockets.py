@@ -35,9 +35,11 @@ class PortServer:
     # Todo: add __enter__() and __exit__().
 
 class SocketPort(BaseInput, BaseOutput):
-    def __init__(self, host, port, conn=None):
+    def __init__(self, host, port, conn=None, string_protocol=False):
         self.closed = False
-        self._messages = deque()
+        self._parser = Parser()
+        self._messages = self._parser._parsed_messages
+        self.string_protocol = string_protocol
 
         if conn is None:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -57,19 +59,32 @@ class SocketPort(BaseInput, BaseOutput):
             if not rlist:
                 break
 
-            line = self.file.readline()
-            if line == '':
-                # End of stream.
-                self.close()
-                return
+            if self.string_protocol:
+                line = self.file.readline()
+                if line == '':
+                    # End of stream.
+                    self.close()
+                    return
+                else:
+                    message = parse_string(line)
+                    self._messages.append(message)
             else:
-                message = parse_string(line)
-                self._messages.append(message)
+                byte = self.file.read(1)
+                if byte == '':
+                    # End of stream.
+                    self.close()
+                    return
+                else:
+                    self._parser.feed_byte(ord(byte))
 
         return len(self._messages)
 
     def _send(self, message):
-        self.file.write('{}\n'.format(message))
+        if self.string_protocol:
+            self.file.write('{}\n'.format(message))
+        else:
+            self.file.write(message.bin())
+
         self.file.flush()
 
     def _close(self):
