@@ -65,9 +65,9 @@ The PortMidi wrapper is written with `ctypes`, so no compilation is
 required.
 
 If you want to use ports, you need the PortMidi shared library. The
-Ubuntu package is called ``libportmidi-dev``.  PortMidi is also
-available in `MacPorts <http://www.macports.org/>`_ and `Homebrew
-<http://mxcl.github.io/homebrew/>`_ under the name ``portmidi``.
+Ubuntu package is called ``libportmidi-dev``, while the `MacPorts
+<http://www.macports.org/>`_ and `Homebrew
+<http://mxcl.github.io/homebrew/>`_ packages are called ``portmidi``.
 
 
 Documentation
