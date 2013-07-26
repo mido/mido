@@ -34,9 +34,9 @@ Status
 1.1 is the second stable release.
 
 1.0 established the basic functionality (messages, ports and parser),
-while 1.1 adds reading of MIDI files, MIDI over TCP/IP (socket ports)
-and many improvements to the port API (including reset() and panic()
-methods for output ports.)
+while 1.1 adds reading of MIDI files (with a convenient `play()`
+method), MIDI over TCP/IP (socket ports) and many improvements to the
+port API (including reset() and panic() methods for output ports.)
 
 
 Requirements
