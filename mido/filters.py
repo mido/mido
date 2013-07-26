@@ -118,7 +118,10 @@ class monophonic(object):
             self.select)
 
     def send(self, message):
-        send = self.output
+        if hasattr(self.output, 'send'):
+            send = self.output.send
+        else:
+            send = self.output
 
         if message.type not in ['note_on', 'note_off'] or \
                 message.channel != self.channel:
