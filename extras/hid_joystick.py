@@ -90,29 +90,73 @@ def read_events(device_name):
         while 1:
             yield read_event(device)
 
+
+def play_scale(dev, out):
+    scale = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19]
+
+    out.send(mido.Message('program_change', program=16))
+
+    while 1:
+        event = read_event(dev)
+        if event['type'] == 'button':
+            note = 62 + 12 + scale[event['number']]
+            if event['value']:
+                out.send(mido.Message('note_on', note=note, velocity=64))
+            else:
+                out.send(mido.Message('note_off', note=note, velocity=64))
+
+        elif event['type'] == 'axis':
+            if event['number'] == 0:
+                pitch_scale = mido.messages.MAX_PITCHWHEEL
+                pitch = int(event['normalized_value'] * pitch_scale)
+                out.send(mido.Message('pitchwheel', pitch=pitch))
+
+def play_drums(dev, out):
+    # http://www.midi.org/techspecs/gm1sound.php
+    note_mapping = {
+        2: 35,  # Acoustic Bass Drum
+        6: 38,  # Acoustic Snare
+        1: 41,  # Low Floor Tom
+        4: 47,  # Low Mid Tom
+        3: 50,  # High Tom
+        8: 51,  # Ride Cymbal
+
+        5: 42,  # Closed Hi Hat
+        7: 46,  # Open Hi Hat
+
+        9: 52,  # Chinese Cymbal
+        10: 55,  # Splash Cymbal
+        }
+
+    while 1:
+        event = read_event(dev)
+        if event['init']:
+            continue
+
+        if event['type'] == 'button':
+            print(event)
+
+            button = event['number'] + 1  # Number buttons starting with 1.
+            if button not in note_mapping:
+                continue
+
+            if event['value']:
+                type_ = 'note_on'
+            else:
+                type_ = 'note_off'
+            
+            note = note_mapping[button]
+
+            message = mido.Message(type_, channel=9, note=note, velocity=64)
+            print(message)
+            out.send(message)
+
+
 if __name__ == '__main__':
     import sys
     import mido
 
-    scale = range(20)
-    scale = [0, 2, 5, 7, 9, 12, 14, 17, 19, 21, 24, 26, 29]
-    scale = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19]
-
     with open('/dev/input/js0') as dev:
-        with mido.open_output('SH-201 MIDI 1') as out:
-            out.send(mido.Message('program_change', program=16))
-
-        while 1:
-            event = read_event(dev)
-            if event['type'] == 'button':
-                note = 62 + 12 + scale[event['number']]
-                if event['value']:
-                    out.send(mido.Message('note_on', note=note, velocity=64))
-                else:
-                    out.send(mido.Message('note_off', note=note, velocity=64))
-
-            if event['type'] == 'axis':
-                if event['number'] == 0:
-                    pitch_scale = mido.messages.MAX_PITCHWHEEL
-                    pitch = int(event['normalized_value'] * pitch_scale)
-                    out.send(mido.Message('pitchwheel', pitch=pitch))
+        with mido.open_output('SD-20 Part A') as out:
+            # play_drums(dev, out)
+            play_scale(dev, out)
