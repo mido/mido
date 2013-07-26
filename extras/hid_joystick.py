@@ -90,8 +90,68 @@ def read_events(device_name):
         while 1:
             yield read_event(device)
 
+def panic(port):
+    """
+    Send "All Notes Off" and "Reset All Controllers" on
+    all channels.
+    """
+    for channel in range(16):
+        for control in [121, 123]:
+            message = mido.Message('control_change',
+                                   channel=channel,
+                                   control=control, value=0)
+            print(message)
+            port.send(message)
+
+class Monophonic:
+    # Todo: this assumes everything is on channel 0!
+
+    def __init__(self, output):
+        self.output = output
+        self.notes = set()
+        self.current_note = None
+
+    def send(self, message):
+        if message.type not in ['note_on', 'note_off']:
+            self.output.send(message)
+            return
+
+        if message.type == 'note_on':
+            self.notes.add(message.note)
+        elif message.type == 'note_off':
+            if message.note in self.notes:
+                self.notes.remove(message.note)
+
+        print(self.notes)
+
+        try:
+            note = min(self.notes)
+        except ValueError:
+            note = None
+
+        if note == self.current_note:
+            return  # Same note as before, no change.
+
+        if self.current_note is not None:
+            off = mido.Message('note_off',
+                               note=self.current_note,
+                               velocity=message.velocity)
+            print(off)
+            self.output.send(off)
+            self.current_note = None
+
+        if note is not None:
+            on = mido.Message('note_on',
+                              note=note,
+                              velocity=message.velocity)
+            print(on)
+            self.output.send(on)
+            self.current_note = note
+
 
 def play_scale(dev, out):
+    # out = Monophonic(out)
+
     # Major scale.
     scale = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19]
 
@@ -114,7 +174,6 @@ def play_scale(dev, out):
                 type_ = 'note_off'
 
             message = mido.Message(type_, note=note, velocity=64)
-            print(message)
             out.send(message)
 
         # elif event['type'] == 'axis':
@@ -170,5 +229,8 @@ if __name__ == '__main__':
 
     with open('/dev/input/js0') as dev:
         with mido.open_output('SD-20 Part A') as out:
-            # play_drums(dev, out)
-            play_scale(dev, out)
+            try:
+                # play_drums(dev, out)
+                play_scale(dev, out)
+            finally:
+                panic(out)
