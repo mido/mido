@@ -65,7 +65,7 @@ class SocketPort(BaseInput, BaseOutput):
                 if line == '':
                     # End of stream.
                     self.close()
-                    return
+                    break
                 else:
                     message = parse_string(line)
                     self._messages.append(message)
@@ -74,7 +74,7 @@ class SocketPort(BaseInput, BaseOutput):
                 if byte == '':
                     # End of stream.
                     self.close()
-                    return
+                    break
                 else:
                     self._parser.feed_byte(ord(byte))
 
