@@ -180,6 +180,27 @@ class BaseOutput(BasePort):
             raise ValueError('send() called on closed port')
 
         self._send(message)
+        print(message)
+
+    def reset(self):
+        """Send "All Notes Off" and "Reset All Controllers" on all channels
+        """
+        ALL_NOTES_OFF = 123
+        RESET_ALL_CONTROLLERS = 121
+        message = Message('control_change')
+        for message.channel in range(16):
+            for message.control in [ALL_NOTES_OFF, RESET_ALL_CONTROLLERS]:
+                self.send(message)
+
+    def panic(self):
+        """Send "All Sounds Off" on all channels.
+
+        Useful when notes are hanging, and nothing else helps.
+        """
+        ALL_SOUNDS_OFF = 120
+        message = Message('control_change')
+        for message.channel in range(16):
+            self.send(message)
 
 class IOPort(object):
     """Input / output port.
