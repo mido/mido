@@ -54,7 +54,7 @@ class SocketPort(BaseInput, BaseOutput):
         while 1:
             timeout = 0
             (rlist, wlist, elist) = select.select(
-                [self.socket.fileno()], [], [], timeout)
+                [self.socket.fileno()], [], [self.socket.fileno()], timeout)
 
             if not rlist:
                 break
@@ -90,5 +90,13 @@ class SocketPort(BaseInput, BaseOutput):
     def _close(self):
         self.socket.close()
 
+    def __iter__(self):
+        while 1:
+            for message in self.iter_pending():
+                yield message
+
+            if self.closed:
+                break
+            
 def connect(host, port):
     return SocketPort(host, port)

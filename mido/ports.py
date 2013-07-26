@@ -134,7 +134,8 @@ class BaseInput(BasePort):
             return self._messages.popleft()
             
         if self.closed:
-            raise ValueError('receive() called on closed port')
+            return None
+            # raise ValueError('receive() called on closed port')
 
         # Wait for a message to arrive.
         while 1:
@@ -147,11 +148,6 @@ class BaseInput(BasePort):
     def __iter__(self):
         """Iterate through messages as they arrive on the port."""
         while 1:
-            if self.closed and len(self._messages) == 0:
-                # End iteration when port is closed.
-                # (Used by SocketPort.)
-                return
-
             yield self.receive()
 
 class BaseOutput(BasePort):
