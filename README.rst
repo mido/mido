@@ -42,20 +42,26 @@ port API (including reset() and panic() methods for output ports.)
 Requirements
 -------------
 
-Mido targets Python 2.7 and 3.2 and runs on Ubuntu and Mac OS X. May
-also run on other systems.
+Mido targets Python 2.7 and 3.2.
 
 If you want to use message ports, you will need `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
 your system. The PortMidi library is loaded on demand, so you can use
 the parser and messages without it.
 
-Alternative backends for pygame.midi and python-rtmidi are included in
-the extras directory. You can choose which backend to use with an
-environment variable::
+The PortMidi wrapper is tested on on Ubuntu and Mac OS X, but may also
+run on other systems where the ``portmidi.so/dll`` file is available.
+
+Alternative backends are included for `python-rtmidi
+<http://pypi.python.org/pypi/python-rtmidi/>`_ and `pygame
+<http://www.pygame.org/docs/ref/midi.html>`_. These can be selected
+with an environment variable::
 
     export MIDO_BACKEND=mido.backends.pygame
     python some_program.py
+
+Like PortMidi, these are also loaded on demand. New backends can be
+written and used with Mido by setting this environment variable.
 
 
 Installing
