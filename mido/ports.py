@@ -67,12 +67,13 @@ class BasePort(object):
         else:
             state = 'open'
 
-        if isinstance(self, BaseInput):
-            port_type = 'input'
-        elif isinstance(self, BaseOutput):
-            port_type = 'output'
-        else:
-            port_type = 'I/O'  # Todo: this is wrong
+        capabilities = (hasattr(self, 'receive'), hasattr(self, 'send'))
+        port_type = {
+            (True, False): 'input',
+            (False, True): 'output',
+            (True, True): 'I/O',
+            (False, False): 'mute',
+            }[capabilities]
 
         device_name = self._get_device_type()
 
