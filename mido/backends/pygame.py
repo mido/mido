@@ -16,7 +16,7 @@ def get_device(device_id):
     
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
     info = dict(zip(keys, midi.get_device_info(device_id)))
-    info['device_id'] = device_id
+    info['id'] = device_id
     return info
 
 def get_devices():
@@ -51,9 +51,9 @@ class PortCommon(object):
                                                                 self.name))
 
         if opening_input:
-            self._port = midi.Input(self.device['device_id'])
+            self._port = midi.Input(self.device['id'])
         else:
-            self._port = midi.Output(self.device['device_id'])
+            self._port = midi.Output(self.device['id'])
 
         atexit.register(self.close)
 
