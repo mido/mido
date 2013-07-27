@@ -278,8 +278,8 @@ class Broadcast(BaseOutput):
     The output ports will not be closed when the tee port is.
     """
 
-    def __init__(self, *ports):
-        self.name = 'tee'
+    def __init__(self, ports):
+        self.name = 'Broadcast'
         self.closed = False
         self.ports = ports
 
