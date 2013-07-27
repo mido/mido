@@ -30,10 +30,13 @@ designed to be as straight forward and Pythonic as possible.
     >>> msg2 = msg.copy(program=9)
     <program_change message channel=2, program=9, time=0>
 
-The latest version of the source code is available at:
+The latest stable version of the source code is available at:
 http://github.com/olemb/mido/
 
-(Not very active) subreddit:
+The latest development version (incomplete and probably buggy) can
+be found at: http://github.com/olemb/mido/tree/develop/
+
+A (not very active) subreddit:
 http://reddit.com/r/midopy/
 
 

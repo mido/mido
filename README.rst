@@ -122,6 +122,9 @@ License
 Mido is released under the terms of the `MIT license
 <http://en.wikipedia.org/wiki/MIT_License>`_.
 
-Latest version of the code: http://github.com/olemb/mido/ .
+Latest stable version of the code: http://github.com/olemb/mido/ .
+
+Latest development version (incomplete and probably buggy):
+http://github.com/olemb/mido/tree/develop/
 
 Author: Ole Martin Bjørndalen - ombdalen@gmail.com
