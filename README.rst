@@ -51,7 +51,10 @@ your system. The PortMidi library is loaded on demand, so you can use
 the parser and messages without it.
 
 Alternative backends for pygame.midi and python-rtmidi are included in
-the extras directory.
+the extras directory. You can choose which backend to use with an
+environment variable::
+
+    MIDO_BACKEND=mido.backends.rtmidi python send.py
 
 
 Installing
