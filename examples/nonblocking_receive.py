@@ -15,12 +15,9 @@ else:
 
 try:
     with mido.open_input(portname) as port:
-        print('Using {}'.format(port))
+        print('Using {}'.format(port))        
         while 1:
-            # Iterate through all messages
-            # that are available at this time.
-            for _ in range(port.pending()):
-                message = port.receive()
+            for message in port.iter_pending():
                 print('Received {}'.format(message))
 
             print('Doing something else for a while...')
