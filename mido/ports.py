@@ -26,11 +26,17 @@ class BasePort(object):
         self._open(**kwargs)
         self.closed = False
 
+    def _send(self, message):
+        pass
+
+    def _pending(self):
+        return 0
+
     def _open(self, **kwargs):
-        raise ValueError('_open() not implemented')
+        pass
 
     def _close(self):
-        raise ValueError('_close() not implemented')
+        pass
 
     def _get_device_type(self):
         return 'Unknown'
