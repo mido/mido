@@ -234,9 +234,8 @@ If you want to receive messages from multiple ports, you can use
 
     from mido.ports import multi_receive
     
-    while 1:
-        for message in multi_receive([port1, port2, port3]):
-            ...
+    for message in multi_receive([port1, port2, port3]):
+        ...
 
 The ports are checked in random order to ensure fairness. There is
 also a non-blocking version of this function::
@@ -244,3 +243,9 @@ also a non-blocking version of this function::
     while 1:
         for message in multi_iter_pending([port1, port2, port3]):
             ...
+
+Both functions take an optional parameter that allows you to see which
+port each message arrived on::
+
+    for port, message in multi_receive(ports, yield_ports=True):
+        print('{} arrived on {}'.format(message, port))
