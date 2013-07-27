@@ -270,6 +270,24 @@ class IOPort(object):
             state, self.name, self.input._get_device_type())
 
 
+class Tee(BaseOutput):
+    """
+    A port that wraps around a set of ports and sends messages to all of them.
+
+    Any message passed to send() is passed to send() on all ports in turn.
+    The output ports will not be closed when the tee port is.
+    """
+
+    def __init__(self, *ports):
+        self.name = 'tee'
+        self.closed = False
+        self.ports = ports
+
+    def _send(self, message):
+        for port in self.ports:
+            port.send(message)
+
+
 def multi_receive(ports):
     """Receive messages from multiple ports.
 

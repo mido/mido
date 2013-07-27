@@ -158,6 +158,10 @@ class monophonic(object):
             send(on)
             self.current_note = note
 
+def echo(input_port, output_port):
+    for message in input_port:
+        output_port.send(message)
+
 class fifth:
     def __init__(self, output):
         pass

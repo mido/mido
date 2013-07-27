@@ -35,6 +35,3 @@ try:
             time.sleep(0.1)
 except KeyboardInterrupt:
     print()
-finally:
-    # Send 'All Notes Off'
-    port.send(mido.Message('control_change', control=123, value=0))
