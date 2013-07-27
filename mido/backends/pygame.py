@@ -6,9 +6,10 @@ Pygame uses PortMidi, so this is perhaps not very useful.
 http://www.pygame.org/docs/ref/midi.html
 """
 
+from __future__ import absolute_import
 import atexit
 from pygame import midi
-from mido.ports import BaseInput, BaseOutput, IOPort
+from ..ports import BaseInput, BaseOutput, IOPort
 
 def get_device(device_id):
     midi.init()
@@ -23,32 +24,6 @@ def get_devices():
 
     return [get_device(device_id) for device_id in range(midi.get_count())]
 
-
-def get_input_names():
-    names = [dev['name'] for dev in get_devices() if dev['is_input']]
-    return list(sorted(names))
-
-
-def get_output_names():
-    names = [dev['name'] for dev in get_devices() if dev['is_output']]
-    return list(sorted(names))
-
-
-def get_ioport_names():
-    names = set(get_input_names()) & set(get_output_names())
-    return list(sorted(names))
-
-
-def open_input(name=None):
-    return Input(name)
-
-
-def open_output(name=None):
-    return Output(name)
-
-
-def open_ioport(name=None):
-    return IOPort(Input(name), Output(name))
 
 class PortCommon(object):
     """

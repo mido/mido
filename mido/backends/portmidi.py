@@ -9,9 +9,9 @@ http://portmedia.sourceforge.net/portmidi/doxygen/
 """
 import time
 
-from .parser import Parser
-from .messages import Message
-from .ports import BaseInput, BaseOutput, IOPort
+from ..parser import Parser
+from ..messages import Message
+from ..ports import BaseInput, BaseOutput, IOPort
 
 class PortMidiInitializer:
     """
@@ -50,95 +50,30 @@ def _check_error(return_value):
     """
     if return_value < 0:
         raise IOError(pm.lib.Pm_GetErrorText(return_value))
-
-
-class DeviceInfo(object):
-    """
-    Info about a PortMidi device.
-
-        device_id   an integer
-        interface   interface name (for example 'ALSA')
-        name        device name (the same as port name)
-        is_input    boolean, True if this is an input device
-        is_output   boolean, True if this is an output device
-    """
-
-    def __init__(self, device_id):
-        """Create a new DeviceInfo object."""
-        info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
-        if not info_pointer:
-            raise IOError('PortMidi device with id={} not found'.format(
-                          device_id))
-        info = info_pointer.contents
-        
-        self.device_id = device_id
-        self.interface = info.interface.decode('utf-8')
-        self.name = info.name.decode('utf-8')
-        self.is_input = info.is_input
-        self.is_output = info.is_output
-        self.opened = bool(info.opened)
- 
-    def __repr__(self):
-        if self.opened:
-            state = 'open'
-        else:
-            state = 'closed'
-
-        if self.is_input:
-            device_type = 'input'
-        else:
-            device_type = 'output'
-
-        return "<{state} {device_type} device '{self.name}'" \
-            " '{self.interface}'>" \
-            "".format(**locals())
+    
+    
+def _get_device(device_id):
+    device = {}
+    
+    info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
+    if not info_pointer:
+        raise IOError('PortMidi device with id={} not found'.format(
+            device_id))
+    info = info_pointer.contents
+     
+    return {
+        'id': device_id,
+        'interface': info.interface.decode('utf-8'),
+        'name': info.name.decode('utf-8'),
+        'is_input': info.is_input,
+        'is_output': info.is_output,
+        'opened': bool(info.opened),
+    }
 
 
 def get_devices():
-    """Return a list of DeviceInfo objects, one for each PortMidi device."""
-    devices = []
-    for device_id in range(pm.lib.Pm_CountDevices()):
-        devices.append(DeviceInfo(device_id))
-
-    return devices
-
-
-def get_input_names():
-    """Return a sorted list of all input port names.
-
-    These names can be passed to Input().
-    """
-    names = [device.name for device in get_devices() if device.is_input]
-    return list(sorted(names))
-
-
-def get_output_names():
-    """Return a sorted list of all input port names.
-
-    These names can be passed to Output().
-    """
-    names = [device.name for device in get_devices() if device.is_output]
-    return list(sorted(names))
-
-
-def get_ioport_names():
-    """Return the names of all ports that allow input and output."""
-    return sorted(set(get_input_names()) & set(get_output_names()))
-
-
-def open_input(name=None):
-    """Open an input port."""
-    return Input(name)
-
-
-def open_output(name=None):
-    """Open an output port."""
-    return Output(name)
-
-
-def open_ioport(name=None):
-    """Open a port for input and output."""
-    return IOPort(Input(name), Output(name))
+    """Return a list of devices as dictionaries."""
+    return [_get_device(i) for i in range(pm.lib.Pm_CountDevices())]
 
 
 class PortCommon(object):
@@ -153,11 +88,11 @@ class PortCommon(object):
 
         if self.name is None:
             self.device = self._get_default_device(opening_input)
-            self.name = self.device.name
+            self.name = self.device['name']
         else:
             self.device = self._get_named_device(self.name, opening_input)
 
-        if self.device.opened:
+        if self.device['opened']:
             if opening_input:
                 devtype = 'input'
             else:
@@ -166,7 +101,7 @@ class PortCommon(object):
                                                                 self.name))
         
         # Make a shortcut, since this is so long
-        device_id = self.device.device_id
+        device_id = self.device['id']
 
         if opening_input:
             _check_error(pm.lib.Pm_OpenInput(
@@ -188,7 +123,7 @@ class PortCommon(object):
                          0))         # Latency
 
     def _get_device_type(self):
-        return self.device.interface
+        return self.device['interface']
 
     def _get_default_device(self, get_input):
         if get_input:
@@ -199,23 +134,23 @@ class PortCommon(object):
         if device_id < 0:
             raise IOError('no default port found')
         
-        return DeviceInfo(device_id)
+        return _get_device(device_id)
 
     def _get_named_device(self, name, get_input):
         # Look for the device by name and type (input / output)
         for device in get_devices():
-            if device.name != name:
+            if device['name'] != name:
                 continue
 
             # Skip if device is the wrong type
             if get_input:
-                if device.is_output:
+                if device['is_output']:
                     continue
             else:
-                if device.is_input:
+                if device['is_input']:
                     continue
 
-            if device.opened:
+            if device['opened']:
                 raise IOError('port already opened: {!r}'.format(name))
 
             return device
@@ -224,7 +159,7 @@ class PortCommon(object):
 
     def _close(self):
         _check_error(pm.lib.Pm_Close(self._stream))
-        self.device.opened = False
+        self.device['opened'] = False
 
 class Input(PortCommon, BaseInput):
     """

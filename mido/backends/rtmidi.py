@@ -2,15 +2,6 @@
 Experimental wrapper for python-rtmidi:
 https://pypi.python.org/pypi/python-rtmidi/
 
-Used just like the portmidi ports:
-
-import mido
-import mido_rtmidi
-
-with mido_rtmidi.open_output() as port:
-    port.send(mido.Messsage('note_on'))
-
-
 This module only supports a limited number of MIDI message types,
 as listed below. (I am not sure where this limitation arises.)
 
@@ -52,11 +43,31 @@ pitchwheel channel=0 pitch=0 time=0
 songpos pos=0 time=0
 song_select song=0 time=0
 """
-
+from __future__ import absolute_import
 import time
 import mido
 import rtmidi
-from mido.ports import BaseInput, BaseOutput, IOPort
+from ..ports import BaseInput, BaseOutput, IOPort
+
+def get_devices():
+    devices = []
+
+    input_names = set(rtmidi.MidiIn().get_ports())
+    output_names = set(rtmidi.MidiOut().get_ports())
+
+    for name in sorted(input_names | output_names):
+        devices.append({
+                'name' : name,
+                'is_input' : name in input_names,
+                'is_output' : name in output_names,
+                })
+
+    return devices
+
+def get_output_names():
+    rt = rtmidi.MidiOut()
+    return rt.get_ports()
+
 
 class PortCommon(object):
     def _open(self, **kwargs):
@@ -101,29 +112,3 @@ class Input(PortCommon, BaseInput):
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
         self.rt.send_message(message.bytes())
-
-
-def open_input(name=None):
-    return Input(name)
-
-
-def open_output(name=None):
-    return Input(name)
-
-
-def open_input(name=None):
-    return IOPort(Input(name), Output(name))
-
-
-def get_input_names():
-    rt = rtmidi.MidiIn()
-    return rt.get_ports()
-
-
-def get_output_names():
-    rt = rtmidi.MidiOut()
-    return rt.get_ports()
-
-
-def get_ioport_names():
-    return list(set(input_names()) & set(output_names))
