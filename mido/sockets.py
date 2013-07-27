@@ -41,8 +41,8 @@ class PortServer:
         """
         Accept a connection from a client.
 
-        Will block until there is a new connection, and return
-        a SocketPort object.
+        Will block until there is a new connection, and then return a
+        SocketPort object.
 
         If block=False, None will be returned if there is no
         new connection.
