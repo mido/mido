@@ -4,7 +4,7 @@ Forward all messages from one or more ports to server.
 
 Example:
 
-    ./connect localhost:8080 'Keyboard MIDI 1'
+    python connect.py localhost:8080 'Keyboard MIDI 1'
 """
 import sys
 import mido
