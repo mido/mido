@@ -98,6 +98,27 @@ class SocketPort(BaseInput, BaseOutput):
 
             if self.closed:
                 break
-            
-def connect(host, port):
-    return SocketPort(host, port)
+
+def parse_address(address):
+    """Parse and address on the format hostname:port.
+
+    Returns a tuple (hostname, port). Raises ValueError if format is
+    invalid or port is not an integer or out of range.
+    """
+    words = address.split(':')
+    if len(words) != 2:
+        raise ValueError('address must contain exactly one colon')
+
+    hostname = words[0]
+    port = words[1]
+
+    try:
+        port = int(port)
+    except ValueError:
+        raise ValueError('port number must be an integer')
+
+    # Note: port 0 is not allowed.
+    if not 0 < port < (2**16):
+        raise ValueError('port number out of range')
+
+    return (hostname, port)

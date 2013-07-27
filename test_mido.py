@@ -333,6 +333,21 @@ class TestParser(unittest.TestCase):
         messages = mido.parse_all([0xf6])  # Tune request.
         self.assertTrue(len(messages) == 1)
         self.assertTrue(messages[0].type == 'tune_request')
- 
+
+class TestSockets(unittest.TestCase):
+    
+    def test_parse_address(self):
+        from mido.sockets import parse_address
+
+        self.assertTrue(('', 8080) == parse_address(':8080'))
+        self.assertTrue(('localhost', 8080) == parse_address('localhost:8080'))
+        self.assertRaises(ValueError, parse_address, ':to_many_colons:8080')
+        self.assertRaises(ValueError, parse_address, 'only_hostname')
+        self.assertRaises(ValueError, parse_address, '')
+        self.assertRaises(ValueError, parse_address, ':')
+        self.assertRaises(ValueError, parse_address, ':shoe')
+        self.assertRaises(ValueError, parse_address, ':0')
+        self.assertRaises(ValueError, parse_address, ':65536')  # Out of range.
+
 if __name__ == '__main__':
     unittest.main()
