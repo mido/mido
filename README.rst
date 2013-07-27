@@ -54,7 +54,8 @@ Alternative backends for pygame.midi and python-rtmidi are included in
 the extras directory. You can choose which backend to use with an
 environment variable::
 
-    MIDO_BACKEND=mido.backends.rtmidi python send.py
+    export MIDO_BACKEND=mido.backends.pygame
+    python some_program.py
 
 
 Installing
