@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Open a MIDI file and print every message in every track.
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from mido import Message
 from mido.ports import BaseInput, BaseOutput
 
