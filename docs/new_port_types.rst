@@ -74,3 +74,39 @@ before calling your implementation specific method. It also means you
 don't have to worry about adding doc strings.
 
 See ``mido.portmidi.py`` and ``extras/mido_rtmidi.py`` for full examples.
+
+
+Writing a New Backend
+----------------------
+
+Mido comes with backends for PortMidi, python-rtmidi and pygame.midi,
+but you can easily add your own. All you need to do is to write a
+module with the following::
+
+    Input -- an input class like above (optional)
+    Output -- an output class like above (optional
+    IOPort -- an I/O port class (if not present, IOPort will be used as
+              a wrapper
+    get_devices() -- returns a list of devices, as described below
+
+``get_devices()`` must return a list of devices, where each device is
+dictionary with at least these three values::
+
+    {
+      'name': 'Some MIDI Input Port',
+      'is_input': True,
+      'is_output': False,
+    }
+
+These will be used by ``get_input_names()`` etc.. 
+
+If your backend module is ``my_new_backend.py``, you can then use your
+new backend like this::
+
+    export MIDO_BACKEND=my_new_backend
+    python some_mido_program.py
+
+and all the usual functions, like ``open_input`` and
+``get_output_names()`` will use your backend.
+
+See mido/backends/ for examples.
