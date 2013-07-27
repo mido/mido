@@ -43,6 +43,8 @@ class BasePort(object):
         is garbage collected.
         """
         if not self.closed:
+            if hasattr(self, 'reset'):
+                self.reset()
             self._close()
             self.closed = True
 
