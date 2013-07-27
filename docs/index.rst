@@ -43,8 +43,8 @@ Contents:
    :maxdepth: 2
 
    why_mido
-   tutorial
    installing
+   tutorial
    message_types
    parsing_and_encoding
    socket_ports
