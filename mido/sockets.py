@@ -107,7 +107,12 @@ class SocketPort(BaseInput, BaseOutput):
                     message = parse_string(line)
                     self._messages.append(message)
             else:
-                byte = self.file.read(1)
+                try:
+                    byte = self.file.read(1)
+                except socket.error:
+                    # Todo: handle this more gracefully?
+                    self.close()
+                    break
                 if byte == '':
                     # End of stream.
                     self.close()
