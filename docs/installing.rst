@@ -31,3 +31,4 @@ If you want to use ports, you need the PortMidi shared library. The
 Ubuntu package is called ``libportmidi-dev``.  PortMidi is also
 available in `MacPorts <http://www.macports.org/>`_ and `Homebrew
 <http://mxcl.github.io/homebrew/>`_ under the name ``portmidi``.
+
