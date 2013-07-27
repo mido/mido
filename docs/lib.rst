@@ -63,3 +63,19 @@ Ports
 
 .. autofunction:: multi_receive
 .. autofunction:: multi_iter_pending
+
+
+Socket Ports
+-------------
+
+.. module:: mido.sockets
+
+.. autoclass:: PortServer
+   :members:
+   :inherited-members:
+
+.. autoclass:: SocketPort
+   :members:
+   :inherited-members:
+
+.. autofunction:: parse_address

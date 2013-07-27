@@ -33,12 +33,8 @@ designed to be as straight forward and Pythonic as possible.
 The latest version of the source code is available at:
 http://github.com/olemb/mido/
 
-
-Community:
-
+(Not very active) subreddit:
 http://reddit.com/r/midopy/
-
-IRC channel #mido on freenode.net
 
 
 Contents:
