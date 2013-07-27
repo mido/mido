@@ -49,11 +49,12 @@ Contents:
    why_mido
    tutorial
    installing
-   lib
    message_types
    parsing_and_encoding
-   string_encoding
+   socket_ports
    new_port_types
+   string_encoding
+   lib
    about_midi
    license
    author
