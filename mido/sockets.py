@@ -66,6 +66,7 @@ class PortServer:
 
 class SocketPort(BaseInput, BaseOutput):
     def __init__(self, hostname, port, conn=None, string_protocol=False):
+        self.name = '{}:{:d}'.format(hostname, port)
         self.closed = False
         self._parser = Parser()
 
@@ -87,7 +88,7 @@ class SocketPort(BaseInput, BaseOutput):
             self.file = self.socket.makefile('r+', bufsize=0)
 
     def _get_device_type(self):
-        return '{}:{:d}'.format(self.hostname, self.port)
+        return 'socket'
 
     def fileno(self):
         return self.socket.fileno()
