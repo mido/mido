@@ -60,8 +60,10 @@ with an environment variable::
     export MIDO_BACKEND=mido.backends.pygame
     python some_program.py
 
-Like PortMidi, these are also loaded on demand. New backends can be
-written and used with Mido by setting this environment variable.
+Like PortMidi, these are also loaded on demand. If you write a new
+backend, it can be used with Mido by setting ``MIDO_BACKEND``::
+
+    export MIDO_BACKEND=some_custom_backend_module
 
 
 Installing
