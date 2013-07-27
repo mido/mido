@@ -3,8 +3,8 @@
 Library Reference
 ==================
 
-Creating Message and Opening Ports
------------------------------------
+Opening Ports
+--------------
 
 .. module:: mido
 
