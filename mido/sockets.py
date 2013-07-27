@@ -22,18 +22,16 @@ def _is_readable(socket):
 class PortServer:
     # Todo: queue size.
 
-    def __init__(self, host, port, backlog=1):
-        self.host = host
+    def __init__(self, hostname, port, backlog=1):
+        self.hostname = hostname
         self.port = port
 
-        #if self.host == '':
-        #    family = socket.AF_UNIX
-        #else:
+        # family = socket.AF_UNIX
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self.socket.setblocking(True)
-        self.socket.bind((self.host, self.port))
+        self.socket.bind((self.hostname, self.port))
         self.socket.listen(backlog)
     
     def fileno(self):
