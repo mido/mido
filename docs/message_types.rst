@@ -1,6 +1,9 @@
 Message Types
 ==============
 
+Supported Messages
+-------------------
+
 ==============  ==============================
 Name            Keyword Arguments / Attributes
 ==============  ==============================
@@ -28,6 +31,10 @@ undefined_fd
 active_sensing
 reset
 ==============  ==============================
+
+The ``undefined_*`` messages will be received with no data
+bytes. ``undefined_f1`` is used for time codes, and may be implemented
+at some point in the future.
 
 
 Parameter Types

@@ -249,3 +249,27 @@ port each message arrived on::
 
     for port, message in multi_receive(ports, yield_ports=True):
         print('{} arrived on {}'.format(message, port))
+
+
+Hanging Notes
+--------------
+
+If you send a ``note_on``, but for some reason don't send the
+corresponding ``note_off``, you will be left with a hanging note.
+
+To deal with this, you can call either the ``reset()`` or ``panic()``
+methods on the output port::
+
+    # One of these should sort it out.
+    port.reset()
+    port.panic()
+
+``reset()`` will send "All Notes Off" and "Reset All Controllers" on
+all channels, while the more brutal ``panic()`` will send "All Sounds
+Off", which tells the recepient to abruptly cut off all sounding notes
+(and in some cases reverb and other effects), even if notes are still
+in the release stage or the sustain pedal is held down or
+
+It can sometimes be useful to call ``reset()`` right before close,
+to ensure that all notes are indeed turned off.
+
