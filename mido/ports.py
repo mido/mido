@@ -15,6 +15,8 @@ from collections import deque
 from .parser import Parser
 from .messages import Message
 
+_sleep_time = 0.001  # How many seconds to sleep before polling again.
+
 class BasePort(object):
     """
     Abstract base class for Input and Output ports.
@@ -146,7 +148,7 @@ class BaseInput(BasePort):
 
         # Wait for a message to arrive.
         while 1:
-            time.sleep(0.001)
+            time.sleep(_sleep_time)
             if self.pending():
                 # pending() has read at least one message from the
                 # device. Return the first message.
@@ -308,7 +310,7 @@ def multi_receive(ports, yield_ports=False):
                 else:
                     yield message
 
-        time.sleep(0.001)
+        time.sleep(_sleep_time)
 
 
 def multi_iter_pending(ports, yield_ports=False):
