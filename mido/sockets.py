@@ -9,6 +9,16 @@ from .parser import Parser
 from .ports import BaseInput, BaseOutput
 from .messages import parse_string
 
+def _is_readable(socket):
+    """Return True if there is data to be read on the socket."""
+
+    timeout = 0
+    (rlist, wlist, elist) = select.select(
+        [socket.fileno()], [], [], timeout)
+    
+    return bool(rlist)
+
+
 class PortServer:
     # Todo: queue size.
 
@@ -25,24 +35,49 @@ class PortServer:
         self.socket.setblocking(True)
         self.socket.bind((self.host, self.port))
         self.socket.listen(backlog)
+    
+    def fileno(self):
+        return self.socket.fileno()
 
-    def accept(self):
+    def accept(self, block=True):
+        """
+        Accept a connection from a client.
+
+        Will block until there is a new connection, and return
+        a SocketPort object.
+
+        If block=False, None will be returned if there is no
+        new connection.
+        """
+        if not block and not _is_readable(self):
+            return None
+
         conn, (host, port) = self.socket.accept()
         return SocketPort(host, port, conn=conn)
 
     # Todo: add __enter__() and __exit__().
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        # Todo: clean up connections?
+        return False
+
 class SocketPort(BaseInput, BaseOutput):
-    def __init__(self, host, port, conn=None, string_protocol=False):
+    def __init__(self, hostname, port, conn=None, string_protocol=False):
         self.closed = False
         self._parser = Parser()
+
+        self.hostname = hostname
+        self.port = port
         self._messages = self._parser._parsed_messages
         self.string_protocol = string_protocol
 
         if conn is None:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setblocking(True)
-            self.socket.connect((host, port))
+            self.socket.connect((hostname, port))
         else:
             self.socket = conn
 
@@ -51,13 +86,15 @@ class SocketPort(BaseInput, BaseOutput):
         else:
             self.file = self.socket.makefile('r+', bufsize=0)
 
+    def _get_device_type(self):
+        return '{}:{:d}'.format(self.hostname, self.port)
+
+    def fileno(self):
+        return self.socket.fileno()
+
     def _pending(self):
         while 1:
-            timeout = 0
-            (rlist, wlist, elist) = select.select(
-                [self.socket.fileno()], [], [self.socket.fileno()], timeout)
-
-            if not rlist:
+            if not _is_readable(self):
                 break
 
             if self.string_protocol:
