@@ -92,13 +92,12 @@ __all__ = []
 
 def get_backend_name():
     """Return name of the current backend."""
-    return os.environ.get('MIDO_BACKEND', 'portmidi')    
+    return os.environ.get('MIDO_BACKEND', 'mido.backends.portmidi')    
 
 def _get_backend(name=None):
     if name is None:
         name = get_backend_name()
-    return importlib.import_module('.backends.{}'.format(name),
-                                   package='mido')
+    return importlib.import_module(name)
 
 def open_input(name=None, **kwargs):
     """Open an input port."""
