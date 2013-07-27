@@ -90,7 +90,7 @@ class BaseInput(BasePort):
     (See portmidi.py for an example of how to do this.)
     """
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, **kwargs):
         """Create an input port.
 
         name is the port name, as returned by input_names(). If
@@ -98,7 +98,7 @@ class BaseInput(BasePort):
         """
         self._parser = Parser()
         self._messages = self._parser._parsed_messages  # Shortcut.
-        BasePort.__init__(self, name)
+        BasePort.__init__(self, name, **kwargs)
 
     def pending(self):
         """Return how many messages are ready to be received.
@@ -166,13 +166,13 @@ class BaseOutput(BasePort):
     portmidi.py for how to do this.)
     """
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, **kwargs):
         """Create an output port
         
         name is the port name, as returned by output_names(). If
         name is not passed, the default output is used instead.
         """
-        BasePort.__init__(self, name)
+        BasePort.__init__(self, name, **kwargs)
 
     def _send(self, message):
         raise ValueError('_send() is not implemented')
