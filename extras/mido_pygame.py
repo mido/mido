@@ -21,7 +21,7 @@ def get_device(device_id):
 def get_devices():
     midi.init()
 
-    return [get_device() for device_id in range(midi.get_count())]
+    return [get_device(device_id) for device_id in range(midi.get_count())]
 
 
 def get_input_names():
