@@ -270,7 +270,7 @@ class IOPort(object):
             state, self.name, self.input._get_device_type())
 
 
-class Tee(BaseOutput):
+class Broadcast(BaseOutput):
     """
     A port that wraps around a set of ports and sends messages to all of them.
 
