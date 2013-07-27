@@ -50,6 +50,7 @@ Contents:
    tutorial
    message_types
    parsing_and_encoding
+   midi_files
    socket_ports
    new_port_types
    string_encoding
