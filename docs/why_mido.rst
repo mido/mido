@@ -97,12 +97,12 @@ it's easy to write code to receive messages from multiple ports (such
 as ``multi_receive()``) or to apply filters to a port by writing and
 chaining generators.
 
-With duck typing, you can write pseudo ports to, for example, generate
-random messages, sends incoming messages to different ports based on
-MIDI channel or note number, broadcast incoming messages to a list of
-ports (``ports.Broadcast``) or turn one channel monophonic
-(``filters.Monophonic``). These can then be plugged in wherever a
-normal port goes, as long as only the implemented methods are called.
+With subclassing or duck typing, you can write pseudo ports to, for
+example, generate random messages, sends incoming messages to
+different ports based on MIDI channel or note number, broadcast
+incoming messages to a list of ports (``ports.Broadcast``) or turn one
+channel monophonic (``filters.Monophonic``). These can then be plugged
+in wherever a normal port goes.
 
 
 The Mido Toolbox
