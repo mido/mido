@@ -12,12 +12,14 @@ from pygame import midi
 from ..ports import BaseInput, BaseOutput
 
 def get_device(device_id):
-    midi.init()
-    
+    midi.init()    
+
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
     info = dict(zip(keys, midi.get_device_info(device_id)))
     info['id'] = device_id
+    info['name'] = info['name'].decode('utf-8') # Todo: correct encoding?
     return info
+
 
 def get_devices():
     midi.init()
