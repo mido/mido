@@ -9,7 +9,7 @@ http://www.pygame.org/docs/ref/midi.html
 from __future__ import absolute_import
 import atexit
 from pygame import midi
-from ..ports import BaseInput, BaseOutput, IOPort
+from ..ports import BaseInput, BaseOutput
 
 def get_device(device_id):
     midi.init()

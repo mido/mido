@@ -47,7 +47,7 @@ from __future__ import absolute_import
 import time
 import mido
 import rtmidi
-from ..ports import BaseInput, BaseOutput, IOPort
+from ..ports import BaseInput, BaseOutput
 
 def get_devices():
     devices = []

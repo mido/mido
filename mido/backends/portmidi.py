@@ -11,7 +11,7 @@ import time
 
 from ..parser import Parser
 from ..messages import Message
-from ..ports import BaseInput, BaseOutput, IOPort
+from ..ports import BaseInput, BaseOutput
 
 class PortMidiInitializer:
     """
