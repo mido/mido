@@ -30,6 +30,8 @@ designed to be as straight forward and Pythonic as possible.
     >>> msg2 = msg.copy(program=9)
     <program_change message channel=2, program=9, time=0>
 
+Mido is short for MIDi Objects.
+
 The latest stable version of the source code is available at:
 http://github.com/olemb/mido/
 
