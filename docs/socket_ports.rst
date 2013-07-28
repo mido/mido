@@ -22,14 +22,34 @@ A server can be set up with::
     from mido.sockets import PortServer
 
     with PortServer('', 8080) as server:
+        for message in server:
+            print(message)
+
+This will print all messages from a client until the client
+disconnects, and then wait for another client. ``client`` is a
+``SocketPort`` object. If you want to receive messages from more
+than one client at a time, you can do::
+
+    with PortServer('', 8080, backlog=10) as server:
+        for message in server:
+            print(message)
+
+This will allow 10 clients to connect at once, and you will receive
+messages from all of them in the for loop.
+
+A more wordy way of writing the first example is::
+
+    with PortServer('', 8080) as server:
         while 1:
             client = server.accept()
+            print('New connection from')
             for message in client:
                 print(message)
 
-This will print all messages from the client until the client
-disconnects, and then wait for another client. ``client`` is a
-``SocketPort`` object.
+It gets even more wordy if you want to handle more than one connection
+at a time, but ``for message in server:`` does all of this for you
+(unless you need to treat each client differently, or have other
+special needs).
 
 
 Connecting to a Server
