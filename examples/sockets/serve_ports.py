@@ -1,25 +1,28 @@
 #!/usr/bin/env python
 """
-Server one or more output ports.
+Serve one or more output ports.
 
 Every message received on any of the connected sockets will be sent to
-all ports.
+every output port.
 
-For example:
+Example:
 
-    python serve.py :8080 'SH-201' 'SD-20 Part A'
+    python serve_ports.py :8080 'SH-201' 'SD-20 Part A'
+
+This simply iterates through all incoming messages. More advanced and
+flexible servers can be written by calling the ``accept()`` and
+``accept(block=False) methods directly. See PortServer.__init__() for
+an example.
 """
 import sys
-import time
 import mido
 from mido import sockets
-from mido.ports import multi_iter_pending
 
 # Todo: do this with a argument parser.
 out = mido.ports.Broadcast([mido.open_output(name) for name in sys.argv[2:]])
 
 (hostname, port) = sockets.parse_address(sys.argv[1])
-with sockets.PortServer(hostname, port, backlog=10) as server:
+with sockets.PortServer(hostname, port) as server:
     for message in server:
         print('Received {}'.format(message))
         out.send(message)

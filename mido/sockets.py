@@ -2,11 +2,12 @@
 Experimental MIDI over TCP/IP.
 """
 
+import time
 import socket
 import select
 from collections import deque
 from .parser import Parser
-from .ports import BaseInput, BaseOutput
+from .ports import BaseInput, BaseOutput, multi_iter_pending
 from .messages import parse_string
 
 def _is_readable(socket):
@@ -59,10 +60,11 @@ class PortServer:
     def __iter__(self):
         while 1:
             # Update connection list.
-            client = server.accept(block=False)
+            client = self.accept(block=False)
             if client:
                 self.clients.append(client)
-            self.clients = [client for client in clients if not client.closed]
+            self.clients = [client for client in self.clients \
+                                if not client.closed]
 
             # Receive and send messages.
             for message in multi_iter_pending(self.clients):
