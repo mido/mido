@@ -56,8 +56,8 @@ Contents:
    socket_ports
    new_port_types
    string_encoding
-   lib
    about_midi
+   lib
    license
    author
    acknowledgements

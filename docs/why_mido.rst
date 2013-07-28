@@ -1,9 +1,8 @@
-===========
  Why Mido?
 ===========
 
 Messages as Objects
-===================
+--------------------
 
 Working with MIDI messages by manipulating the bytes is painful::
 
@@ -33,7 +32,7 @@ With Mido, you can instead do::
 
 
 Type and Value Checking
-=======================
+------------------------
 
 Working directly with the bytes is also error prone. While MIDI data
 bytes have a valid range of 0..127, the size of Python integers is only
@@ -75,7 +74,7 @@ This means that a Mido message object is always a valid MIDI message.
 
 
 Flexible and Uniform Ports
-==========================
+---------------------------
 
 Mido Ports are used to send and receive Mido messages. Inside the
 port, anything may happen depending on the implementation, but to the
@@ -106,7 +105,7 @@ in wherever a normal port goes.
 
 
 The Mido Toolbox
-================
+-----------------
 
 Mido is designed as a toolbox of pieces that you can put together in
 any way you like. The pieces are made to be maximally reusable and
