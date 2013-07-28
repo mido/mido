@@ -76,14 +76,14 @@ This means that a Mido message object is always a valid MIDI message.
 Ports
 ------
 
-Ports are used to send and receive Mido messages. Inside the port,
-anything may happen depending on the implementation, but to the user
-all ports look and behave the same.
+Mido Ports are used to send and receive Mido messages. Inside the
+port, anything may happen depending on the implementation, but to the
+user all ports look and behave the same.
 
-This means when you write code that uses ports, you can give it any
-kind of Mido port, and it will be able to use it, no matter if it's a
-PortMidi port, a Queue port, a socket port or any other kind. It won't
-even know the difference.
+This means that when you write code that uses ports, you can give it
+any kind of Mido port, and it will be able to use it, no matter if
+it's a PortMidi port, a Queue port, a socket port or any other
+kind. It won't even know the difference.
 
 Creating a new port type is a simple as subclassing one or both of the
 base ports and overriding a few methods, typically only one to three
@@ -96,4 +96,5 @@ The Mido Toolbox
 
 Mido is designed as a toolbox of pieces that you can put together in
 any way you like. The pieces are made to be maximally reusable and
-composable.
+composable, and to interact well with the rest of Python.
+
