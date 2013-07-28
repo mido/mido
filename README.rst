@@ -60,7 +60,7 @@ with an environment variable::
     export MIDO_BACKEND=mido.backends.pygame
     python some_program.py
 
-Like PortMidi, these are also loaded on demand.
+Like PortMidi, these are loaded on demand.
 
 
 Installing
