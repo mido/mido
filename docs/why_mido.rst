@@ -88,7 +88,7 @@ kind. It won't even know the difference.
 
 Creating a new port type is a simple as subclassing one or both of the
 base ports and overriding a few methods, typically only ``_send()`` or
-``_pending()``, and for some ports ``_open()`` and ``_close()``.
+``_pending()``, and for most ports ``_open()`` and ``_close()``.
 
 While output ports have little but a ``send()`` method, input ports
 have a wide range of methods() to receive or iterate through messages
