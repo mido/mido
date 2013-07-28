@@ -73,7 +73,8 @@ allows the base class to do some type and value checking for you
 before calling your implementation specific method. It also means you
 don't have to worry about adding doc strings.
 
-See ``mido.portmidi.py`` and ``extras/mido_rtmidi.py`` for full examples.
+See ``mido/backends/``, ``mido.ports.py`` and ``mido/sockets.py`` for
+full examples.
 
 
 Writing a New Backend
