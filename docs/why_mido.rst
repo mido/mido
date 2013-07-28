@@ -1,8 +1,9 @@
-Why Mido?
-==========
+===========
+ Why Mido?
+===========
 
 Messages as Objects
---------------------
+===================
 
 Working with MIDI messages by manipulating the bytes is painful::
 
@@ -32,7 +33,7 @@ With Mido, you can instead do::
 
 
 Type and Value Checking
-------------------------
+=======================
 
 Working directly with the bytes is also error prone. While MIDI data
 bytes have a valid range of 0..127, the size of Python integers is only
@@ -73,8 +74,8 @@ constructor or the copy() method::
 This means that a Mido message object is always a valid MIDI message.
 
 
-Ports
-------
+Flexible and Uniform Ports
+==========================
 
 Mido Ports are used to send and receive Mido messages. Inside the
 port, anything may happen depending on the implementation, but to the
@@ -90,11 +91,24 @@ base ports and overriding a few methods, typically only one to three
 (``_send()`` or ``_receive()``, and for some ports ``_open()`` and
 ``_close()``).
 
+While output ports have little but a ``send()`` method, input ports
+have a wide range of methods() to receive or iterate through messages
+in a blocking or nonblocking way. Since all ports behave the same way,
+it's easy to write code to receive messages from multiple ports (such
+as ``multi_receive()``) or to apply filters to a port by writing and
+chaining generators.
+
+With duck typing, you can write pseudo ports to, for example, generate
+random messages, sends incoming messages to different ports based on
+MIDI channel or note number, broadcast incoing messages to a list of
+ports (``ports.Broadcast``) or turn one channel monophonic
+(``filters.Monophonic``). They can then be plugged in wherever a
+normal port goes, as long as only the implemented methods are called.
+
 
 The Mido Toolbox
------------------
+================
 
 Mido is designed as a toolbox of pieces that you can put together in
 any way you like. The pieces are made to be maximally reusable and
 composable, and to interact well with the rest of Python.
-
