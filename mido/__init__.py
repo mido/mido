@@ -105,7 +105,8 @@ def open_input(name=None, **kwargs):
     If the environment variable MIDO_DEFAULT_INPUT is set,
     if will override the default port.
     """
-    name = os.environ.get('MIDO_DEFAULT_INPUT', None)
+    if name is None:
+        name = os.environ.get('MIDO_DEFAULT_INPUT', None)
     return _get_backend().Input(name, **kwargs)
 
 def open_output(name=None, **kwargs):
@@ -114,7 +115,8 @@ def open_output(name=None, **kwargs):
     If the environment variable MIDO_DEFAULT_OUTPUT is set,
     if will override the default port.
     """
-    name = os.environ.get('MIDO_DEFAULT_OUTPUT', None)
+    if name is None:
+        name = os.environ.get('MIDO_DEFAULT_OUTPUT', None)
     return _get_backend().Output(name, **kwargs)
 
 def open_ioport(name=None, **kwargs):
@@ -123,7 +125,8 @@ def open_ioport(name=None, **kwargs):
     If the environment variable MIDO_DEFAULT_IOPORT is set,
     if will override the default port.
     """
-    name = os.environ.get('MIDO_DEFAULT_IOPORT', None)
+    if name is None:
+        name = os.environ.get('MIDO_DEFAULT_IOPORT', None)
     backend = _get_backend()
     if hasattr(backend, 'IOPort'):
         return backend.IOPort(name, **kwargs)
