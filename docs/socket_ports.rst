@@ -38,6 +38,8 @@ Connecting to a Server
 You can connect to a server by creating a ``SocketPort``, passing the
 host name and port as arguments::
 
+    from mido.sockets import SocketPort
+
     server = SocketPort('localhost', 8080)
     server.send(mido.Message('program_change', program=20))
     server.close()
