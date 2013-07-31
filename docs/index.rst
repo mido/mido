@@ -38,9 +38,6 @@ http://github.com/olemb/mido/
 The latest development version (incomplete and probably buggy) can
 be found at: http://github.com/olemb/mido/tree/develop/
 
-A (not very active) subreddit:
-http://reddit.com/r/midopy/
-
 
 Contents:
 
