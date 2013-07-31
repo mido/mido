@@ -400,6 +400,10 @@ class MidiFile:
             if message.type == 'set_tempo':
                 tempo = message.tempo
 
+    def __iter__(self):
+        for message in self.play():
+            yield message
+
     def __enter__(self):
         return self
 

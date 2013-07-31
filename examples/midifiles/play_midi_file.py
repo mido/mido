@@ -11,11 +11,16 @@ import sys
 import mido
 from mido.midifiles import MidiFile
 
-with mido.open_output(sys.argv[1]) as output:
+if len(sys.argv) == 3:
+    port_name = sys.argv[2]
+else:
+    port_name = None
+
+with mido.open_output(port_name) as output:
     try:
         print(output)
-        with MidiFile(sys.argv[2]) as midi_file:
-            for message in midi_file.play():
+        with MidiFile(sys.argv[1]) as midi_file:
+            for message in midi_file:
                 print(message)
                 output.send(message)
     except KeyboardInterrupt:
