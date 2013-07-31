@@ -242,35 +242,46 @@ class IOPort(object):
             state, self.name, self.input._get_device_type())
 
 
-def multi_receive(ports):
+def multi_receive(ports, yield_ports=False):
     """Receive messages from multiple ports.
 
-    Generates (message, port) tuples from every port in ports. The
-    ports are polled in random order for fairness, and all messages
-    from each port are yielded before moving on to the next port.
+    Generates messages from ever input port. The ports are polled in
+    random order for fairness, and all messages from each port are
+    yielded before moving on to the next port.
+    
+    If yield_ports=True, (port, message) is yielded instead of just
+    the message.
     """
     ports = list(ports)
     while 1:
         random.shuffle(ports)
         
         for port in ports:
-            for _ in range(port.pending()):
-                yield (port.receive(), port)
+            for message in port.iter_pending():
+                if yield_ports:
+                    yield (port, message)
+                else:
+                    yield message
 
         time.sleep(0.001)
 
 
-def multi_iter_pending(ports):
+def multi_iter_pending(ports, yield_ports=False):
     """Iterate through all pending messages in ports.
 
     ports is an iterable of message ports to check.
 
-    Yields (message, port) tuples until there are no more pending
-    messages. This can be used to receive messages from
-    a set of ports in a non-blocking manner.
+    This can be used to receive messages from a set of ports in a
+    non-blocking manner.
+
+    If yield_ports=True, (port, message) is yielded instead of just
+    the message.
     """
     ports = list(ports)
     random.shuffle(ports)
     for port in ports:
-        for _ in range(port.pending()):
-            yield (port.receive(), port)
+        for message in port.iter_pending():
+            if yield_ports:
+                yield (port, message)
+            else:
+                yield message
