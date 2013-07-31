@@ -1,4 +1,4 @@
-include README.rst CHANGELOG.rst LICENSE test_mido.py run_tests.sh
+include README.rst LICENSE CHANGELOG.rst test_mido.py run_tests.sh
 include examples/*.py
 include extras/*.py
 include tmp/segfault.py
