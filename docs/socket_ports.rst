@@ -5,17 +5,15 @@ About Socket Ports
 -------------------
 
 Socket ports allow you to send MIDI messages over a computer
-network. You set up a server, and clients can then connect to it. The
-end points of the connection are SocketPort objects, which behave like
-any other Mido I/O port.
+network.
 
 The protocol is standard MIDI bytes over a TCP stream.
 
 
-A Simple Server
-----------------
+A Simple Server and Client
+---------------------------
 
-The easiest way to set up a server is to do::
+To get a connection going, you must first set up a server::
 
     with mido.sockets.PortServer('localhost', 8080) as server:
         while 1:
@@ -23,32 +21,37 @@ The easiest way to set up a server is to do::
             for message in client_port:
                 print(message)
 
-This will wait for a client to connect and then iterate over all
-incoming messages until the client disconnects. It will then wait for
-another client.
+You can then connect to the server with::
 
-To connect to the server and send messages::
+    server_port = mido.sockets.connect('localhost', 8080):
 
-    with mido.sockets.connect('localhost', 8080) as server_port:
-        server_port.send(mido.Message('program_change', program=10))
+``client_port`` and ``server_port`` are normal Mido I/O ports with all
+the usual methods, so to send a message to the server, you can simply
+do::
 
-``client_port`` and ``server_port`` behave like normal Mido I/O ports,
-with all the usual methods. (Messages can be sent either way, but it's
-usually best to settle on one way and stick to that.)
+    server_port.send(message)
+
+Messages can be sent either way, but it's usually best to settle on
+one way and stick to that.
 
 
 Handling More Connections
 ---------------------------
 
 The example above has one weakness: only one client can connect at a
-time. The easiest way to get around this is to do::
+time. This is easily fixed by doing::
 
     with mido.sockets.PortServer('localhost', 8080) as server:
         for message in server:
             print(message)
 
 This will iterate over all messages from all clients, and handle
-connections automatically. This is equivalent to::
+connections automatically. The cost is control over connections and
+client ports.
+
+By using the non-blocking version of ``accept()``, you can get more
+control and still allow multiple connections. As an example, here's
+the implementation of ``for message in server`` above::
 
     with mido.sockets.PortServer('localhost', 8080) as server:
         clients = []
