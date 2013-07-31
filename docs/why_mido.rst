@@ -1,5 +1,5 @@
- Why Mido?
-===========
+Why Mido?
+==========
 
 Messages as Objects
 --------------------
