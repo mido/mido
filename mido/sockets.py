@@ -36,6 +36,9 @@ class PortServer:
         self.socket.listen(backlog)
     
     def fileno(self):
+        """Return file descriptor of server socket.
+
+        This is used for select()."""
         return self.socket.fileno()
 
     def accept(self, block=True):
@@ -105,6 +108,9 @@ class SocketPort(BaseInput, BaseOutput):
         return 'socket'
 
     def fileno(self):
+        """Return file descriptor of socket.
+
+        This is used for select()."""
         return self.socket.fileno()
 
     def _pending(self):
