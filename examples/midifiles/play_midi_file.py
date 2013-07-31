@@ -25,3 +25,5 @@ with mido.open_output(port_name) as output:
                 output.send(message)
     except KeyboardInterrupt:
         print()
+        output.reset()
+
