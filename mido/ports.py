@@ -28,12 +28,6 @@ class BasePort(object):
         self._open(**kwargs)
         self.closed = False
 
-    def _send(self, message):
-        pass
-
-    def _pending(self):
-        return 0
-
     def _open(self, **kwargs):
         pass
 
@@ -100,6 +94,9 @@ class BaseInput(BasePort):
         self._parser = Parser()
         self._messages = self._parser._parsed_messages  # Shortcut.
         BasePort.__init__(self, name, **kwargs)
+
+    def _pending(self):
+        return 0
 
     def pending(self):
         """Return how many messages are ready to be received.
@@ -176,7 +173,7 @@ class BaseOutput(BasePort):
         BasePort.__init__(self, name, **kwargs)
 
     def _send(self, message):
-        raise ValueError('_send() is not implemented')
+        pass
 
     def send(self, message):
         """Send a message on the port.
