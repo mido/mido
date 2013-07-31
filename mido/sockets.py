@@ -157,6 +157,14 @@ class SocketPort(BaseInput, BaseOutput):
             if self.closed:
                 break
 
+
+def connect(hostname, port, conn=None, string_protocol=False):
+    """Connect to a socket port server.
+
+    The return value is a SocketPort object."""
+    return SocketPort(hostname, port, string_protocol=string_protocol)
+
+
 def parse_address(address):
     """Parse and address on the format hostname:port.
 

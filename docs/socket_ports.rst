@@ -4,82 +4,63 @@ Socket Ports - MIDI over TCP/IP
 About Socket Ports
 -------------------
 
-Socket ports allow to send MIDI messages over for example the wireless
-network. You can set up a server and send messages to it that you can
-then relay to soft synths or external equipment.
+Socket ports allow you to send MIDI messages over a computer
+network. You set up a server, and clients can then connect to it. The
+end points of the connection are SocketPort objects, which behave like
+any other Mido I/O port.
 
 The protocol is standard MIDI bytes over a TCP stream.
-
-Socket ports behave like any other Mido I/O port, with all the usual
-``send()``, ``receive()``, ``pending()`` and other methods.
 
 
 A Simple Server
 ----------------
 
-A server can be set up with::
+The easiest way to set up a server is to do::
 
-    from mido.sockets import PortServer
-
-    with PortServer('', 8080) as server:
-        for message in server:
-            print(message)
-
-This will print all messages from a client until the client
-disconnects, and then wait for another client. ``client`` is a
-``SocketPort`` object. If you want to receive messages from more
-than one client at a time, you can do::
-
-    with PortServer('', 8080, backlog=10) as server:
-        for message in server:
-            print(message)
-
-This will allow 10 clients to connect at once, and you will receive
-messages from all of them in the for loop.
-
-A more wordy way of writing the first example is::
-
-    with PortServer('', 8080) as server:
+    with mido.sockets.PortServer('localhost', 8080) as server:
         while 1:
-            client = server.accept()
-            print('New connection from')
-            for message in client:
+            client_port = server.accept()
+            for message in client_port:
                 print(message)
 
-It gets even more wordy if you want to handle more than one connection
-at a time, but ``for message in server:`` does all of this for you
-(unless you need to treat each client differently, or have other
-special needs).
+This will wait for a client to connect and then iterate over all
+incoming messages until the client disconnects. It will then wait for
+another client.
+
+To connect to the server and send messages::
+
+    with mido.sockets.connect('localhost', 8080) as server_port:
+        server_port.send(mido.Message('program_change', program=10))
+
+``client_port`` and ``server_port`` behave like normal Mido I/O ports,
+with all the usual methods. (Messages can be sent either way, but it's
+usually best to settle on one way and stick to that.)
 
 
-Connecting to a Server
------------------------
+Handling More Connections
+---------------------------
 
-You can connect to a server by creating a ``SocketPort``, passing the
-host name and port as arguments::
+The example above has one weakness: only one client can connect at a
+time. The easiest way to get around this is to do::
 
-    from mido.sockets import SocketPort
+    with mido.sockets.PortServer('localhost', 8080) as server:
+        for message in server:
+            print(message)
 
-    server = SocketPort('localhost', 8080)
-    server.send(mido.Message('program_change', program=20))
-    server.close()
+This will iterate over all messages from all clients, and handle
+connections automatically. This is equivalent to::
 
-Socket ports are two-way, but usually it's best to send only once way.
+    with mido.sockets.PortServer('localhost', 8080) as server:
+        clients = []
+        while 1:
+            # Update connection list.
+            client = self.accept(block=False)
+            if client:
+                clients.append(client)
+            clients = [client for client in clients if not client.closed]
 
+            # Receive messages from clients.
+            for message in multi_iter_pending(clients):
+                print(message)
 
-Parsing an Address
--------------------
-
-A function is provided for parsing addresses::
-
-    hostname, port = parse_address('localhost:8080')
-
-The ``name`` attribute of a ``SocketPort`` has this format, so you can do::
-
-    >>> port = SocketPort('localhost', 8080)
-    >>> port.name
-    'localhost:8080'
-    >>> port
-    <open I/O port 'localhost:8080' (socket)>
-
-See examples/socket/ for more examples.
+            time.sleep(0.001)
