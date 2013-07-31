@@ -237,6 +237,14 @@ class IOPort(object):
         return self.output.send(message)
     send.__doc__ = BaseOutput.send.__doc__
 
+    def reset(self):
+        return self.output.reset()
+    send.__doc__ = BaseOutput.reset.__doc__
+
+    def panic(self):
+        return self.output.panic()
+    panic.__doc__ = BaseOutput.panic.__doc__
+
     def receive(self):
         return self.input.receive()
     receive.__doc__ = BaseInput.receive.__doc__
