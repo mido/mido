@@ -7,7 +7,7 @@ import socket
 import select
 from collections import deque
 from .parser import Parser
-from .ports import BaseInput, BaseOutput, multi_iter_pending
+from .ports import BaseInput, BaseOutput, multi_iter_pending, _sleep_time
 from .messages import parse_string
 
 def _is_readable(socket):
@@ -70,7 +70,7 @@ class PortServer:
             for message in multi_iter_pending(self.clients):
                 yield message
 
-            time.sleep(0.001)
+            time.sleep(_sleep_time)
 
     def __enter__(self):
         return self
@@ -156,6 +156,8 @@ class SocketPort(BaseInput, BaseOutput):
 
             if self.closed:
                 break
+
+            time.sleep(_sleep_time)
 
 
 def connect(hostname, port, conn=None, string_protocol=False):
