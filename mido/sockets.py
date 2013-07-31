@@ -26,7 +26,6 @@ class PortServer:
     def __init__(self, hostname, port, backlog=1):
         self.hostname = hostname
         self.port = port
-        self.clients = []
 
         # family = socket.AF_UNIX
 
@@ -58,16 +57,16 @@ class PortServer:
     # Todo: add __enter__() and __exit__().
 
     def __iter__(self):
+        clients = []
         while 1:
             # Update connection list.
             client = self.accept(block=False)
             if client:
-                self.clients.append(client)
-            self.clients = [client for client in self.clients \
-                                if not client.closed]
+                clients.append(client)
+            clients = [client for client in clients if not client.closed]
 
             # Receive and send messages.
-            for message in multi_iter_pending(self.clients):
+            for message in multi_iter_pending(clients):
                 yield message
 
             time.sleep(_sleep_time)
