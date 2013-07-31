@@ -1,13 +1,10 @@
-Why Mido?
-==========
-
+ Why Mido?
+===========
 
 Messages as Objects
 --------------------
 
-Have you ever had to write code like this?
-
-::
+Working with MIDI messages by manipulating the bytes is painful::
 
     NOTE_OFF = 0x80
     NOTE_ON = 0x90
@@ -23,9 +20,11 @@ Have you ever had to write code like this?
         channel = message[0] & 0x0f
         print('Got {} on channel {}'.format(message_type, channel))
         
-I have, and let me tell you, I don't ever want to that again.
+This doesn't look much like Python! You could make some utility
+functions on top of this to make it a little bit better, but it won't
+get you far.
 
-That's why I created Mido. Now I can do this instead::
+With Mido, you can instead do::
 
     message = port.receive()
     if message.type in ['note_on', 'note_off']:
