@@ -15,9 +15,21 @@ import mido
 hostname, port = mido.sockets.parse_address(sys.argv[1])
 ports = [mido.open_input(name) for name in sys.argv[2:]]
 
+# A pentatonic scale
+notes = [60, 62, 64, 67, 69, 72]
+on = mido.Message('note_on', velocity=100)
+off = mido.Message('note_off', velocity=100)
+
 with mido.sockets.connect(hostname, port) as server_port:
-    message = mido.Message('program_change')
-    for __ in range(10):
-        message.program = random.randrange(128)
-        server_port.send(message)
-        time.sleep(0.2)
+    try:
+        message = mido.Message('program_change')
+        for __ in range(10):
+            on.note = off.note = random.choice(notes)
+
+            server_port.send(on)
+            time.sleep(0.05)
+
+            server_port.send(off)
+            time.sleep(0.1)
+    finally:
+        server_port.reset()
