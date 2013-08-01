@@ -73,7 +73,7 @@ Some Examples of Messages
 More About MIDI
 ----------------
 
-* `Wikipedia's page on MIDI <https://en.wikipedia.org/wiki/Midi>`_
+* `Wikipedia's page on MIDI <http://en.wikipedia.org/wiki/Midi>`_
 
 * `MIDI Manufacturers Association <http://www.midi.org/>`_
 
