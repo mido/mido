@@ -15,16 +15,15 @@ import mido
 hostname, port = mido.sockets.parse_address(sys.argv[1])
 ports = [mido.open_input(name) for name in sys.argv[2:]]
 
-# A pentatonic scale
-notes = [60, 62, 64, 67, 69, 72]
+notes = [60, 67, 72, 79, 84, 79, 72, 67, 60]
 on = mido.Message('note_on', velocity=100)
 off = mido.Message('note_off', velocity=100)
 
 with mido.sockets.connect(hostname, port) as server_port:
     try:
         message = mido.Message('program_change')
-        for __ in range(10):
-            on.note = off.note = random.choice(notes)
+        for note in notes:
+            on.note = off.note = note
 
             server_port.send(on)
             time.sleep(0.05)
