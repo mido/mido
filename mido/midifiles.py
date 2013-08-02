@@ -25,7 +25,7 @@ from __future__ import print_function
 import sys
 import time
 from collections import deque, namedtuple
-from .messages import BaseMessage
+from .messages import BaseMessage, MIN_PITCHWHEEL
 from . import messages, Message
 
 PY2 = (sys.version_info.major == 2)
@@ -211,6 +211,7 @@ class MetaMessage(BaseMessage):
 # Todo: This should use build_message() from mido.parser
 
 def build_message(bytes, spec=None):
+    # Todo: this should be in messages.py
     if spec is None:
         spec = messages.get_spec(bytes[0])
 
