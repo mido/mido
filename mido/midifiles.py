@@ -22,13 +22,14 @@ http://www.sonicspot.com/guide/midifiles.html
 """
 
 from __future__ import print_function
+import os
 import sys
 import time
 from collections import deque, namedtuple
 from .messages import BaseMessage, build_message, Message, get_spec
 
 PY2 = (sys.version_info.major == 2)
-DEBUG_PARSING = False
+DEBUG_PARSING = bool(os.environ.get('MIDO_DEBUG_PARSING'))
 
 class ByteReader(object):
     def __init__(self, stream):
