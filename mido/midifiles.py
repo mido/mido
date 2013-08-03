@@ -209,9 +209,9 @@ def decode_time_signature(message, data):
 
 
 def decode_key_signature(message, data):
-    key, mode _key_signature_lookup[(decode_signed_byte(data[0]), data[1])]
-        message.key = key
-        message.mode = mode
+    key, mode = _key_signature_lookup[(decode_signed_byte(data[0]), data[1])]
+    message.key = key
+    message.mode = mode
 
 
 def decode_set_tempo(message, data):
