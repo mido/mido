@@ -354,7 +354,7 @@ class MidiFile:
         # Todo: not all messages have running status
         if status_byte < 0x80:
             if self._last_status is None:
-                raise IOError('*** no running status!')
+                raise IOError('*** last_status is None!')
             self.file.unread_byte(status_byte)
             status_byte = self._last_status
         else:
