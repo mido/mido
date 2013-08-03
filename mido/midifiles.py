@@ -303,7 +303,7 @@ class MidiFile:
         self.filename = filename
         self.tracks = []
         self._current_track = []
-        self._running_status = None
+        self._last_status = None
 
         with FileReader(open(filename, 'rb')) as self.file:
             # Read header (16 bytes)
@@ -353,12 +353,12 @@ class MidiFile:
     def _read_message(self, status_byte):
         # Todo: not all messages have running status
         if status_byte < 0x80:
-            if self._running_status is None:
+            if self._last_status is None:
                 raise IOError('*** no running status!')
             self.file.unread_byte(status_byte)
-            status_byte = self._running_status
+            status_byte = self._last_status
         else:
-            self._running_status = status_byte
+            self._last_status = status_byte
 
         try:
             spec = get_spec(status_byte)
@@ -412,7 +412,7 @@ class MidiFile:
         length = self.file.read_long()  # Ignore this.
 
         self._current_track = []
-        self._running_status = None
+        self._last_status = None
 
         start = self.file.tell()
 
