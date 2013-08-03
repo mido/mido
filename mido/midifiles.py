@@ -283,16 +283,6 @@ class MidiFile:
             if not byte & 0x80:
                 break
 
-        # Todo: this is wrong and caused a bug in some files
-        # with pitchwheel messages with running status.
-        while 0:
-            byte = self.file.read_byte()
-            if byte != 0:
-                self.file.unread_byte(byte)
-                break
-            else:
-                pass
-
         return delta
 
     def _read_meta_event(self):
