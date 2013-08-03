@@ -262,7 +262,7 @@ class MidiFile:
         # Todo: not all messages have running status
         if status_byte < 0x80:
             if self._running_status is None:
-                return
+                raise IOError('*** no running status!')
             self.file.unread_byte(status_byte)
             status_byte = self._running_status
         else:
