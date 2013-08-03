@@ -169,9 +169,10 @@ class MetaMessage(BaseMessage):
             try:
                 self.type = self._type_name_lookup[type_]
             except KeyError:
-                # print('  *** Unknown meta message type 0x{:02x}'.format(
-                #         type_))
-                self.type = None  # Todo: we just ignore this for now
+                print('*** Unknown meta message {:02x}, data={!r}'.format(
+                        type_, data))
+                self.type = 'meta_unknown_{:02x}'.format(type_)
+                self.data = data
             self._data = data
 
             try:
