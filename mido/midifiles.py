@@ -259,6 +259,15 @@ class MidiFile:
         return MetaMessage(type, data)
 
     def _read_message(self, status_byte):
+        # Todo: not all messages have running status
+        if status_byte < 0x80:
+            if self._running_status is None:
+                return
+            self.file.unread_byte(status_byte)
+            status_byte = self._running_status
+        else:
+            self._running_status = status_byte
+
         try:
             spec = get_spec(status_byte)
         except LookupError:
@@ -286,13 +295,6 @@ class MidiFile:
 
     def _read_event(self, delta):
         status_byte = self.file.read_byte()
-
-        # Deal with running status.
-        if status_byte < 0x80:
-            status_byte = self._running_status
-            print('    running status: {:02x}'.format(status_byte))
-        else:
-            self._running_status = status_byte
 
         if status_byte == 0xff:
             event = self._read_meta_event()
