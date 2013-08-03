@@ -277,36 +277,30 @@ class MidiFile:
     def _read_sysex(self):
         length = self.file.read_byte()
         data = self.file.read_bytes(length)
-        if data[-1] == 0xf7:
+
+        if data and data[-1] == 0xf7:
             data = data[:-1]
 
         message = Message('sysex', data=data)
-
         return message
-
 
     def _read_event(self, delta):
         status_byte = self.file.read_byte()
 
+        # Deal with running status.
+        if status_byte < 0x80:
+            status_byte = self._running_status
+            print('    running status: {:02x}'.format(status_byte))
+        else:
+            self._running_status = status_byte
+
         if status_byte == 0xff:
             event = self._read_meta_event()
-
         elif status_byte == 0xf0:
             event = self._read_sysex()
-
         elif status_byte == 0xf7:
             event = self._read_sysex()  # Todo: continuation of previous sysex
-
         else:
-            # Deal with running status.
-            if status_byte >= 0x80:
-                self._running_status = status_byte
-            else:
-                self.file.unread_byte(status_byte)
-                status_byte = self._running_status
-                if DEBUG_PARSING:
-                    print('    running status: {:02x}'.format(status_byte))
-
             event = self._read_message(status_byte)
 
         event.time = delta
