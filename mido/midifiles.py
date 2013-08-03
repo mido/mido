@@ -401,7 +401,7 @@ class MidiFile:
         except EOFError:
             pass
 
-    def play(self, yield_meta_messages=False):
+    def play(self, yield_meta_messages=False, tempo_scale=1.0):
         """Play back all tracks.
 
         Yields all messages in all tracks in temporal order, with
@@ -423,14 +423,19 @@ class MidiFile:
 
         # The default tempo is 120 BPM.
         tempo = 500000  # Microseconds per beat.
-        tempo = 5000000 / 1.5
+        # tempo = 5000000 / 1.5
+        tempo /= tempo_scale
 
         elapsed = 0
 
+        # Convert time of all message to absolute time (in ticks)
+        # so they can be sorted
         messages = []
         for i, track in enumerate(self.tracks):
             now = 0
             for message in track:
+                if message.type == 'end_of_track':
+                    break
                 now += message.time
                 messages.append(message.copy(time=now))
 
