@@ -423,29 +423,32 @@ class MidiFile:
 
         # The default tempo is 120 BPM.
         tempo = 500000  # Microseconds per beat.
+        tempo = 5000000 / 1.5
 
-        while tracks:
-            # Remove empty tracks.
-            tracks = [track for track in tracks if track]
-            if not tracks:
-                break  # We ran out of messages.
-            
-            # Find the message with the smallest delta time.
-            __, i = min([(track[0].time, i) \
-                                 for i, track in enumerate(tracks)])
-            message = tracks[i].popleft()
+        elapsed = 0
 
-            if message.time:
-                sleep_time = (tempo * message.time) / 1000000000.0
+        messages = []
+        for i, track in enumerate(self.tracks):
+            now = 0
+            for message in track:
+                now += message.time
+                messages.append(message.copy(time=now))
+
+        messages.sort(key=lambda x: x.time)
+
+        now = 0
+        for message in messages:
+            delta = message.time - now
+            if delta:
+                sleep_time = (tempo * delta) / 1000000000.0
                 time.sleep(sleep_time)
+            if isinstance(message, Message):
+                yield message.copy()
+            now += delta
 
-            if isinstance(message, MetaMessage) and not yield_meta_messages:
-                pass  # Skip meta message.
-            else:
-                yield message.copy(time=0)
-
-            if message.type == 'set_tempo':
-                tempo = message.tempo
+            # Todo: set tempo before or after?
+            # if message.type == 'set_tempo':
+            #     tempo = message.tempo
 
     def __iter__(self):
         for message in self.play():
