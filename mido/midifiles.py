@@ -28,6 +28,7 @@ from collections import deque, namedtuple
 from .messages import BaseMessage, build_message, Message, get_spec
 
 PY2 = (sys.version_info.major == 2)
+DEBUG_PARSING = False
 
 class ByteReader(object):
     def __init__(self, stream):
@@ -49,7 +50,8 @@ class ByteReader(object):
         """Get the next byte from."""
         try:
             byte = self.data.popleft()
-            # print('  {:04x}: {:02x}'.format(self.tell(), byte))
+            if DEBUG_PARSING:
+                print('  {:04x}: {:02x}'.format(self.tell(), byte))
             self._pos += 1
             return byte
         except IndexError:
@@ -312,7 +314,8 @@ class MidiFile:
 
         if event is not None:
             event.time = delta
-            # print('    =>', event)
+            if DEBUG_PARSING:
+                print('    =>', event)
             self._current_track.append(event)
             if event.type == 'end_of_track':
                 raise EndOfTrack()
@@ -335,9 +338,11 @@ class MidiFile:
                 if self.file.tell() - start == length:
                     break
 
-                # print('delta:')
+                if DEBUG_PARSING:
+                    print('delta:')
                 delta = self._read_delta_time()
-                # print('message:')
+                if DEBUG_PARSING:
+                    print('message:')
                 self._read_event(delta)
             except EndOfTrack:
                 break
