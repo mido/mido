@@ -14,7 +14,7 @@ available in the top level module.
 
 import sys
 from collections import deque
-from .messages import Message, MIN_PITCHWHEEL, get_spec
+from .messages import Message, build_message, get_spec
 
 PY2 = (sys.version_info.major == 2)
 
@@ -38,35 +38,6 @@ class Parser(object):
         self._spec = None
         self._bytes = []
 
-    def _build_message(self):
-        type_ = self._spec.type
-
-        if type_ == 'sysex':
-            arguments = {'data': self._bytes[1:]}
-
-        elif type_ == 'pitchwheel':
-            pitch = self._bytes[1]
-            pitch |= ((self._bytes[2] << 7) + MIN_PITCHWHEEL)
-            arguments = {'pitch': pitch}
-
-        elif type_ == 'songpos':
-            pos = self._bytes[1]
-            pos |= (self._bytes[2] << 7)
-            arguments = {'pos': pos}
-
-        else:
-            if self._bytes[0] < 0xf0:
-                # Channel message. Skip channel.
-                attribute_names = self._spec.arguments[1:]
-            else:
-                attribute_names = self._spec.arguments
-
-            arguments = dict(zip(attribute_names, self._bytes[1:]))
-
-        # Note: we're using the status byte here, not type.
-        # If we used type, the channel would be discarded.
-        return Message(self._bytes[0], **arguments)
-
     def _deliver(self, message):
         self._parsed_messages.append(message)
 
@@ -87,7 +58,7 @@ class Parser(object):
             # End of sysex
             if self._spec and self._bytes[0] == 0xf0:
                 # We were inside a sysex message. Deliver it.
-                self._deliver(self._build_message())
+                self._deliver(build_message(self._bytes))
             self._reset()
         else:
             # Start of new message
@@ -123,7 +94,7 @@ class Parser(object):
 
         # If we have a complete messages, deliver it.
         if self._spec and len(self._bytes) == self._spec.length:
-            self._deliver(self._build_message())
+            self._deliver(build_message(self._bytes))
 
             if self._bytes[0] < 0xf0:
                 # Delete data bytes, but keep the

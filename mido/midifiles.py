@@ -25,8 +25,7 @@ from __future__ import print_function
 import sys
 import time
 from collections import deque, namedtuple
-from .messages import BaseMessage, MIN_PITCHWHEEL
-from . import messages, Message
+from .messages import BaseMessage, build_message, Message, get_spec
 
 PY2 = (sys.version_info.major == 2)
 
@@ -208,43 +207,6 @@ class MetaMessage(BaseMessage):
         values = self._get_values()
         return '{} {!r}'.format(self.type, self._get_values())
 
-# Todo: This should use build_message() from mido.parser
-
-def build_message(bytes, spec=None):
-    # Todo: this should be in messages.py
-    if spec is None:
-        spec = messages.get_spec(bytes[0])
-
-    type_ = spec.type
-
-    if type_ == 'sysex':
-        arguments = {'data': bytes[1:]}
-
-    elif type_ == 'pitchwheel':
-        pitch = bytes[1]
-        pitch |= ((bytes[2] << 7) + MIN_PITCHWHEEL)
-        arguments = {'pitch': pitch}
-
-    elif type_ == 'songpos':
-        pos = bytes[1]
-        pos |= ([2] << 7)
-        arguments = {'pos': pos}
-
-    else:
-        if bytes[0] < 0xf0:
-            # Channel message. Skip channel.
-            attribute_names = spec.arguments[1:]
-        else:
-            attribute_names = spec.arguments
-
-        arguments = dict(zip(attribute_names, bytes[1:]))
-
-    # Note: we're using the status byte here, not type.
-    # If we used type, the channel would be discarded.
-    return Message(bytes[0], **arguments)
-
-
-
 
 class MidiFile:
     def __init__(self, filename):
@@ -303,7 +265,7 @@ class MidiFile:
             self._running_status = status_byte
 
         try:
-            spec = messages.get_spec(status_byte)
+            spec = get_spec(status_byte)
         except LookupError:
             sys.exit(1)
 
@@ -312,7 +274,6 @@ class MidiFile:
         for i in range(spec.length - 1):
             bytes.append(self.file.read_byte())
 
-        # message = parse(bytes)
         message = build_message(bytes)
 
         return message

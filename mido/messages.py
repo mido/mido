@@ -272,6 +272,40 @@ class BaseMessage(object):
         return self.bytes() == other.bytes()
 
 
+def build_message(bytes):
+    """Build message from bytes.
+
+    This is used by the parser."""
+
+    spec = get_spec(bytes[0])
+
+    if spec.type == 'sysex':
+        arguments = {'data': bytes[1:]}
+
+    elif spec.type == 'pitchwheel':
+        pitch = bytes[1]
+        pitch |= ((bytes[2] << 7) + MIN_PITCHWHEEL)
+        arguments = {'pitch': pitch}
+
+    elif spec.type == 'songpos':
+        pos = bytes[1]
+        pos |= (bytes[2] << 7)
+        arguments = {'pos': pos}
+
+    else:
+        if bytes[0] < 0xf0:
+            # Channel message. Skip channel.
+            attribute_names = spec.arguments[1:]
+        else:
+            attribute_names = spec.arguments
+
+        arguments = dict(zip(attribute_names, bytes[1:]))
+
+    # Note: we're using the status byte here, not type.
+    # If we used type, the channel would be discarded.
+    return Message(bytes[0], **arguments)
+
+
 class Message(BaseMessage):
     """
     MIDI message class.
