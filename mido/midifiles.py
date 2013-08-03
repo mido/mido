@@ -370,6 +370,16 @@ class MidiFile:
         for i in range(spec.length - 1):
             bytes.append(self.file.read_byte())
 
+        # Value > 127 occurs sometimes.
+        # Clip it so it's inside valid range.
+        # (This is what timidity does.)
+        # if spec.type == 'control_change':
+        #     if bytes[-1] > 127:
+        #         bytes[-1] = 127
+        # elif spec.type in ['note_on', 'note_off']:
+        #     for i in [1, 2]:
+        #         bytes[i] &= 0x7f
+
         message = build_message(bytes)
 
         return message
