@@ -70,7 +70,6 @@ def decode_signed_byte(byte):
     else:
         return byte
 
-
 class ByteReader(object):
     def __init__(self, stream):
         self.stream = stream
@@ -91,6 +90,7 @@ class ByteReader(object):
         """Get the next byte from."""
         try:
             byte = self.data.popleft()
+            # print('  {:04x}: {:02x}'.format(self.tell(), byte))
             self._pos += 1
             return byte
         except IndexError:
@@ -168,8 +168,8 @@ class MetaMessage(BaseMessage):
             try:
                 self.type = self._type_name_lookup[type_]
             except KeyError:
-                print('  *** Unknown meta message type 0x{:02x}'.format(
-                        type_))
+                # print('  *** Unknown meta message type 0x{:02x}'.format(
+                #         type_))
                 self.type = None  # Todo: we just ignore this for now
             self._data = data
 
@@ -283,6 +283,9 @@ class MidiFile:
             if not byte & 0x80:
                 break
 
+        return delta
+
+    def __this_is_a_bug(self):
         while 1:
             byte = self.file.read_byte()
             if byte != 0:
@@ -349,7 +352,7 @@ class MidiFile:
             event = self._read_meta_event()
 
         elif status_byte == 0xf0:
-            event =self._read_sysex()
+            event = self._read_sysex()
 
         elif status_byte == 0xf7:
             event = self._read_sysex()  # Todo: continuation of previous sysex
@@ -359,6 +362,7 @@ class MidiFile:
 
         if event is not None:
             event.time = delta
+            # print('    =>', event)
             self._current_track.append(event)
             if event.type == 'end_of_track':
                 raise EndOfTrack()
@@ -381,7 +385,9 @@ class MidiFile:
                 if self.file.tell() - start == length:
                     break
 
+                # print('delta:')
                 delta = self._read_delta_time()
+                # print('message:')
                 self._read_event(delta)
             except EndOfTrack:
                 break
@@ -418,7 +424,7 @@ class MidiFile:
 
         # The default tempo is 120 BPM.
         tempo = 500000  # Microseconds per beat.
-        
+
         while tracks:
             # Remove empty tracks.
             tracks = [track for track in tracks if track]
