@@ -248,7 +248,7 @@ class MidiFile:
             delta = (delta << 7) | (byte & 0x7f)
             if not byte & 0x80:
                 break
-
+        
         return delta
 
     def _read_meta_event(self):
@@ -259,15 +259,6 @@ class MidiFile:
         return MetaMessage(type, data)
 
     def _read_message(self, status_byte):
-        # Todo: not all messages have running status
-        if status_byte < 0x80:
-            if self._running_status is None:
-                return
-            status_byte = self._running_status
-            # self.file.unread_byte(status_byte)
-        else:
-            self._running_status = status_byte
-
         try:
             spec = get_spec(status_byte)
         except LookupError:
@@ -296,11 +287,6 @@ class MidiFile:
 
     def _read_event(self, delta):
         status_byte = self.file.read_byte()
-        if status_byte >= 0x80:
-            self._running_status = status_byte
-        else:
-            self.file.unread_byte(status_byte)
-            status_byte = self._running_status
 
         if status_byte == 0xff:
             event = self._read_meta_event()
@@ -312,15 +298,23 @@ class MidiFile:
             event = self._read_sysex()  # Todo: continuation of previous sysex
 
         else:
+            # Deal with running status.
+            if status_byte >= 0x80:
+                self._running_status = status_byte
+            else:
+                self.file.unread_byte(status_byte)
+                status_byte = self._running_status
+                if DEBUG_PARSING:
+                    print('    running status: {:02x}'.format(status_byte))
+
             event = self._read_message(status_byte)
 
-        if event is not None:
-            event.time = delta
-            if DEBUG_PARSING:
-                print('    =>', event)
-            self._current_track.append(event)
-            if event.type == 'end_of_track':
-                raise EndOfTrack()
+        event.time = delta
+        if DEBUG_PARSING:
+            print('    =>', event)
+        self._current_track.append(event)
+        if event.type == 'end_of_track':
+            raise EndOfTrack()
 
     def _read_track(self):
         magic = self.file.read_bytearray(4)
