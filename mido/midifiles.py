@@ -88,10 +88,6 @@ class FileReader(ByteReader):
         return a << 24 | b << 16 | c << 8 | d
 
 
-class EndOfTrack(IOError):
-    pass
-
-
 def encode_signed_byte(byte):
     """Encode integer as two's complement signed byte."""
     if not isinstance(byte, int):
@@ -295,11 +291,49 @@ class MetaMessage(BaseMessage):
         return '{} {!r}'.format(self.type, self._get_values())
 
 
+class Track(list):
+    """
+    The 'name' property will set and get the track name using a
+    MetaMessage of type 'track_name'. Get returns the first
+    'track_name' in the track (and ignores the rest). Set modifies the
+    first 'track_name', or if one is not found, adds one to the
+    beginning of the track with delta time 0.
+    """
+
+    def __init__(self):
+        list.__init__([])
+
+    def _get_name(self):
+        for message in self:
+            if message.type == 'track_name':
+                return message.title
+        else:
+            return u''
+
+    def _set_name(self, name):
+        # Find the first track_name message and modify it.
+        for message in self:
+            if message.type == 'track_name':
+                message.title = name
+                return
+        else:
+            # No track name found, add one.
+            # This is not an ideal way to do it, but it's the only
+            # way that's possible at the moment.
+            name = name.encode('iso-8859-1')  # Todo: wrong encoding?
+            data = list(bytearray(name))
+            message = MetaMessage(0x03, data)
+            message.time = 0
+            self.insert(0, message)
+
+    name = property(fget=_get_name, fset=_set_name)
+    del _get_name, _set_name
+
+
 class MidiFile:
     def __init__(self, filename):
         self.filename = filename
         self.tracks = []
-        self._current_track = []
         self._last_status = None  # Used for running status.
 
         with FileReader(open(filename, 'rb')) as self.file:
@@ -392,54 +426,55 @@ class MidiFile:
         message = Message('sysex', data=data)
         return message
 
-    def _read_event(self, delta):
+    def _read_event(self):
         status_byte = self.file.read_byte()
 
         if status_byte == 0xff:
-            event = self._read_meta_event()
+            return self._read_meta_event()
         elif status_byte == 0xf0:
-            event = self._read_sysex()
+            return self._read_sysex()
         elif status_byte == 0xf7:
-            event = self._read_sysex()  # Todo: continuation of previous sysex
+            return self._read_sysex()  # Todo: continuation of previous sysex
         else:
-            event = self._read_message(status_byte)
-
-        event.time = delta
-        if DEBUG_PARSING:
-            print('    =>', event)
-        self._current_track.append(event)
-        if event.type == 'end_of_track':
-            raise EndOfTrack()
+            return self._read_message(status_byte)
 
     def _read_track(self):
+        track = Track()
+        self.tracks.append(track)
+
         magic = self.file.read_bytearray(4)
         if magic != bytearray(b'MTrk'):
             raise ValueError("track doesn't start with 'MTrk'")
 
         length = self.file.read_long()  # Ignore this.
 
-        self._current_track = []
         self._last_status = None
+        self._current_track = Track()
 
         start = self.file.tell()
 
         while 1:
-            try:
-                # End of track reached
-                if self.file.tell() - start == length:
-                    break
+            # End of track reached
+            if self.file.tell() - start == length:
+                break
 
-                if DEBUG_PARSING:
-                    print('delta:')
-                delta = self._read_delta_time()
-                if DEBUG_PARSING:
-                    print('message:')
-                self._read_event(delta)
-            except EndOfTrack:
+            if DEBUG_PARSING:
+                print('delta:')
+            delta = self._read_delta_time()
+
+            if DEBUG_PARSING:
+                print('message:')
+            event = self._read_event()
+            event.time = delta
+
+            if DEBUG_PARSING:
+                print('    =>', event)
+            track.append(event)
+
+            if event.type == 'end_of_track':
                 break
 
         self.tracks.append(self._current_track)
-        self._current_track = []
 
     def _read_tracks(self):
         try:
