@@ -345,11 +345,13 @@ class MidiFile:
 
             header_size = self.file.read_long()
 
-            self.file_format = self.file.read_short()
-            self.number_of_tracks = self.file.read_short()
+            self.format = self.file.read_short()
+            number_of_tracks = self.file.read_short()
             self.ticks_per_quarter_note = self.file.read_short()
 
-            self._read_tracks()
+            for i in range(number_of_tracks):
+                self.tracks.append(self._read_track())
+                # Todo: used to ignore EOFError. I hope things still work.
         
     def _print_tracks(self):
         for i, track in enumerate(self.tracks):
@@ -440,7 +442,6 @@ class MidiFile:
 
     def _read_track(self):
         track = Track()
-        self.tracks.append(track)
 
         magic = self.file.read_bytearray(4)
         if magic != bytearray(b'MTrk'):
@@ -449,7 +450,6 @@ class MidiFile:
         length = self.file.read_long()  # Ignore this.
 
         self._last_status = None
-        self._current_track = Track()
 
         start = self.file.tell()
 
@@ -474,14 +474,7 @@ class MidiFile:
             if event.type == 'end_of_track':
                 break
 
-        self.tracks.append(self._current_track)
-
-    def _read_tracks(self):
-        try:
-            for i in range(self.number_of_tracks):
-                self._read_track()
-        except EOFError:
-            pass
+        return track
 
     def play(self, yield_meta_messages=False):
         """Play back all tracks.
