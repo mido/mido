@@ -21,7 +21,7 @@ http://www.recordingblogs.com/sa/tabid/82/EntryId/44/MIDI-Part-XIII-Delta-time-a
 http://www.sonicspot.com/guide/midifiles.html
 """
 
-from __future__ import print_function
+from __future__ import print_function, division
 import os
 import sys
 import time
@@ -216,9 +216,7 @@ def decode_key_signature(message, data):
 
 def decode_set_tempo(message, data):
     # Tempo is in microseconds per beat.
-    # Convert big endian 3 bytes with 7 bit bytes into
-    # and integer.
-    message.tempo = data[0] | data[1] << 7 | data[2] << 14
+    message.tempo = (data[0] << 16) | (data[1] << 8) | (data[2])
 
 
 def decode_text(message, data):
@@ -451,7 +449,7 @@ class MidiFile:
         except EOFError:
             pass
 
-    def play(self, yield_meta_messages=False, tempo_scale=1.0):
+    def play(self, yield_meta_messages=False):
         """Play back all tracks.
 
         Yields all messages in all tracks in temporal order, with
@@ -471,12 +469,18 @@ class MidiFile:
         tracks = [deque(track) for track in self.tracks]
         messages_left = sum(map(len, tracks))
 
-        # The default tempo is 120 BPM.
-        tempo = 500000  # Microseconds per beat.
-        # tempo = 5000000 / 1.5
-        tempo /= tempo_scale
+        def set_tick_time(tempo):
+            """Compute seconds per tick."""
+            seconds_per_quarter_note = (tempo / 1000000.0)
 
-        elapsed = 0
+            s = seconds_per_quarter_note
+            t = self.ticks_per_quarter_note
+
+            values['tick_time'] = s / t
+
+        values = {'tick_time': None}  # Seconds per tick.
+        # The default tempo is 120 BPM.
+        set_tick_time(500000)  # Microseconds per quarter note.
 
         # Convert time of all message to absolute time (in ticks)
         # so they can be sorted
@@ -495,14 +499,14 @@ class MidiFile:
         for message in messages:
             delta = message.time - now
             if delta:
-                sleep_time = (tempo * delta) / 1000000000.0
+                sleep_time = delta * values['tick_time']
                 time.sleep(sleep_time)
             if isinstance(message, Message):
                 yield message.copy()
             now += delta
 
-            # if message.type == 'set_tempo':
-            #     tempo = message.tempo
+            if message.type == 'set_tempo':
+                set_tick_time(message.tempo)
 
     def __iter__(self):
         for message in self.play():
