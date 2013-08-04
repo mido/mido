@@ -1,17 +1,16 @@
 """
-An incomplete MIDI file reader.
-
-Reads most MIDI files, but fails with others.
+MIDI file reading and playback.
 
 Todo:
-    - return MetaMessages along with Messages?
+    - implement more meta messages
+    - make it more fault tolerant (handle errors in MIDI files?)
     - join sysex messages (0xf0...0xf7, 0xf7...0xf7, ...)
-    - handle the too short files listed below:
-
-    mid2/Portsmouth.mid
-    mid1/acso3op2.mid
 
 References:
+
+http://home.roadrunner.com/~jgglatt/
+http://home.roadrunner.com/~jgglatt/tech/miditech.htm
+http://home.roadrunner.com/~jgglatt/tech/midifile.htm
 
 http://www.sonicspot.com/guide/midifiles.html
 http://www.ccarh.org/courses/253/assignment/midifile/
@@ -301,7 +300,7 @@ class MidiFile:
         self.filename = filename
         self.tracks = []
         self._current_track = []
-        self._last_status = None
+        self._last_status = None  # Used for running status.
 
         with FileReader(open(filename, 'rb')) as self.file:
             # Read header (16 bytes)
