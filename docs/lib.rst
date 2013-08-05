@@ -3,8 +3,8 @@
 Library Reference
 ==================
 
-Opening Ports
---------------
+Convenience Functions
+----------------------
 
 .. module:: mido
 
@@ -15,33 +15,6 @@ Opening Ports
 .. autofunction:: get_input_names
 .. autofunction:: get_output_names
 .. autofunction:: get_ioport_names
-
-
-Parsing and Parser class
--------------------------
-
-.. autofunction:: parse
-.. autofunction:: parse_all
-.. autoclass:: Parser
-   :members:
-   :inherited-members:
-
-
-Message Objects
-----------------
-
-.. autoclass:: Message
-   :members:
-   :inherited-members:
-
-
-String Serialization
----------------------
-
-There is not `format_as_string()`, but you can use `str(message)`.
-
-.. autofunction:: parse_string
-.. autofunction:: parse_string_stream
 
 
 Ports
@@ -63,6 +36,56 @@ Ports
 
 .. autofunction:: multi_receive
 .. autofunction:: multi_iter_pending
+
+
+Messages
+---------
+
+.. module:: mido
+
+.. autoclass:: Message
+   :members:
+   :inherited-members:
+
+
+Parsing
+--------
+
+.. module:: mido
+
+.. autofunction:: parse
+.. autofunction:: parse_all
+.. autoclass:: Parser
+   :members:
+   :inherited-members:
+
+
+String Serialization
+---------------------
+
+.. module:: mido
+
+.. autofunction:: parse_string
+.. autofunction:: parse_string_stream
+.. autofunction:: format_as_string
+
+
+MIDI Files
+-----------
+
+.. module:: mido.midifiles
+
+.. autoclass:: MidiFile
+   :members:
+   :inherited-members:
+
+.. autoclass:: Track
+   :members:
+   :inherited-members:
+
+.. autoclass:: MetaMessage
+   :members:
+   :inherited-members:
 
 
 Socket Ports

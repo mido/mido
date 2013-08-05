@@ -14,31 +14,101 @@ You can open a file with::
 
     mid = MidiFile('song.mid')
 
-This will read all data into memory. The tracks can be found in the
-``tracks`` attribute, which is a list where each track is a list of
-messages.
+The ``tracks`` attribute is a list of tracks. Each track is a list of
+messages and meta messages, with the ``time`` attribute of each
+messages set to its delta time (in ticks). (See Tempo and Time
+Resolution below for more on delta times.)
+
+To print out all messages in the file, you can do::
+
+    for i, track in enumerate(mid.tracks):
+        print('Track {}: {}'.format(i, track.name))
+        for message in track:
+            print(message)
+
+The entire file is read into memory. Thus you can freely modify tracks
+and messages, and save the file back by calling the ``save()``
+method. (More on this below.)
 
 
 Playing Back The File
 ----------------------
 
-The ``play()`` method can be used to play back the file in its
-entirety.  This will generate each message in the file at the
-appropriate time for playback, so all you need to do is::
+You can play back a MIDI file by iterating over it and sending the
+messages to a port. The generator will call ``time.sleep()`` before
+each messages is yielded, so you get them at the correct time::
 
-    for message in mid.play():
+    for message in mid:
         output.send(message)
 
-You will not receive meta messages, so it's safe to send these on to
-any Mido port.
+The ``time`` attribute will be set to delta time (the number of
+seconds slept before the message was yielded).
+
+If you also want to receive meta messages, you can call the ``play()``
+method directly. Meta messages can not be sent to ports, so they need
+to be filtered out::
+
+    from mido.midifiles import MetaMessage
+
+    for message in mid:
+        if isinstance(message, MetaMessage):
+            print('Got meta message', MetaMessage)
+        else:
+            output.send(message)
 
 
-Track Contents
----------------
+Creating a New File
+--------------------
 
-Each track is a list of Mido messages. The ``time`` attribute of each
-message is the time that has passed since the previous messages (delta
-time). The unit is MIDI ticks.
+*Note*: Saving of meta messages other than 'end_of_track' is not yet
+ implemented. (They will simply be skipped, which will most likely
+ mess up timing.)
+
+You can create a new file by calling MidiFile without the ``filename``
+argument. The file can then be saved by calling the ``save()`` method::
+
+    from mido.midifies import Track
+
+    with MidiFile() as mid:
+        track = Track()
+        tracks.append(track)
+
+        tracks.append(midi.Message('program_change', program=12, time=0))
+        tracks.append(midi.Message('note_on', note=64, velocity=64, time=32)
+        tracks.append(midi.Message('note_off', note=64, velocity=127, time=32)
+
+        mid.save('new_song.mid')
+
+The ``Track`` class is a subclass of list, so you can use all the
+usual methods.
+
+All messages must be tagged with delta time (in ticks). (A delta time
+is how long to wait before the next message.)
+
+If there is no 'end_of_track' message at the end of a track, one will
+be written anyway.
+
+A complete example can be found in ``examples/midifiles/``.
+
+
+File Formats
+-------------
+
+MIDI files have three different formats:
+
+* format 0 (single track): all messages are saved in one track
+* format 1 (synchronous): all tracks start at the same time
+* format 2 (asynchronous): each track is independent of the others
+
+You can select file format by passing the ``format`` keyword argument,
+or by setting the ``format`` attribute::
+
+   mid = MidiFile(format=2)
+   mid.format = 1
+
+Format 0 files must have exactly one track. A ``ValueError`` is raised
+if you attempt to save a file with no tracks or with more than one
+track.
 
 
 Meta Messages
@@ -60,22 +130,21 @@ messages from a track, you can do::
 
     messages = [m for m in track if not isinstance(m, MetaMessage)]
 
-Meta messages have a ``type`` attribute, just like normal messages::
+Meta messages are only found in MIDI files and can not be sent to
+ports.
 
 
-Future Plans: Saving a File
-----------------------------
+Tempo and Time Resolution
+--------------------------
 
-This is not yet implemented, but it is planned to be used something
-like this::
+(Todo: write about the tempo message when it has
+been implemented.)
 
-    with MidiFile() as mid:  # blank MIDI file
-        tracks.append([message1, message2])
-        mid.save('new_song.mid')
+(Todo: exmplain ticks.)
 
-This will require the messages to be stamped with the correct delta
-times, and meta messages to be created and inserted at the correct
-place in the track. It is up to the application to do this, but the
-library may be expanded later to assist with this if it turns out that
-it can be done in a general way, and that it is useful.
+You can adjust the resolution of time ticks by setting this attribute::
 
+   mid.ticks_per_quarter_note = 360
+
+This will affect playback tempo, so you need to adjust the ``tempo``
+messages accordingly.

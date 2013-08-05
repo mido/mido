@@ -78,7 +78,8 @@ from __future__ import absolute_import
 import os
 import importlib
 from . import ports, sockets
-from .messages import Message, parse_string, parse_string_stream
+from .messages import Message
+from .messages import parse_string, parse_string_stream, format_as_string
 from .parser import Parser, parse, parse_all
 
 __author__ = 'Ole Martin Bjørndalen'

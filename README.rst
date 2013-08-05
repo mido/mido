@@ -112,7 +112,7 @@ Known Bugs
 Future Plans
 -------------
 
-* add save() method to MidiFile so you can save MIDI files.
+* implement saving of MIDI meta messages
 
 * add a library of useful tools, such as delays, an event engine and
   message filters.

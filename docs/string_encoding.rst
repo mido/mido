@@ -7,8 +7,13 @@ them in JSON, among other things.
 
 To encode a message, simply call ``str()`` on it::
 
-    >>> n = control_change(channel=9, control=1, value=122, time=60)
-    >>> str(n)
+    >>> cc = control_change(channel=9, control=1, value=122, time=60)
+    >>> str(cc)
+    'control_change channel=9 control=1 value=122 time=60'
+
+Alternatively, you can the ``format_as_string`` function directly:
+
+    >>> mido.format_as_string(cc)
     'control_change channel=9 control=1 value=122 time=60'
 
 

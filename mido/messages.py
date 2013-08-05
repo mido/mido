@@ -447,7 +447,7 @@ class Message(BaseMessage):
         return '<{} message {}>'.format(self.type, ', '.join(parts))
 
     def __str__(self):
-        return _format_as_string(self)
+        return format_as_string(self)
 
     def __len__(self):
         if self.type == 'sysex':
@@ -533,10 +533,12 @@ def parse_string(text):
 def parse_string_stream(stream):
     """Parse a stram of messages and yield (message, error_message)
 
-    stream can be any iterable that generates text strings. If
-    a line can be parsed, (message, None) is returned. If it can't
-    be parsed (None, error_message) is returned. The error message
-    containes the line number where the error occured.
+    stream can be any iterable that generates text strings, where each
+    string is a string encoded message.
+
+    If a string can be parsed, (message, None) is returned. If it
+    can't be parsed (None, error_message) is returned. The error
+    message containes the line number where the error occurred.
     """
     line_number = 1
     for line in stream:
@@ -552,11 +554,10 @@ def parse_string_stream(stream):
         line_number += 1
 
 
-def _format_as_string(message):
+def format_as_string(message):
     """Format a message and return as a string.
 
-    There is no reason to call this function directly.
-    Use str(message) instead.
+    This is equivalent to str(message).
     """
     if not isinstance(message, Message):
         raise ValueError('message must be a mido.Message object')

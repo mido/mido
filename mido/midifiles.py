@@ -380,6 +380,16 @@ class MidiFile:
             delta = delta >> 7
 
     def save(self, filename=None):
+        """Save to a file.
+
+        If filename is passed, self.filename will be set to this
+        value, and the data will be saved to this file. Otherwise
+        self.filename is used.
+
+        Raises ValueError both filename and self.filename are None,
+        or if a format 1 file has != one track.
+        """
+
         if self.format == 0 and len(self.tracks) != 1:
             raise ValueError('format 1 file must have exactly 1 track')
 
@@ -402,7 +412,7 @@ class MidiFile:
                 for message in track:
                     # Todo: support meta messages.
                     if isinstance(message, MetaMessage):
-                        continue  # Todo: do someting here
+                       continue  # Todo: do someting here
                     
                     # Todo: running status?
                     bytes += self._encode_delta_time(message.time)
