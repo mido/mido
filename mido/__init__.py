@@ -117,7 +117,7 @@ def open_output(name=None, **kwargs):
     if will override the default port.
     """
     if name is None:
-        name = os.environ.get('MIDO_DEFAULT_OUTPUT', None)
+        name = os.environ.get('MIDO_DEFAULT_OUTPUT')
     return _get_backend().Output(name, **kwargs)
 
 def open_ioport(name=None, **kwargs):
@@ -127,13 +127,26 @@ def open_ioport(name=None, **kwargs):
     if will override the default port.
     """
     if name is None:
-        name = os.environ.get('MIDO_DEFAULT_IOPORT', None)
+        name = os.environ.get('MIDO_DEFAULT_IOPORT')
     backend = _get_backend()
     if hasattr(backend, 'IOPort'):
+        if name is None:
+            name = os.environ.get('MIDO_DEFAULT_IOPORT')
         return backend.IOPort(name, **kwargs)
     else:
-        return ports.IOPort(backend.Input(name, **kwargs),
-                            backend.Output(name, **kwargs))
+        if name is None:
+            # MIDO_DEFAULT_IOPORT overrides the other two variables.
+            name = os.environ.get('MIDO_DEFAULT_IOPORT')
+            if name is not None:
+                input_name = output_name = name
+            else:
+                input_name = os.environ.get('MIDO_DEFAULT_INPUT')
+                output_name = os.environ.get('MIDO_DEFAULT_OUTPUT')
+        else:
+            input_name = output_name = name
+
+        return ports.IOPort(backend.Input(input_name, **kwargs),
+                            backend.Output(output_name, **kwargs))
 
 def get_input_names():
     """Return a sorted list of all input port names.
