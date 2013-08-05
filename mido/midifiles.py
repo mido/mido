@@ -412,7 +412,13 @@ class MidiFile:
                 for message in track:
                     # Todo: support meta messages.
                     if isinstance(message, MetaMessage):
-                       continue  # Todo: do someting here
+                        if message.type == 'end_of_track':
+                            bytes += self._encode_delta_time(message.time)
+                            bytes += [0xff, 0x2f, 0]
+                        else:
+                            # Todo: implement bytes() method in MetaMessage.
+                            # For now just skip this message.
+                            continue
                     
                     # Todo: running status?
                     bytes += self._encode_delta_time(message.time)
