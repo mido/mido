@@ -33,8 +33,8 @@ Main Features
 
   * convenient message objects.
 
-  * supports PortMidi, rtmidi and pygame. New backends can be written
-    easily and used with Mido.
+  * supports PortMidi, rtmidi and pygame. New backends can be easily
+    written and used with Mido.
 
   * full support for MIDI files (read, write, create and play) with
     complete access to every message in the file.
@@ -46,6 +46,9 @@ Main Features
     and overriding a few methods, or by duck typing.
 
   * includes a reusable MIDI parser.
+
+  * includes programs for playing MIDI files, listing ports and
+    serving and forwarding ports over a network
 
   * works in Python 2 and 3.
 
