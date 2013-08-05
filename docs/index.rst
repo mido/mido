@@ -49,6 +49,7 @@ Contents
 
    why_mido
    installing
+   about_midi
    tutorial
    message_types
    parsing_and_encoding
@@ -56,7 +57,6 @@ Contents
    socket_ports
    new_port_types
    string_encoding
-   about_midi
    lib
    license
    author
