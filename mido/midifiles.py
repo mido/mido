@@ -22,6 +22,7 @@ http://www.sonicspot.com/guide/midifiles.html
 
 from __future__ import print_function, division
 import os
+import io
 import sys
 import time
 from collections import deque, namedtuple
@@ -31,38 +32,53 @@ PY2 = (sys.version_info.major == 2)
 DEBUG_PARSING = bool(os.environ.get('MIDO_DEBUG_PARSING'))
 
 class ByteReader(object):
+    """
+    Reads bytes from a binary stream.
+
+    Stream must be a file opened with mode 'rb'.
+    """
+
+    # Todo: test if EOFError is raised.
+
     def __init__(self, stream):
-        self.stream = stream
-        self.data = deque()
-
-        for line in stream:
-            self.data.extend(bytearray(line))
-
+        self.buffer = io.BufferedReader(stream)
         self._pos = 0
 
-    def read_bytes(self, n):
-        return [self.read_byte() for _ in range(n)]
-
     def read_bytearray(self, n):
-        return bytearray(self.read_bytes(n))
+        """Read n bytes and return as a bytearray."""
+        self._pos += n
+        return bytearray(self.buffer.read(n))
+
+    def read_byte_list(self, n):
+        """Read n bytes and return as a list."""
+        return list(self.read_bytearray(n))
 
     def read_byte(self):
-        """Get the next byte from."""
-        try:
-            byte = self.data.popleft()
-            if DEBUG_PARSING:
-                print('  {:04x}: {:02x}'.format(self.tell(), byte))
-            self._pos += 1
-            return byte
-        except IndexError:
-            raise EOFError('end of file reached')
+        """Read one byte."""
+        byte = self.read_byte_list(1)[0]
+        if DEBUG_PARSING:
+            print('  {:04x}: {:02x}'.format(self.tell(), byte))
+        return byte
 
-    def unread_byte(self, byte):
-        """Put a byte back.
+    def peek_byte(self):
+        """Return the next byte in the file.
 
         This can be used for look-ahead."""
-        self.data.appendleft(byte)
-        self._pos -= 1
+        # Todo: this seems a bit excessive for just one byte.
+        byte = bytearray(self.buffer.peek(1))[0]
+        if DEBUG_PARSING:
+            print('  Peek: {:04x}: {:02x}'.format(self.tell(), byte))
+        return byte
+
+    def read_short(self):
+        """Read short (2 bytes little endian)."""
+        a, b = self.read_byte_list(2)
+        return a << 8 | b
+
+    def read_long(self):
+        """Read long (4 bytes little endian)."""
+        a, b, c, d = self.read_byte_list(4)
+        return a << 24 | b << 16 | c << 8 | d
 
     def tell(self):
         return self._pos
@@ -73,19 +89,10 @@ class ByteReader(object):
     def __exit__(self, type, value, traceback):
         return False
 
-    def __iter__(self):
-        while 1:
-            yield self.data.popleft()
-
-
-class FileReader(ByteReader):
-    def read_short(self):
-        a, b = [self.read_byte() for i in range(2)]
-        return a << 8 | b
-
-    def read_long(self):
-        a, b, c, d = [self.read_byte() for i in range(4)]
-        return a << 24 | b << 16 | c << 8 | d
+    # Todo: I don't think this is needed.
+    #def __iter__(self):
+    #    while 1:
+    #        yield self.()
 
 
 def encode_signed_byte(byte):
@@ -334,14 +341,13 @@ class MidiFile:
     def __init__(self, filename):
         self.filename = filename
         self.tracks = []
-        self._last_status = None  # Used for running status.
 
-        with FileReader(open(filename, 'rb')) as self.file:
+        with ByteReader(open(filename, 'rb')) as self.file:
             # Read header (16 bytes)
             magic = self.file.read_bytearray(4)
             if not magic == bytearray(b'MThd'):
                 # Todo: raise some other error?
-                raise ValueError('not a MIDI file')
+                raise IOError('not a MIDI file')
 
             header_size = self.file.read_long()
 
@@ -376,29 +382,9 @@ class MidiFile:
         
         return delta
 
-    def _read_meta_event(self):
-        type = self.file.read_byte()
-        length = self.file.read_byte()
-        data = self.file.read_bytes(length)
-
-        return MetaMessage(type, data)
-
     def _read_message(self, status_byte):
-        # Todo: not all messages have running status
-        if status_byte < 0x80:
-            if self._last_status is None:
-                raise IOError('*** last_status is None!')
-            self.file.unread_byte(status_byte)
-            status_byte = self._last_status
-        else:
-            self._last_status = status_byte
-
-        try:
-            spec = get_spec(status_byte)
-        except LookupError:
-            sys.exit(1)
-
         bytes = [status_byte]
+        spec = get_spec(status_byte)
 
         for i in range(spec.length - 1):
             bytes.append(self.file.read_byte())
@@ -413,14 +399,18 @@ class MidiFile:
         #     for i in [1, 2]:
         #         bytes[i] &= 0x7f
 
-        message = build_message(bytes)
+        return build_message(bytes)
 
-        return message
+    def _read_meta_message(self):
+        type = self.file.read_byte()
+        length = self.file.read_byte()
+        data = self.file.read_byte_list(length)
 
+        return MetaMessage(type, data)
 
     def _read_sysex(self):
         length = self.file.read_byte()
-        data = self.file.read_bytes(length)
+        data = self.file.read_byte_list(length)
 
         if data and data[-1] == 0xf7:
             data = data[:-1]
@@ -428,33 +418,19 @@ class MidiFile:
         message = Message('sysex', data=data)
         return message
 
-    def _read_event(self):
-        status_byte = self.file.read_byte()
-
-        if status_byte == 0xff:
-            return self._read_meta_event()
-        elif status_byte == 0xf0:
-            return self._read_sysex()
-        elif status_byte == 0xf7:
-            return self._read_sysex()  # Todo: continuation of previous sysex
-        else:
-            return self._read_message(status_byte)
-
     def _read_track(self):
         track = Track()
 
         magic = self.file.read_bytearray(4)
         if magic != bytearray(b'MTrk'):
-            raise ValueError("track doesn't start with 'MTrk'")
+            raise IOError("track doesn't start with 'MTrk'")
 
         length = self.file.read_long()  # Ignore this.
-
-        self._last_status = None
-
         start = self.file.tell()
+        last_status = None
 
         while 1:
-            # End of track reached
+            # End of track reached.
             if self.file.tell() - start == length:
                 break
 
@@ -464,14 +440,36 @@ class MidiFile:
 
             if DEBUG_PARSING:
                 print('message:')
-            event = self._read_event()
-            event.time = delta
+
+            peek_status = self.file.peek_byte()
+
+            # Todo: not all messages have running status
+            if peek_status < 0x80:
+                if last_status is None:
+                    # Todo: add file offset to error message?
+                    raise IOError('running status when last_status is None!')
+                status_byte = last_status
+            else:
+                status_byte = self.file.read_byte()
+                last_status = status_byte
+
+            if status_byte == 0xff:
+                message = self._read_meta_message()
+            elif status_byte == 0xf0:
+                message = self._read_sysex()
+            elif status_byte == 0xf7:
+                # Todo: handle continuation of previous sysex
+                message = self._read_sysex()
+            else:
+                message = self._read_message(status_byte)
+
+            message.time = delta
 
             if DEBUG_PARSING:
-                print('    =>', event)
-            track.append(event)
+                print('    =>', message)
+            track.append(message)
 
-            if event.type == 'end_of_track':
+            if message.type == 'end_of_track':
                 break
 
         return track
