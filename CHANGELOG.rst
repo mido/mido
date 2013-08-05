@@ -1,13 +1,32 @@
 1.1 -
 ------
 
-* implemented MIDI files (mido.midifiles).
+* added full support for MIDI files (read, write playback) (as mido.midifiles).
+  (Not all meta messages are supported yet.
 
-* implemented MIDI over TCP/IP (socket ports) (mido.sockets).
+* added MIDI over TCP/IP with socket ports (as mido.sockets).
+
+* added support for selectable backends (with MIDO_BACKEND) and
+  included python-rtmidi and pygame.midi backends in the official
+  library (as mido.backend.rtmidi and mido.backend.pygame).
+
+* backend API simplified to so that you only need to implement
+  get_device(), Input and Output, and optionally IOPort. All of these
+  are optional, depending on how the backend will be used and what
+  functionality it provices.
 
 * added support for SMPTE time code quarter frames.
 
+* port constructors can now take keyword arguments.
+
 * output ports now have reset() and panic() methods.
+
+* new environment variables MIDO_DEFAULT_INPUT and MIDO_DEFAULT_OUTPUT.
+
+* added ports.Broadcast, a port contains a list of ports and
+  sends its messages to all of these.
+
+* added new examples and updated the old ones.
 
 
 1.0.2 - 2013-07-31
