@@ -277,11 +277,12 @@ class MidiFile:
         """Play back all tracks.
 
         The generator will sleep between each message, so that
-        messages are yielded with correct timing.
+        messages are yielded with correct timing. The time attribute
+        is set to the number of seconds slept since the previous
+        message.
 
-        Yields copies of messages, so you can safely modify them
-        without ruining the tracks. The time attribute is set to the
-        number of seconds slept since the previous message.
+        You will receive copies of the original messages, so you can
+        safely modify them without ruining the tracks.
         """
 
         # The tracks of format 2 files are not in sync, so they can
