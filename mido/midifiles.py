@@ -135,18 +135,6 @@ class MidiFile:
                 self.tracks.append(self._read_track())
                 # Todo: used to ignore EOFError. I hope things still work.
         
-    def _print_tracks(self):
-        for i, track in enumerate(self.tracks):
-            sys.stdout.write('=== Track {}\n'.format(i))
-            for event in track:
-                sys.stdout.write('  {!r}\n'.format(event))
-
-    def _get_info(self):
-        for i, track in enumerate(self.tracks):
-            sys.stdout.write('=== Track {}\n'.format(i))
-            for event in track:
-                sys.stdout.write('  {!r}\n'.format(event))
-
     def _read_delta_time(self):
         delta = 0
 
