@@ -475,9 +475,10 @@ class MidiFile:
         tracks. The time attribute will be set to 0.
         """
 
-        # Todo: raise exception if self.format == 2, but which one?
-        # (The tracks of format 2 files are not in sync, and can not
-        # be played back like this.)
+        # The tracks of format 2 files are not in sync, so they can
+        # not be played back like this.
+        if self.format == 2:
+            raise ValueError('format 2 file can not be played back like this')
 
         # Make a copy of the tracks, since we'll be removing from them.
         tracks = [deque(track) for track in self.tracks]
