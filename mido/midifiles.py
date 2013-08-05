@@ -325,13 +325,7 @@ class Track(list):
                 return
         else:
             # No track name found, add one.
-            # This is not an ideal way to do it, but it's the only
-            # way that's possible at the moment.
-            name = name.encode('iso-8859-1')  # Todo: wrong encoding?
-            data = list(bytearray(name))
-            message = MetaMessage(0x03, data)
-            message.time = 0
-            self.insert(0, message)
+            self.insert(0, MetaMessage('track_name', title=name, time=0))
 
     name = property(fget=_get_name, fset=_set_name)
     del _get_name, _set_name
