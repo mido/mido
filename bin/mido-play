@@ -21,8 +21,14 @@ with mido.open_output() as output:
     output.reset()
     try:
         print('Using output {!r}.'.format(output.name))
+        print()
         for filename in sys.argv[1:]:
             with MidiFile(filename) as midi_file:
+                print('Playing {}.'.format(midi_file.filename))
+                length = midi_file.length
+                print('Song length: {} minutes, {} seconds.'.format(
+                        int(length / 60),
+                        int(length % 60)))
                 print('Tracks:')
                 for i, track in enumerate(midi_file.tracks):
                     print('  {:2d}: {!r}'.format(i, track.name.strip()))
@@ -30,6 +36,7 @@ with mido.open_output() as output:
                 for message in midi_file:
                     # print(message)
                     output.send(message)
+            print()
     except KeyboardInterrupt:
         pass
     finally:

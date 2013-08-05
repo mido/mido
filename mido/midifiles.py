@@ -28,6 +28,10 @@ from .midifiles_meta import MetaMessage
 
 DEBUG_PARSING = bool(os.environ.get('MIDO_DEBUG_PARSING'))
 
+# The default tempo is 120 BPM.
+# (500000 microseconds per quarter note.)
+DEFAULT_TEMPO = 500000
+
 class ByteReader(object):
     """
     Reads bytes from a file.
@@ -322,6 +326,25 @@ class MidiFile:
         seconds_per_quarter_note = (tempo / 1000000.0)
         return seconds_per_quarter_note / self.ticks_per_quarter_note
 
+    def _get_length(self):
+        if not self.tracks:
+            return 0.0
+
+        track_lengths = []
+    
+        for track in self.tracks:
+            seconds_per_tick = self._compute_tempo(500000)
+            length = 0.0
+            for message in track:
+                length += (message.time * seconds_per_tick)
+                if message.type == 'set_tempo':
+                    seconds_per_tick = self._compute_tempo(message.tempo)
+            track_lengths.append(length)
+
+        return max(track_lengths)
+
+    length = property(fget=_get_length)
+
     def play(self, yield_meta_messages=False):
         """Play back all tracks.
 
@@ -339,9 +362,7 @@ class MidiFile:
         if self.format == 2:
             raise ValueError('format 2 file can not be played back like this')
 
-        # The default tempo is 120 BPM.
-        # (500000 microseconds per quarter note.)
-        seconds_per_tick = self._compute_tempo(500000)
+        seconds_per_tick = self._compute_tempo(DEFAULT_TEMPO)
 
         messages = self._merge_tracks(self.tracks)
 
