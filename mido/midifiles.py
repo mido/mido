@@ -29,7 +29,7 @@ from .midifiles_meta import MetaMessage
 DEBUG_PARSING = bool(os.environ.get('MIDO_DEBUG_PARSING'))
 
 # The default tempo is 120 BPM.
-# (500000 microseconds per quarter note.)
+# (500000 microseconds per beat (quarter note).)
 DEFAULT_TEMPO = 500000
 
 class ByteReader(object):
@@ -163,7 +163,7 @@ class MidiFile:
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
             self.format = format
             # Todo: is this a good default value?
-            self.ticks_per_quarter_note = 120
+            self.ticks_per_beat = 120
         else:
             self._load()
 
@@ -180,7 +180,7 @@ class MidiFile:
 
             self.format = self._file.read_short()
             number_of_tracks = self._file.read_short()
-            self.ticks_per_quarter_note = self._file.read_short()
+            self.ticks_per_beat = self._file.read_short()
 
             for i in range(number_of_tracks):
                 self.tracks.append(self._read_track())
@@ -322,7 +322,7 @@ class MidiFile:
     def _compute_tempo(self, tempo):
         """Compute seconds per tick.
 
-        The tempo argument is microseconds per quarter note. """
+        The tempo argument is microseconds per beat (quarter note). """
         seconds_per_beat = (tempo / 1000000.0)
         return seconds_per_beat / self.ticks_per_beat
 
