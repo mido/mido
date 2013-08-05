@@ -6,8 +6,8 @@
 * added MIDI over TCP/IP with socket ports (as mido.sockets).
 
 * added support for selectable backends (with MIDO_BACKEND) and
-  included python-rtmidi and pygame.midi backends in the official
-  library (as mido.backend.rtmidi and mido.backend.pygame).
+  included python-rtmidi and pygame backends in the official library
+  (as mido.backend.rtmidi and mido.backend.pygame).
 
 * backend API simplified to so that you only need to implement
   get_device(), Input and Output, and optionally IOPort. All of these
