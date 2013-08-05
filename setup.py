@@ -31,6 +31,10 @@ setup(
     package_data={'': ['LICENSE']},
     package_dir={'requests': 'requests'},
     packages = ['mido'],
+    scripts = ['bin/mido-play',
+               'bin/mido-ports',
+               'bin/mido-serve',
+               'bin/mido-forward'],
     include_package_data=True,
     url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3
