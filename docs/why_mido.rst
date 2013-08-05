@@ -98,10 +98,8 @@ chaining generators.
 
 With subclassing or duck typing, you can write pseudo ports to, for
 example, generate random messages, sends incoming messages to
-different ports based on MIDI channel or note number, broadcast
-incoming messages to a list of ports (``ports.Broadcast``) or turn one
-channel monophonic (``filters.Monophonic``). These can then be plugged
-in wherever a normal port goes.
+different ports based on MIDI channel or note number or broadcast
+incoming messages to a list of ports (``ports.Broadcast``).
 
 
 The Mido Toolbox
