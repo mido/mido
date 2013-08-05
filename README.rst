@@ -85,6 +85,14 @@ Documentation
 Documentation is available at http://mido.readthedocs.org/
 
 
+Source code
+------------
+
+Latest stable release: http://github.com/olemb/mido/
+
+Development version: http://github.com/olemb/mido/tree/develop/
+
+
 Known Bugs
 -----------
 
@@ -104,21 +112,14 @@ Known Bugs
 Future Plans
 -------------
 
-* include multiple backends, and provide a way to choose which one to
-  use, perhaps with `MIDO_BACKEND=portmidi` or some other mechanism.
-
-* support for writing MIDI files.
+* add save() method to MidiFile so you can save MIDI files.
 
 * add a library of useful tools, such as delays, an event engine and
   message filters.
 
-* support `running status
-  <http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/midispec/run.htm>`_
-  (This is currently tricky or impossible with PortMidi, but could be
-  useful for other data sources.)
-
 * support time codes (0xf1). (These have one data bytes divided into 3
-  bits type and 4 bits values. It's unclear how to handle this.)
+  bits type and 4 bits values. It's unclear how this should be
+  handled.)
 
 
 License
@@ -127,9 +128,8 @@ License
 Mido is released under the terms of the `MIT license
 <http://en.wikipedia.org/wiki/MIT_License>`_.
 
-Latest stable version of the code: http://github.com/olemb/mido/ .
 
-Latest development version (incomplete and probably buggy):
-http://github.com/olemb/mido/tree/develop/
+Author
+-------
 
-Author: Ole Martin Bjørndalen - ombdalen@gmail.com
+Ole Martin Bjørndalen - ombdalen@gmail.com
