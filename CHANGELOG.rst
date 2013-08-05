@@ -2,7 +2,6 @@
 ------
 
 * added full support for MIDI files (read, write playback) (as mido.midifiles).
-  (Not all meta messages are supported yet.
 
 * added MIDI over TCP/IP with socket ports (as mido.sockets).
 
