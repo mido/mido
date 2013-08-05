@@ -305,9 +305,7 @@ class MidiFile:
             if message.type == 'set_tempo':
                 seconds_per_tick = compute_seconds_per_tick(message.tempo)
 
-    def __iter__(self):
-        for message in self.play():
-            yield message
+    __iter__ = play
 
     def __enter__(self):
         return self
