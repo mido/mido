@@ -33,16 +33,18 @@ class ByteReader(object):
     Reads bytes from a file.
     """
 
-    # Todo: test if EOFError is raised.
-
     def __init__(self, filename):
-        self.buffer = io.BufferedReader(io.open(filename, 'rb'))
+        self.file = io.open(filename, 'rb')
+        self.buffer = io.BufferedReader(self.file)
         self._pos = 0
 
     def read_bytearray(self, n):
         """Read n bytes and return as a bytearray."""
         self._pos += n
-        return bytearray(self.buffer.read(n))
+        bytes = bytearray(self.buffer.read(n))
+        if len(bytes) < n:
+            raise EOFError('unexpected end of file')
+        return bytes
 
     def read_byte_list(self, n):
         """Read n bytes and return as a list."""
@@ -61,7 +63,11 @@ class ByteReader(object):
 
         This can be used for look-ahead."""
         # Todo: this seems a bit excessive for just one byte.
-        byte = bytearray(self.buffer.peek(1))[0]
+        bytes = bytearray(self.buffer.peek(1))
+        if len(bytes) < 1:
+            raise IOError('unexpected end of file')
+
+        byte = bytes[0]
         if DEBUG_PARSING:
             print(' ({:6x}): peek {:02x}'.format(self.tell(), byte))
         return byte
@@ -83,6 +89,37 @@ class ByteReader(object):
         return self
 
     def __exit__(self, type, value, traceback):
+        self.file.close()
+        return False
+
+
+class ByteWriter(object):
+    def __init__(self, filename):
+        self.file = io.open(filename, 'wb')
+    
+    def write(self, bytes):
+        self.file.write(bytearray(bytes))
+
+    def write_byte(self, byte):
+        self.write_bytearray([byte])
+
+    def write_short(self, n):
+        a = n >> 8
+        b = n & 0xff
+        self.write([a, b])
+
+    def write_long(self, n):
+        a = n >> 24 & 0xff
+        b = n >> 16 & 0xff
+        c = n >> 8 & 0xff
+        d = n & 0xff
+        self.write([a, b, c, d])
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.file.close()
         return False
 
 
@@ -112,33 +149,45 @@ class Track(list):
 
 
 class MidiFile:
-    def __init__(self, filename):
+    def __init__(self, filename=None, format=1):
         self.filename = filename
         self.tracks = []
 
-        with ByteReader(filename) as self.file:
+        if filename is None:
+            if format not in range(3):
+                raise ValueError(
+                    'invalid format {} (must be 0, 1 or 2)'.format(format))
+            self.format = format
+            # Todo: is this a good default value?
+            self.ticks_per_quarter_note = 120
+        else:
+            self._load()
+            print('!', 'tpqn:', self.ticks_per_quarter_note)
+
+    def _load(self):
+        with ByteReader(self.filename) as self._file:
             # Read header (16 bytes)
-            magic = self.file.read_bytearray(4)
+            magic = self._file.read_bytearray(4)
             if not magic == bytearray(b'MThd'):
-                raise IOError('not a MIDI file')
+                raise IOError('MThd not found. Probably not a MIDI file')
 
             # Skip header size. (It's always 6, referring to the size
             # of the next three shorts.)
-            self.file.read_long()
+            self._file.read_long()
 
-            self.format = self.file.read_short()
-            number_of_tracks = self.file.read_short()
-            self.ticks_per_quarter_note = self.file.read_short()
+            self.format = self._file.read_short()
+            number_of_tracks = self._file.read_short()
+            self.ticks_per_quarter_note = self._file.read_short()
 
             for i in range(number_of_tracks):
                 self.tracks.append(self._read_track())
                 # Todo: used to ignore EOFError. I hope things still work.
-        
+
     def _read_delta_time(self):
         delta = 0
 
         while 1:
-            byte = self.file.read_byte()
+            byte = self._file.read_byte()
             delta = (delta << 7) | (byte & 0x7f)
             if not byte & 0x80:
                 break
@@ -150,7 +199,7 @@ class MidiFile:
         spec = get_spec(status_byte)
 
         for i in range(spec.length - 1):
-            bytes.append(self.file.read_byte())
+            bytes.append(self._file.read_byte())
 
         # Value > 127 occurs sometimes.
         # Clip it so it's inside valid range.
@@ -165,15 +214,16 @@ class MidiFile:
         return build_message(bytes)
 
     def _read_meta_message(self):
-        type = self.file.read_byte()
-        length = self.file.read_byte()
-        data = self.file.read_byte_list(length)
+        type = self._file.read_byte()
+        length = self._file.read_byte()
+        data = self._file.read_byte_list(length)
+        print('!', 'meta_message', hex(type), length, data)
 
         return MetaMessage(type, data)
 
     def _read_sysex(self):
-        length = self.file.read_byte()
-        data = self.file.read_byte_list(length)
+        length = self._file.read_byte()
+        data = self._file.read_byte_list(length)
 
         if data and data[-1] == 0xf7:
             data = data[:-1]
@@ -184,18 +234,18 @@ class MidiFile:
     def _read_track(self):
         track = Track()
 
-        magic = self.file.read_bytearray(4)
+        magic = self._file.read_bytearray(4)
         if magic != bytearray(b'MTrk'):
             raise IOError("track doesn't start with 'MTrk'")
 
-        length = self.file.read_long()  # Ignore this.
-        start = self.file.tell()
+        length = self._file.read_long()
+        start = self._file.tell()
         last_status = None
         last_systex = None
 
         while 1:
             # End of track reached.
-            if self.file.tell() - start == length:
+            if self._file.tell() - start == length:
                 break
 
             is_sysex_continuation = False
@@ -207,7 +257,7 @@ class MidiFile:
             if DEBUG_PARSING:
                 print('message:')
 
-            peek_status = self.file.peek_byte()
+            peek_status = self._file.peek_byte()
 
             # Todo: not all messages have running status
             if peek_status < 0x80:
@@ -215,7 +265,7 @@ class MidiFile:
                     raise IOError('running status without last_status')
                 status_byte = last_status
             else:
-                status_byte = self.file.read_byte()
+                status_byte = self._file.read_byte()
                 last_status = status_byte
 
             if status_byte == 0xff:
@@ -317,6 +367,57 @@ class MidiFile:
 
     __iter__ = play
 
+    def _encode_delta_time(self, delta):
+        bytes = []
+        while 1:
+            byte = delta & 0x7f
+            bytes.append(byte)
+
+            if byte <= 0x80:
+                bytes.reverse()
+                return bytes
+
+            delta = delta >> 7
+
+    def save(self, filename=None):
+        if self.format == 0 and len(self.tracks) != 1:
+            raise ValueError('format 1 file must have exactly 1 track')
+
+        if filename is self.filename is None:
+            raise ValueError('filename is None')
+
+        if filename is not None:
+            self.filename = filename
+
+        with ByteWriter(self.filename) as self._file:
+            self._file.write(b'MThd')
+
+            self._file.write_long(6)  # Header size. (Next three shorts.)
+            self._file.write_short(self.format)
+            self._file.write_short(len(self.tracks))
+            self._file.write_short(self.ticks_per_quarter_note)
+
+            for track in self.tracks:
+                bytes = []
+                for message in track:
+                    # Todo: support meta messages.
+                    if isinstance(message, MetaMessage):
+                        continue  # Todo: do someting here
+                    
+                    # Todo: running status?
+                    bytes += self._encode_delta_time(message.time)
+                    bytes += message.bytes()
+
+                if len(track) == 0 or track[-1].type != 'end_of_track':
+                    # Adding 'end_of_track' meta message.
+                    bytes += self._encode_delta_time(0)
+                    bytes += [0xff, 0x2f, 0]
+
+                self._file.write(b'MTrk')
+                self._file.write_long(len(bytes))
+                self._file.write(bytes)
+                    
+ 
     def __enter__(self):
         return self
 
