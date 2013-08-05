@@ -9,5 +9,8 @@ from mido.midifiles import MidiFile
 
 if __name__ == '__main__':
     filename = sys.argv[1]
-    midi_file = MidiFile(filename)
-    midi_file._print_tracks()
+    with MidiFile(filename) as midi_file:
+        for i, track in enumerate(midi_file.tracks):
+            sys.stdout.write('=== Track {}\n'.format(i))
+            for message in track:
+                sys.stdout.write('  {!r}\n'.format(message))
