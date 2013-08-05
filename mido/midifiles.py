@@ -323,8 +323,8 @@ class MidiFile:
         """Compute seconds per tick.
 
         The tempo argument is microseconds per quarter note. """
-        seconds_per_quarter_note = (tempo / 1000000.0)
-        return seconds_per_quarter_note / self.ticks_per_quarter_note
+        seconds_per_beat = (tempo / 1000000.0)
+        return seconds_per_beat / self.ticks_per_beat
 
     def _get_length(self):
         if not self.tracks:
@@ -437,7 +437,7 @@ class MidiFile:
             self._file.write_long(6)  # Header size. (Next three shorts.)
             self._file.write_short(self.format)
             self._file.write_short(len(self.tracks))
-            self._file.write_short(self.ticks_per_quarter_note)
+            self._file.write_short(self.ticks_per_beat)
 
             for track in self.tracks:
                 bytes = []
