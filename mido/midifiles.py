@@ -53,9 +53,10 @@ class ByteReader(object):
 
     def read_byte(self):
         """Read one byte."""
+        pos = self.tell()
         byte = self.read_byte_list(1)[0]
         if DEBUG_PARSING:
-            print('  {:04x}: {:02x}'.format(self.tell(), byte))
+            print('  {:6x}: {:02x}'.format(pos, byte))
         return byte
 
     def peek_byte(self):
@@ -65,7 +66,7 @@ class ByteReader(object):
         # Todo: this seems a bit excessive for just one byte.
         byte = bytearray(self.buffer.peek(1))[0]
         if DEBUG_PARSING:
-            print('  Peek: {:04x}: {:02x}'.format(self.tell(), byte))
+            print(' ({:6x}): peek {:02x}'.format(self.tell(), byte))
         return byte
 
     def read_short(self):
