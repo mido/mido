@@ -250,34 +250,11 @@ class MidiFile:
 
         return track
 
-    def play(self, yield_meta_messages=False):
-        """Play back all tracks.
+    def _merge_tracks(self, tracks):
+        """Merge all messates from tracks.
 
-        Yields all messages in all tracks in temporal order, with
-        correct timing. (It pauses with time.sleep() between each
-        message according to delta times and current tempo.)
-
-        Each message returned will be a copy of the one in the
-        track, so you can safely modify it without ruining the
-        tracks. The time attribute will be set to 0.
-        """
-
-        # The tracks of format 2 files are not in sync, so they can
-        # not be played back like this.
-        if self.format == 2:
-            raise ValueError('format 2 file can not be played back like this')
-
-        def compute_seconds_per_tick(tempo):
-            """Compute seconds per tick."""
-            seconds_per_quarter_note = (tempo / 1000000.0)
-            return seconds_per_quarter_note / self.ticks_per_quarter_note
-
-        # The default tempo is 120 BPM.
-        # (500000 microseconds per quarter note.)
-        seconds_per_tick = compute_seconds_per_tick(500000)
-
-        # Convert time of all message to absolute time (in ticks)
-        # so they can be sorted
+        Delta times are converted to absolute time (in ticks), and
+        messages from all tracks are sorted on absolute time."""
         messages = []
         for i, track in enumerate(self.tracks):
             now = 0
@@ -289,6 +266,35 @@ class MidiFile:
 
         messages.sort(key=lambda x: x.time)
 
+        return messages
+
+    def _compute_tempo(self, tempo):
+        """Compute seconds per tick."""
+        seconds_per_quarter_note = (tempo / 1000000.0)
+        return seconds_per_quarter_note / self.ticks_per_quarter_note
+
+    def play(self, yield_meta_messages=False):
+        """Play back all tracks.
+
+        The generator will sleep between each message, so that
+        messages are yielded with correct timing.
+
+        Yields copies of messages, so you can safely modify them
+        without ruining the tracks. The time attribute is set to the
+        number of seconds slept since the previous message.
+        """
+
+        # The tracks of format 2 files are not in sync, so they can
+        # not be played back like this.
+        if self.format == 2:
+            raise ValueError('format 2 file can not be played back like this')
+
+        # The default tempo is 120 BPM.
+        # (500000 microseconds per quarter note.)
+        seconds_per_tick = self._compute_tempo(500000)
+
+        messages = self._merge_tracks(self.tracks)
+
         # Play back messages.
         now = 0
         for message in messages:
@@ -296,12 +302,15 @@ class MidiFile:
             if delta:
                 sleep_time = delta * seconds_per_tick
                 time.sleep(sleep_time)
-            if isinstance(message, Message):
-                yield message.copy()
-            now += delta
+            else:
+                sleep_time = 0.0
 
+            if yield_meta_messages or isinstance(message, Message):
+                yield message.copy(time=sleep_time)
+
+            now += delta
             if message.type == 'set_tempo':
-                seconds_per_tick = compute_seconds_per_tick(message.tempo)
+                seconds_per_tick = self._compute_tempo(message.tempo)
 
     __iter__ = play
 
