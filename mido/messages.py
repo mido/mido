@@ -81,8 +81,7 @@ def get_message_specs():
 
         # System common messages
         MessageSpec(0xf0, 'sysex', ('data',), float('inf')),
-        MessageSpec(0xf1, 'undefined_f1', (), 1),  # Todo: support this.
-        # MessageSpec(0xf1, 'time_code', ('value'), 2),
+        MessageSpec(0xf1, 'quarter_frame', ('frame_type', 'frame_value'), 2),
         MessageSpec(0xf2, 'songpos', ('pos',), 3),
         MessageSpec(0xf3, 'song_select', ('song',), 2),
         MessageSpec(0xf4, 'undefined_f4', (), 1),
@@ -200,6 +199,30 @@ def check_data(data_bytes):
     return data_bytes
 
 
+def check_frame_type(value):
+    """Check type and value SMPTE quarter frame type.
+
+    Raises TypeError if the value is not an integer.
+    Raises ValueError if the value is out of range.
+    """
+    if not isinstance(value, int):
+        raise TypeError('frame_type must be an integer')
+    elif not 0 <= value <= 7:
+        raise ValueError('frame_type must be in range 0..7')
+
+
+def check_frame_value(value):
+    """Check type and value of SMPTE quarter frame value.
+
+    Raises TypeError if the value is not an integer.
+    Raises ValueError if the value is out of range.
+    """
+    if not isinstance(value, int):
+        raise TypeError('frame_value must be an integer')
+    elif not 0 <= value <= 15:
+        raise ValueError('frame_value must be in range 0..15')
+
+
 def check_databyte(value):
     """Raise exception of byte has wrong type or is out of range
 
@@ -275,7 +298,7 @@ class BaseMessage(object):
 def build_message(bytes):
     """Build message from bytes.
 
-    This is used by the parser."""
+    This is used by Parser and MidiFile."""
 
     spec = get_spec(bytes[0])
 
@@ -291,6 +314,10 @@ def build_message(bytes):
         pos = bytes[1]
         pos |= (bytes[2] << 7)
         arguments = {'pos': pos}
+
+    elif spec.type == 'quarter_frame':
+        arguments = {'frame_type': bytes[1] >> 4,
+                     'frame_value' : bytes[1] & 15}
 
     else:
         if bytes[0] < 0xf0:
@@ -428,13 +455,16 @@ class Message(BaseMessage):
 
         message_bytes = [status_byte]
 
-        for name in self._spec.arguments:
-            value = getattr(self, name)
-            try:
-                encode = globals()['encode_{}'.format(name)]
-                message_bytes.extend(encode(value))
-            except KeyError:
-                message_bytes.append(value)
+        if self.type == 'quarter_frame':
+            message_bytes.append(self.frame_type << 4 | self.frame_value)
+        else:
+            for name in self._spec.arguments:
+                value = getattr(self, name)
+                try:
+                    encode = globals()['encode_{}'.format(name)]
+                    message_bytes.extend(encode(value))
+                except KeyError:
+                    message_bytes.append(value)
 
         return message_bytes
 

@@ -15,7 +15,7 @@ program_change  channel program
 aftertouch      channel value
 pitchwheel      channel pitch
 sysex           data
-undefined_f1
+quarter_frame   frame_type frame_value
 songpos         pos
 song_select     song
 undefined_f4
@@ -33,8 +33,10 @@ reset
 ==============  ==============================
 
 The ``undefined_*`` messages will be received with no data
-bytes. ``undefined_f1`` is used for time codes, and may be implemented
-at some point in the future.
+bytes.
+
+``quarter_frame`` is used for SMPTE time codes. See:
+http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/MTC.htm
 
 
 Parameter Types

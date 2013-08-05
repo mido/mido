@@ -1,3 +1,15 @@
+1.1 -
+------
+
+* implemented MIDI files (mido.midifiles).
+
+* implemented MIDI over TCP/IP (socket ports) (mido.sockets).
+
+* added support for SMPTE time code quarter frames.
+
+* output ports now have reset() and panic() methods.
+
+
 1.0.2 - 2013-07-31
 -------------------
 
