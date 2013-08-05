@@ -212,8 +212,7 @@ class MidiFile:
             # Todo: not all messages have running status
             if peek_status < 0x80:
                 if last_status is None:
-                    # Todo: add file offset to error message?
-                    raise IOError('running status when last_status is None')
+                    raise IOError('running status without last_status')
                 status_byte = last_status
             else:
                 status_byte = self.file.read_byte()
