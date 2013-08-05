@@ -28,6 +28,28 @@ designed to be as straight forward and Pythonic as possible:
 Full documentation at http://mido.readthedocs.org/
 
 
+Main Features
+--------------
+
+  * convenient message objects.
+
+  * standard port API allows all kinds of input and output ports to be
+    used interchangingly. New port types can be written by subclassing
+    and overriding a few methods, or by duck typing.
+
+  * supports PortMidi, rtmidi and pygame. New backends can be written
+    easily and used with Mido.
+
+  * full support for MIDI files (read, write, create and play) with
+    complete access to every message in the file.
+
+  * allows MIDI over TCP/IP with socket ports.
+
+  * reusable MIDI parser.
+
+  * works in Python 2 and 3.
+
+
 Status
 -------
 
