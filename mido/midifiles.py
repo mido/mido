@@ -90,14 +90,6 @@ class ByteReader(object):
 
 
 class Track(list):
-    """
-    The 'name' property will set and get the track name using a
-    MetaMessage of type 'track_name'. Get returns the first
-    'track_name' in the track (and ignores the rest). Set modifies the
-    first 'track_name', or if one is not found, adds one to the
-    beginning of the track with delta time 0.
-    """
-
     def __init__(self):
         list.__init__([])
 
@@ -131,10 +123,11 @@ class MidiFile:
             # Read header (16 bytes)
             magic = self.file.read_bytearray(4)
             if not magic == bytearray(b'MThd'):
-                # Todo: raise some other error?
                 raise IOError('not a MIDI file')
 
-            header_size = self.file.read_long()
+            # Skip header size. (It's always 6, referring to the size
+            # of the next three shorts.)
+            self.file.read_long()
 
             self.format = self.file.read_short()
             number_of_tracks = self.file.read_short()
