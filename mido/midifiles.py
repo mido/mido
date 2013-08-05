@@ -162,7 +162,6 @@ class MidiFile:
             self.ticks_per_quarter_note = 120
         else:
             self._load()
-            print('!', 'tpqn:', self.ticks_per_quarter_note)
 
     def _load(self):
         with ByteReader(self.filename) as self._file:
@@ -217,7 +216,6 @@ class MidiFile:
         type = self._file.read_byte()
         length = self._file.read_byte()
         data = self._file.read_byte_list(length)
-        print('!', 'meta_message', hex(type), length, data)
 
         return MetaMessage(type, data)
 
