@@ -67,3 +67,12 @@ the implementation of ``for message in server`` above::
                 print(message)
 
             time.sleep(0.001)
+
+
+Caveats
+--------
+
+If you call ``receive()`` and the connection is closed from the other
+side while ``receive()`` waits for a messages, ``IOError`` will be
+raised. For this reason, it is best to use only ``__iter__()`` and
+``iter_pending()`` with socket ports.
