@@ -319,12 +319,9 @@ class MidiFile:
 
         return messages
 
-    def _compute_tempo(self, tempo):
-        """Compute seconds per tick.
-
-        The tempo argument is microseconds per beat (quarter note). """
-        seconds_per_beat = (tempo / 1000000.0)
-        return seconds_per_beat / self.ticks_per_beat
+    def _compute_tick_time(self, milliseconds_per_beat):
+        """Compute seconds per tick."""
+        return (milliseconds_per_beat / 100000.0) / self.ticks_per_beat
 
     def _get_length(self):
         if not self.tracks:
@@ -333,12 +330,12 @@ class MidiFile:
         track_lengths = []
     
         for track in self.tracks:
-            seconds_per_tick = self._compute_tempo(500000)
+            seconds_per_tick = self._compute_tick_time(500000)
             length = 0.0
             for message in track:
                 length += (message.time * seconds_per_tick)
                 if message.type == 'set_tempo':
-                    seconds_per_tick = self._compute_tempo(message.tempo)
+                    seconds_per_tick = self._compute_tick_time(message.tempo)
             track_lengths.append(length)
 
         return max(track_lengths)
@@ -362,7 +359,7 @@ class MidiFile:
         if self.format == 2:
             raise ValueError('format 2 file can not be played back like this')
 
-        seconds_per_tick = self._compute_tempo(DEFAULT_TEMPO)
+        seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
 
         messages = self._merge_tracks(self.tracks)
 
@@ -382,7 +379,7 @@ class MidiFile:
 
             now += delta
             if message.type == 'set_tempo':
-                seconds_per_tick = self._compute_tempo(message.tempo)
+                seconds_per_tick = self._compute_tick_time(message.tempo)
 
     __iter__ = play
 
