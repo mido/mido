@@ -306,7 +306,8 @@ class MidiFile:
                 sleep_time = 0.0
 
             if yield_meta_messages or isinstance(message, Message):
-                yield message.copy(time=sleep_time)
+                message.time = sleep_time
+                yield message
 
             now += delta
             if message.type == 'set_tempo':
