@@ -89,11 +89,6 @@ class ByteReader(object):
     def __exit__(self, type, value, traceback):
         return False
 
-    # Todo: I don't think this is needed.
-    #def __iter__(self):
-    #    while 1:
-    #        yield self.()
-
 
 def encode_signed_byte(byte):
     """Encode integer as two's complement signed byte."""
@@ -480,10 +475,10 @@ class MidiFile:
         tracks. The time attribute will be set to 0.
         """
 
-        # Todo: delta time is not converted correctly.
-        # The unit is MIDI ticks, whose duration depend on time signature.
-        # This is a little too complex for the first implementation.
-        
+        # Todo: raise exception if self.format == 2, but which one?
+        # (The tracks of format 2 files are not in sync, and can not
+        # be played back like this.)
+
         # Make a copy of the tracks, since we'll be removing from them.
         tracks = [deque(track) for track in self.tracks]
         messages_left = sum(map(len, tracks))
@@ -536,11 +531,3 @@ class MidiFile:
 
     def __exit__(self, type, value, traceback):
         return False
-
-
-# mid1/acso3op2.mid:
-# 00008b0: 00c0 0604 b05b 5400 5d5d 8168 0a58 0307
-#          (prog )(control )(? ... )(note off)(? )
-#
-# 00008c0: 7f81 4a90 4057 0043 5901 4854 1940 0001
-#          (off ?  ) (?                          )
