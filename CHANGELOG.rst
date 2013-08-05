@@ -14,6 +14,8 @@
   are optional, depending on how the backend will be used and what
   functionality it provices.
 
+* added utility programs mido-play, mido-ports, mido-serve and mido-forward.
+
 * added support for SMPTE time code quarter frames.
 
 * port constructors can now take keyword arguments.
