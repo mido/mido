@@ -379,6 +379,19 @@ class MidiFile:
 
             delta = delta >> 7
 
+    def _has_end_of_track(self, track):
+        """Return True if there is an end_of_track at the end of the track."""
+        last_i = len(track) - 1
+        print(last_i)
+        for i, message in enumerate(track):
+            if message.type == 'end_of_track':
+                print(i)
+                if i != last_i:
+                    raise ValueError('end_of_track not at end of the track')
+                return True
+        else:
+            return False
+
     def save(self, filename=None):
         """Save to a file.
 
@@ -413,19 +426,20 @@ class MidiFile:
                     # Todo: support meta messages.
                     if isinstance(message, MetaMessage):
                         if message.type == 'end_of_track':
+                            # Write end of track.
                             bytes += self._encode_delta_time(message.time)
                             bytes += [0xff, 0x2f, 0]
                         else:
                             # Todo: implement bytes() method in MetaMessage.
                             # For now just skip this message.
                             continue
-                    
-                    # Todo: running status?
-                    bytes += self._encode_delta_time(message.time)
-                    bytes += message.bytes()
+                    else:
+                        # Todo: running status?
+                        bytes += self._encode_delta_time(message.time)
+                        bytes += message.bytes()
 
-                if len(track) == 0 or track[-1].type != 'end_of_track':
-                    # Adding 'end_of_track' meta message.
+                if not self._has_end_of_track(track):
+                    # Write end_of_track.
                     bytes += self._encode_delta_time(0)
                     bytes += [0xff, 0x2f, 0]
 
