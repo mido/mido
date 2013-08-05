@@ -20,7 +20,7 @@ from mido.midifiles import MidiFile
 with mido.open_output() as output:
     output.reset()
     try:
-        print('Using {!r}'.format(output))
+        print('Using output {!r}.'.format(output.name))
         for filename in sys.argv[1:]:
             with MidiFile(filename) as midi_file:
                 print('Tracks:')
