@@ -31,15 +31,13 @@ DEBUG_PARSING = bool(os.environ.get('MIDO_DEBUG_PARSING'))
 
 class ByteReader(object):
     """
-    Reads bytes from a binary stream.
-
-    Stream must be a file opened with mode 'rb'.
+    Reads bytes from a file.
     """
 
     # Todo: test if EOFError is raised.
 
-    def __init__(self, stream):
-        self.buffer = io.BufferedReader(stream)
+    def __init__(self, filename):
+        self.buffer = io.BufferedReader(io.open(filename, 'rb'))
         self._pos = 0
 
     def read_bytearray(self, n):
@@ -119,7 +117,7 @@ class MidiFile:
         self.filename = filename
         self.tracks = []
 
-        with ByteReader(open(filename, 'rb')) as self.file:
+        with ByteReader(filename) as self.file:
             # Read header (16 bytes)
             magic = self.file.read_bytearray(4)
             if not magic == bytearray(b'MThd'):
