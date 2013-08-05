@@ -269,7 +269,9 @@ class MidiFile:
         return messages
 
     def _compute_tempo(self, tempo):
-        """Compute seconds per tick."""
+        """Compute seconds per tick.
+
+        The tempo argument is microseconds per quarter note. """
         seconds_per_quarter_note = (tempo / 1000000.0)
         return seconds_per_quarter_note / self.ticks_per_quarter_note
 
