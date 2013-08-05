@@ -484,18 +484,14 @@ class MidiFile:
         tracks = [deque(track) for track in self.tracks]
         messages_left = sum(map(len, tracks))
 
-        def set_tick_time(tempo):
+        def compute_seconds_per_tick(tempo):
             """Compute seconds per tick."""
             seconds_per_quarter_note = (tempo / 1000000.0)
+            return seconds_per_quarter_note / self.ticks_per_quarter_note
 
-            s = seconds_per_quarter_note
-            t = self.ticks_per_quarter_note
-
-            values['tick_time'] = s / t
-
-        values = {'tick_time': None}  # Seconds per tick.
         # The default tempo is 120 BPM.
-        set_tick_time(500000)  # Microseconds per quarter note.
+        # (500000 microseconds per quarter note.)
+        seconds_per_tick = compute_seconds_per_tick(500000)
 
         # Convert time of all message to absolute time (in ticks)
         # so they can be sorted
@@ -514,14 +510,14 @@ class MidiFile:
         for message in messages:
             delta = message.time - now
             if delta:
-                sleep_time = delta * values['tick_time']
+                sleep_time = delta * seconds_per_tick
                 time.sleep(sleep_time)
             if isinstance(message, Message):
                 yield message.copy()
             now += delta
 
             if message.type == 'set_tempo':
-                set_tick_time(message.tempo)
+                seconds_per_tick = compute_seconds_per_tick(message.tempo)
 
     def __iter__(self):
         for message in self.play():
