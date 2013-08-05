@@ -117,10 +117,6 @@ Future Plans
 * add a library of useful tools, such as delays, an event engine and
   message filters.
 
-* support time codes (0xf1). (These have one data bytes divided into 3
-  bits type and 4 bits values. It's unclear how this should be
-  handled.)
-
 
 License
 --------
