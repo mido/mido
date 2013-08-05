@@ -3,7 +3,6 @@ MIDI file reading and playback.
 
 Todo:
     - make it more fault tolerant (handle errors in MIDI files?)
-    - join sysex messages (0xf0...0xf7, 0xf7...0xf7, ...)
 
 References:
 
@@ -192,11 +191,14 @@ class MidiFile:
         length = self.file.read_long()  # Ignore this.
         start = self.file.tell()
         last_status = None
+        last_systex = None
 
         while 1:
             # End of track reached.
             if self.file.tell() - start == length:
                 break
+
+            is_sysex_continuation = False
 
             if DEBUG_PARSING:
                 print('delta:')
@@ -211,7 +213,7 @@ class MidiFile:
             if peek_status < 0x80:
                 if last_status is None:
                     # Todo: add file offset to error message?
-                    raise IOError('running status when last_status is None!')
+                    raise IOError('running status when last_status is None')
                 status_byte = last_status
             else:
                 status_byte = self.file.read_byte()
@@ -221,9 +223,15 @@ class MidiFile:
                 message = self._read_meta_message()
             elif status_byte == 0xf0:
                 message = self._read_sysex()
+                last_sysex = message
             elif status_byte == 0xf7:
-                # Todo: handle continuation of previous sysex
                 message = self._read_sysex()
+                # Todo: does this actually work?
+                is_sysex_continuation = True
+                if last_systex is None:
+                    raise IOError(
+                        'sysex continuation without preceding sysex')
+                last_systex.data += message.data
             else:
                 message = self._read_message(status_byte)
 
@@ -231,7 +239,11 @@ class MidiFile:
 
             if DEBUG_PARSING:
                 print('    =>', message)
-            track.append(message)
+                if is_sysex_continuation:
+                    print('       (sysex continuation)')
+
+            if not is_sysex_continuation:
+                track.append(message)
 
             if message.type == 'end_of_track':
                 break
