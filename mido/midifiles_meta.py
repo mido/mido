@@ -86,7 +86,7 @@ def decode_text(message, data):
 
 
 def decode_track_name(message, data):
-    message.title = parse_text(data)
+    message.name = parse_text(data)
 
 
 def decode_midi_port(message, data):

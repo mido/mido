@@ -96,7 +96,7 @@ class Track(list):
     def _get_name(self):
         for message in self:
             if message.type == 'track_name':
-                return message.title
+                return message.name
         else:
             return u''
 
@@ -104,11 +104,11 @@ class Track(list):
         # Find the first track_name message and modify it.
         for message in self:
             if message.type == 'track_name':
-                message.title = name
+                message.name = name
                 return
         else:
             # No track name found, add one.
-            self.insert(0, MetaMessage('track_name', title=name, time=0))
+            self.insert(0, MetaMessage('track_name', name=name, time=0))
 
     name = property(fget=_get_name, fset=_set_name)
     del _get_name, _set_name
