@@ -22,6 +22,8 @@
 * output ports now have reset() and panic() methods.
 
 * new environment variables MIDO_DEFAULT_INPUT and MIDO_DEFAULT_OUTPUT.
+  If these are set, the open_*() functions will use them instead of the
+  backend's default ports.
 
 * added ports.Broadcast, a port contains a list of ports and
   sends its messages to all of these.
