@@ -146,15 +146,15 @@ is half a second per beat, or 120 beats per minute. The meta message
 
 Computations::
 
-    seconds_per_beat = tempo / 1000000.0
-    beats_per_minute = 60 / seconds_per_beat
-    tempo = (beats_per_minute / 60.0) * 1000000.0
+    beats_per_seconds = 1000000 / tempo
+    beats_per_minute = (1000000 / tempo) * 60
+    tempo = (60 / beats_per_minute) * 1000000
 
 Examples::
 
-    0.5 == 500000 / 1000000.0
-    120 == 60 / 0.5
-    500000 == (120 / 60.0) * 1000000.0
+    2 == 1000000 / 500000
+    120 == (1000000 / 500000) * 60
+    500000 == (60 / 120.0) * 1000000
 
 Each message in a MIDI file has a delta time, which tells how many
 ticks has passed since the last message. The resolution of these ticks
@@ -166,13 +166,15 @@ times to and from real time.
 
 Computations::
 
+    seconds_per_beat = tempo / 1000000.0
     seconds_per_tick = seconds_per_beat / float(ticks_per_beat)
     time_in_seconds = time_in_ticks * seconds_per_tick
     time_in_ticks = time_in_seconds / seconds_per_tick
 
 Examples::
 
-    0.005 == 0.5 / float(100)
+    0.5 == 500000 / 1000000.0
+    0.005 == 0.5 / 100    
     1.0 == 200 * 0.005
     200 == 1.0 / 0.005
 
