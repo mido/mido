@@ -178,8 +178,6 @@ Examples::
 
 (Todo: update with default value.)
 
-In Mido, tick per beat is available as the ``ticks_per_beat``
-attribute of MidiFile objects, and delta time (in ticks) is available
-as ``message.time``.
-
-Tempo is updated by ``set_tempo`` meta messages.
+In Mido, MidiFile objects have a ``ticks_per_beat`` attribute, while
+``message.time`` is used for delta time. Tempo is updated by
+``set_tempo`` meta messages.
