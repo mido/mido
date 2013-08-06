@@ -178,6 +178,6 @@ Examples::
 
 (Todo: update with default value.)
 
-In Mido, MidiFile objects have a ``ticks_per_beat`` attribute, while
+MidiFile objects have a ``ticks_per_beat`` attribute, while
 ``message.time`` is used for delta time. Tempo is updated by
 ``set_tempo`` meta messages.
