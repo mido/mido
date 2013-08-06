@@ -141,7 +141,7 @@ Timing in MIDI files is all centered around beats. A beat is the same
 as a quarter note.
 
 Tempo is given in microseconds per beat. It defaults to 500000, which
-is half a seconds per beat, or 120 beats per minute. The meta message
+is half a second per beat, or 120 beats per minute. The meta message
 'set_tempo' can be used to change tempo during a song.
 
 Computations::
