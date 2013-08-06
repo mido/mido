@@ -140,11 +140,11 @@ Tempo and Time Resolution
 Timing in MIDI files is all centered around beats. A beat is the same
 as a quarter note.
 
-The tempo is given in microseconds per beat. It defaults to 500000,
-which is half a seconds per beat, or 120 beats per minute. The meta
-message 'set_tempo' can be used to change the tempo during a song.
+Tempo is given in microseconds per beat. It defaults to 500000, which
+is half a seconds per beat, or 120 beats per minute. The meta message
+'set_tempo' can be used to change tempo during a song.
 
-Computation::
+Computations::
 
     seconds_per_beat = microseconds_per_beat / 1000000.0
     beats_per_minute = 60 / seconds_per_beat
@@ -157,13 +157,14 @@ Examples::
     2.0 == 1 / 0.5
 
 Each message in a MIDI file has a delta time, which tells how many
-ticks has passed since the last message. The number of ticks per beat
-is stored in the file header, and remains fixed throughout the
-song. It is used when converting delta times to and from real time.
+ticks has passed since the last message. The resolution of these ticks
+is defined in ticks per beat. This value is in the file header and
+remains fixed throughout the song. It is used when converting delta
+times to and from real time.
 
 (Todo: what's the default value?) 
 
-Computation::
+Computations::
 
     seconds_per_tick = seconds_per_beat / float(ticks_per_beat)
     time_in_seconds = time_in_ticks * seconds_per_tick
