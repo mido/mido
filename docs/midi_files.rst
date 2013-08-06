@@ -148,7 +148,7 @@ Computations::
 
     seconds_per_beat = tempo / 1000000.0
     beats_per_minute = 60 / seconds_per_beat
-    beats_per_second = 1 / seconds_per_beat
+    tempo = (beats_per_minute / 60.0) * 1000000.0
 
 Examples::
 
