@@ -146,7 +146,7 @@ is half a seconds per beat, or 120 beats per minute. The meta message
 
 Computations::
 
-    seconds_per_beat = microseconds_per_beat / 1000000.0
+    seconds_per_beat = tempo / 1000000.0
     beats_per_minute = 60 / seconds_per_beat
     beats_per_second = 1 / seconds_per_beat
 
@@ -172,7 +172,7 @@ Computations::
 
 Examples::
 
-    0.005 == 0.5 / 100
+    0.005 == 0.5 / float(100)
     1.0 == 200 * 0.005
     200 == 1.0 / 0.005
 
