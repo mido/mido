@@ -137,14 +137,48 @@ ports.
 Tempo and Time Resolution
 --------------------------
 
-(Todo: write about the tempo message when it has
-been implemented.)
+Timing in MIDI files is all centered around beats. A beat is the same
+as a quarter note.
 
-(Todo: exmplain ticks.)
+The tempo is given in microseconds per beat. It defaults to 500000,
+which is half a seconds per beat, or 120 beats per minute. The meta
+message 'set_tempo' can be used to change the tempo during a song.
 
-You can adjust the resolution of time ticks by setting this attribute::
+Computation::
 
-   mid.ticks_per_quarter_note = 360
+    seconds_per_beat = microseconds_per_beat / 1000000.0
+    beats_per_minute = 60 / seconds_per_beat
+    beats_per_second = 1 / seconds_per_beat
 
-This will affect playback tempo, so you need to adjust the ``tempo``
-messages accordingly.
+Examples::
+
+    0.5 == 500000 / 1000000.0
+    120 == 60 / 0.5
+    2.0 == 1 / 0.5
+
+Each message in a MIDI file has a delta time, which tells how many
+ticks has passed since the last message. The number of ticks per beat
+is stored in the file header, and remains fixed throughout the
+song. It is used when converting delta times to and from real time.
+
+(Todo: what's the default value?) 
+
+Computation::
+
+    seconds_per_tick = seconds_per_beat / float(ticks_per_beat)
+    time_in_seconds = time_in_ticks * seconds_per_tick
+    time_in_ticks = time_in_seconds / seconds_per_tick
+
+Examples::
+
+    0.005 == 0.5 / 100
+    1.0 == 200 * 0.005
+    200 == 1.0 / 0.005
+
+(Todo: update with default value.)
+
+In Mido, tick per beat is available as the ``ticks_per_beat``
+attribute of MidiFile objects, and delta time (in ticks) is available
+as ``message.time``.
+
+Tempo is updated by ``set_tempo`` meta messages.
