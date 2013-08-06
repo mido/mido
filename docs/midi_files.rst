@@ -158,7 +158,7 @@ Examples::
 
 Each message in a MIDI file has a delta time, which tells how many
 ticks has passed since the last message. The length of a tick is
-defined in ticks per beat. This value is in the file header and
+defined in ticks per beat. This value is stored in the file header and
 remains fixed throughout the song. It is used when converting delta
 times to and from real time.
 
