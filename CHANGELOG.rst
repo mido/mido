@@ -1,9 +1,9 @@
 1.1 -
 ------
 
-* added full support for MIDI files (read, write playback) (as mido.midifiles).
+* added full support for MIDI files (read, write playback)
 
-* added MIDI over TCP/IP with socket ports (as mido.sockets).
+* added MIDI over TCP/IP (socket ports)
 
 * added support for selectable backends (with MIDO_BACKEND) and
   included python-rtmidi and pygame backends in the official library
