@@ -154,7 +154,7 @@ Examples::
 
     0.5 == 500000 / 1000000.0
     120 == 60 / 0.5
-    2.0 == 1 / 0.5
+    500000 == (120 / 60.0) * 1000000.0
 
 Each message in a MIDI file has a delta time, which tells how many
 ticks has passed since the last message. The resolution of these ticks
