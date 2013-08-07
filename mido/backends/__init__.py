@@ -1,6 +1,7 @@
 import os
 import types
 import importlib
+from .. import ports
 
 class Backend(object):
     # Todo: doc strings.
@@ -8,7 +9,7 @@ class Backend(object):
     # Todo: call an exit() function on the module or something when
     #       it is unloaded?
 
-    def __init__(self, module, on_demand=False, use_environ=False):
+    def __init__(self, module, on_demand=True, use_environ=False):
         self.use_environ = use_environ
 
         if isinstance(module, types.ModuleType):
@@ -18,9 +19,9 @@ class Backend(object):
             self.path = module
             self.module = None
             if not on_demand:
-                self._import()
+                self._load()
 
-    def _import(self):
+    def _load(self):
         if self.module is None:
             self.module = importlib.import_module(self.path)
 
@@ -31,8 +32,8 @@ class Backend(object):
             return None
 
     def __getattr__(self, name):
-        self._import()
         if name in ['Input', 'Output', 'IOPort', 'get_devices']:
+            self._load()
             return getattr(self.module, name)
         else:
             raise AttributeError(name)
@@ -43,7 +44,7 @@ class Backend(object):
         If the environment variable MIDO_DEFAULT_INPUT is set,
         if will override the default port.
         """
-        self._import()
+        self._load()
         if name is None:
             name = self._env('MIDO_DEFAULT_INPUT')
         return self.module.Input(name, **kwargs)
@@ -54,7 +55,7 @@ class Backend(object):
         If the environment variable MIDO_DEFAULT_OUTPUT is set,
         if will override the default port.
         """
-        self._import()
+        self._load()
         if name is None:
             name = self._env('MIDO_DEFAULT_OUTPUT')
         return self.module.Output(name, **kwargs)
@@ -65,7 +66,7 @@ class Backend(object):
         If the environment variable MIDO_DEFAULT_IOPORT is set,
         if will override the default port.
         """
-        self._import()
+        self._load()
 
         if name is None:
             name = self._env('MIDO_DEFAULT_IOPORT')
@@ -90,21 +91,21 @@ class Backend(object):
 
     def get_input_names(self):
         """Return a sorted list of all input port names."""
-        self._import()
+        self._load()
         devices = self.module.get_devices()
         names = [device['name'] for device in devices if device['is_input']]
         return list(sorted(names))
 
     def get_output_names(self):
         """Return a sorted list of all output port names."""
-        self._import()
+        self._load()
         devices = self.module.get_devices()
         names = [device['name'] for device in devices if device['is_input']]
         return list(sorted(names))
 
     def get_ioport_names(self):
         """Return a sorted list of all I/O port names."""
-        self._import()
+        self._load()
         return sorted(
             set(self.get_input_names()) & set(self.get_output_names()))        
 

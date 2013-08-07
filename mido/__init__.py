@@ -100,7 +100,7 @@ def set_backend(path):
 
     glob = globals()
 
-    backend = glob['backend'] = Backend(path, use_environ=True)
+    backend = glob['backend'] = Backend(path, on_demand=True, use_environ=True)
     for name in dir(backend):
         if name.split('_')[0] in ['open', 'get']:
             glob[name] = getattr(backend, name)
