@@ -141,8 +141,6 @@ class SocketPort(BaseInput, BaseOutput):
                 else:
                     self._parser.feed_byte(ord(byte))
 
-        return len(self._messages)
-
     def _send(self, message):
         if self.string_protocol:
             self.file.write('{}\n'.format(message))
@@ -153,16 +151,6 @@ class SocketPort(BaseInput, BaseOutput):
 
     def _close(self):
         self.socket.close()
-
-    def __iter__(self):
-        while 1:
-            for message in self.iter_pending():
-                yield message
-
-            if self.closed:
-                break
-
-            sleep()
 
 
 def connect(hostname, port, conn=None, string_protocol=False):
