@@ -1,7 +1,22 @@
 import os
+import imp
 import types
 import importlib
 from .. import ports
+
+import sys
+import imp
+
+def find_dotted_module(name, path=None):
+    """Recursive version of imp.find_module.
+
+    Handles dotted module names.
+    """
+    res = None
+    for part in name.split('.'):
+        res = imp.find_module(part, path)
+        path = [res[1]]
+    return res
 
 class Backend(object):
     # Todo: doc strings.
@@ -13,17 +28,19 @@ class Backend(object):
         self.use_environ = use_environ
 
         if isinstance(module, types.ModuleType):
-            self.path = module.__name__
+            self.name = module.__name__
             self.module = module
         else:
-            self.path = module
+            self.name = module
             self.module = None
-            if not on_demand:
+            if on_demand:
+                find_dotted_module(self.name)
+            else:
                 self._load()
 
     def _load(self):
         if self.module is None:
-            self.module = importlib.import_module(self.path)
+            self.module = importlib.import_module(self.name)
 
     def _env(self, name):
         if self.use_environ:
@@ -115,4 +132,4 @@ class Backend(object):
         else:
             status = 'loaded'
 
-        return '<backend {!r} ({})>'.format(self.path, status)
+        return '<backend {!r} ({})>'.format(self.name, status)
