@@ -146,10 +146,6 @@ class BaseInput(BasePort):
         This will block until a message arrives. For non-blocking
         behavior, you can use pending() to see how many messages can
         safely be received without blocking.
-                
-        NOTE: Blocking is currently implemented with polling and
-        time.sleep(). This is inefficient, but the proper way doesn't
-        work yet, so it's better than nothing.
 
         Todo: What should happen when the port is closed?
         - raise exception?
@@ -170,6 +166,8 @@ class BaseInput(BasePort):
                 # pending() has read at least one message from the
                 # device. Return the first message.
                 return self._messages.popleft()
+            elif self.closed:
+                raise IOError('port closed while waiting in receive()')
 
     def __iter__(self):
         """Iterate through messages as they arrive on the port."""

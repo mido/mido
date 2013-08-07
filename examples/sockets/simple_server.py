@@ -10,10 +10,10 @@ import sys
 import time
 import mido
 from mido import sockets
-from mido.ports import multi_iter_pending
+from mido.ports import MultiPort
 
 # Todo: do this with a argument parser.
-out = mido.ports.Broadcast([mido.open_output(name) for name in sys.argv[2:]])
+out = MultiPort([mido.open_output(name) for name in sys.argv[2:]])
 
 (hostname, port) = sockets.parse_address(sys.argv[1])
 with sockets.PortServer(hostname, port) as server:
