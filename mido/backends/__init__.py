@@ -12,11 +12,14 @@ def find_dotted_module(name, path=None):
 
     Handles dotted module names.
     """
-    res = None
-    for part in name.split('.'):
-        res = imp.find_module(part, path)
-        path = [res[1]]
-    return res
+    try:
+        res = None
+        for part in name.split('.'):
+            res = imp.find_module(part, path)
+            path = [res[1]]
+        return res
+    except ImportError:
+        raise ImportError('No module named {}'.format(name))
 
 class Backend(object):
     # Todo: doc strings.
