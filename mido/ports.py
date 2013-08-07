@@ -138,7 +138,7 @@ class BaseInput(BasePort):
     def iter_pending(self):
         """Iterate through pending messages."""
         for _ in range(self.pending()):
-            yield self.receive()
+            yield self._messages.popleft()
 
     def receive(self):
         """Return the next message.
@@ -167,12 +167,16 @@ class BaseInput(BasePort):
                 # device. Return the first message.
                 return self._messages.popleft()
             elif self.closed:
-                raise IOError('port closed while waiting in receive()')
+                raise IOError('port closed inside receive()')
 
     def __iter__(self):
-        """Iterate through messages as they arrive on the port."""
+        """Iterate through messages until the port closes."""
         while 1:
-            yield self.receive()
+            for message in self.iter_pending():
+                yield message
+            if self.closed:
+                return
+            sleep()
 
 class BaseOutput(BasePort):
     """
