@@ -14,7 +14,7 @@ import mido
 
 mido.set_backend('printer')
 
-print('Available outputs: {}'.format(mido.get_output_names()))
+print('Available outputs: {!r}'.format(mido.get_output_names()))
 
 with mido.open_output() as port:
     print('Using {}.'.format(port))
