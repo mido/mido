@@ -13,66 +13,72 @@ The protocol is standard MIDI bytes over a TCP stream.
 A Simple Server and Client
 ---------------------------
 
-To get a connection going, you must first set up a server::
+First, let's import some things::
 
-    with mido.sockets.Server('localhost', 8080) as server:
+    from mido.sockets import Server, connect
+
+To get a connection going you must first set up a server::
+
+    for message in Server('localhost', 8080):
+        print(message)
+
+You can then connect to the server and send it messages::
+
+    output = connect('localhost', 8080):
+    output.send(message)
+
+If you want to turn things on their head, you can let the server send
+messages to the clients::
+
+    with Server('localhost', 8080) as output:
         while 1:
-            client_port = server.accept()
-            for message in client_port:
+            output.send(message)
+
+and then on the client side::
+
+    input = connect()
+    for message in connect('localhost', 8080):
+        print(message)
+
+The client will now print any message that the server sends.
+
+
+Under the Hood
+---------------
+
+The examples above use the server and client ports as normal I/O
+ports. This makes it easy to write simple servers, but you don't have
+any control of the client connections.
+
+To get more control, you can ignore the port methods of the Server
+object and use only the ``accept()`` method. Here's a
+simple server implemented this way::
+
+    with Server('localhost', 8080) as server:
+        while 1:
+            # Wait for a client.
+            client = server.accept()
+
+            # Print all messages until the client disconnects.
+            for message in client:
                 print(message)
 
-You can then connect to the server with::
+This will only handle one client at a time. To get around this, you
+can use the non-blocking version of ``accept()``. You now need to keep
+a list of clients::
 
-    server_port = mido.sockets.connect('localhost', 8080):
-
-``client_port`` and ``server_port`` are normal Mido I/O ports with all
-the usual methods, so to send a message to the server, you can simply
-do::
-
-    server_port.send(message)
-
-Messages can be sent either way, but it's usually best to settle on
-one way and stick to that.
-
-
-Handling More Connections
----------------------------
-
-The example above has one weakness: only one client can connect at a
-time. This is easily fixed by doing::
-
-    with mido.sockets.Server('localhost', 8080) as server:
-        for message in server:
-            print(message)
-
-This will iterate over all messages from all clients, and handle
-connections automatically. The cost is control over connections and
-client ports.
-
-By using the non-blocking version of ``accept()``, you can get more
-control and still allow multiple connections. As an example, here's
-the implementation of ``for message in server`` above::
-
-    with mido.sockets.Server('localhost', 8080) as server:
+    with Server('localhost', 8080) as server:
         clients = []
         while 1:
-            # Update connection list.
-            client = self.accept(block=False)
+            client = server.accept(block=False)
             if client:
                 clients.append(client)
-            clients = [client for client in clients if not client.closed]
+            clients = [c for c in clients if not c.closed]
 
-            # Receive messages from clients.
-            for message in multi_iter_pending(clients):
-                print(message)
+            for client in clients:
+                for message in client.iter_pending()
+                    print(message)
 
-            time.sleep(0.001)
+            ... do other things
 
-
-Caveats
---------
-
-If you call ``receive()`` and the connection is closed from the other
-side while ``receive()`` waits for a messages, ``IOError`` will be
-raised. For this reason, it is best to use only ``__iter__()`` and
-``iter_pending()`` with socket ports.
+This is how the ``__iter__()`` method of Server is implemented.

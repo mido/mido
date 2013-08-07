@@ -22,7 +22,7 @@ def _is_readable(socket):
 class Server(MultiPort):
     # Todo: queue size.
 
-    def __init__(self, host, portno, backlog=1):
+    def __init__(self, host, portno):
         BaseInput.__init__(self, format_address(host, portno))
         self.ports = []
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -66,8 +66,7 @@ class Server(MultiPort):
         port = self.accept(block=False)
         if port:
             self.ports.append(port)
-        self._update_ports()        
-
+        self._update_ports()
         self._messages.extend(multi_iter_pending(self.ports))
 
 
