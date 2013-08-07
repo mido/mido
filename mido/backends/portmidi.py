@@ -169,8 +169,6 @@ class Input(PortCommon, BaseInput):
                 self._parser.feed_byte(byte)
                 packed_message >>= 8
 
-        return self._parser.pending()
-
 
 class Output(PortCommon, BaseOutput):
     """

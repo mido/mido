@@ -107,8 +107,6 @@ class Input(PortCommon, BaseInput):
             else:
                 self._parser.feed(message[0])
             
-        return self._parser.pending()
-
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
         self.rt.send_message(message.bytes())

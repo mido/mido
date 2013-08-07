@@ -96,7 +96,7 @@ class BaseInput(BasePort):
         BasePort.__init__(self, name, **kwargs)
 
     def _pending(self):
-        return 0
+        return None
 
     def pending(self):
         """Return how many messages are ready to be received.
@@ -113,7 +113,11 @@ class BaseInput(BasePort):
         if self.closed:
             return len(self._messages)
         else:
-            return self._pending()
+            num_messages = self._pending()
+            if num_messages is None:
+                return len(self._messages)
+            else:
+                return num_messages
 
     def iter_pending(self):
         """Iterate through pending messages."""

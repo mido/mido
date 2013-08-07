@@ -59,6 +59,10 @@ port classes in ``mido.ports``::
             ... Check for new messages, feed them
             ... to the parser and return how many messages
             ... are now available.
+            ...
+            ... Returns the number of available messages.
+            ... If it returns None, pending() will return
+            ... len(self._messages).
 
     class Output(PortCommon, BaseOutput):
         def _send(self, message):

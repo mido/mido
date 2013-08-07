@@ -31,7 +31,7 @@ class PortCommon(object):
     """
     Mixin with common things for input and output ports.
     """
-    def _open(self):
+    def _open(self, **kwargs):
         midi.init()
 
         self.device = None
@@ -111,8 +111,6 @@ class Input(PortCommon, BaseInput):
             event = self._port.read(1)[0]
             midi_bytes = event[0]
             self._parser.feed(midi_bytes)
-        
-        return self._parser.pending()
 
 
 class Output(PortCommon, BaseOutput):
