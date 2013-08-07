@@ -33,7 +33,10 @@ class Backend(object):
         else:
             self.name = module
             self.module = None
-            if on_demand:
+
+            if self.name in sys.modules:
+                self.module = sys.modules[self.name]
+            elif on_demand:
                 find_dotted_module(self.name)
             else:
                 self._load()
@@ -127,9 +130,9 @@ class Backend(object):
             set(self.get_input_names()) & set(self.get_output_names()))        
 
     def __repr__(self):
-        if self.module is None:
-            status = 'not loaded'
-        else:
+        if self.module is not None or self.name in sys.modules:
             status = 'loaded'
+        else:
+            status = 'not loaded'
 
         return '<backend {!r} ({})>'.format(self.name, status)
