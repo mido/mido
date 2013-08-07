@@ -22,8 +22,8 @@ from mido.ports import MultiPort
 # Todo: do this with a argument parser.
 out = MultiPort([mido.open_output(name) for name in sys.argv[2:]])
 
-(hostname, port) = sockets.parse_address(sys.argv[1])
-with sockets.PortServer(hostname, port) as server:
+(host, port) = sockets.parse_address(sys.argv[1])
+with sockets.PortServer(host, port) as server:
     for message in server:
         print('Received {}'.format(message))
         out.send(message)

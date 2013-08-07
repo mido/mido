@@ -23,18 +23,23 @@ def _is_readable(socket):
 class PortServer:
     # Todo: queue size.
 
-    def __init__(self, hostname, port, backlog=1):
-        self.hostname = hostname
+    def __init__(self, host, port, backlog=1):
+        self.host = host
         self.port = port
+        self.clients = []
 
         # family = socket.AF_UNIX
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self.socket.setblocking(True)
-        self.socket.bind((self.hostname, self.port))
+        self.socket.bind((self.host, self.port))
         self.socket.listen(backlog)
-    
+
+    def _update_clients(self):
+        """Remove closed client ports."""
+        self.clients = [client for client in self.clients if not client.closed]
+
     def fileno(self):
         """Return file descriptor of server socket.
 
@@ -54,22 +59,23 @@ class PortServer:
         if not block and not _is_readable(self):
             return None
 
+        self._update_clients()
+
         conn, (host, port) = self.socket.accept()
         return SocketPort(host, port, conn=conn)
 
     # Todo: add __enter__() and __exit__().
 
     def __iter__(self):
-        clients = []
         while 1:
             # Update connection list.
             client = self.accept(block=False)
             if client:
-                clients.append(client)
-            clients = [client for client in clients if not client.closed]
+                self.clients.append(client)
+            self._update_clients()
 
             # Receive and send messages.
-            for message in multi_iter_pending(clients):
+            for message in multi_iter_pending(self.clients):
                 yield message
 
             sleep()
@@ -82,12 +88,12 @@ class PortServer:
         return False
 
 class SocketPort(BaseInput, BaseOutput):
-    def __init__(self, hostname, port, conn=None, string_protocol=False):
-        self.name = '{}:{:d}'.format(hostname, port)
+    def __init__(self, host, port, conn=None, string_protocol=False):
+        self.name = '{}:{:d}'.format(host, port)
         self.closed = False
         self._parser = Parser()
 
-        self.hostname = hostname
+        self.host = host
         self.port = port
         self._messages = self._parser._parsed_messages
         self.string_protocol = string_protocol
@@ -95,7 +101,7 @@ class SocketPort(BaseInput, BaseOutput):
         if conn is None:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setblocking(True)
-            self.socket.connect((hostname, port))
+            self.socket.connect((host, port))
         else:
             self.socket = conn
 
@@ -153,24 +159,24 @@ class SocketPort(BaseInput, BaseOutput):
         self.socket.close()
 
 
-def connect(hostname, port, conn=None, string_protocol=False):
+def connect(host, port, conn=None, string_protocol=False):
     """Connect to a socket port server.
 
     The return value is a SocketPort object."""
-    return SocketPort(hostname, port, string_protocol=string_protocol)
+    return SocketPort(host, port, string_protocol=string_protocol)
 
 
 def parse_address(address):
-    """Parse and address on the format hostname:port.
+    """Parse and address on the format host:port.
 
-    Returns a tuple (hostname, port). Raises ValueError if format is
+    Returns a tuple (host, port). Raises ValueError if format is
     invalid or port is not an integer or out of range.
     """
     words = address.split(':')
     if len(words) != 2:
         raise ValueError('address must contain exactly one colon')
 
-    hostname = words[0]
+    host = words[0]
     port = words[1]
 
     try:
@@ -182,4 +188,4 @@ def parse_address(address):
     if not 0 < port < (2**16):
         raise ValueError('port number out of range')
 
-    return (hostname, port)
+    return (host, port)

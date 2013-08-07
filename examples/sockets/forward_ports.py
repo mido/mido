@@ -9,10 +9,10 @@ Example:
 import sys
 import mido
 
-hostname, port = mido.sockets.parse_address(sys.argv[1])
+host, port = mido.sockets.parse_address(sys.argv[1])
 ports = [mido.open_input(name) for name in sys.argv[2:]]
 
-with mido.sockets.connect(hostname, port) as server_port:
+with mido.sockets.connect(host, port) as server_port:
     print('Connected.')
     for message in mido.ports.multi_receive(ports):
         print('Sending {}'.format(message))
