@@ -23,22 +23,22 @@ def _is_readable(socket):
 class PortServer:
     # Todo: queue size.
 
-    def __init__(self, host, port, backlog=1):
+    def __init__(self, host, portno, backlog=1):
         self.host = host
-        self.port = port
-        self.clients = []
+        self.portno = portno
+        self.ports = []
 
         # family = socket.AF_UNIX
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self.socket.setblocking(True)
-        self.socket.bind((self.host, self.port))
+        self.socket.bind((self.host, self.portno))
         self.socket.listen(backlog)
 
-    def _update_clients(self):
-        """Remove closed client ports."""
-        self.clients = [client for client in self.clients if not client.closed]
+    def _update_ports(self):
+        """Remove closed port ports."""
+        self.ports = [port for port in self.ports if not port.closed]
 
     def fileno(self):
         """Return file descriptor of server socket.
@@ -54,12 +54,12 @@ class PortServer:
         SocketPort object.
 
         If block=False, None will be returned if there is no
-        new connection.
+        new connection waiting.
         """
         if not block and not _is_readable(self):
             return None
 
-        self._update_clients()
+        self._update_ports()
 
         conn, (host, port) = self.socket.accept()
         return SocketPort(host, port, conn=conn)
@@ -69,13 +69,13 @@ class PortServer:
     def __iter__(self):
         while 1:
             # Update connection list.
-            client = self.accept(block=False)
-            if client:
-                self.clients.append(client)
-            self._update_clients()
+            port = self.accept(block=False)
+            if port:
+                self.ports.append(port)
+            self._update_ports()
 
             # Receive and send messages.
-            for message in multi_iter_pending(self.clients):
+            for message in multi_iter_pending(self.ports):
                 yield message
 
             sleep()
@@ -88,20 +88,17 @@ class PortServer:
         return False
 
 class SocketPort(BaseInput, BaseOutput):
-    def __init__(self, host, port, conn=None, string_protocol=False):
-        self.name = '{}:{:d}'.format(host, port)
+    def __init__(self, host, portno, conn=None, string_protocol=False):
+        self.name = '{}:{:d}'.format(host, portno)
         self.closed = False
         self._parser = Parser()
-
-        self.host = host
-        self.port = port
         self._messages = self._parser._parsed_messages
         self.string_protocol = string_protocol
 
         if conn is None:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setblocking(True)
-            self.socket.connect((host, port))
+            self.socket.connect((host, portno))
         else:
             self.socket = conn
 
@@ -176,9 +173,7 @@ def parse_address(address):
     if len(words) != 2:
         raise ValueError('address must contain exactly one colon')
 
-    host = words[0]
-    port = words[1]
-
+    host, port = words
     try:
         port = int(port)
     except ValueError:
