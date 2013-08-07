@@ -15,7 +15,7 @@ A Simple Server and Client
 
 To get a connection going, you must first set up a server::
 
-    with mido.sockets.PortServer('localhost', 8080) as server:
+    with mido.sockets.Server('localhost', 8080) as server:
         while 1:
             client_port = server.accept()
             for message in client_port:
@@ -41,7 +41,7 @@ Handling More Connections
 The example above has one weakness: only one client can connect at a
 time. This is easily fixed by doing::
 
-    with mido.sockets.PortServer('localhost', 8080) as server:
+    with mido.sockets.Server('localhost', 8080) as server:
         for message in server:
             print(message)
 
@@ -53,7 +53,7 @@ By using the non-blocking version of ``accept()``, you can get more
 control and still allow multiple connections. As an example, here's
 the implementation of ``for message in server`` above::
 
-    with mido.sockets.PortServer('localhost', 8080) as server:
+    with mido.sockets.Server('localhost', 8080) as server:
         clients = []
         while 1:
             # Update connection list.

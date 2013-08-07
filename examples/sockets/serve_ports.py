@@ -23,7 +23,7 @@ from mido.ports import MultiPort
 out = MultiPort([mido.open_output(name) for name in sys.argv[2:]])
 
 (host, port) = sockets.parse_address(sys.argv[1])
-with sockets.PortServer(host, port) as server:
+with sockets.Server(host, port) as server:
     for message in server:
         print('Received {}'.format(message))
         out.send(message)

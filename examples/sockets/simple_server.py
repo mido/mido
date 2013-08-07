@@ -15,11 +15,14 @@ from mido.ports import MultiPort
 # Todo: do this with a argument parser.
 out = MultiPort([mido.open_output(name) for name in sys.argv[2:]])
 
-(hostname, port) = sockets.parse_address(sys.argv[1])
-with sockets.PortServer(hostname, port) as server:
-    while 1:
-        client = server.accept()
-        print('Connection from {}'.format(client.name))
-        for message in client:
-            print(message)
-        print('Client disconnected')
+try:
+    (hostname, port) = sockets.parse_address(sys.argv[1])
+    with sockets.Server(hostname, port) as server:
+        while 1:
+            client = server.accept()
+            print('Connection from {}'.format(client.name))
+            for message in client:
+                print(message)
+            print('Client disconnected')
+except KeyboardInterrupt:
+    pass
