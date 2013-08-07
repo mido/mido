@@ -150,7 +150,6 @@ def open_ioport(name=None, **kwargs):
 
 def get_input_names():
     """Return a sorted list of all input port names."""
-    """
     devices = _get_backend().get_devices()
     names = [device['name'] for device in devices if device['is_input']]
     return list(sorted(names))
@@ -158,7 +157,6 @@ def get_input_names():
 
 def get_output_names():
     """Return a sorted list of all input port names."""
-    """
     devices = _get_backend().get_devices()
     names = [device['name'] for device in devices if device['is_output']]
     return list(sorted(names))
