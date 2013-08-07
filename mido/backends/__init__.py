@@ -119,7 +119,7 @@ class Backend(object):
         """Return a sorted list of all output port names."""
         self.load()
         devices = self.module.get_devices()
-        names = [device['name'] for device in devices if device['is_input']]
+        names = [device['name'] for device in devices if device['is_output']]
         return list(sorted(names))
 
     def get_ioport_names(self):
