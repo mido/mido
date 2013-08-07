@@ -303,7 +303,6 @@ class MultiPort(BaseInput, BaseOutput):
     def __init__(self, ports):
         BaseInput.__init__(self, 'multi')
         self.ports = ports
-        self._port_list = []
 
     def _get_device_type(self):
         return 'multi'

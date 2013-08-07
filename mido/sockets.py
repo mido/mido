@@ -7,7 +7,7 @@ import socket
 import select
 from collections import deque
 from .parser import Parser
-from .ports import BaseInput, BaseOutput, multi_iter_pending, sleep
+from .ports import MultiPort, BaseInput, BaseOutput, multi_iter_pending, sleep
 from .messages import parse_string
 
 def _is_readable(socket):
@@ -19,23 +19,16 @@ def _is_readable(socket):
     
     return bool(rlist)
 
-
-class Server(BaseInput):
+class Server(MultiPort):
     # Todo: queue size.
 
     def __init__(self, host, portno, backlog=1):
-        self.name = format_address(host, portno)
-        self.closed = False
-        self.host = host
-        self.portno = portno
+        BaseInput.__init__(self, format_address(host, portno))
         self.ports = []
-
-        # family = socket.AF_UNIX
-
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self._socket.setblocking(True)
-        self._socket.bind((self.host, self.portno))
+        self._socket.bind((host, portno))
         self._socket.listen(backlog)
 
     def _get_device_type(self):
@@ -79,12 +72,11 @@ class Server(BaseInput):
 
 
 class SocketPort(BaseInput, BaseOutput):
-    def __init__(self, host, portno, conn=None, string_protocol=False):
+    def __init__(self, host, portno, conn=None):
         self.name = format_address(host, portno)
         self.closed = False
         self._parser = Parser()
         self._messages = self._parser._parsed_messages
-        self.string_protocol = string_protocol
 
         if conn is None:
             self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -93,10 +85,7 @@ class SocketPort(BaseInput, BaseOutput):
         else:
             self._socket = conn
 
-        if self.string_protocol:
-            self._file = self._socket.makefile('r+')
-        else:
-            self._file = self._socket.makefile('r+', bufsize=0)
+        self._file = self._socket.makefile('r+', bufsize=0)
 
     def _get_device_type(self):
         return 'socket'
@@ -106,46 +95,34 @@ class SocketPort(BaseInput, BaseOutput):
             if not _is_readable(self._socket):
                 break
 
-            if self.string_protocol:
-                line = self._file.readline()
-                if line == '':
-                    # End of stream.
-                    self.close()
-                    break
-                else:
-                    message = parse_string(line)
-                    self._messages.append(message)
+            try:
+                byte = self._file.read(1)
+            except socket.error:
+                # Todo: handle this more gracefully?
+                self.close()
+                break
+            if byte == '':
+                # End of stream.
+                self.close()
+                break
             else:
-                try:
-                    byte = self._file.read(1)
-                except socket.error:
-                    # Todo: handle this more gracefully?
-                    self.close()
-                    break
-                if byte == '':
-                    # End of stream.
-                    self.close()
-                    break
-                else:
-                    self._parser.feed_byte(ord(byte))
+                self._parser.feed_byte(ord(byte))
 
     def _send(self, message):
-        if self.string_protocol:
-            self._file.write('{}\n'.format(message))
-        else:
-            self._file.write(message.bin())
-
+        self._file.write(message.bin())
         self._file.flush()
 
     def _close(self):
         self._socket.close()
 
 
-def connect(host, port, conn=None, string_protocol=False):
+def connect(host, portno):
     """Connect to a socket port server.
 
-    The return value is a SocketPort object."""
-    return SocketPort(host, port, string_protocol=string_protocol)
+    The return value is a SocketPort object connected to another
+    SocketPort object at the server end. Messages can be sent either way.
+    """
+    return SocketPort(host, portno)
 
 
 def parse_address(address):
