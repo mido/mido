@@ -12,36 +12,7 @@ import time
 from ..parser import Parser
 from ..messages import Message
 from ..ports import BaseInput, BaseOutput
-
-class PortMidiInitializer:
-    """
-    This class is responsible for loading PortMidi on demand. It
-    camouflages in the global name space as a module, and forwards all
-    attribute access to the real module.
-
-    For testing, this mock module can be replaced with another mock
-    module.
-    """
-    def __init__(self):
-        self.pm = None
-
-    def __getattr__(self, attr):
-        # print('initializer was asked for', attr)
-        if self.pm is None:
-            # print('Initializing PortMidi...')
-            from . import portmidi_init as pm
-            self.pm = pm
-            self.pm.lib.Pm_Initialize()
-
-        return getattr(self.pm, attr)
-
-    def __del__(self):
-        if self.pm is not None:
-            # print('Terminating PortMidi...')
-            self.pm.lib.Pm_Terminate()
-            self.pm = None
-
-pm = PortMidiInitializer()
+from . import portmidi_init as pm
 
 def _check_error(return_value):
     """Raise IOError if return_value < 0.
