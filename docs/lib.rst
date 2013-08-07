@@ -16,11 +16,22 @@ Convenience Functions
 .. autofunction:: get_output_names
 .. autofunction:: get_ioport_names
 
+.. autofunction:: set_backend
+
+.. autoclass:: Backend
+   :members:
+   :inherited-members:
+
 
 Ports
 ------
 
 .. module:: mido.ports
+
+.. autofunction:: sleep
+.. autofunction:: set_sleep_time
+.. autofunction:: get_sleep_time
+
 
 .. autoclass:: BaseInput
    :members:
@@ -31,6 +42,10 @@ Ports
    :inherited-members:
 
 .. autoclass:: IOPort
+   :members:
+   :inherited-members:
+
+.. autoclass:: MultiPort
    :members:
    :inherited-members:
 
