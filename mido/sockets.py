@@ -108,6 +108,7 @@ class SocketPort(BaseInput, BaseOutput):
                 self._parser.feed_byte(ord(byte))
 
     def _send(self, message):
+        self._update_ports()
         self._file.write(message.bin())
         self._file.flush()
 

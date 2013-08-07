@@ -10,14 +10,14 @@ network.
 The protocol is standard MIDI bytes over a TCP stream.
 
 
-A Simple Server and Client
----------------------------
+Sending Messages to a Server
+-----------------------------
 
 First, let's import some things::
 
     from mido.sockets import Server, connect
 
-To get a connection going you must first set up a server::
+After that, a simple server is only two lines::
 
     for message in Server('localhost', 8080):
         print(message)
@@ -27,12 +27,20 @@ You can then connect to the server and send it messages::
     output = connect('localhost', 8080):
     output.send(message)
 
-If you want to turn things on their head, you can let the server send
-messages to the clients::
+Each end of the connection behaves like a normal Mido I/O port, with
+all the usual methods.
 
-    with Server('localhost', 8080) as output:
-        while 1:
-            output.send(message)
+
+Turning Things on their Head
+-----------------------------
+
+If you want the server to send messages to all connected clients, you
+can instead do::
+
+    server = Server('localhost', 8080):
+    while 1:
+        server.send(message)
+        ...
 
 and then on the client side::
 
@@ -40,7 +48,9 @@ and then on the client side::
     for message in connect('localhost', 8080):
         print(message)
 
-The client will now print any message that the server sends.
+The client will now print any message that the server sends. Each
+message that the server sends will be received by all connected
+clients.
 
 
 Under the Hood
@@ -48,24 +58,28 @@ Under the Hood
 
 The examples above use the server and client ports as normal I/O
 ports. This makes it easy to write simple servers, but you don't have
-any control of the client connections.
+any control connections and the way messages are sent and received.
 
-To get more control, you can ignore the port methods of the Server
-object and use only the ``accept()`` method. Here's a
-simple server implemented this way::
+To get more control, you can ignore all the other methods of the
+Server object and use only ``accept()``. Here's a simple server
+implemented this way::
 
     with Server('localhost', 8080) as server:
         while 1:
-            # Wait for a client.
             client = server.accept()
-
-            # Print all messages until the client disconnects.
             for message in client:
                 print(message)
 
-This will only handle one client at a time. To get around this, you
-can use the non-blocking version of ``accept()``. You now need to keep
-a list of clients::
+``accept()`` waits for a client to connect, and returns a SocketPort
+object which is connected to the SocketPort object returned by
+``connect()`` at the other end.
+
+The server above has one weakness: it allows only one connection at a
+time. You can get around this by using ``accept(block=False)``. This
+will return a SocketPort if there is a connection waiting and None if
+there is connection yet.
+
+Using this, you can write the server any way you like, for example::
 
     with Server('localhost', 8080) as server:
         clients = []
