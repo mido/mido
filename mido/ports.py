@@ -15,7 +15,23 @@ from collections import deque
 from .parser import Parser
 from .messages import Message
 
-_sleep_time = 0.001  # How many seconds to sleep before polling again.
+# How many seconds to sleep before polling again.
+_default_sleep_time = 0.001
+_sleep_time = 0.001
+
+# Todo: document this more.
+def sleep():
+    """Sleep for N seconds.
+
+    N can be accessed with set_sleep_time() and get_sleep_time()."""
+    time.sleep(_sleep_time)
+
+def set_sleep_time(seconds=_default_sleep_time):
+    global _sleep_time
+    _sleep_time = seconds
+
+def get_sleep_time():
+    return _sleep_time
 
 class BasePort(object):
     """
@@ -149,7 +165,7 @@ class BaseInput(BasePort):
 
         # Wait for a message to arrive.
         while 1:
-            time.sleep(_sleep_time)
+            sleep()
             if self.pending():
                 # pending() has read at least one message from the
                 # device. Return the first message.
@@ -280,22 +296,29 @@ class IOPort(object):
             state, self.name, self.input._get_device_type())
 
 
-class Broadcast(BaseOutput):
-    """
-    A port that wraps around a set of ports and sends messages to all of them.
-
-    Any message passed to send() is passed to send() on all ports in turn.
-    The output ports will not be closed when the tee port is.
-    """
-
+# Todo: i don't know how to implement yield_ports here, so for now I haven't.
+class MultiPort(BaseInput, BaseOutput):
     def __init__(self, ports):
-        self.name = 'Broadcast'
-        self.closed = False
+        BaseInput.__init__(self, 'multi')
         self.ports = ports
+        self._port_list = []
+
+    def _get_device_type(self):
+        return 'multi'
 
     def _send(self, message):
         for port in self.ports:
-            port.send(message)
+            if not port.closed:
+                # Todo: what if a SocketPort connection closes in-between here?
+                port.send(message)
+
+    def _pending(self):
+        ports = list(self.ports)
+        random.shuffle(ports)
+        for port in ports:
+            if not port.closed:
+                for message in port.iter_pending():
+                    self._messages.append(message)
 
 
 def multi_receive(ports, yield_ports=False):
@@ -319,7 +342,7 @@ def multi_receive(ports, yield_ports=False):
                 else:
                     yield message
 
-        time.sleep(_sleep_time)
+        sleep()
 
 
 def multi_iter_pending(ports, yield_ports=False):
