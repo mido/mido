@@ -1,3 +1,8 @@
+"""
+A simple custom backend with an output port type which prints messages
+to stdout.
+"""
+
 from mido.ports import BaseOutput
 
 def get_devices():

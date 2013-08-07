@@ -1,3 +1,14 @@
+"""
+Try out the new printer port backend.
+
+It also works with MIDO_BACKEND, so you can do:
+
+    $ MIDO_BACKEND=printer python
+    >>> import mido
+    >>> mido.get_output_names()
+    ['The Printer Port']
+"""
+
 import time
 import mido
 
