@@ -16,8 +16,8 @@ from .parser import Parser
 from .messages import Message
 
 # How many seconds to sleep before polling again.
-_default_sleep_time = 0.001
-_sleep_time = 0.001
+_DEFAULT_SLEEP_TIME = 0.001
+_sleep_time = _DEFAULT_SLEEP_TIME
 
 # Todo: document this more.
 def sleep():
@@ -26,7 +26,7 @@ def sleep():
     N can be accessed with set_sleep_time() and get_sleep_time()."""
     time.sleep(_sleep_time)
 
-def set_sleep_time(seconds=_default_sleep_time):
+def set_sleep_time(seconds=_DEFAULT_SLEEP_TIME):
     global _sleep_time
     _sleep_time = seconds
 
