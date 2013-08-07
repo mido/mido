@@ -30,6 +30,13 @@ class Backend(object):
         else:
             return None
 
+    def __getattr__(self, name):
+        self._import()
+        if name in ['Input', 'Output', 'IOPort', 'get_devices']:
+            return getattr(self.module, name)
+        else:
+            raise AttributeError(name)
+
     def open_input(self, name=None, **kwargs):
         """Open an input port.
 
