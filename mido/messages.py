@@ -474,7 +474,7 @@ class Message(BaseMessage):
         for name in self._spec.arguments + ('time',):
             parts.append('{}={!r}'.format(name, getattr(self, name)))
 
-        return '<{} message {}>'.format(self.type, ', '.join(parts))
+        return '<message {} {}>'.format(self.type, ', '.join(parts))
 
     def __str__(self):
         return format_as_string(self)
