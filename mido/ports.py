@@ -24,7 +24,8 @@ _sleep_time = _DEFAULT_SLEEP_TIME
 def sleep():
     """Sleep for N seconds.
 
-    N can be accessed with set_sleep_time() and get_sleep_time()."""
+    This is used in ports when polling and waiting for messages. N can
+    be accessed with set_sleep_time() and get_sleep_time()."""
     time.sleep(_sleep_time)
 
 def set_sleep_time(seconds=_DEFAULT_SLEEP_TIME):
