@@ -108,17 +108,23 @@ class Backend(object):
             return ports.IOPort(self.module.Input(input_name, **kwargs),
                                 self.module.Output(output_name, **kwargs))
 
+    def _get_devices(self):
+        if hasattr(self.module, 'get_devices'):
+            return self.module.get_devices()
+        else:
+            return []
+
     def get_input_names(self):
         """Return a sorted list of all input port names."""
         self.load()
-        devices = self.module.get_devices()
+        devices = self._get_devices()
         names = [device['name'] for device in devices if device['is_input']]
         return list(sorted(names))
 
     def get_output_names(self):
         """Return a sorted list of all output port names."""
         self.load()
-        devices = self.module.get_devices()
+        devices = self._get_devices()
         names = [device['name'] for device in devices if device['is_output']]
         return list(sorted(names))
 
