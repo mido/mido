@@ -1,6 +1,25 @@
 Tutorial
 =========
 
+Basics Concepts
+----------------
+
+Mido, like MIDI, is centered around messages and ports.
+
+    message = port.receive()
+
+    port.send(message)
+
+There are three types of ports: input ports, output ports and I/O ports
+(which can be used as input and output ports).
+
+Except for the contructor, all ports behave the same and can be used
+interchanchingly. A port can be a physical device like a synthesizer,
+an internal port like a sequencer or soft synth, a network connection,
+a virtual port like a message queue, a logger or a file. To the user, it
+doesn't matter.
+
+
 Creating Messages
 ------------------
 
@@ -100,9 +119,10 @@ you can do::
 System Exclusive (sysex) Messages
 ----------------------------------
 
-Sysex messages have a ``data`` parameter, which is a sequence of bytes.
-The ``data`` parameter takes any object that generates bytes when
-iterated over. This is converted internally into a tuple of integers::
+Sysex messages are used to send device-specific data such as patch data
+and custom controllers. The ``data`` parameter takes any object that
+generates bytes when iterated over. This is converted internally into
+a tuple of integers::
 
     >>> Message('sysex')
     <sysex message data=(), time=0>

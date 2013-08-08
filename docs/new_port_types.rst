@@ -15,7 +15,7 @@ new port type: ``BaseInput``, ``BaseOutput`` and ``BaseIOPort``.
 The base ports define public and private versions of the core methods,
 where the public one calls the private one. Overriding only one to
 four of these private methods will give you the full port API. The
-functions are ``_open()``, ``_close()``, ``_send()`` and ``_pending()``.
+methods are ``_open()``, ``_close()``, ``_send()`` and ``_pending()``.
 
 Here is an example of a new output port class::
 
