@@ -55,8 +55,8 @@ Contents
    parsing_and_encoding
    midi_files
    socket_ports
-   new_port_types
    string_encoding
+   new_port_types
    lib
    license
    author
