@@ -9,6 +9,7 @@ Module content:
     MessageBuffer -- pseudo-port that stores messages in a deque
 """
 
+from __future__ import unicode_literals
 import time
 import random
 from collections import deque
@@ -50,9 +51,6 @@ class BasePort(object):
     def _close(self):
         pass
 
-    def _get_device_type(self):
-        return None
-
     def close(self):
         """Close the port.
 
@@ -87,15 +85,18 @@ class BasePort(object):
             (False, False): 'mute',
             }[capabilities]
 
-        device_name = self._get_device_type()
+        name = repr(self.name or '')
+        if name.startswith('u'):
+            # Python 2.
+            name = name[1:]
 
-        parts = [state, port_type, repr(self.name or '')]
+        try:
+            device_type = self._device_type
+        except AttributeError:
+            device_type = self.__class__.__name__
 
-        device_type = self._get_device_type()
-        if device_type is not None:
-            parts.append(device_type)
-
-        return '<{}>'.format(' '.join(parts))
+        return '<{} {} {} ({})>'.format(
+            state, port_type, name, device_type)
 
 
 class BaseInput(BasePort):
@@ -302,20 +303,8 @@ class IOPort(object):
         self.close()
         return False
 
-    def __repr__(self):
-        if self.closed:
-            state = 'closed'
-        else:
-            state = 'open'
-
-        return "<{} I/O port '{}' ({})>".format(
-            state, self.name, self.input._get_device_type())
-
 
 class EchoPort(BaseIOPort):
-    def _get_device_type(self):
-        return 'echo'
-
     def _send(self, message):
         self._messages.append(message)
 
@@ -327,9 +316,6 @@ class MultiPort(BaseIOPort):
     def __init__(self, ports):
         BaseIO.__init__(self, 'multi')
         self.ports = ports
-
-    def _get_device_type(self):
-        return 'multi'
 
     def _send(self, message):
         for port in self.ports:

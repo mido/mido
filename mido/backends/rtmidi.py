@@ -90,11 +90,10 @@ class PortCommon(object):
 
         self.rt.open_port(port_id)
 
+        self._device_type = 'RtMidi'
+
     def _close(self):
         del self.rt
-
-    def _get_device_type(self):
-        return 'RtMidi'
 
 
 class Input(PortCommon, BaseInput):

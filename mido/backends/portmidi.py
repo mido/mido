@@ -59,8 +59,8 @@ class PortCommon(object):
 
         if self.name is None:
             self.device = self._get_default_device(opening_input)
-            self.name = self.device['name']
         else:
+            self.name = self.device['name']
             self.device = self._get_named_device(self.name, opening_input)
 
         if self.device['opened']:
@@ -71,6 +71,8 @@ class PortCommon(object):
             raise IOError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
         
+        self._device_type = 'PortMidi/{}'.format(self.device['interface'])
+
         # Make a shortcut, since this is so long
         device_id = self.device['id']
 

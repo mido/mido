@@ -58,9 +58,7 @@ class PortCommon(object):
             self._port = midi.Output(self.device['id'])
 
         atexit.register(self.close)
-
-    def _get_device_type(self):
-        return self.device['interface']
+        self._device_type = 'pygame'
 
     def _get_default_device(self, get_input):
         if get_input:
