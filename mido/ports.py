@@ -38,7 +38,7 @@ class BasePort(object):
     Abstract base class for Input and Output ports.
     """
 
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, name='', **kwargs):
         self.name = name
         self.closed = True
         self._open(**kwargs)
@@ -106,7 +106,7 @@ class BaseInput(BasePort):
     (See portmidi.py for an example of how to do this.)
     """
 
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, name='', **kwargs):
         """Create an input port.
 
         name is the port name, as returned by input_names(). If
@@ -197,7 +197,7 @@ class BaseOutput(BasePort):
     portmidi.py for how to do this.)
     """
 
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, name='', **kwargs):
         """Create an output port
         
         name is the port name, as returned by output_names(). If
@@ -313,18 +313,11 @@ class IOPort(object):
 
 
 class EchoPort(BaseIOPort):
-    def _open(self):
-        if self.name is None:
-            self.name = 'echo'
-
     def _get_device_type(self):
         return 'echo'
 
     def _send(self, message):
         self._messages.append(message)
-
-    def _pending(self):
-        pass
 
     __iter__ = BaseIOPort.iter_pending
 
