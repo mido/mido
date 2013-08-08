@@ -34,6 +34,10 @@
 * format_as_string() now takes an include_time argument (defaults to True)
   so you can leave out the time attribute.
 
+* added new virtual ports MultiPort and EchoPort.
+
+* sleep time in poll and wait inside sockets can now be changed.
+
 
 1.0.2 - 2013-07-31
 -------------------
