@@ -37,6 +37,12 @@ If you want your port to support both input and output, you can use
 Attributes
 -----------
 
+``name``
+
+    The name of the port as as unicode string or None. Set by
+    ``__init__()``. The value is device specific and does not have to
+    be unique.
+
 ``closed``
 
     True if the port is closed.
@@ -45,6 +51,12 @@ Attributes
 
     This is a ``collections.deque`` of messages that have been read and
     are ready to be received.
+
+``_device_type`` (Optional.)
+
+    If this attribute exists, it's a string which will be used in
+    ``__repr__()``. If it doesn't exist, the class name will be used
+    instead.
 
 
 Overridable Methods
@@ -62,7 +74,7 @@ Overridable Methods
     ``self._parser._parsed_messages``.
 
     If you want more control over initialization you can override
-    ``__init__`` instead.
+    ``__init__()`` instead.
 
     If an error occurs while opening the device, ``IOError`` should be raised.
 
