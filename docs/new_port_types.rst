@@ -31,12 +31,7 @@ correct exceptions. Then it will call ``_send()``. It also provides
 the doc string.
 
 If you want your port to support both input and output, you can use
-``BaseIOPort``. Alternatively, you can use ``mido.ports.IOPort``,
-which simulates an I/O port by wrapping an input and an output port::
-
-    port = IOPort(input_port, output_port)
-    port.send(message)  -- received from input_port
-    message = port.receive()  -- send to output_port
+``BaseIOPort``.
 
 
 Attributes
