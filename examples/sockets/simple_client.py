@@ -12,13 +12,19 @@ import time
 import random
 import mido
 
-host, port = mido.sockets.parse_address(sys.argv[1])
-ports = [mido.open_input(name) for name in sys.argv[2:]]
+if sys.argv[1:]:
+    address = sys.argv[1]
+else:
+    address = 'localhost:9080'
+
+host, port = mido.sockets.parse_address(address)
 
 notes = [60, 67, 72, 79, 84, 79, 72, 67, 60]
 on = mido.Message('note_on', velocity=100)
 off = mido.Message('note_off', velocity=100)
 base = random.randrange(12)
+
+print('Connecting to {}'.format(address))
 
 with mido.sockets.connect(host, port) as server_port:
     try:

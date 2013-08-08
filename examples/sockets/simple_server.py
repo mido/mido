@@ -10,9 +10,15 @@ import mido
 from mido import sockets
 from mido.ports import MultiPort
 
+if sys.argv[1:]:
+    address = sys.argv[1]
+else:
+    address = 'localhost:9080'
+
 try:
-    (hostname, port) = sockets.parse_address(sys.argv[1])
-    with sockets.Server(hostname, port) as server:
+    (hostname, portno) = sockets.parse_address(address)
+    print('Serving on {}'.format(address))
+    with sockets.Server(hostname, portno) as server:
         for message in server:
             print(message)
 except KeyboardInterrupt:
