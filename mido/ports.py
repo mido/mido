@@ -51,7 +51,7 @@ class BasePort(object):
         pass
 
     def _get_device_type(self):
-        return 'Unknown'
+        return None
 
     def close(self):
         """Close the port.
@@ -89,8 +89,13 @@ class BasePort(object):
 
         device_name = self._get_device_type()
 
-        return "<{state} {port_type} port '{self.name}'" \
-               " ({device_name})>".format(**locals())
+        parts = [state, port_type, repr(self.name or '')]
+
+        device_type = self._get_device_type()
+        if device_type is not None:
+            parts.append(device_type)
+
+        return '<{}>'.format(' '.join(parts))
 
 
 class BaseInput(BasePort):
