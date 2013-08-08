@@ -1,5 +1,5 @@
 """
-Experimental MIDI over TCP/IP.
+MIDI over TCP/IP.
 """
 
 import time
@@ -7,7 +7,7 @@ import socket
 import select
 from collections import deque
 from .parser import Parser
-from .ports import MultiPort, BaseInput, BaseOutput, multi_iter_pending, sleep
+from .ports import MultiPort, BaseIO, multi_iter_pending, sleep
 from .messages import parse_string
 
 def _is_readable(socket):
@@ -22,8 +22,8 @@ def _is_readable(socket):
 class Server(MultiPort):
     # Todo: queue size.
 
-    def __init__(self, host, portno):
-        BaseInput.__init__(self, format_address(host, portno))
+    def __init__(self, host, portno, backlog=1):
+        BaseIO.__init__(self, format_address(host, portno))
         self.ports = []
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
@@ -62,15 +62,19 @@ class Server(MultiPort):
         conn, (host, port) = self._socket.accept()
         return SocketPort(host, port, conn=conn)
 
-    def _pending():
+    def _send(self, message):
+        self._update_ports()
+        return MultiPort._send(self, message)
+
+    def _pending(self):
         port = self.accept(block=False)
         if port:
             self.ports.append(port)
         self._update_ports()
-        self._messages.extend(multi_iter_pending(self.ports))
+        return MultiPort._pending(self)
 
 
-class SocketPort(BaseInput, BaseOutput):
+class SocketPort(BaseIO):
     def __init__(self, host, portno, conn=None):
         self.name = format_address(host, portno)
         self.closed = False
@@ -108,7 +112,6 @@ class SocketPort(BaseInput, BaseOutput):
                 self._parser.feed_byte(ord(byte))
 
     def _send(self, message):
-        self._update_ports()
         self._file.write(message.bin())
         self._file.flush()
 
