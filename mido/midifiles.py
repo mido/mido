@@ -151,13 +151,20 @@ class Track(list):
     name = property(fget=_get_name, fset=_set_name)
     del _get_name, _set_name
 
+    def __repr__(self):
+        name = repr(self.name)
+        if name.startswith('u'):
+            # Python 2.
+           name = name[1:]
+        return '<midi track {} {} messages>'.format(name, len(self))
+
 
 class MidiFile:
-    def __init__(self, filename=None, format=1):
-        self.filename = filename
+    def __init__(self, name=None, format=1):
+        self.name = name
         self.tracks = []
 
-        if filename is None:
+        if name is None:
             if format not in range(3):
                 raise ValueError(
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
@@ -168,7 +175,7 @@ class MidiFile:
             self._load()
 
     def _load(self):
-        with ByteReader(self.filename) as self._file:
+        with ByteReader(self.name) as self._file:
             # Read header (16 bytes)
             magic = self._file.read_bytearray(4)
             if not magic == bytearray(b'MThd'):
@@ -408,27 +415,27 @@ class MidiFile:
         else:
             return False
 
-    def save(self, filename=None):
+    def save(self, filname=None):
         """Save to a file.
 
-        If filename is passed, self.filename will be set to this
+        If filename is passed, self.name will be set to this
         value, and the data will be saved to this file. Otherwise
-        self.filename is used.
+        self.name is used.
 
-        Raises ValueError both filename and self.filename are None,
+        Raises ValueError both filename and self.name are None,
         or if a format 1 file has != one track.
         """
 
         if self.format == 0 and len(self.tracks) != 1:
             raise ValueError('format 1 file must have exactly 1 track')
 
-        if filename is self.filename is None:
-            raise ValueError('filename is None')
+        if filename is self.name is None:
+            raise ValueError('no file name')
 
         if filename is not None:
-            self.filename = filename
+            self.name = filename
 
-        with ByteWriter(self.filename) as self._file:
+        with ByteWriter(self.name) as self._file:
             self._file.write(b'MThd')
 
             self._file.write_long(6)  # Header size. (Next three shorts.)
@@ -462,7 +469,15 @@ class MidiFile:
                 self._file.write(b'MTrk')
                 self._file.write_long(len(bytes))
                 self._file.write(bytes)
-                    
+              
+    def __repr__(self):
+        name = repr(self.name)
+        if name.startswith('u'):
+            # Python 2.
+            name = name[1:]
+        return '<midi file {} format {}, {} tracks, {} messages>'.format(
+            name, self.format, len(self.tracks),
+            sum([len(track) for track in self.tracks]))
  
     def __enter__(self):
         return self
