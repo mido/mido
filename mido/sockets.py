@@ -7,7 +7,7 @@ import socket
 import select
 from collections import deque
 from .parser import Parser
-from .ports import MultiPort, BaseIO, multi_iter_pending, sleep
+from .ports import MultiPort, BaseIOPort, multi_iter_pending, sleep
 from .messages import parse_string
 
 def _is_readable(socket):
@@ -23,7 +23,7 @@ class Server(MultiPort):
     # Todo: queue size.
 
     def __init__(self, host, portno, backlog=1):
-        BaseIO.__init__(self, format_address(host, portno))
+        BaseIOPort.__init__(self, format_address(host, portno))
         self.ports = []
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)

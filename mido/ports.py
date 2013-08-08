@@ -235,7 +235,7 @@ class BaseOutput(BasePort):
         for message.channel in range(16):
             self.send(message)
 
-class BaseIO(BaseInput, BaseOutput):
+class BaseIOPort(BaseInput, BaseOutput):
     pass
 
 class IOPort(object):
@@ -308,7 +308,7 @@ class IOPort(object):
 
 
 # Todo: i don't know how to implement yield_ports here, so for now I haven't.
-class MultiPort(BaseIO):
+class MultiPort(BaseIOPort):
     def __init__(self, ports):
         BaseIO.__init__(self, 'multi')
         self.ports = ports
