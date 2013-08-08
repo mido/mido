@@ -29,15 +29,15 @@ create a new message, you can do::
     >>> from mido import Message
     >>> 
     >>> Message('note_on', note=60, velocity=100)
-    <note_on message channel=0, note=60, velocity=100, time=0>
+    <message note_on channel=0, note=60, velocity=100, time=0>
 
 All message parameters are optional, and if not explicitly set, will
 default to ``0`` (or ``()`` for sysex data)::
 
     >>> Message('note_on')
-    <note_on message channel=0, note=0, velocity=0, time=0>
+    <message note_on channel=0, note=0, velocity=0, time=0>
     >>> Message('sysex')
-    <sysex message data=(), time=0>
+    <message sysex data=() time=0>
 
 This means that it's important to remember to pass the ``velocity``
 parameter for ``note_on`` messages, or the note will interpreted as a
@@ -71,9 +71,9 @@ You can copy a message, optionally passing keyword arguments to
 override attributes::
 
     >>> msg.copy()  # Make an identical copy.
-    <note_on message channel=2, note=62, velocity=50, time=0>
+    <message note_on channel=2, note=62, velocity=50, time=0>
     >>> msg.copy(channel=4)
-    <note_on message channel=4, note=62, velocity=50, time=0>
+    <message note_on channel=4, note=62, velocity=50, time=0>
 
 This is useful when you pass messages around in a large system, and
 you want to keep a copy for yourself while allowing other parts of the
@@ -125,11 +125,11 @@ generates bytes when iterated over. This is converted internally into
 a tuple of integers::
 
     >>> Message('sysex')
-    <sysex message data=(), time=0>
+    <message sysex data=(), time=0>
     >>> Message('sysex', data=[1, 2, 3])
-    <sysex message data=(1, 2, 3), time=0>
+    <message sysex data=(1, 2, 3), time=0>
     >>> Message('sysex', data=bytearray('abc'))
-    <sysex message data=(97, 98, 99), time=0>
+    <message sysex data=(97, 98, 99), time=0>
 
 Sysex messages inlude the ``sysex_end`` byte when sent and received, so
 while there is a ``sysex_end`` message type, it is never used::
@@ -232,7 +232,7 @@ messages are available::
     >>> port.pending()
     2
     >>> port.receive()
-    <note_on message channel=2, note=60, velocity=50, time=0>
+    <message message channel=2, note=60, velocity=50, time=0>
     >>> port.receive()
     <note_on message channel=2, note=72, velocity=50, time=0>
     >>> port.receive()
