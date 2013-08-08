@@ -16,6 +16,12 @@ Alternatively, you can the ``format_as_string`` function directly:
     >>> mido.format_as_string(cc)
     'control_change channel=9 control=1 value=122 time=60'
 
+If you don't need the time attribute or you want to store it elsewhere, you
+can pass ``include_time=False``::
+
+    >>> mido.format_as_string(cc)
+    'control_change channel=9 control=1 value=122'
+
 
 Format
 -------

@@ -584,10 +584,12 @@ def parse_string_stream(stream):
         line_number += 1
 
 
-def format_as_string(message):
+def format_as_string(message, include_time=True):
     """Format a message and return as a string.
 
     This is equivalent to str(message).
+
+    To leave out the time attribute, pass include_time=False.
     """
     if not isinstance(message, Message):
         raise ValueError('message must be a mido.Message object')
@@ -595,7 +597,11 @@ def format_as_string(message):
     words = []
     words.append(message.type)
 
-    for name in message._spec.arguments + ('time',):
+    names = message._spec.arguments
+    if include_time:
+        names += ('time',)
+
+    for name in names:
         value = getattr(message, name)
         if name == 'data':
             value = '({})'.format(','.join([str(byte) for byte in value]))
