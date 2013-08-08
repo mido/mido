@@ -74,7 +74,7 @@ class Server(MultiPort):
         return MultiPort._pending(self)
 
 
-class SocketPort(BaseIO):
+class SocketPort(BaseIOPort):
     def __init__(self, host, portno, conn=None):
         self.name = format_address(host, portno)
         self.closed = False
