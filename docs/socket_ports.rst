@@ -44,7 +44,6 @@ do::
 
 and then on the client side::
 
-    input = connect()
     for message in connect('localhost', 8080):
         print(message)
 
