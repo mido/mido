@@ -31,6 +31,9 @@
 
 * added new examples and updated the old ones.
 
+* format_as_string() now takes an include_time argument (defaults to True)
+  so you can leave out the time attribute.
+
 
 1.0.2 - 2013-07-31
 -------------------
