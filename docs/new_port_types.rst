@@ -47,13 +47,6 @@ port classes in ``mido.ports``::
         def _close(self):
             ... Close the underlying device.
 
-        def _get_device_type(self):
-            ... A text representation of the type of device,
-            ... for example 'CoreMidi' or 'ALSA'. This is
-            ... used by __repr__(). Defaults to 'Unknown'.
-            return 'CoreMidi'  # For example.
-
-
     class Input(PortCommon, BaseInput):
         def _pending(self):
             ... Check for new messages, feed them
