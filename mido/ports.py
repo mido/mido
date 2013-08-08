@@ -235,7 +235,9 @@ class BaseOutput(BasePort):
     def panic(self):
         """Send "All Sounds Off" on all channels.
 
-        Useful when notes are hanging, and nothing else helps.
+        This will mute all sounding notes regardless of
+        envelopes. Useful when notes are hanging and nothing else
+        helps.
         """
         ALL_SOUNDS_OFF = 120
         message = Message('control_change', control=ALL_SOUNDS_OFF)
