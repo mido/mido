@@ -65,7 +65,7 @@ attributes::
     >>> msg.channel = 2
     >>> msg.note = 62
     >>> msg
-    <note_off message channel=2, note=62, velocity=50, time=0>
+    <message note_off channel=2, note=62, velocity=50, time=0>
 
 You can copy a message, optionally passing keyword arguments to
 override attributes::
@@ -234,7 +234,7 @@ messages are available::
     >>> port.receive()
     <message message channel=2, note=60, velocity=50, time=0>
     >>> port.receive()
-    <note_on message channel=2, note=72, velocity=50, time=0>
+    <message note_on channel=2, note=72, velocity=50, time=0>
     >>> port.receive()
         *** blocks until the next message arrives ***
 

@@ -58,7 +58,7 @@ There are a couple of shortcuts for when you only want to parse one message
 or a short list of bytes::
 
     >>> mido.parse([0x92, 0x10, 0x20])
-    <note_on message channel=0, note=16, velocity=32, time=0>
+    <message note_on channel=0, note=16, velocity=32, time=0>
 
     >>> mido.parse_all([0x92, 0x10, 0x20, 0x82, 0x10, 0x20])
     <message note_on channel=0, note=16, velocity=32, time=0>
