@@ -140,34 +140,40 @@ class BaseInput(BasePort):
         for _ in range(self.pending()):
             yield self._messages.popleft()
 
-    def receive(self):
+    def receive(self, block=True):
         """Return the next message.
 
         This will block until a message arrives. For non-blocking
         behavior, you can use pending() to see how many messages can
         safely be received without blocking.
 
-        Todo: What should happen when the port is closed?
-        - raise exception?
-        - return pending messages until we run out, then raise exception?
+        If the port is closed and there are no pending messages, ValueError
+        will be raised. If the port closes while waiting inside receive(),
+        IOError will be raised. Todo: this seems a bit inconsistent. Should
+        different errors be raised? What's most useful here?
+
+        If block=False is passed, None will be returned if there are no
+        pending messages or if the port is closed.
         """
         # If there is a message pending, return it right away.
         if self._messages:
             return self._messages.popleft()
             
         if self.closed:
-            return None
-            # raise ValueError('receive() called on closed port')
+            if block:
+                # Todo: which error?
+                raise ValueError('receive() called on closed port')
+            else:
+                return None
 
-        # Wait for a message to arrive.
         while 1:
-            sleep()
             if self.pending():
-                # pending() has read at least one message from the
-                # device. Return the first message.
                 return self._messages.popleft()
+            elif not block:
+                return None
             elif self.closed:
-                raise IOError('port closed inside receive()')
+                raise ValueError('port closed inside receive()')
+            sleep()
 
     def __iter__(self):
         """Iterate through messages until the port closes."""
