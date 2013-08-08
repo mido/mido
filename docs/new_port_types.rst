@@ -1,35 +1,81 @@
-Adding New Port Types
-======================
-
-Mido comes with support for PortMidi built in, and experimental
-support for RtMidi through the python-rtmidi package. If you want to
-use some other library or system, like say PyGame, you can write write
-custom ports.
-
-There are two ways of adding new port types to Mido.
+=======================
+ Adding New Port Types
+=======================
 
 
-Duck Typing
-------------
-
-The simplest way is to just create an object that has the methods
-that you know will be called, for example::
-
-    class PrintPort:
-        """Port that prints out messages instead of sending them."""
-
-        def send(self, message):
-            print(message)
-
-    port = PrintPort()
-    port.send(mido.Message('note_on')
 
 
 Subclassing
-------------
+===========
+
+name
+
+    The name of the port. Must be a unicode string or None. The name
+    does not have to be unique. You can choose any name that makes
+    sense for your port type. If names don't make sense, just use None.
+
+closed
+
+    True if the port is closed.
+
+_messages
+
+    For input ports.
+
+    This is a ``collections.deque`` of messages that have been read and
+    are ready to be received.
+
+_open(self, **kwargs)
+
+    Is called by ``__init__()`` and is responsible for actually opening
+    the device or intializing the internal state of the object. The
+    name that was passed to ``__init__()`` will already be assigned to
+    ``self.name`` while all other keyword arguments arrive here.
+
+    Ports derived from ``BaseInput`` will also a ``self._parser`` and
+    ``self._messages``.  ``self._messages`` is a shortcut for as
+    ``self._parser._parsed_messages``.
+
+    If you want more control over initialization you can override
+    ``__init__`` instead.
+
+_close(self):
+
+    Called by ``close()``. Closes the device or frees any resources
+    used by the object. This will only be called if the port is still
+    open.
+
+_send(self, message):
+
+    Called by ``send()``. Will not be called if the port is closed.
+
+_pending(self):
+
+    Called by ``pending()``.
+
+    Checks the device for new messages and appends them to
+    ``self._messages``. Returns the number of messages now pending. If
+    you would just have returned ``len(self._messages)``, you can return
+    ``None`` and just let ``pending()`` take care of the return value.
+
+Here is an implementation of a simple I/O port::
+
+    from mido.ports import BaseInput, BaseOutput
+
+    class EchoPort(BaseInput, BaseOutput):
+        def __init__(self):
+            pass  # This is just here so that we don't take any arguments.
+
+        def _send(self, message):
+            self._messages.append(message)            
 
 If you want the full range of behaviour, you can subclass the abstract
-port classes in ``mido.ports``::
+port classes in ``mido.ports``. Here's a simple output port::
+
+    from mido.ports import BaseOutput
+
+    class PrintPort(BaseOutput):
+        def 
 
     from mido.ports import BaseInput, BaseOutput
 
@@ -74,8 +120,26 @@ See ``mido/backends/``, ``mido.ports.py`` and ``mido/sockets.py`` for
 full examples.
 
 
+Duck Typing
+===========
+
+If you know that you'll only use part of the port API, you can make a
+quick class without subclassing::
+
+    class PrintPort:
+        """Port that prints out messages instead of sending them."""
+
+        def send(self, message):
+            print(message)
+
+    port = PrintPort()
+    port.send(mido.Message('note_on')
+
+This will behave like an output port.
+
+
 Writing a New Backend
-----------------------
+=====================
 
 Mido comes with backends for PortMidi, python-rtmidi and pygame.midi,
 but you can easily add your own. All you need to do is to write a
@@ -87,7 +151,13 @@ module with the following::
               a wrapper
     get_devices() -- returns a list of devices, as described below
 
-``get_devices()`` must return a list of devices, where each device is
+All of these are optional. For example, if the backend only supports
+output, you only need ``Output`` and ``get_devices()``.
+
+If ``IOPort`` is left out, Mido will open your ``Input`` and
+``Output`` and wrap a ``mido.ports.IOPort`` around them.
+
+``get_devices()`` returns a list of devices, where each device is
 dictionary with at least these three values::
 
     {
@@ -96,15 +166,36 @@ dictionary with at least these three values::
       'is_output': False,
     }
 
-These will be used by ``get_input_names()`` etc.. 
+These are used to build return values for ``get_input_names()`` etc.,
+and the user can access these directly for more fine-grained control.
+You can 
 
-If your backend module is ``my_new_backend.py``, you can then use your
-new backend like this::
+Here is a simple backend that implements input and output, but not
+``get_devices()``:
 
-    export MIDO_BACKEND=my_new_backend
-    python some_mido_program.py
+    from mido.ports import BaseInput, BaseOutput
 
-and all the usual functions, like ``open_input`` and
-``get_output_names()`` will use your backend.
+    # The Input and Output usually contains almost the same
+    # code. A mix-in like this one is a good way to avoid
+    # repetition.
+    class PortCommon:
+        def _open(self, *kwargs):
+            # Determine if this is an input or an output.
+            is_input = hasattr(self, 'receive')
+            ... # Open the port here
 
-See mido/backends/ for examples.
+        def _close(self):
+            self.device.close()  # For example
+
+    class Input(PortCommon, BaseInput):
+        def _pending(self):
+            # Check device for new messages and feed these
+            # to the parser.
+            ...
+
+    class Output(PortCommon, BaseOutput):
+        def _send(self, message):
+            ... # Encode the messages (typically using message.bytes()) and
+                # send it to the device.
+
+For more examples, see ``mido/backends/``.
