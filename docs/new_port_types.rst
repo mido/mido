@@ -1,31 +1,59 @@
 =======================
- Adding New Port Types
+Writing new Port Types
 =======================
 
+The Mido port API allows you to write new ports to do practically
+anything.
 
 
+Creating a new Port class
+==========================
 
-Subclassing
-===========
+``mido.ports`` defines base classes that you can use to create your
+new port type: ``BaseInput``, ``BaseOutput`` and ``BaseIOPort``.
 
-name
+The base ports define public and private versions of the core methods,
+where the public one calls the private one. Overriding only one to
+four of these private methods will give you the full port API. Here is
+an example of a new output port class::
 
-    The name of the port. Must be a unicode string or None. The name
-    does not have to be unique. You can choose any name that makes
-    sense for your port type. If names don't make sense, just use None.
+    from mido.ports import BaseOutput
 
-closed
+    class PrintPort(BaseOutput):
+        def _send(message):
+            print(message)
+
+That's all you need to write. The public send method will check if the
+message is a ``Message`` object and if the port is open and raise the
+correct exceptions. Then it will call ``_send()``. It also provides
+the doc string.
+
+If you want your port to support both input and output, you can use
+``BaseIOPort``. Alternatively, you can use ``mido.ports.IOPort``,
+which simulates an I/O port by wrapping an input and an output port::
+
+    port = IOPort(input_port, output_port)
+    port.send(message)  -- received from input_port
+    message = port.receive()  -- send to output_port
+
+
+Attributes
+-----------
+
+``closed``
 
     True if the port is closed.
 
-_messages
-
-    For input ports.
+``_messages``
 
     This is a ``collections.deque`` of messages that have been read and
     are ready to be received.
 
-_open(self, **kwargs)
+
+Overridable Methods
+--------------------
+
+``_open(self, **kwargs)``
 
     Is called by ``__init__()`` and is responsible for actually opening
     the device or intializing the internal state of the object. The
@@ -39,17 +67,23 @@ _open(self, **kwargs)
     If you want more control over initialization you can override
     ``__init__`` instead.
 
-_close(self):
+    If an error occurs while opening the device, ``IOError`` should be raised.
+
+``_close(self):``
 
     Called by ``close()``. Closes the device or frees any resources
     used by the object. This will only be called if the port is still
     open.
 
-_send(self, message):
+    If an error occurs, ``IOError`` should be raised.
+
+``_send(self, message):``
 
     Called by ``send()``. Will not be called if the port is closed.
 
-_pending(self):
+    If an error occurs, ``IOError`` should be raised.
+
+``_pending(self):``
 
     Called by ``pending()``.
 
@@ -58,144 +92,54 @@ _pending(self):
     you would just have returned ``len(self._messages)``, you can return
     ``None`` and just let ``pending()`` take care of the return value.
 
-Here is an implementation of a simple I/O port::
-
-    from mido.ports import BaseInput, BaseOutput
-
-    class EchoPort(BaseInput, BaseOutput):
-        def __init__(self):
-            pass  # This is just here so that we don't take any arguments.
-
-        def _send(self, message):
-            self._messages.append(message)            
-
-If you want the full range of behaviour, you can subclass the abstract
-port classes in ``mido.ports``. Here's a simple output port::
-
-    from mido.ports import BaseOutput
-
-    class PrintPort(BaseOutput):
-        def 
-
-    from mido.ports import BaseInput, BaseOutput
-
-    class PortCommon(object):
-        ... Mixin for things that are common to your Input and Output
-        ... ports (so you don't need a lot of duplicate code.
-
-        def _open(self, **kwargs): 
-            ... This is where you actually # open
-            ... the underlying device.
-            ...
-            ... self.name will be set to the name that was passed
-            ... **kwargs will be passed to you by __init__()
-
-        def _close(self):
-            ... Close the underlying device.
-
-    class Input(PortCommon, BaseInput):
-        def _pending(self):
-            ... Check for new messages, feed them
-            ... to the parser and return how many messages
-            ... are now available.
-            ...
-            ... Returns the number of available messages.
-            ... If it returns None, pending() will return
-            ... len(self._messages).
-
-    class Output(PortCommon, BaseOutput):
-        def _send(self, message):
-            ... Send the message via the underlying device.
-
-The base classes will take care of everything else. You may still
-override selected methods if you need to.
-
-All the methods you need to override start with an underscore and is
-are called by the corresponding method without an underscore. This
-allows the base class to do some type and value checking for you
-before calling your implementation specific method. It also means you
-don't have to worry about adding doc strings.
-
-See ``mido/backends/``, ``mido.ports.py`` and ``mido/sockets.py`` for
-full examples.
-
-
-Duck Typing
-===========
-
-If you know that you'll only use part of the port API, you can make a
-quick class without subclassing::
-
-    class PrintPort:
-        """Port that prints out messages instead of sending them."""
-
-        def send(self, message):
-            print(message)
-
-    port = PrintPort()
-    port.send(mido.Message('note_on')
-
-This will behave like an output port.
+    If an error occurs, ``IOError`` should be raised.
 
 
 Writing a New Backend
-=====================
+======================
 
 Mido comes with backends for PortMidi, python-rtmidi and pygame.midi,
-but you can easily add your own. All you need to do is to write a
-module with the following::
+but you can easily add your own.
 
-    Input -- an input class like above (optional)
-    Output -- an output class like above (optional
-    IOPort -- an I/O port class (if not present, IOPort will be used as
-              a wrapper
-    get_devices() -- returns a list of devices, as described below
+A backend is a Python module with one or more of these::
 
-All of these are optional. For example, if the backend only supports
-output, you only need ``Output`` and ``get_devices()``.
+    Input -- an input port class
+    Output -- an output port class
+    IOPort -- an I/O port class
+    get_devices() -- returns a list of devices
 
-If ``IOPort`` is left out, Mido will open your ``Input`` and
-``Output`` and wrap a ``mido.ports.IOPort`` around them.
+Once written, the backend can be used by setting the environment
+variable ``MIDO_BACKEND`` or by calling ``mido.set_backend()``. In
+both cases, the path of the module is used.
 
-``get_devices()`` returns a list of devices, where each device is
-dictionary with at least these three values::
+``Input``
 
-    {
-      'name': 'Some MIDI Input Port',
-      'is_input': True,
-      'is_output': False,
-    }
+   And input class for ``open_input()``. This is only required if the
+   backend supports input.
 
-These are used to build return values for ``get_input_names()`` etc.,
-and the user can access these directly for more fine-grained control.
-You can 
+``Output``
 
-Here is a simple backend that implements input and output, but not
-``get_devices()``:
+   And output class for ``open_output()``. This is only required if the
+   backend supports output.
 
-    from mido.ports import BaseInput, BaseOutput
+``IOPort``
 
-    # The Input and Output usually contains almost the same
-    # code. A mix-in like this one is a good way to avoid
-    # repetition.
-    class PortCommon:
-        def _open(self, *kwargs):
-            # Determine if this is an input or an output.
-            is_input = hasattr(self, 'receive')
-            ... # Open the port here
+   An I/O port class for ``open_ioport()``. If this is not found,
+   ``open_ioport()`` will return ``mido.ports.IOPort(Input(),
+   Output())``.
 
-        def _close(self):
-            self.device.close()  # For example
+``get_devices()``
 
-    class Input(PortCommon, BaseInput):
-        def _pending(self):
-            # Check device for new messages and feed these
-            # to the parser.
-            ...
+   Returns a list of devices, where each device is dictionary with at
+   least these three values::
 
-    class Output(PortCommon, BaseOutput):
-        def _send(self, message):
-            ... # Encode the messages (typically using message.bytes()) and
-                # send it to the device.
+      {
+        'name': 'Some MIDI Input Port',
+        'is_input': True,
+        'is_output': False,
+      }
 
-For more examples, see ``mido/backends/``.
+   These are used to build return values for ``get_input_names()`` etc..
+   This function will also be available to the user directly.
+
+For examples, see ``mido/backends/``.

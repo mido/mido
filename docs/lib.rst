@@ -3,8 +3,18 @@
 Library Reference
 ==================
 
-Convenience Functions
-----------------------
+Messages
+---------
+
+.. module:: mido
+
+.. autoclass:: Message
+   :members:
+   :inherited-members:
+
+
+Ports
+------
 
 .. module:: mido
 
@@ -16,6 +26,10 @@ Convenience Functions
 .. autofunction:: get_output_names
 .. autofunction:: get_ioport_names
 
+
+Backends
+---------
+
 .. autofunction:: set_backend
 
 .. autoclass:: Backend
@@ -23,8 +37,28 @@ Convenience Functions
    :inherited-members:
 
 
-Ports
-------
+Parsing
+--------
+
+.. autofunction:: parse
+.. autofunction:: parse_all
+.. autoclass:: Parser
+   :members:
+   :inherited-members:
+
+
+String Serialization
+---------------------
+
+.. module:: mido
+
+.. autofunction:: parse_string
+.. autofunction:: parse_string_stream
+.. autofunction:: format_as_string
+
+
+Port Classes and Functions
+---------------------------
 
 .. module:: mido.ports
 
@@ -51,38 +85,6 @@ Ports
 
 .. autofunction:: multi_receive
 .. autofunction:: multi_iter_pending
-
-
-Messages
----------
-
-.. module:: mido
-
-.. autoclass:: Message
-   :members:
-   :inherited-members:
-
-
-Parsing
---------
-
-.. module:: mido
-
-.. autofunction:: parse
-.. autofunction:: parse_all
-.. autoclass:: Parser
-   :members:
-   :inherited-members:
-
-
-String Serialization
----------------------
-
-.. module:: mido
-
-.. autofunction:: parse_string
-.. autofunction:: parse_string_stream
-.. autofunction:: format_as_string
 
 
 MIDI Files
