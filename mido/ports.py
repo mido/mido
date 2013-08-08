@@ -307,6 +307,23 @@ class IOPort(object):
             state, self.name, self.input._get_device_type())
 
 
+class EchoPort(BaseIOPort):
+    def _open(self):
+        if self.name is None:
+            self.name = 'echo'
+
+    def _get_device_type(self):
+        return 'echo'
+
+    def _send(self, message):
+        self._messages.append(message)
+
+    def _pending(self):
+        pass
+
+    __iter__ = BaseIOPort.iter_pending
+
+
 # Todo: i don't know how to implement yield_ports here, so for now I haven't.
 class MultiPort(BaseIOPort):
     def __init__(self, ports):
