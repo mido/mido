@@ -34,8 +34,8 @@ all the usual methods.
 Turning Things on their Head
 -----------------------------
 
-If you want the server to send messages to all connected clients, you
-can instead do::
+If you want the server to send messages the client, you can instead
+do::
 
     server = Server('localhost', 8080):
     while 1:
