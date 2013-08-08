@@ -42,6 +42,44 @@ def _get_device(device_id):
     }
 
 
+def _get_device_type():
+    return self.device['interface']
+
+
+def _get_default_device(get_input):
+    if get_input:
+        device_id = pm.lib.Pm_GetDefaultInputDeviceID()
+    else:
+        device_id = pm.lib.Pm_GetDefaultOutputDeviceID()
+        
+    if device_id < 0:
+        raise IOError('no default port found')
+    
+    return _get_device(device_id)
+
+
+def _get_named_device(name, get_input):
+    # Look for the device by name and type (input / output)
+    for device in get_devices():
+        if device['name'] != name:
+            continue
+
+        # Skip if device is the wrong type
+        if get_input:
+            if device['is_output']:
+                continue
+        else:
+            if device['is_input']:
+                continue
+
+        if device['opened']:
+            raise IOError('port already opened: {!r}'.format(name))
+
+        return device
+    else:
+        raise IOError('unknown port: {!r}'.format(name))
+
+
 def get_devices():
     """Return a list of devices as dictionaries."""
     return [_get_device(i) for i in range(pm.lib.Pm_CountDevices())]
@@ -58,10 +96,10 @@ class PortCommon(object):
         opening_input = (self.__class__ is Input)
 
         if self.name is None:
-            self.device = self._get_default_device(opening_input)
+            self.device = _get_default_device(opening_input)
         else:
             self.name = self.device['name']
-            self.device = self._get_named_device(self.name, opening_input)
+            self.device = _get_named_device(self.name, opening_input)
 
         if self.device['opened']:
             if opening_input:
@@ -94,41 +132,6 @@ class PortCommon(object):
                          pm.NullTimeProcPtr,  # Default to internal clock
                          pm.null,    # Time info
                          0))         # Latency
-
-    def _get_device_type(self):
-        return self.device['interface']
-
-    def _get_default_device(self, get_input):
-        if get_input:
-            device_id = pm.lib.Pm_GetDefaultInputDeviceID()
-        else:
-            device_id = pm.lib.Pm_GetDefaultOutputDeviceID()
-
-        if device_id < 0:
-            raise IOError('no default port found')
-        
-        return _get_device(device_id)
-
-    def _get_named_device(self, name, get_input):
-        # Look for the device by name and type (input / output)
-        for device in get_devices():
-            if device['name'] != name:
-                continue
-
-            # Skip if device is the wrong type
-            if get_input:
-                if device['is_output']:
-                    continue
-            else:
-                if device['is_input']:
-                    continue
-
-            if device['opened']:
-                raise IOError('port already opened: {!r}'.format(name))
-
-            return device
-        else:
-            raise IOError('unknown port: {!r}'.format(name))
 
     def _close(self):
         _check_error(pm.lib.Pm_Close(self._stream))

@@ -11,7 +11,7 @@ import atexit
 from pygame import midi
 from ..ports import BaseInput, BaseOutput
 
-def get_device(device_id):
+def _get_device(device_id):
     midi.init()    
 
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
@@ -20,11 +20,43 @@ def get_device(device_id):
     info['name'] = info['name'].decode('utf-8') # Todo: correct encoding?
     return info
 
+def _get_default_device(get_input):
+    if get_input:
+        device_id = midi.get_default_input_id()
+    else:
+        device_id = midi.get_default_output_id()
+
+    if device_id < 0:
+        raise IOError('no default port found')
+
+    return _get_device(device_id)
+
+def _get_named_device(name, get_input):
+    # Look for the device by name and type (input / output)
+    for device in get_devices():
+        if device['name'] != name:
+            continue
+
+        # Skip if device is the wrong type
+        if get_input:
+            if device['is_output']:
+                continue
+        else:
+            if device['is_input']:
+                continue
+
+        if device['opened']:
+            raise IOError('port already opened: {!r}'.format(name))
+
+        return device
+    else:
+        raise IOError('unknown port: {!r}'.format(name))
+
 
 def get_devices():
     midi.init()
 
-    return [get_device(device_id) for device_id in range(midi.get_count())]
+    return [_get_device(device_id) for device_id in range(midi.get_count())]
 
 
 class PortCommon(object):
@@ -39,10 +71,10 @@ class PortCommon(object):
         opening_input = (self.__class__ is Input)
 
         if self.name is None:
-            self.device = self._get_default_device(opening_input)
+            self.device = _get_default_device(opening_input)
             self.name = self.device['name']
         else:
-            self.device = self._get_named_device(self.name, opening_input)
+            self.device = _get_named_device(self.name, opening_input)
 
         if self.device['opened']:
             if opening_input:
@@ -59,38 +91,6 @@ class PortCommon(object):
 
         atexit.register(self.close)
         self._device_type = 'pygame'
-
-    def _get_default_device(self, get_input):
-        if get_input:
-            device_id = midi.get_default_input_id()
-        else:
-            device_id = midi.get_default_output_id()
-
-        if device_id < 0:
-            raise IOError('no default port found')
-
-        return get_device(device_id)
-
-    def _get_named_device(self, name, get_input):
-        # Look for the device by name and type (input / output)
-        for device in get_devices():
-            if device['name'] != name:
-                continue
-
-            # Skip if device is the wrong type
-            if get_input:
-                if device['is_output']:
-                    continue
-            else:
-                if device['is_input']:
-                    continue
-
-            if device['opened']:
-                raise IOError('port already opened: {!r}'.format(name))
-
-            return device
-        else:
-            raise IOError('unknown port: {!r}'.format(name))
 
     def _close(self):
         self._port = None  # Todo: this should call self._port.close()

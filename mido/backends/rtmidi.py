@@ -3,45 +3,31 @@ Experimental wrapper for python-rtmidi:
 https://pypi.python.org/pypi/python-rtmidi/
 
 This module only supports a limited number of MIDI message types,
-as listed below. (I am not sure where this limitation arises.)
+as listed below.
 
-rtmidi => rtmidi
------------------
-note_off channel=0 note=0 velocity=0 time=0
-note_on channel=0 note=0 velocity=0 time=0
-polytouch channel=0 note=0 value=0 time=0
-control_change channel=0 control=0 value=0 time=0
-program_change channel=0 program=0 time=0
-aftertouch channel=0 value=0 time=0
-pitchwheel channel=0 pitch=0 time=0
-songpos pos=0 time=0
-song_select song=0 time=0
+I tested sending all messags types in these directions:
 
-rtmidi => portmidi
--------------------
-Received note_off channel=0 note=0 velocity=0 time=0
-Received note_on channel=0 note=0 velocity=0 time=0
-Received polytouch channel=0 note=0 value=0 time=0
-Received control_change channel=0 control=0 value=0 time=0
-Received program_change channel=0 program=0 time=0
-Received aftertouch channel=0 value=0 time=0
-Received pitchwheel channel=0 pitch=0 time=0
-Received sysex data=() time=0    !
-Received songpos pos=0 time=0
-Received song_select song=0 time=0
+    rtmidi -> rtmidi
+    rtmidi -> portmidi
+    portmidi -> rtmidi
 
-portmidi => rtmidi
--------------------
+These were received in all cases:
 
-note_off channel=0 note=0 velocity=0 time=0
-note_on channel=0 note=0 velocity=0 time=0
-polytouch channel=0 note=0 value=0 time=0
-control_change channel=0 control=0 value=0 time=0
-program_change channel=0 program=0 time=0
-aftertouch channel=0 value=0 time=0
-pitchwheel channel=0 pitch=0 time=0
-songpos pos=0 time=0
-song_select song=0 time=0
+    note_off
+    note_on
+    polytouch
+    control_change
+    program_change
+    aftertouch
+    pitchwheel
+    songpos
+    song_select
+
+In addition, sysex was received in "rtmidi -> portmidi", and only there.
+
+Since PortMidi is able to send and receive all message types, it seems
+that the limitation is in RtMidi or python-rtmidi. This will require
+some further investigation.
 """
 from __future__ import absolute_import
 import time
@@ -63,11 +49,6 @@ def get_devices():
                 })
 
     return devices
-
-def get_output_names():
-    rt = rtmidi.MidiOut()
-    return rt.get_ports()
-
 
 class PortCommon(object):
     def _open(self, **kwargs):
@@ -94,7 +75,6 @@ class PortCommon(object):
 
     def _close(self):
         del self.rt
-
 
 class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
