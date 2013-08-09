@@ -35,19 +35,19 @@ class ByteReader(object):
     """
     def __init__(self, filename):
         self._buffer = bytearray(open(filename, 'rb').read())
-        self._index = 0
+        self.pos = 0
 
     def _eof(self):
         return 
 
     def read_bytearray(self, n):
         """Read n bytes and return as a bytearray."""
-        i = self._index
+        i = self.pos
         ret = self._buffer[i:i + n]
         if len(ret) < n:
             raise self._eof
 
-        self._index += n
+        self.pos += n
         return ret
 
     def read_byte_list(self, n):
@@ -57,8 +57,8 @@ class ByteReader(object):
     def read_byte(self):
         """Read one byte."""
         try:
-            byte = self._buffer[self._index]
-            self._index += 1
+            byte = self._buffer[self.pos]
+            self.pos += 1
             return byte
         except IndexError:
             raise self._eof
@@ -68,22 +68,19 @@ class ByteReader(object):
 
         This can be used for look-ahead."""
         try:
-            return self._buffer[self._index]
+            return self._buffer[self.pos]
         except IndexError:
             raise self._eof
 
     def read_short(self):
         """Read short (2 bytes little endian)."""
-        a, b = self.read_byte(), self.read_byte()
+        a, b = self.read_bytearray(2)
         return a << 8 | b
 
     def read_long(self):
         """Read long (4 bytes little endian)."""
         a, b, c, d = self.read_bytearray(4)
         return a << 24 | b << 16 | c << 8 | d
-
-    def tell(self):
-        return self._index
 
     def __enter__(self):
         return self
@@ -226,22 +223,19 @@ class MidiFile:
             raise IOError("track doesn't start with 'MTrk'")
 
         length = self._file.read_long()
-        start = self._file.tell()
+        start = self._file.pos
         last_status = None
         last_systex = None
 
         while 1:
             # End of track reached.
-            if self._file.tell() - start == length:
+            if self._file.pos - start == length:
                 break
-
-            is_sysex_continuation = False
 
             delta = self._read_delta_time()
 
-            peek_status = self._file.peek_byte()
-
             # Todo: not all messages have running status
+            peek_status = self._file.peek_byte()
             if peek_status < 0x80:
                 if last_status is None:
                     raise IOError('running status without last_status')
@@ -256,20 +250,17 @@ class MidiFile:
                 message = self._read_sysex()
                 last_sysex = message
             elif status_byte == 0xf7:
-                message = self._read_sysex()
-                # Todo: does this actually work?
-                is_sysex_continuation = True
+                # Todo: check if this works as intended.
                 if last_systex is None:
                     raise IOError(
                         'sysex continuation without preceding sysex')
-                last_systex.data += message.data
+                last_sysex.data += self._read_sysex()
+                continue
             else:
                 message = self._read_message(status_byte)
 
             message.time = delta
-
-            if not is_sysex_continuation:
-                track.append(message)
+            track.append(message)
 
             if message.type == 'end_of_track':
                 break
