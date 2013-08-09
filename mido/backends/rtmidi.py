@@ -41,13 +41,19 @@ def get_devices():
     return devices
 
 class PortCommon(object):
-    def _open(self, virtual=False, **kwargs):
+    def _open(self, virtual=False, callback=None):
 
         opening_input = hasattr(self, 'receive')
 
         if opening_input:
             self._rt = rtmidi.MidiIn()
             self._rt.ignore_types(False, False, False)
+            if callback:
+                def callback_wrapper(message_data, data):
+                    self._parser.feed(message_data[0])
+                    for message in self._parser:
+                        callback(message)
+                self._rt.set_callback(callback_wrapper)
         else:
             self._rt = rtmidi.MidiOut()
             # Turn of ignore of sysex, time and active_sensing.
