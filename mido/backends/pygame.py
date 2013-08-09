@@ -101,7 +101,6 @@ class Input(PortCommon, BaseInput):
             event = self._port.read(1)[0]
             midi_bytes = event[0]
             self._parser.feed(midi_bytes)
-            print(self._messages)
 
 
 class Output(PortCommon, BaseOutput):
