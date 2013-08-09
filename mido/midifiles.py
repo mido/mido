@@ -79,10 +79,7 @@ class ByteReader(object):
 
     def read_long(self):
         """Read long (4 bytes little endian)."""
-        a = self.read_byte()
-        b = self.read_byte()
-        c = self.read_byte() 
-        d = self.read_byte()
+        a, b, c, d = self.read_bytearray(4)
         return a << 24 | b << 16 | c << 8 | d
 
     def tell(self):
