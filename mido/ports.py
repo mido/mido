@@ -299,6 +299,14 @@ class IOPort(object):
         for message in self.input:
             yield message
 
+    def __repr__(self):
+        if self.closed:
+            state = 'closed'
+        else:
+            state = 'open'
+    
+        return '<{} IOPort({}, {})>'.format(state, self.input, self.output)
+
     def __enter__(self):
         return self
 
