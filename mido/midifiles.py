@@ -34,25 +34,11 @@ class ByteReader(object):
     Reads bytes from a file.
     """
     def __init__(self, filename):
-        self._buffer = bytearray(open(filename, 'rb').read())
+        self._buffer = list(bytearray(open(filename, 'rb').read()))
         self.pos = 0
 
     def _eof(self):
         return 
-
-    def read_bytearray(self, n):
-        """Read n bytes and return as a bytearray."""
-        i = self.pos
-        ret = self._buffer[i:i + n]
-        if len(ret) < n:
-            raise self._eof
-
-        self.pos += n
-        return ret
-
-    def read_byte_list(self, n):
-        """Read n bytes and return as a list."""
-        return list(self.read_bytearray(n))
 
     def read_byte(self):
         """Read one byte."""
@@ -72,14 +58,24 @@ class ByteReader(object):
         except IndexError:
             raise self._eof
 
+    def read_list(self, n):
+        """Read n bytes and return as a list."""
+        i = self.pos
+        ret = self._buffer[i:i + n]
+        if len(ret) < n:
+            raise self._eof
+
+        self.pos += n
+        return ret
+
     def read_short(self):
         """Read short (2 bytes little endian)."""
-        a, b = self.read_bytearray(2)
+        a, b = self.read_list(2)
         return a << 8 | b
 
     def read_long(self):
         """Read long (4 bytes little endian)."""
-        a, b, c, d = self.read_bytearray(4)
+        a, b, c, d = self.read_list(4)
         return a << 24 | b << 16 | c << 8 | d
 
     def __enter__(self):
@@ -169,8 +165,8 @@ class MidiFile:
     def _load(self):
         with ByteReader(self.name) as self._file:
             # Read header (16 bytes)
-            magic = self._file.read_bytearray(4)
-            if not magic == bytearray(b'MThd'):
+            magic = self._file.read_list(4)
+            if not bytearray(magic) == bytearray(b'MThd'):
                 raise IOError('MThd not found. Probably not a MIDI file')
 
             # Skip header size. (It's always 6, referring to the size
@@ -196,18 +192,18 @@ class MidiFile:
 
     def _read_message(self, status_byte):
         spec = get_spec(status_byte)
-        data_bytes = self._file.read_byte_list(spec.length - 1)
+        data_bytes = self._file.read_list(spec.length - 1)
         return build_message(spec, [status_byte] + data_bytes)
 
     def _read_meta_message(self):
         type = self._file.read_byte()
         length = self._file.read_byte()
-        data = self._file.read_byte_list(length)
+        data = self._file.read_list(length)
         return MetaMessage(type, data)
 
     def _read_sysex(self):
         length = self._file.read_byte()
-        data = self._file.read_byte_list(length)
+        data = self._file.read_list(length)
 
         if data and data[-1] == 0xf7:
             data = data[:-1]
@@ -218,8 +214,8 @@ class MidiFile:
     def _read_track(self):
         track = Track()
 
-        magic = self._file.read_bytearray(4)
-        if magic != bytearray(b'MTrk'):
+        magic = self._file.read_list(4)
+        if bytearray(magic) != bytearray(b'MTrk'):
             raise IOError("track doesn't start with 'MTrk'")
 
         length = self._file.read_long()
