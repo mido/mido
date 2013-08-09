@@ -21,7 +21,6 @@ song_select     song
 undefined_f4
 undefined_f5
 tune_request
-sysex_end
 clock
 undefined_f9
 start

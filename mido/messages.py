@@ -87,7 +87,7 @@ def get_message_specs():
         MessageSpec(0xf4, 'undefined_f4', (), 1),
         MessageSpec(0xf5, 'undefined_f5', (), 1),
         MessageSpec(0xf6, 'tune_request', (), 1),
-        MessageSpec(0xf7, 'sysex_end', (), 1),
+        # 0xf7 ('sysex_end') is a part of 'sysex', so should not be alloed.
 
         # System real time messages
         MessageSpec(0xf8, 'clock', (), 1),

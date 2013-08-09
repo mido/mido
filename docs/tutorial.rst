@@ -131,12 +131,13 @@ a tuple of integers::
     >>> Message('sysex', data=bytearray('abc'))
     <message sysex data=(97, 98, 99), time=0>
 
-Sysex messages inlude the ``sysex_end`` byte when sent and received, so
-while there is a ``sysex_end`` message type, it is never used::
+Sysex messages include the end byte (0xf7) when sent and received::
 
     >>> msg = Message('sysex', data=[1, 2, 3])
     >>> msg.hex()
     'F0 01 02 03 F7'
+
+Thus, there is no 'sysex_end' type.
 
 
 Time
