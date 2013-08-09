@@ -16,6 +16,17 @@ MAX_PITCHWHEEL = 8191
 MIN_SONGPOS = 0
 MAX_SONGPOS = 16383
 
+# This is here to optimize __setattr__().
+_VALID_DATA_BYTES = set(range(128))
+_VALID_VALUES = {
+    'channel': set(range(16)),
+    'control': _VALID_DATA_BYTES,
+    'note': _VALID_DATA_BYTES,
+    'program': _VALID_DATA_BYTES,
+    'song': _VALID_DATA_BYTES,
+    'value': _VALID_DATA_BYTES,
+    'velocity': _VALID_DATA_BYTES,
+}
 
 class MessageSpec(object):
     """
@@ -295,12 +306,12 @@ class BaseMessage(object):
         return self.bytes() == other.bytes()
 
 
-def build_message(bytes):
+def build_message(bytes, spec=None):
     """Build message from bytes.
 
-    This is used by Parser and MidiFile."""
-
-    spec = get_spec(bytes[0])
+    This is used by Parser and MidiFile.
+    """
+    spec = spec or get_spec(bytes[0])
 
     if spec.type == 'sysex':
         arguments = {'data': bytes[1:]}
@@ -331,7 +342,6 @@ def build_message(bytes):
     # Note: we're using the status byte here, not type.
     # If we used type, the channel would be discarded.
     return Message(bytes[0], **arguments)
-
 
 class Message(BaseMessage):
     """
@@ -423,23 +433,31 @@ class Message(BaseMessage):
 
     def __setattr__(self, name, value):
         """Set an attribute."""
-
         if name in self._spec.valid_attributes:
             try:
-                check = globals()['check_{}'.format(name)]
+                if value in _VALID_VALUES[name]:
+                    self.__dict__[name] = value
+                    return
             except KeyError:
-                check = check_databyte
+                pass
 
-            ret = check(value)
-            if name == 'data':
-                value = ret
-
+            if name == 'time':
+                check_time(value)
+            elif name == 'data':
+                self.__dict__['data'] = check_data(value)
+            else:
+                try:
+                    check = globals()['check_{}'.format(name)]
+                except KeyError:
+                    raise AttributeError(
+                        '{} message has no attribute {}'.format(self.type,
+                                                                name))
             self.__dict__[name] = value
         elif name in self.__dict__:
             raise AttributeError('{} attribute is read only'.format(name))
         else:
-            raise AttributeError('{} message has no attribute {}'.format(
-                                 self.type, name))
+            raise AttributeError(
+                '{} message has no attribute {}'.format(self.type, name))
 
     def __delattr__(self, name):
         raise AttributeError('attribute can not be deleted')
