@@ -25,6 +25,21 @@ import mido
 import rtmidi
 from ..ports import BaseInput, BaseOutput
 
+def _get_api_names():
+    api_names = {}
+
+    for name in dir(rtmidi):
+        if name.startswith('API_'):
+            value = getattr(rtmidi, name)
+            name = name.replace('API_', '')
+            api_names[name] = value
+            api_names[value] = name
+
+    return api_names
+
+api_names = _get_api_names()
+print(api_names)
+
 def get_devices():
     devices = []
 
@@ -79,6 +94,9 @@ class PortCommon(object):
                 raise IOError('unknown port {!r}'.format(self.name))
 
             self._rt.open_port(port_id)
+
+        api = api_names[self._rt.get_current_api()]
+        self._device_type = 'RtMidi/{}'.format(api)
 
     def _close(self):
         self._rt.close_port()
