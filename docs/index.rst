@@ -47,7 +47,6 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   why_mido
    installing
    about_midi
    tutorial
