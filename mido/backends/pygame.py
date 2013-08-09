@@ -115,5 +115,8 @@ class Output(PortCommon, BaseOutput):
     def _send(self, message):
         if message.type == 'sysex':
             self._port.write_sys_ex(midi.time(), message.bytes())
+        elif message.type == 'sysex_end':
+            # This crashes PortMidi, so it's best to ignore it.
+            pass
         else:
             self._port.write_short(*message.bytes())

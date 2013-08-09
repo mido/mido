@@ -177,6 +177,9 @@ class Output(PortCommon, BaseOutput):
             string = pm.c_char_p(bytes(message.bin()))
             timestamp = 0  # Ignored when latency = 0
             _check_error(pm.lib.Pm_WriteSysEx(self._stream, timestamp, string))
+        elif message.type == 'sysex_end':
+            # This crashes PortMidi, so it's best to ignore it.
+            pass
         else:
             # The bytes of a message as packed into a 32 bit integer.
             packed_message = 0
