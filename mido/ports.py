@@ -217,9 +217,12 @@ class BaseOutput(BasePort):
         The message is sent immediately."""
         if not isinstance(message, Message):
             raise ValueError('argument to send() must be a Message')
-
-        if self.closed:
+        elif self.closed:
             raise ValueError('send() called on closed port')
+        elif message.type == 'sysex_end':
+            # Ignore stray 'sysex_end'. It will crash PortMidi and
+            # probably other libraries.
+            return
 
         self._send(message)
 
