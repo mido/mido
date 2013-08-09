@@ -13,7 +13,7 @@ dependencies unless they are used.
 
 Mido currently supports three different backends: `PortMidi
 <http://sourceforge.net/p/portmedia/wiki/portmidi/>`_,
-`python-rtmidi <http://github.com/superquadratic/rtmidi-python>`_
+`python-rtmidi <<http://github.com/superquadratic/rtmidi-python>`_
 and `pygame <http://www.pygame.org/docs/ref/midi.html>`_.
 
 
