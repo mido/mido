@@ -11,8 +11,6 @@ from pygame import midi
 from ..ports import BaseInput, BaseOutput
 
 def _get_device(device_id):
-    midi.init()    
-
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
     info = dict(zip(keys, midi.get_device_info(device_id)))
     info['id'] = device_id
@@ -54,7 +52,6 @@ def _get_named_device(name, get_input):
 
 def get_devices():
     midi.init()
-
     return [_get_device(device_id) for device_id in range(midi.get_count())]
 
 
@@ -86,9 +83,9 @@ class PortCommon(object):
             self._port = midi.Output(self.device['id'])
 
         self._device_type = 'pygame'
-
+        
     def _close(self):
-        self._port = None  # Todo: this should call self._port.close()
+        self._port.close()
 
 class Input(PortCommon, BaseInput):
     """
