@@ -7,7 +7,6 @@ http://www.pygame.org/docs/ref/midi.html
 """
 
 from __future__ import absolute_import
-import atexit
 from pygame import midi
 from ..ports import BaseInput, BaseOutput
 
@@ -86,7 +85,6 @@ class PortCommon(object):
         else:
             self._port = midi.Output(self.device['id'])
 
-        atexit.register(self.close)  # Todo: is this necessary?
         self._device_type = 'pygame'
 
     def _close(self):
@@ -106,6 +104,7 @@ class Input(PortCommon, BaseInput):
             event = self._port.read(1)[0]
             midi_bytes = event[0]
             self._parser.feed(midi_bytes)
+            print(self._messages)
 
 
 class Output(PortCommon, BaseOutput):
@@ -114,7 +113,6 @@ class Output(PortCommon, BaseOutput):
     """
 
     def _send(self, message):
-        print(message)
         if message.type == 'sysex':
             self._port.write_sys_ex(midi.time(), message.bytes())
         else:

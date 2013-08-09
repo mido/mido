@@ -73,7 +73,7 @@ def _get_named_device(name, get_input):
 
         return device
     else:
-        raise IOError('unknown port: {!r}'.format(name))
+        raise IOError('unknown port {!r}'.format(name))
 
 
 def get_devices():

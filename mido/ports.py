@@ -62,6 +62,7 @@ class BasePort(object):
         if not self.closed:
             self._close()
             self.closed = True
+        print('close', id(self))
 
     def __del__(self):
         self.close()

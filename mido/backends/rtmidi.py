@@ -57,22 +57,26 @@ class PortCommon(object):
 
         if opening_input:
             self._rt = rtmidi.MidiIn()
+            # print(self._rt.ignore_types(['note_on']))
         else:
             self._rt = rtmidi.MidiOut()
 
-        available_ports = self._rt.get_ports()
+        ports = self._rt.get_ports()
+
         if self.name is None:
             # Todo: this could fail if list is empty.
-            # Also, it assumes that the first port is the default port.
-            self.name = available_ports[0]
-            port_id = 0
-        else:
-            # Todo: this could fail if the name is not in the list.
-            port_id = available_ports.index(self.name)
+            # In RtMidi, the default port is the first port.
+            try:
+                self.name = ports[0]
+            except IndexError:
+                raise IOError('no ports available')
+
+        try:
+            port_id = ports.index(self.name)
+        except ValueError:
+            raise IOError('unknown port {!r}'.format(name))
 
         self._rt.open_port(port_id)
-
-        self._device_type = 'RtMidi'
 
     def _close(self):
         self._rt.close_port()
