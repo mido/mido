@@ -85,7 +85,7 @@ class PortCommon(object):
     """
     Mixin with common things for input and output ports.
     """
-    def _open(self, **kwargs):
+    def _open(self):
         self._stream = pm.PortMidiStreamPtr()
 
         opening_input = hasattr(self, 'receive')

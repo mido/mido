@@ -62,7 +62,7 @@ Attributes
 Overridable Methods
 --------------------
 
-``_open(self, **kwargs)``
+``_open(self)``, ``_open(self, **kwargs)``
 
     Is called by ``__init__()`` and is responsible for actually opening
     the device or intializing the internal state of the object. The
