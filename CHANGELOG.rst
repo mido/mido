@@ -43,6 +43,8 @@
 * Message() no longer accepts a status byte as its first argument. (This was
   only meant to be used internally.)
 
+* message creation is heavily optimized.
+
 
 1.0.2 - 2013-07-31
 -------------------
