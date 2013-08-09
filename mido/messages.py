@@ -16,18 +16,6 @@ MAX_PITCHWHEEL = 8191
 MIN_SONGPOS = 0
 MAX_SONGPOS = 16383
 
-# This is here to optimize __setattr__().
-_VALID_DATA_BYTES = set(range(128))
-_VALID_VALUES = {
-    'channel': set(range(16)),
-    'control': _VALID_DATA_BYTES,
-    'note': _VALID_DATA_BYTES,
-    'program': _VALID_DATA_BYTES,
-    'song': _VALID_DATA_BYTES,
-    'value': _VALID_DATA_BYTES,
-    'velocity': _VALID_DATA_BYTES,
-}
-
 class MessageSpec(object):
     """
     Specifications for creating a message.
@@ -305,7 +293,6 @@ class BaseMessage(object):
 
         return self.bytes() == other.bytes()
 
-
 def build_message(spec, bytes):
     """Build message from bytes.
 
@@ -320,6 +307,7 @@ def build_message(spec, bytes):
     call this function. 0xf7 is not allowed as status byte.
     """
     message = Message.__new__(Message)
+    attrs = message.__dict__
     message.__dict__.update({
             'type': spec.type,
             '_spec': spec,
@@ -327,8 +315,8 @@ def build_message(spec, bytes):
             })
 
     # This could be written in a more general way, but most messages
-    # are note_onx or note_off so doing it this way is faster.
-    if spec.type == 'note_on':
+    # are note_on or note_off so doing it this way is faster.
+    if spec.type in ['note_on', 'note_off']:
         message.__dict__.update({
                 'channel': bytes[0] & 0x0f,
                 'note': bytes[1],
@@ -336,11 +324,11 @@ def build_message(spec, bytes):
                 })
         return message
 
-    elif spec.type == 'note_off':
+    elif spec.type == 'control_change':
         message.__dict__.update({
                 'channel': bytes[0] & 0x0f,
-                'note': bytes[1],
-                'velocity': bytes[2],
+                'control': bytes[1],
+                'value': bytes[2],
                 })
         return message
 
@@ -378,6 +366,8 @@ class Message(BaseMessage):
 
     # Quick lookup of specs by name or status_byte.
     _spec_lookup = build_spec_lookup(get_message_specs())
+
+    # This is needed for __init__() so it doesn't accept status bytes.
     _type_lookup = {name: value for name, value in _spec_lookup.items() \
                         if not isinstance(name, int)}
 
@@ -441,24 +431,13 @@ class Message(BaseMessage):
     def __setattr__(self, name, value):
         """Set an attribute."""
         if name in self._spec.valid_attributes:
-            try:
-                if value in _VALID_VALUES[name]:
-                    self.__dict__[name] = value
-                    return
-            except KeyError:
-                pass
-
-            if name == 'time':
-                check_time(value)
-            elif name == 'data':
+            if name == 'data':
                 self.__dict__['data'] = check_data(value)
             else:
                 try:
-                    check = globals()['check_{}'.format(name)]
+                    globals()['check_{}'.format(name)](value)
                 except KeyError:
-                    raise AttributeError(
-                        '{} message has no attribute {}'.format(self.type,
-                                                                name))
+                    check_databyte(value)
             self.__dict__[name] = value
         elif name in self.__dict__:
             raise AttributeError('{} attribute is read only'.format(name))
