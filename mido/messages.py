@@ -432,7 +432,6 @@ class Message(BaseMessage):
             else:
                 arguments[name] = getattr(self, name)
 
-        print(arguments)
         return self.__class__(self.type, **arguments)
 
     def _set(self, name, value):
