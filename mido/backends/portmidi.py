@@ -42,10 +42,6 @@ def _get_device(device_id):
     }
 
 
-def _get_device_type():
-    return self.device['interface']
-
-
 def _get_default_device(get_input):
     if get_input:
         device_id = pm.lib.Pm_GetDefaultInputDeviceID()
@@ -91,17 +87,16 @@ class PortCommon(object):
     """
     def _open(self, **kwargs):
         self._stream = pm.PortMidiStreamPtr()
-        self.device = None
 
-        opening_input = (self.__class__ is Input)
+        opening_input = hasattr(self, 'receive')
 
         if self.name is None:
-            self.device = _get_default_device(opening_input)
+            device = _get_default_device(opening_input)
+            self.name = device['name']
         else:
-            self.name = self.device['name']
-            self.device = _get_named_device(self.name, opening_input)
+            device = _get_named_device(self.name, opening_input)
 
-        if self.device['opened']:
+        if device['opened']:
             if opening_input:
                 devtype = 'input'
             else:
@@ -109,33 +104,29 @@ class PortCommon(object):
             raise IOError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
         
-        self._device_type = 'PortMidi/{}'.format(self.device['interface'])
-
-        # Make a shortcut, since this is so long
-        device_id = self.device['id']
-
         if opening_input:
             _check_error(pm.lib.Pm_OpenInput(
                          pm.byref(self._stream),
-                         device_id,  # Input device
-                         pm.null,    # Input driver info
-                         1000,       # Buffer size
+                         device['id'],  # Input device
+                         pm.null,       # Input driver info
+                         1000,          # Buffer size
                          pm.NullTimeProcPtr,  # Time callback
-                         pm.null))    # Time info
+                         pm.null))      # Time info
         else:
             _check_error(pm.lib.Pm_OpenOutput(
                          pm.byref(self._stream),
-                         device_id,  # Output device
-                         pm.null,    # Output diver info
-                         0,          # Buffer size
-                                     # (ignored when latency == 0?)
+                         device['id'],  # Output device
+                         pm.null,       # Output diver info
+                         0,             # Buffer size
+                                        # (ignored when latency == 0?)
                          pm.NullTimeProcPtr,  # Default to internal clock
-                         pm.null,    # Time info
-                         0))         # Latency
+                         pm.null,       # Time info
+                         0))            # Latency
+
+        self._device_type = 'PortMidi/{}'.format(device['interface'])
 
     def _close(self):
         _check_error(pm.lib.Pm_Close(self._stream))
-        self.device['opened'] = False
 
 class Input(PortCommon, BaseInput):
     """

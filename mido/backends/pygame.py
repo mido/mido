@@ -66,9 +66,7 @@ class PortCommon(object):
     def _open(self, **kwargs):
         midi.init()
 
-        self.device = None
-
-        opening_input = (self.__class__ is Input)
+        opening_input = hasattr(self, 'receive')
 
         if self.name is None:
             self.device = _get_default_device(opening_input)
@@ -83,13 +81,12 @@ class PortCommon(object):
                 devtype = 'output'
             raise IOError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
-
         if opening_input:
             self._port = midi.Input(self.device['id'])
         else:
             self._port = midi.Output(self.device['id'])
 
-        atexit.register(self.close)
+        atexit.register(self.close)  # Todo: is this necessary?
         self._device_type = 'pygame'
 
     def _close(self):

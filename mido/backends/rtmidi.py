@@ -52,14 +52,15 @@ def get_devices():
 
 class PortCommon(object):
     def _open(self, **kwargs):
-        opening_input = isinstance(self, Input)
+
+        opening_input = hasattr(self, 'receive')
 
         if opening_input:
-            self.rt = rtmidi.MidiIn()
+            self._rt = rtmidi.MidiIn()
         else:
-            self.rt = rtmidi.MidiOut()
+            self._rt = rtmidi.MidiOut()
 
-        available_ports = self.rt.get_ports()
+        available_ports = self._rt.get_ports()
         if self.name is None:
             # Todo: this could fail if list is empty.
             # Also, it assumes that the first port is the default port.
@@ -69,18 +70,18 @@ class PortCommon(object):
             # Todo: this could fail if the name is not in the list.
             port_id = available_ports.index(self.name)
 
-        self.rt.open_port(port_id)
+        self._rt.open_port(port_id)
 
         self._device_type = 'RtMidi'
 
     def _close(self):
-        del self.rt
+        self._rt.close_port()
 
 class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
     def _pending(self):
         while 1:
-            message = self.rt.get_message()
+            message = self._rt.get_message()
             if message is None:
                 break
             else:
@@ -88,4 +89,4 @@ class Input(PortCommon, BaseInput):
             
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
-        self.rt.send_message(message.bytes())
+        self.rt._send_message(message.bytes())
