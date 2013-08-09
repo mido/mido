@@ -66,7 +66,10 @@ class Parser(object):
             self._reset()
         else:
             # Start of new message
-            self._spec = get_spec(byte)
+            try:
+                self._spec = get_spec(byte)
+            except LookupError:
+                return  # Skip unknown status byte.
             self._bytes = [byte]
 
     def _handle_data_byte(self, byte):

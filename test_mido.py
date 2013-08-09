@@ -345,6 +345,12 @@ class TestParser(unittest.TestCase):
         self.assertTrue(len(messages) == 1)
         self.assertTrue(messages[0].type == 'tune_request')
 
+    def test_undefined_messages(self):
+        """The parser should ignore undefined status bytes and sysex_end."""
+        messages = mido.parse_all([0xf4, 0xf5, 0xf7, 0xf9, 0xfd])
+        self.assertTrue(messages == [])
+
+
 class TestSockets(unittest.TestCase):
     
     def test_parse_address(self):
