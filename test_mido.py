@@ -148,8 +148,9 @@ class TestMessages(unittest.TestCase):
         self.assertEqual(m.encode_channel(channel=0), [])
 
         # Encode data
-        sysex_end_byte = 0xf7
-        self.assertEqual([1, 2, 3, sysex_end_byte], m.encode_data((1, 2, 3)))
+        # Note: encode_data() includes the sysex end byte (0xf7) to avoid a
+        # special case in bytes().
+        self.assertEqual([1, 2, 3, 0xf7], m.encode_data((1, 2, 3)))
 
         # Pitchwheel pitch
         self.assertEqual([0, 0], m.encode_pitch(m.MIN_PITCHWHEEL))
@@ -299,11 +300,6 @@ class TestParser(unittest.TestCase):
         """
         p = mido.Parser()
         for spec in mido.messages.get_message_specs():
-            if spec.type == 'sysex_end':
-                # This is considered part of 'sysex' and is not returned
-                # by the parter.
-                continue
-
             msg = Message(spec.type)
             p.feed(msg.bytes())
             outmsg = p.get_message()
