@@ -38,6 +38,8 @@
 
 * sleep time in poll and wait inside sockets can now be changed.
 
+* removed the message type 'sysex_end'. It had no use and only caused problems.
+
 
 1.0.2 - 2013-07-31
 -------------------
