@@ -319,11 +319,17 @@ def build_message(spec, bytes):
     # This could be written in a more general way, but most messages
     # are note_on or note_off so doing it this way is faster.
     if spec.type == 'note_on':
-        return Message('note_on', channel=bytes[0] & 0x0f,
-                       note=bytes[1], velocity=bytes[2])
+        return Message('note_on',
+                       channel=bytes[0] & 0x0f,
+                       note=bytes[1],
+                       velocity=bytes[2])
+
     elif spec.type == 'note_off':
-        return Message('note_off', channel=bytes[0] & 0x0f,
-                       note=bytes[1], velocity=bytes[2])
+        return Message('note_off',
+                       channel=bytes[0] & 0x0f,
+                       note=bytes[1],
+                       velocity=bytes[2])
+
     elif spec.status_byte < 0xf0:
         # Channel message. The most common type.
         if spec.type == 'pitchwheel':
