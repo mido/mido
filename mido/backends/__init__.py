@@ -23,7 +23,7 @@ def find_dotted_module(name, path=None):
 
 class Backend(object):
     # Todo: doc strings.
-    def __init__(self, module, on_demand=True, use_environ=False):
+    def __init__(self, module, load=False, use_environ=False):
         self.use_environ = use_environ
 
         if isinstance(module, types.ModuleType):
@@ -35,7 +35,8 @@ class Backend(object):
 
             if self.name in sys.modules:
                 self.module = sys.modules[self.name]
-            elif on_demand:
+            elif not load:
+                # Raise ImportError if module is not found.
                 find_dotted_module(self.name)
             else:
                 self.load()

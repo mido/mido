@@ -103,7 +103,7 @@ def set_backend(path):
     if isinstance(path, Backend):
         backend = path
     else:
-        backend = Backend(path, on_demand=True, use_environ=True)
+        backend = Backend(path, load=False, use_environ=True)
     glob['backend'] = backend
 
     for name in dir(backend):
