@@ -1,23 +1,7 @@
 """
-Experimental wrapper for python-rtmidi:
+Backend for python-rtmidi:
 
-http://github.com/superquadratic/rtmidi-python
 http://pypi.python.org/pypi/python-rtmidi/
-
-This module only supports a limited number of MIDI message types,
-as listed below:
-
-    note_off
-    note_on
-    polytouch
-    control_change
-    program_change
-    aftertouch
-    pitchwheel
-    songpos
-    song_select
-
-This seems to be a limitation in either RtMidi or python-rtmidi.
 """
 from __future__ import absolute_import
 import os
@@ -92,6 +76,9 @@ class PortCommon(object):
                     for message in self._parser:
                         callback(message)
                 self._rt.set_callback(callback_wrapper)
+                self._has_callback = True
+            else:
+                self._has_callback = False
         else:
             self._rt = rtmidi.MidiOut(rtapi=api)
             # Turn of ignore of sysex, time and active_sensing.
@@ -127,6 +114,9 @@ class PortCommon(object):
 class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
     def _pending(self):
+        if self._has_callback:
+            raise IOError('a callback is currently set for this port')
+
         while 1:
             message = self._rt.get_message()
             if message is None:
