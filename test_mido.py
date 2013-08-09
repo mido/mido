@@ -50,16 +50,6 @@ class TestMessages(unittest.TestCase):
         
         self.assertTrue(a == b)
 
-    def test_channel_value(self):
-        """See if the channel masking and overrides work in init."""
-
-        self.assertTrue(Message('note_on').channel == 0)
-        self.assertTrue(Message('note_on', channel=1).channel == 1)
-
-        self.assertTrue(Message(0x90).channel == 0)
-        self.assertTrue(Message(0x91).channel == 1)
-        self.assertTrue(Message(0x90, channel=1).channel == 1)
-
     def test_sysex(self):
         original = Message('sysex', data=(1, 2, 3, 4, 5))
         parsed = mido.parse(original.bytes())
@@ -269,7 +259,7 @@ class TestParser(unittest.TestCase):
     def test_parse(self):
         """Parse a note_on msg and compare it to one created with Message()."""
         parsed = mido.parse(b'\x90\x4c\x20')
-        other = Message('note_on', channel=0, note=76, velocity=32)
+        other = Message('note_on', channel=0, note=0x4c, velocity=0x20)
         self.assertTrue(parsed == other)
 
     def test_parse_stray_data(self):

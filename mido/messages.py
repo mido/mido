@@ -306,24 +306,31 @@ class BaseMessage(object):
         return self.bytes() == other.bytes()
 
 
-def build_message(bytes, spec=None):
+def build_message(spec, bytes):
     """Build message from bytes.
 
-    This is used by Parser and MidiFile.
-    """
-    spec = spec or get_spec(bytes[0])
+    This is used by Parser and MidiFile. bytes is a full list
+    of bytes for the message including the status byte. For sysex
+    messages, the end byte is not included. Examples:
 
-    if spec.type == 'sysex':
-        arguments = {'data': bytes[1:]}
+        build_message(spec, [0x80, 20, 100])
+        build_message(spec, [0xf0, 1, 2, 3])
+    """
+    if spec.status_byte < 0xf0:
+        # Channel message. The most common type.
+        arguments = dict(zip(spec.arguments, bytes))
+        # Replace status_bytes sneakily with channel.
+        arguments['channel'] = bytes[0] & 0x0f
 
     elif spec.type == 'pitchwheel':
-        pitch = bytes[1]
-        pitch |= ((bytes[2] << 7) + MIN_PITCHWHEEL)
+        pitch = bytes[1] | ((bytes[2] << 7) + MIN_PITCHWHEEL)
         arguments = {'pitch': pitch}
 
+    elif spec.type == 'sysex':
+        arguments = {'data': bytes[1:]}
+
     elif spec.type == 'songpos':
-        pos = bytes[1]
-        pos |= (bytes[2] << 7)
+        pos = bytes[1] | (bytes[2] << 7)
         arguments = {'pos': pos}
 
     elif spec.type == 'quarter_frame':
@@ -331,17 +338,11 @@ def build_message(bytes, spec=None):
                      'frame_value' : bytes[1] & 15}
 
     else:
-        if bytes[0] < 0xf0:
-            # Channel message. Skip channel.
-            attribute_names = spec.arguments[1:]
-        else:
-            attribute_names = spec.arguments
-
-        arguments = dict(zip(attribute_names, bytes[1:]))
+        arguments = dict(zip(spec.arguments, bytes[1:]))
 
     # Note: we're using the status byte here, not type.
     # If we used type, the channel would be discarded.
-    return Message(bytes[0], **arguments)
+    return Message(spec.type, **arguments)
 
 class Message(BaseMessage):
     """
@@ -350,55 +351,35 @@ class Message(BaseMessage):
 
     # Quick lookup of specs by name or status_byte.
     _spec_lookup = build_spec_lookup(get_message_specs())
+    _type_lookup = {name: value for name, value in _spec_lookup.items() \
+                        if not isinstance(name, int)}
 
-    def __init__(self, type_, **parameters):
+    def __init__(self, type, **arguments):
         """Create a new message.
 
         The first argument is typically the type of message to create,
         for example 'note_on'.
-
-        It can also be the status_byte, that is the first byte of the
-        message. For channel messages, the channel (lower 4 bits of
-        the status_byte) is masked out from the lower 4 bits of the
-        status byte. This can be overriden by passing the 'channel'
-        keyword argument.
         """
         try:
-            spec = self._spec_lookup[type_]
+            spec = self._type_lookup[type]
         except KeyError:
-            text = '{!r} is an invalid type name or status byte'
-            raise ValueError(text.format(type_))
+            text = 'type name'
+            raise ValueError(text.format(type))
 
-        self._set('_spec', spec)
-        self._set('type', self._spec.type)
+        self.__dict__['type'] = type
+        self.__dict__['_spec'] = spec
 
-        self._set_attributes_to_default_values(type_)
-        self._override_attributes(parameters)
-
-    def _set_attributes_to_default_values(self, type_):
-        for name in self._spec.arguments:
+        # Set default values.
+        for name in spec.arguments:
             if name == 'data':
-                self.data = ()
-            elif name == 'channel':
-                # This is a channel message, so if the first
-                # argument to this function was a status_byte,
-                # the lower 4 bits will contain the channel.
-                if isinstance(type_, int):
-                    self.channel = type_ & 0x0f
-                else:
-                    self.channel = 0
+                self.__dict__['data'] = ()
             else:
-                setattr(self, name, 0)
-        self._set('time', 0)
+                self.__dict__[name] = 0
+        self.__dict__['time'] = 0
 
-    def _override_attributes(self, parameters):
-        for name, value in parameters.items():
-            try:
-                setattr(self, name, value)
-            except AttributeError:
-                raise ValueError('{!r} is an invalid'
-                                 ' keyword argument for this message type'
-                                 ''.format(name))
+        # Override defaults.
+        for name, value in arguments.items():
+            setattr(self, name, value)
 
     def copy(self, **overrides):
         """Return a copy of the message.

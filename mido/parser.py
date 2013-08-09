@@ -58,7 +58,7 @@ class Parser(object):
             # End of sysex
             if self._spec and self._bytes[0] == 0xf0:
                 # We were inside a sysex message. Deliver it.
-                self._deliver(build_message(self._bytes))
+                self._deliver(build_message(self._spec, self._bytes))
             self._reset()
         else:
             # Start of new message
@@ -94,7 +94,7 @@ class Parser(object):
 
         # If we have a complete messages, deliver it.
         if self._spec and len(self._bytes) == self._spec.length:
-            self._deliver(build_message(self._bytes))
+            self._deliver(build_message(self._spec, self._bytes))
 
             if self._bytes[0] < 0xf0:
                 # Delete data bytes, but keep the

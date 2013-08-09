@@ -199,8 +199,8 @@ class MidiFile:
 
     def _read_message(self, status_byte):
         spec = get_spec(status_byte)
-        bytes = [status_byte] + self._file.read_byte_list(spec.length - 1)
-        return build_message(bytes, spec)
+        data_bytes = self._file.read_byte_list(spec.length - 1)
+        return build_message(spec, data_bytes)
 
     def _read_meta_message(self):
         type = self._file.read_byte()
