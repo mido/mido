@@ -24,7 +24,7 @@ with mido.open_output() as output:
         print()
         for filename in sys.argv[1:]:
             with MidiFile(filename) as midi_file:
-                print('Playing {}.'.format(midi_file.filename))
+                print('Playing {}.'.format(midi_file.name))
                 length = midi_file.length
                 print('Song length: {} minutes, {} seconds.'.format(
                         int(length / 60),
