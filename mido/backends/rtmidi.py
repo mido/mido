@@ -47,9 +47,10 @@ class PortCommon(object):
 
         if opening_input:
             self._rt = rtmidi.MidiIn()
-            # print(self._rt.ignore_types(['note_on']))
+            self._rt.ignore_types(False, False, False)
         else:
             self._rt = rtmidi.MidiOut()
+            # Turn of ignore of sysex, time and active_sensing.
 
         ports = self._rt.get_ports()
 
@@ -64,7 +65,7 @@ class PortCommon(object):
         try:
             port_id = ports.index(self.name)
         except ValueError:
-            raise IOError('unknown port {!r}'.format(name))
+            raise IOError('unknown port {!r}'.format(self.name))
 
         self._rt.open_port(port_id)
 
