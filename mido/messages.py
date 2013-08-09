@@ -318,13 +318,13 @@ def build_message(spec, bytes):
     """
     if spec.status_byte < 0xf0:
         # Channel message. The most common type.
-        arguments = dict(zip(spec.arguments, bytes))
+        if spec.type == 'pitchwheel':
+            pitch = bytes[1] | ((bytes[2] << 7) + MIN_PITCHWHEEL)
+            arguments = {'pitch': pitch}
+        else:
+            arguments = dict(zip(spec.arguments, bytes))
         # Replace status_bytes sneakily with channel.
         arguments['channel'] = bytes[0] & 0x0f
-
-    elif spec.type == 'pitchwheel':
-        pitch = bytes[1] | ((bytes[2] << 7) + MIN_PITCHWHEEL)
-        arguments = {'pitch': pitch}
 
     elif spec.type == 'sysex':
         arguments = {'data': bytes[1:]}
@@ -363,8 +363,7 @@ class Message(BaseMessage):
         try:
             spec = self._type_lookup[type]
         except KeyError:
-            text = 'type name'
-            raise ValueError(text.format(type))
+            raise ValueError('invalid message type {!r}'.format(type))
 
         self.__dict__['type'] = type
         self.__dict__['_spec'] = spec
