@@ -52,7 +52,7 @@ def _get_api_id(name=None):
     except KeyError:
         raise ValueError('unknown API {}'.format(name))    
 
-    if name in get_compiled_api_names():
+    if name in get_api_names():
         return api
     else:
         raise ValueError('API {} not compiled in'.format(name))
@@ -74,7 +74,7 @@ def get_devices(api=None):
 
     return devices
 
-def get_compiled_api_names():
+def get_api_names():
     return [_api_to_name[n] for n in rtmidi.get_compiled_api()]
 
 class PortCommon(object):
@@ -137,5 +137,3 @@ class Input(PortCommon, BaseInput):
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
         self._rt.send_message(message.bytes())
-
-export_names = ['get_api_names']
