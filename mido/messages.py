@@ -315,20 +315,34 @@ def build_message(spec, bytes):
 
         build_message(spec, [0x80, 20, 100])
         build_message(spec, [0xf0, 1, 2, 3])
+
+    No type or value checking is done, so you need to do that before you
+    call this function. 0xf7 is not allowed as status byte.
     """
+    message = Message.__new__(Message)
+    message.__dict__.update({
+            'type': spec.type,
+            '_spec': spec,
+            'time': 0,
+            })
+
     # This could be written in a more general way, but most messages
-    # are note_on or note_off so doing it this way is faster.
+    # are note_onx or note_off so doing it this way is faster.
     if spec.type == 'note_on':
-        return Message('note_on',
-                       channel=bytes[0] & 0x0f,
-                       note=bytes[1],
-                       velocity=bytes[2])
+        message.__dict__.update({
+                'channel': bytes[0] & 0x0f,
+                'note': bytes[1],
+                'velocity': bytes[2],
+                })
+        return message
 
     elif spec.type == 'note_off':
-        return Message('note_off',
-                       channel=bytes[0] & 0x0f,
-                       note=bytes[1],
-                       velocity=bytes[2])
+        message.__dict__.update({
+                'channel': bytes[0] & 0x0f,
+                'note': bytes[1],
+                'velocity': bytes[2],
+                })
+        return message
 
     elif spec.status_byte < 0xf0:
         # Channel message. The most common type.
@@ -354,9 +368,8 @@ def build_message(spec, bytes):
     else:
         arguments = dict(zip(spec.arguments, bytes[1:]))
 
-    # Note: we're using the status byte here, not type.
-    # If we used type, the channel would be discarded.
-    return Message(spec.type, **arguments)
+    message.__dict__.update(arguments)
+    return message
 
 class Message(BaseMessage):
     """

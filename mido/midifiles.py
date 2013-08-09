@@ -193,6 +193,9 @@ class MidiFile:
     def _read_message(self, status_byte):
         spec = get_spec(status_byte)
         data_bytes = self._file.read_list(spec.length - 1)
+        for byte in data_bytes:
+            if byte > 127:
+                raise IOError('data byte has value > 127')
         return build_message(spec, [status_byte] + data_bytes)
 
     def _read_meta_message(self):
