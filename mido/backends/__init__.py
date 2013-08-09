@@ -108,31 +108,33 @@ class Backend(object):
             return ports.IOPort(self.module.Input(input_name, **kwargs),
                                 self.module.Output(output_name, **kwargs))
 
-    def _get_devices(self):
+    def _get_devices(self, **kwargs):
         if hasattr(self.module, 'get_devices'):
-            return self.module.get_devices()
+            return self.module.get_devices(**kwargs)
         else:
             return []
 
-    def get_input_names(self):
+    def get_input_names(self, **kwargs):
         """Return a sorted list of all input port names."""
         self.load()
-        devices = self._get_devices()
+        devices = self._get_devices(**kwargs)
         names = [device['name'] for device in devices if device['is_input']]
         return list(sorted(names))
 
-    def get_output_names(self):
+    def get_output_names(self, **kwargs):
         """Return a sorted list of all output port names."""
         self.load()
         devices = self._get_devices()
         names = [device['name'] for device in devices if device['is_output']]
         return list(sorted(names))
 
-    def get_ioport_names(self):
+    def get_ioport_names(self, **kwargs):
         """Return a sorted list of all I/O port names."""
         self.load()
-        return sorted(
-            set(self.get_input_names()) & set(self.get_output_names()))        
+        devices = self._get_devices(**kwargs)
+        inputs = [device['name'] for device in devices if device['is_output']]
+        outputs = [device['name'] for device in devices if device['is_output']]
+        return sorted(set(inputs) & set(outputs))
 
     def __repr__(self):
         if self.module is not None or self.name in sys.modules:

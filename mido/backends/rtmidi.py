@@ -20,31 +20,50 @@ as listed below:
 This seems to be a limitation in either RtMidi or python-rtmidi.
 """
 from __future__ import absolute_import
+import os
 import time
 import mido
 import rtmidi
 from ..ports import BaseInput, BaseOutput
 
-def _get_api_names():
-    api_names = {}
+def _get_api_lookup():
+    api_to_name = {}
+    name_to_api = {}
 
     for name in dir(rtmidi):
         if name.startswith('API_'):
             value = getattr(rtmidi, name)
             name = name.replace('API_', '')
-            api_names[name] = value
-            api_names[value] = name
+            name_to_api[name] = value
+            api_to_name[value] = name
 
-    return api_names
+    return api_to_name, name_to_api
 
-api_names = _get_api_names()
-print(api_names)
+_api_to_name, _name_to_api = _get_api_lookup()
 
-def get_devices():
+def _get_api_id(name=None):
+    if name is None:
+        name = os.environ.get('MIDO_RTMIDI_API')
+        if name is None:
+            return rtmidi.API_UNSPECIFIED
+
+    try:
+        api = _name_to_api[name]
+    except KeyError:
+        raise ValueError('unknown API {}'.format(name))    
+
+    if name in get_compiled_api_names():
+        return api
+    else:
+        raise ValueError('API {} not compiled in'.format(name))
+    
+
+def get_devices(api=None):
     devices = []
 
-    input_names = set(rtmidi.MidiIn().get_ports())
-    output_names = set(rtmidi.MidiOut().get_ports())
+    api = _get_api_id(api)
+    input_names = set(rtmidi.MidiIn(rtapi=api).get_ports())
+    output_names = set(rtmidi.MidiOut(rtapi=api).get_ports())
 
     for name in sorted(input_names | output_names):
         devices.append({
@@ -55,13 +74,17 @@ def get_devices():
 
     return devices
 
-class PortCommon(object):
-    def _open(self, virtual=False, callback=None):
+def get_compiled_api_names():
+    return [_api_to_name[n] for n in rtmidi.get_compiled_api()]
 
+class PortCommon(object):
+    def _open(self, api=None, virtual=False, callback=None):
+
+        api = _get_api_id(api)
         opening_input = hasattr(self, 'receive')
 
         if opening_input:
-            self._rt = rtmidi.MidiIn()
+            self._rt = rtmidi.MidiIn(rtapi=api)
             self._rt.ignore_types(False, False, False)
             if callback:
                 def callback_wrapper(message_data, data):
@@ -70,7 +93,7 @@ class PortCommon(object):
                         callback(message)
                 self._rt.set_callback(callback_wrapper)
         else:
-            self._rt = rtmidi.MidiOut()
+            self._rt = rtmidi.MidiOut(rtapi=api)
             # Turn of ignore of sysex, time and active_sensing.
 
         ports = self._rt.get_ports()
@@ -95,7 +118,7 @@ class PortCommon(object):
 
             self._rt.open_port(port_id)
 
-        api = api_names[self._rt.get_current_api()]
+        api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(api)
 
     def _close(self):
@@ -114,3 +137,5 @@ class Input(PortCommon, BaseInput):
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
         self._rt.send_message(message.bytes())
+
+export_names = ['get_api_names']
