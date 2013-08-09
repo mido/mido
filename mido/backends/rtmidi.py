@@ -5,15 +5,7 @@ http://github.com/superquadratic/rtmidi-python
 http://pypi.python.org/pypi/python-rtmidi/
 
 This module only supports a limited number of MIDI message types,
-as listed below.
-
-I tested sending all messags types in these directions:
-
-    rtmidi -> rtmidi
-    rtmidi -> portmidi
-    portmidi -> rtmidi
-
-These were received in all cases:
+as listed below:
 
     note_off
     note_on
@@ -25,11 +17,7 @@ These were received in all cases:
     songpos
     song_select
 
-In addition, sysex was received in "rtmidi -> portmidi", and only there.
-
-Since PortMidi is able to send and receive all message types, it seems
-that the limitation is in RtMidi or python-rtmidi. This will require
-some further investigation.
+This seems to be a limitation in either RtMidi or python-rtmidi.
 """
 from __future__ import absolute_import
 import time
@@ -95,4 +83,4 @@ class Input(PortCommon, BaseInput):
             
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
-        self.rt._send_message(message.bytes())
+        self._rt.send_message(message.bytes())
