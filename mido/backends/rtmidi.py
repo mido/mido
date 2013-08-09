@@ -41,7 +41,7 @@ def get_devices():
     return devices
 
 class PortCommon(object):
-    def _open(self, **kwargs):
+    def _open(self, virtual=False, **kwargs):
 
         opening_input = hasattr(self, 'receive')
 
@@ -54,20 +54,25 @@ class PortCommon(object):
 
         ports = self._rt.get_ports()
 
-        if self.name is None:
-            # Todo: this could fail if list is empty.
-            # In RtMidi, the default port is the first port.
+        if virtual:
+            if self.name is None:
+                raise IOError('virtual port must have a name')
+            self._rt.open_virtual_port(self.name)
+        else:
+            if self.name is None:
+                # Todo: this could fail if list is empty.
+                # In RtMidi, the default port is the first port.
+                try:
+                    self.name = ports[0]
+                except IndexError:
+                    raise IOError('no ports available')
+
             try:
-                self.name = ports[0]
-            except IndexError:
-                raise IOError('no ports available')
+                port_id = ports.index(self.name)
+            except ValueError:
+                raise IOError('unknown port {!r}'.format(self.name))
 
-        try:
-            port_id = ports.index(self.name)
-        except ValueError:
-            raise IOError('unknown port {!r}'.format(self.name))
-
-        self._rt.open_port(port_id)
+            self._rt.open_port(port_id)
 
     def _close(self):
         self._rt.close_port()
