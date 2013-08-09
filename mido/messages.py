@@ -406,6 +406,11 @@ class Message(BaseMessage):
             a = Message('note_on')
             b = a.copy(velocity=32)
         """
+        for name in overrides:
+            if name not in self._spec.valid_attributes:
+                text = '{!r} is an invalid argument for this message type'
+                raise ValueError(text.format(name))
+
         # Get values from this object
         arguments = {}
         for name in self._spec.valid_attributes:
@@ -414,11 +419,7 @@ class Message(BaseMessage):
             else:
                 arguments[name] = getattr(self, name)
 
-        for name in overrides:
-            if name not in self._spec.valid_attributes:
-                text = '{!r} is an invalid argument for this message type'
-                raise ValueError(text.format(name))
-
+        print(arguments)
         return self.__class__(self.type, **arguments)
 
     def _set(self, name, value):
