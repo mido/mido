@@ -51,7 +51,11 @@ class Parser(object):
                     # message. Discard the message we were parsing.
                     self._reset()
             else:
-                self._spec = get_spec(byte)
+                try:
+                    self._spec = get_spec(byte)
+                except LookupError:
+                    return  # Skip unknown status byte.
+
                 self._bytes = [byte]
 
         elif byte == 0xf7:

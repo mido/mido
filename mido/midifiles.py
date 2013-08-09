@@ -191,7 +191,10 @@ class MidiFile:
                 return delta
 
     def _read_message(self, status_byte):
-        spec = get_spec(status_byte)
+        try:
+            spec = get_spec(status_byte)
+        except LookupError:
+            raise IOError('undefined status byte 0x{:02x}'.format(status_byte))
         data_bytes = self._file.read_list(spec.length - 1)
         for byte in data_bytes:
             if byte > 127:

@@ -18,21 +18,14 @@ sysex           data
 quarter_frame   frame_type frame_value
 songpos         pos
 song_select     song
-undefined_f4
-undefined_f5
 tune_request
 clock
-undefined_f9
 start
 continue
 stop
-undefined_fd
 active_sensing
 reset
 ==============  ==============================
-
-The ``undefined_*`` messages will be received with no data
-bytes.
 
 ``quarter_frame`` is used for SMPTE time codes. See:
 http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/MTC.htm

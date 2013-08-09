@@ -43,6 +43,9 @@
 * Message() no longer accepts a status byte as its first argument. (This was
   only meant to be used internally.)
 
+* removed undefined_xx messages. They served no purpose, and could not
+  be handled in any meaningful way.
+
 
 1.0.2 - 2013-07-31
 -------------------
