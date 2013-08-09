@@ -79,7 +79,7 @@ The PortMidi wrapper is tested on on Ubuntu and Mac OS X, but may also
 run on other systems where the ``portmidi.so/dll`` file is available.
 
 Alternative backends are included for `python-rtmidi
-<http://pypi.python.org/pypi/python-rtmidi/>`_ and `pygame
+<http://github.com/superquadratic/rtmidi-python>`_ and `pygame
 <http://www.pygame.org/docs/ref/midi.html>`_. These can be selected
 with an environment variable::
 

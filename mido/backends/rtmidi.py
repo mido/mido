@@ -1,6 +1,8 @@
 """
 Experimental wrapper for python-rtmidi:
-https://pypi.python.org/pypi/python-rtmidi/
+
+http://github.com/superquadratic/rtmidi-python
+http://pypi.python.org/pypi/python-rtmidi/
 
 This module only supports a limited number of MIDI message types,
 as listed below.
