@@ -20,13 +20,10 @@ http://www.sonicspot.com/guide/midifiles.html
 
 from __future__ import print_function, division
 import os
-import io
 import sys
 import time
 from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage
-
-DEBUG_PARSING = bool(os.environ.get('MIDO_DEBUG_PARSING'))
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -36,19 +33,22 @@ class ByteReader(object):
     """
     Reads bytes from a file.
     """
-
     def __init__(self, filename):
-        self.file = io.open(filename, 'rb')
-        self.buffer = io.BufferedReader(self.file)
-        self._pos = 0
+        self._buffer = bytearray(open(filename, 'rb').read())
+        self._index = 0
+
+    def _eof(self):
+        return 
 
     def read_bytearray(self, n):
         """Read n bytes and return as a bytearray."""
-        self._pos += n
-        bytes = bytearray(self.buffer.read(n))
-        if len(bytes) < n:
-            raise EOFError('unexpected end of file')
-        return bytes
+        i = self._index
+        ret = self._buffer[i:i + n]
+        if len(ret) < n:
+            raise self._eof
+
+        self._index += n
+        return ret
 
     def read_byte_list(self, n):
         """Read n bytes and return as a list."""
@@ -56,56 +56,54 @@ class ByteReader(object):
 
     def read_byte(self):
         """Read one byte."""
-        pos = self.tell()
-        byte = self.read_byte_list(1)[0]
-        if DEBUG_PARSING:
-            print('  {:6x}: {:02x}'.format(pos, byte))
-        return byte
+        try:
+            byte = self._buffer[self._index]
+            self._index += 1
+            return byte
+        except IndexError:
+            raise self._eof
 
     def peek_byte(self):
         """Return the next byte in the file.
 
         This can be used for look-ahead."""
-        # Todo: this seems a bit excessive for just one byte.
-        bytes = bytearray(self.buffer.peek(1))
-        if len(bytes) < 1:
-            raise IOError('unexpected end of file')
-
-        byte = bytes[0]
-        if DEBUG_PARSING:
-            print(' ({:6x}): peek {:02x}'.format(self.tell(), byte))
-        return byte
+        try:
+            return self._buffer[self._index]
+        except IndexError:
+            raise self._eof
 
     def read_short(self):
         """Read short (2 bytes little endian)."""
-        a, b = self.read_byte_list(2)
+        a, b = self.read_byte(), self.read_byte()
         return a << 8 | b
 
     def read_long(self):
         """Read long (4 bytes little endian)."""
-        a, b, c, d = self.read_byte_list(4)
+        a = self.read_byte()
+        b = self.read_byte()
+        c = self.read_byte() 
+        d = self.read_byte()
         return a << 24 | b << 16 | c << 8 | d
 
     def tell(self):
-        return self._pos
+        return self._index
 
     def __enter__(self):
         return self
 
     def __exit__(self, type, value, traceback):
-        self.file.close()
         return False
 
 
 class ByteWriter(object):
     def __init__(self, filename):
-        self.file = io.open(filename, 'wb')
+        self.file = open(filename, 'wb')
     
     def write(self, bytes):
         self.file.write(bytearray(bytes))
 
     def write_byte(self, byte):
-        self.write_bytearray([byte])
+        self.file.write(chr(byte))
 
     def write_short(self, n):
         a = n >> 8
@@ -259,12 +257,7 @@ class MidiFile:
 
             is_sysex_continuation = False
 
-            if DEBUG_PARSING:
-                print('delta:')
             delta = self._read_delta_time()
-
-            if DEBUG_PARSING:
-                print('message:')
 
             peek_status = self._file.peek_byte()
 
@@ -294,11 +287,6 @@ class MidiFile:
                 message = self._read_message(status_byte)
 
             message.time = delta
-
-            if DEBUG_PARSING:
-                print('    =>', message)
-                if is_sysex_continuation:
-                    print('       (sysex continuation)')
 
             if not is_sysex_continuation:
                 track.append(message)
@@ -405,17 +393,15 @@ class MidiFile:
     def _has_end_of_track(self, track):
         """Return True if there is an end_of_track at the end of the track."""
         last_i = len(track) - 1
-        print(last_i)
         for i, message in enumerate(track):
             if message.type == 'end_of_track':
-                print(i)
                 if i != last_i:
                     raise ValueError('end_of_track not at end of the track')
                 return True
         else:
             return False
 
-    def save(self, filname=None):
+    def save(self, filename=None):
         """Save to a file.
 
         If filename is passed, self.name will be set to this
