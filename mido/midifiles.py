@@ -194,35 +194,18 @@ class MidiFile:
         while 1:
             byte = self._file.read_byte()
             delta = (delta << 7) | (byte & 0x7f)
-            if not byte & 0x80:
-                break
-        
-        return delta
+            if byte < 0x80:
+                return delta
 
     def _read_message(self, status_byte):
-        bytes = [status_byte]
         spec = get_spec(status_byte)
-
-        for i in range(spec.length - 1):
-            bytes.append(self._file.read_byte())
-
-        # Value > 127 occurs sometimes.
-        # Clip it so it's inside valid range.
-        # (This is what timidity does.)
-        # if spec.type == 'control_change':
-        #     if bytes[-1] > 127:
-        #         bytes[-1] = 127
-        # elif spec.type in ['note_on', 'note_off']:
-        #     for i in [1, 2]:
-        #         bytes[i] &= 0x7f
-
+        bytes = [status_byte] + self._file.read_byte_list(spec.length - 1)
         return build_message(bytes)
 
     def _read_meta_message(self):
         type = self._file.read_byte()
         length = self._file.read_byte()
         data = self._file.read_byte_list(length)
-
         return MetaMessage(type, data)
 
     def _read_sysex(self):
@@ -313,7 +296,7 @@ class MidiFile:
 
     def _compute_tick_time(self, milliseconds_per_beat):
         """Compute seconds per tick."""
-        return (milliseconds_per_beat / 100000.0) / self.ticks_per_beat
+        return (milliseconds_per_beat / 1000000.0) / self.ticks_per_beat
 
     def _get_length(self):
         if not self.tracks:
