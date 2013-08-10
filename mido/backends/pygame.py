@@ -65,12 +65,12 @@ class PortCommon(object):
         opening_input = hasattr(self, 'receive')
 
         if self.name is None:
-            self.device = _get_default_device(opening_input)
-            self.name = self.device['name']
+            device = _get_default_device(opening_input)
+            self.name = device['name']
         else:
-            self.device = _get_named_device(self.name, opening_input)
+            device = _get_named_device(self.name, opening_input)
 
-        if self.device['opened']:
+        if device['opened']:
             if opening_input:
                 devtype = 'input'
             else:
@@ -78,11 +78,11 @@ class PortCommon(object):
             raise IOError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
         if opening_input:
-            self._port = midi.Input(self.device['id'])
+            self._port = midi.Input(device['id'])
         else:
-            self._port = midi.Output(self.device['id'])
+            self._port = midi.Output(device['id'])
 
-        self._device_type = 'pygame'
+        self._device_type = 'Pygame/{}'.format(device['interface'])
         
     def _close(self):
         self._port.close()

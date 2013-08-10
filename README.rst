@@ -33,7 +33,7 @@ Main Features
 
   * convenient message objects.
 
-  * supports PortMidi, rtmidi and pygame. New backends can be easily
+  * supports PortMidi, RtMidi and Pygame. New backends can be easily
     written and used with Mido.
 
   * full support for MIDI files (read, write, create and play) with
@@ -79,7 +79,7 @@ The PortMidi wrapper is tested on on Ubuntu and Mac OS X, but may also
 run on other systems where the ``portmidi.so/dll`` file is available.
 
 Alternative backends are included for `python-rtmidi
-http://pypi.python.org/pypi/python-rtmidi/>`_ and `pygame
+http://pypi.python.org/pypi/python-rtmidi/>`_ and `Pygame
 <http://www.pygame.org/docs/ref/midi.html>`_. These can be selected
 with the environment variable ``MIDO_BACKEND`` or by calling
 ``mido.set_backend()``.
