@@ -6,7 +6,7 @@ http://pypi.python.org/pypi/python-rtmidi/
 from __future__ import absolute_import
 import os
 import time
-import mido
+from collections import deque
 import rtmidi
 from ..ports import BaseInput, BaseOutput
 
@@ -76,6 +76,8 @@ class PortCommon(object):
                     for message in self._parser:
                         callback(message)
                 self._rt.set_callback(callback_wrapper)
+                # Make sure pending() doesn't see messages.
+                self._messages = deque()
                 self._has_callback = True
             else:
                 self._has_callback = False

@@ -9,6 +9,7 @@ http://portmedia.sourceforge.net/portmidi/doxygen/
 """
 import time
 import threading
+from collections import deque
 from ..parser import Parser
 from ..messages import Message
 from ..ports import BaseInput, BaseOutput
@@ -131,6 +132,9 @@ class PortCommon(object):
                     target=self._thread_main)
                 self._callback_daemon = True
                 self._callback_thread.start()
+
+                # Make sure pending() doesn't see messages.
+                self._messages = deque()
             else:
                 self._has_callback = False
                 self._callback_thread = None
@@ -199,7 +203,7 @@ class Input(PortCommon, BaseInput):
 
             for message in self._parser:
                 self._callback(message)
-            
+   
     def _close(self):
         self._has_callback = False
         PortCommon._close(self)
