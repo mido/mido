@@ -9,6 +9,7 @@ http://www.pygame.org/docs/ref/midi.html
 from __future__ import absolute_import
 from pygame import midi
 from ..ports import BaseInput, BaseOutput
+from ..parser import parse
 
 def _get_device(device_id):
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
@@ -98,10 +99,18 @@ class Input(PortCommon, BaseInput):
         # more pending events.
 
         while self._port.poll():
-            event = self._port.read(1)[0]
-            midi_bytes = event[0]
-            self._parser.feed(midi_bytes)
+            bytes, time = self._port.read(1)[0]
+            if bytes[0] == 0xf0:
+                # Sysex support is broken.
+                # Only the first 3 data bytes arrive.
+                # It's best to ignore these.
+                continue
 
+            message = parse(bytes)
+            if message:
+                # Time is just 0 or 1, so it's pointless.
+                # message.time = time
+                self._messages.append(message)
 
 class Output(PortCommon, BaseOutput):
     """
