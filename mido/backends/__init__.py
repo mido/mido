@@ -23,15 +23,23 @@ def find_dotted_module(name, path=None):
 
 class Backend(object):
     # Todo: doc strings.
-    def __init__(self, module, load=False, use_environ=False):
+    def __init__(self, module, load=False, use_environ=False, api=None):
         self.use_environ = use_environ
 
         if isinstance(module, types.ModuleType):
             self.name = module.__name__
             self._module = module
+            self.api = api
         else:
             self.name = module
             self._module = None
+
+            if '/' in self.name:
+                self.name, self.api = self.name.split('/', 1)
+                if self.api.strip() == '':
+                    self.api = None
+            else:
+                self.api = None
 
             if self.name in sys.modules:
                 self._module = sys.modules[self.name]
@@ -41,10 +49,18 @@ class Backend(object):
             else:
                 self.load()
 
+        if api:
+            self.api = api
+
     def _get_module(self):
         if not self._module:
             self.load()    
         return self._module
+
+    def _fixkw(self, kwargs):
+        if self.api and 'api' not in kwargs:
+            kwargs['api'] = self.api
+        return kwargs
 
     module = property(fget=_get_module)
     # del _get_module
@@ -73,7 +89,7 @@ class Backend(object):
         """
         if name is None:
             name = self._env('MIDO_DEFAULT_INPUT')
-        return self.module.Input(name, **kwargs)
+        return self.module.Input(name, **self._fixkw(kwargs))
 
     def open_output(self, name=None, **kwargs):
         """Open an output port.
@@ -83,7 +99,7 @@ class Backend(object):
         """
         if name is None:
             name = self._env('MIDO_DEFAULT_OUTPUT')
-        return self.module.Output(name, **kwargs)
+        return self.module.Output(name, **self._fixkw(kwargs))
 
     def open_ioport(self, name=None, **kwargs):
         """Open a port for input and output.
@@ -96,7 +112,7 @@ class Backend(object):
         if hasattr(self.module, 'IOPort'):
             if name is None:
                 name = self._env('MIDO_DEFAULT_IOPORT')
-            return self.module.IOPort(name, **kwargs)
+            return self.module.IOPort(name, **self._fixkw(kwargs))
         else:
             if name is None:
                 # MIDO_DEFAULT_IOPORT overrides the other two variables.
@@ -109,31 +125,32 @@ class Backend(object):
             else:
                 input_name = output_name = name
 
+            kwargs = self._fixkw(kwargs)
             return ports.IOPort(self.module.Input(input_name, **kwargs),
                                 self.module.Output(output_name, **kwargs))
 
     def _get_devices(self, **kwargs):
         if hasattr(self.module, 'get_devices'):
-            return self.module.get_devices(**kwargs)
+            return self.module.get_devices(**self._fixkw(kwargs))
         else:
             return []
 
     def get_input_names(self, **kwargs):
         """Return a sorted list of all input port names."""
-        devices = self._get_devices(**kwargs)
+        devices = self._get_devices(**self._fixkw(kwargs))
         names = [device['name'] for device in devices if device['is_input']]
         return list(sorted(names))
 
     def get_output_names(self, **kwargs):
         """Return a sorted list of all output port names."""
-        devices = self._get_devices()
+        devices = self._get_devices(**self._fixkw(kwargs))
         names = [device['name'] for device in devices if device['is_output']]
         return list(sorted(names))
 
     def get_ioport_names(self, **kwargs):
         """Return a sorted list of all I/O port names."""
-        devices = self._get_devices(**kwargs)
-        inputs = [device['name'] for device in devices if device['is_output']]
+        devices = self._get_devices(**self._fixkw(kwargs))
+        inputs = [device['name'] for device in devices if device['is_intput']]
         outputs = [device['name'] for device in devices if device['is_output']]
         return sorted(set(inputs) & set(outputs))
 
@@ -146,4 +163,9 @@ class Backend(object):
         else:
             status = 'not loaded'
 
-        return '<backend {!r} ({})>'.format(self.name, status)
+        if self.api:
+            name = '{}/{}'.format(self.name, self.api)
+        else:
+            name = self.name
+
+        return '<backend {} ({})>'.format(name, status)

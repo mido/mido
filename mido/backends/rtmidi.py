@@ -27,9 +27,7 @@ _api_to_name, _name_to_api = _get_api_lookup()
 
 def _get_api_id(name=None):
     if name is None:
-        name = os.environ.get('MIDO_RTMIDI_API')
-        if name is None:
-            return rtmidi.API_UNSPECIFIED
+        return rtmidi.API_UNSPECIFIED
 
     try:
         api = _name_to_api[name]
