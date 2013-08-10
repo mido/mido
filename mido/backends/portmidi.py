@@ -8,7 +8,7 @@ PortMidi documentation:
 http://portmedia.sourceforge.net/portmidi/doxygen/
 """
 import time
-
+import threading
 from ..parser import Parser
 from ..messages import Message
 from ..ports import BaseInput, BaseOutput
@@ -123,20 +123,17 @@ class PortCommon(object):
                          pm.null,       # Time info
                          0))            # Latency
 
-        if callback:
-            self._has_callback = False
-
-            def callback_wrapper(self):
-                self._read()
-                for message in self._parser:
-                    callback(message)
-                    
-            self._callback_thread = threading.Thread()
-            self._callback_daemon = True
-            self._callback_thread.start()
-        else:
-            self._has_callback = False
-            self._callback_thread = None
+        if opening_input:
+            if callback:
+                self._has_callback = True
+                self._callback = callback
+                self._callback_thread = threading.Thread(
+                    target=self._thread_main)
+                self._callback_daemon = True
+                self._callback_thread.start()
+            else:
+                self._has_callback = False
+                self._callback_thread = None
 
         self._device_type = 'PortMidi/{}'.format(device['interface'])
 
@@ -187,11 +184,25 @@ class Input(PortCommon, BaseInput):
 
     def _thread_main(self):
         while self._has_callback:
-            self._read()
+            try:
+                self._read()
+            except IOError:
+                if not self._has_callback:
+                    # If the port is closed (and _check_error() works),
+                    # "IOError: PortMidi: `Bad pointer'" is raised
+                    # if the port is closed in self._read().
+                    # Just exit. (Basically, ignore errors if the port is
+                    # closed.)
+                    break
+                else:
+                    raise
+
+            for message in self._parser:
+                self._callback(message)
             
     def _close(self):
-        # Todo: terminate thread.
-        PortCommon._close()
+        self._has_callback = False
+        PortCommon._close(self)
 
 class Output(PortCommon, BaseOutput):
     """
