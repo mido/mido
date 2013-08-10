@@ -3,4 +3,7 @@
 try:
     from .python_rtmidi import *
 except ImportError:
-    from .rtmidi_python import *
+    try:
+        from .rtmidi_python import *
+    except ImportError:
+        raise ImportError('no module named rtmidi or rtmidi_python')
