@@ -71,9 +71,9 @@ Requirements
 Mido targets Python 2.7 and 3.2.
 
 If you want to use message ports, you will need `PortMidi
-<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_ installed on
-your system. The PortMidi library is loaded on demand, so you can use
-the parser and messages without it.
+<http://portmedia.sourceforge.net/portmidi/>`_ installed on your
+system. The PortMidi library is loaded on demand, so you can use the
+parser and messages without it.
 
 The PortMidi wrapper is tested on on Ubuntu and Mac OS X, but may also
 run on other systems where the ``portmidi.so/dll`` file is available.

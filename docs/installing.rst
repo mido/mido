@@ -12,7 +12,7 @@ required. The backends are loaded on demand, so there are no external
 dependencies unless they are used.
 
 Mido currently supports three different backends: `PortMidi
-<http://sourceforge.net/p/portmedia/wiki/portmidi/>`_,
+<http://portmedia.sourceforge.net/portmidi/>`_,
 `python-rtmidi <<http://github.com/superquadratic/rtmidi-python>`_
 and `Pygame <http://www.pygame.org/docs/ref/midi.html>`_.
 
