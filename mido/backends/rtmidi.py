@@ -6,9 +6,9 @@ http://pypi.python.org/pypi/python-rtmidi/
 from __future__ import absolute_import
 import os
 import time
-from collections import deque
 import rtmidi
 from ..ports import BaseInput, BaseOutput
+from ..parser import parse
 
 def _get_api_lookup():
     api_to_name = {}
@@ -70,12 +70,11 @@ class PortCommon(object):
             self._rt.ignore_types(False, False, False)
             if callback:
                 def callback_wrapper(message_data, data):
-                    self._parser.feed(message_data[0])
-                    for message in self._parser:
+                    message = parse(message_data[0])
+                    if message:
+                        message.time = message_data[1]
                         callback(message)
                 self._rt.set_callback(callback_wrapper)
-                # Make sure pending() doesn't see messages.
-                self._messages = deque()
                 self._has_callback = True
             else:
                 self._has_callback = False
@@ -117,12 +116,15 @@ class Input(PortCommon, BaseInput):
             raise IOError('a callback is currently set for this port')
 
         while 1:
-            message = self._rt.get_message()
-            if message is None:
+            message_data = self._rt.get_message()
+            if message_data is None:
                 break
             else:
-                self._parser.feed(message[0])
-            
+                message = parse(message_data[0])
+                if message:
+                    message.time = message_data[1]
+                self._messages.append(message)
+ 
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
         self._rt.send_message(message.bytes())
