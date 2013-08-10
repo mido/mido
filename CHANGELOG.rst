@@ -46,6 +46,9 @@
 * removed undefined_xx messages. They served no purpose, and could not
   be handled in any meaningful way.
 
+* Added (experimental) support for callbacks in PortMidi backends
+  using threads.
+
 
 1.0.2 - 2013-07-31
 -------------------
