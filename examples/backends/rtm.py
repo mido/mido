@@ -10,6 +10,11 @@ http://github.com/superquadratic/rtmidi-python
   TypeError: expected bytes, str found
 
 - Virtual ports don't show up, so other programs can't connect to them.
+
+- There is no way to select API.
+
+Other than that, it works exactly like the included python-rtmidi
+backend.
 """
 from __future__ import absolute_import
 import os
