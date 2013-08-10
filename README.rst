@@ -81,10 +81,8 @@ run on other systems where the ``portmidi.so/dll`` file is available.
 Alternative backends are included for `python-rtmidi
 http://pypi.python.org/pypi/python-rtmidi/>`_ and `pygame
 <http://www.pygame.org/docs/ref/midi.html>`_. These can be selected
-with an environment variable::
-
-    export MIDO_BACKEND=mido.backends.pygame
-    python some_program.py
+with the environment variable ``MIDO_BACKEND`` or by calling
+``mido.set_backend()``.
 
 Like PortMidi, these are loaded on demand.
 
