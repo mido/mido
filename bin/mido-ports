@@ -28,3 +28,6 @@ for name in ['MIDO_DEAFULT_INPUT',
     except LookupError:
         print('{} not set.'.format(name))
 print()
+print('Using backend {}.'.format(mido.backend.name))
+print()
+
