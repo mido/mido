@@ -188,9 +188,9 @@ class Input(PortCommon, BaseInput):
     def _thread_main(self):
         while self._has_callback:
             self._read()
-
+            
     def _close(self):
-        # Stop thread here?
+        # Todo: terminate thread.
         PortCommon._close()
 
 class Output(PortCommon, BaseOutput):
