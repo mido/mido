@@ -1,7 +1,15 @@
 """
-Experimental wrapper for rtmidi-python:
+Experimental backend for rtmidi-python:
 
 http://github.com/superquadratic/rtmidi-python
+
+- Doesn't work with Python 3.3:
+
+  File "rtmidi_python.pyx", line 61, in rtmidi_python.MidiIn.__cinit__
+       (rtmidi_  python.cpp:1214)
+  TypeError: expected bytes, str found
+
+- Virtual ports don't show up, so other programs can't connect to them.
 """
 from __future__ import absolute_import
 import os
@@ -13,6 +21,7 @@ from ..ports import BaseInput, BaseOutput
 def get_devices():
     devices = []
 
+    print(rtmidi.MidiIn())
     input_names = set(rtmidi.MidiIn().ports)
     output_names = set(rtmidi.MidiOut().ports)
 
