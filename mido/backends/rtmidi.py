@@ -112,7 +112,6 @@ class PortCommon(object):
         self._rt.close_port()
 
 class Input(PortCommon, BaseInput):
-    # Todo: sysex messages do not arrive here.
     def _pending(self):
         if self._has_callback:
             raise IOError('a callback is currently set for this port')
