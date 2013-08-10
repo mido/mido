@@ -110,24 +110,8 @@ def set_backend(path):
         if name.split('_')[0] in ['open', 'get']:
             glob[name] = getattr(backend, name)
 
-def _set_default_backend():
-    from .backends import find_dotted_module
+set_backend(os.environ.get('MIDO_BACKEND', 'mido.backends.portmidi'))
 
-    # Try in order:
-    # 1) MIDO_BACKEND if set.
-    # 2) mido.backends.rtmidi if rtmido module exists.
-    # 3) mido.backends.portmidi as fallback.
-
-    name = os.environ.get('MIDO_BACKEND')
-    if not name:
-        try:
-            find_dotted_module('rtmidi')
-            name = 'mido.backends.rtmidi'
-        except ImportError:
-            name = 'mido.backends.portmidi'
-
-    set_backend(name)
-
-_set_default_backend()
+print(backends)
 
 del os, absolute_import
