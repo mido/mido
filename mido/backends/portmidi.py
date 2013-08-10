@@ -85,7 +85,7 @@ class PortCommon(object):
     """
     Mixin with common things for input and output ports.
     """
-    def _open(self):
+    def _open(self, callback=False):
         self._stream = pm.PortMidiStreamPtr()
 
         opening_input = hasattr(self, 'receive')
@@ -123,6 +123,21 @@ class PortCommon(object):
                          pm.null,       # Time info
                          0))            # Latency
 
+        if callback:
+            self._has_callback = False
+
+            def callback_wrapper(self):
+                self._read()
+                for message in self._parser:
+                    callback(message)
+                    
+            self._callback_thread = threading.Thread()
+            self._callback_daemon = True
+            self._callback_thread.start()
+        else:
+            self._has_callback = False
+            self._callback_thread = None
+
         self._device_type = 'PortMidi/{}'.format(device['interface'])
 
     def _close(self):
@@ -133,38 +148,50 @@ class Input(PortCommon, BaseInput):
     PortMidi Input port
     """
 
-    def _pending(self):
+    def _read(self):
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
         # resort to calling Pm_Read() in a loop until there are no
         # more pending events.
-
         max_events = 1
+
         # Todo: this should be allocated once
         BufferType = pm.PmEvent * max_events
         read_buffer = BufferType()
 
+        # Read one message. Should return 1.
+        # If num_events < 0, an error occured.
+        length = 1  # Buffer length
+        num_events = pm.lib.Pm_Read(self._stream, read_buffer, length)
+        _check_error(num_events)
+        
+        # Get the event
+        event = read_buffer[0]
+        # print('Received: {:x}'.format(event.message))
+
+        # The bytes of the message are stored like this:
+        #    0x00201090 -> (0x90, 0x10, 0x10)
+        # (Todo: not sure if this is correct.)
+        packed_message = event.message & 0xffffffff
+        
+        for i in range(4):
+            byte = packed_message & 0xff
+            self._parser.feed_byte(byte)
+            packed_message >>= 8
+
+    def _pending(self):
+        if self._has_callback:
+            raise IOError('a callback is currently set for this port')
+
         while pm.lib.Pm_Poll(self._stream):
+            self._read()
 
-            # Read one message. Should return 1.
-            # If num_events < 0, an error occured.
-            length = 1  # Buffer length
-            num_events = pm.lib.Pm_Read(self._stream, read_buffer, length)
-            _check_error(num_events)
+    def _thread_main(self):
+        while self._has_callback:
+            self._read()
 
-            # Get the event
-            event = read_buffer[0]
-            # print('Received: {:x}'.format(event.message))
-
-            # The bytes of the message are stored like this:
-            #    0x00201090 -> (0x90, 0x10, 0x10)
-            # (Todo: not sure if this is correct.)
-            packed_message = event.message & 0xffffffff
-
-            for i in range(4):
-                byte = packed_message & 0xff
-                self._parser.feed_byte(byte)
-                packed_message >>= 8
-
+    def _close(self):
+        # Stop thread here?
+        PortCommon._close()
 
 class Output(PortCommon, BaseOutput):
     """
