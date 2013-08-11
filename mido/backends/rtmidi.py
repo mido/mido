@@ -108,6 +108,7 @@ class PortCommon(object):
 
     def _close(self):
         self._rt.close_port()
+        del self._rt  # Virtual ports are closed when this is deleted.
 
 class Input(PortCommon, BaseInput):
     def _pending(self):
