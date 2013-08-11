@@ -34,21 +34,23 @@ http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/MTC.htm
 Parameter Types
 ----------------
 
-========  ======================  ================
-Name      Valid Range             Default Value
-========  ======================  ================
-channel   0..15                   0
-control   0..127                  0
-note      0..127                  0
-program   0..127                  0
-song      0..127                  0
-value     0..127                  0
-velocity  0..127                  0
-data      (0..127, 0..127, ...)   () (empty tuple)
-pitch     -8192..8191             0
-pos       0..16383                0
-time      any integer or float    0
-========  ======================  ================
+========     ======================  ================
+Name         Valid Range             Default Value
+========     ======================  ================
+channel      0..15                   0
+frame_type   0..7                    0
+frame_value  0..15                   0
+control      0..127                  0
+note         0..127                  0
+program      0..127                  0
+song         0..127                  0
+value        0..127                  0
+velocity     0..127                  0
+data         (0..127, 0..127, ...)   () (empty tuple)
+pitch        -8192..8191             0
+pos          0..16383                0
+time         any integer or float    0
+========     ======================  ================
 
 ``velocity`` for ``note_off`` is release velocity, that is how quickly the
 note was released. Few instruments support this.
