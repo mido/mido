@@ -107,7 +107,6 @@ class PortCommon(object):
                 def callback_wrapper(message_data, data):
                     message = parse(message_data[0])
                     if message:
-                        message.time = message_data[1]
                         callback(message)
                 self._rt.set_callback(callback_wrapper)
                 self._has_callback = True
@@ -157,8 +156,7 @@ class Input(PortCommon, BaseInput):
             else:
                 message = parse(message_data[0])
                 if message:
-                    message.time = message_data[1]
-                self._messages.append(message)
+                    self._messages.append(message)
  
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
