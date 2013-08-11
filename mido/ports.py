@@ -247,7 +247,7 @@ class BaseOutput(BasePort):
 class BaseIOPort(BaseInput, BaseOutput):
     pass
 
-class IOPort(object):
+class IOPort(BaseIOPort):
     """Input / output port.
 
     This is a convenient wrapper around an input port and an output
@@ -258,61 +258,21 @@ class IOPort(object):
     def __init__(self, input, output):
         self.input = input
         self.output = output
+
+        # We use str() here in case name is None.
+        self.name = '{} + {}'.format(str(input.name), str(output.name))
+        self._messages = self.input._messages
         self.closed = False
 
-        # Todo: what if they have different names?
-        self.name = self.input.name
+    def _close(self):
+        self.input.close()
+        self.output.close()
 
-    def close(self):
-        if not self.closed:
-            self.input.close()
-            self.output.close()
-            self.closed = True
-    close.__doc__ = BasePort.close.__doc__
+    def _pending(self):
+        return self.input._pending()
 
-    def send(self, message):
-        return self.output.send(message)
-    send.__doc__ = BaseOutput.send.__doc__
-
-    def reset(self):
-        return self.output.reset()
-    send.__doc__ = BaseOutput.reset.__doc__
-
-    def panic(self):
-        return self.output.panic()
-    panic.__doc__ = BaseOutput.panic.__doc__
-
-    def receive(self):
-        return self.input.receive()
-    receive.__doc__ = BaseInput.receive.__doc__
-
-    def pending(self):
-        return self.input.pending()
-    pending.__doc__ = BaseInput.pending.__doc__
-
-    def iter_pending(self):
-        for message in self.input.iter_pending():
-            yield message
-    iter_pending.__doc__ = BaseInput.iter_pending.__doc__
-
-    def __iter__(self):
-        for message in self.input:
-            yield message
-
-    def __repr__(self):
-        if self.closed:
-            state = 'closed'
-        else:
-            state = 'open'
-    
-        return '<{} IOPort({}, {})>'.format(state, self.input, self.output)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.close()
-        return False
+    def _send(self, message):
+        self.output._send(message)
 
 
 class EchoPort(BaseIOPort):
