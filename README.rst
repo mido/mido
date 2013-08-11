@@ -36,6 +36,8 @@ Main Features
   * supports PortMidi, RtMidi and Pygame. New backends can be easily
     written and used with Mido.
 
+  * full support for all 18 messages defined by the MIDI standard.
+
   * full support for MIDI files (read, write, create and play) with
     complete access to every message in the file.
 
@@ -44,7 +46,7 @@ Main Features
 
   * standard port API allows all kinds of input and output ports to be
     used interchangingly. New port types can be written by subclassing
-    and overriding a few methods, or by duck typing.
+    and overriding a few methods.
 
   * includes a reusable MIDI parser.
 
