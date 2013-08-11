@@ -154,7 +154,7 @@ class Backend(object):
     def get_ioport_names(self, **kwargs):
         """Return a sorted list of all I/O port names."""
         devices = self._get_devices(**self._fixkw(kwargs))
-        inputs = [device['name'] for device in devices if device['is_intput']]
+        inputs = [device['name'] for device in devices if device['is_input']]
         outputs = [device['name'] for device in devices if device['is_output']]
         return sorted(set(inputs) & set(outputs))
 
