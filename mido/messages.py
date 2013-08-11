@@ -431,13 +431,14 @@ class Message(BaseMessage):
     def __setattr__(self, name, value):
         """Set an attribute."""
         if name in self._spec.valid_attributes:
-            if name == 'data':
-                self.__dict__['data'] = check_data(value)
-            else:
-                try:
+            try:
+                if name == 'data':
+                    value = check_data(value)
+                else:
                     globals()['check_{}'.format(name)](value)
-                except KeyError:
-                    check_databyte(value)
+            except KeyError:
+                check_databyte(value)
+
             self.__dict__[name] = value
         elif name in self.__dict__:
             raise AttributeError('{} attribute is read only'.format(name))

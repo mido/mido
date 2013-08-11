@@ -162,6 +162,17 @@ class TestMessages(unittest.TestCase):
 
         self.assertRaises(LookupError, get_spec, 0)
 
+    def test_sysex_data_type(self):
+        """Is messages.data turned into a tuple?"""
+        data = range(1)
+
+        message = mido.Message('sysex')
+        message.data = data
+        self.assertTrue(isinstance(message.data, tuple))
+
+        message = mido.Message('sysex', data=data)
+        self.assertTrue(isinstance(message.data, tuple))
+
 
 class TestStringFormat(unittest.TestCase):
     def test_parse_string(self):
