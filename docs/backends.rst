@@ -93,7 +93,7 @@ Name: ``.portmidi``
 The PortMidi backend is written with ``ctypes`` and requires only the
 shared library file ``portmidi.so`` or ``portmidi.dll``.
 
-All 18 messages are supported.
+Can send but doesn't receive ``active_sensing`` messages.
 
 PortMidi has no callback mechanism, so callbacks are implemented in
 Python with threads. Each port with a callback has a dedicated thread
@@ -113,7 +113,7 @@ Name: ``.rtmidi``
 The RtMidi backend is a thin wrapper around `python-rtmidi
 <https://pypi.python.org/pypi/python-rtmidi/>`_
 
-All 18 messages are supported.
+Sends and receives all 18 message types.
 
 Callbacks use RtMidi's own mechanism.
 
@@ -168,8 +168,7 @@ Name: ``.pygame``
 
 The Pygame backend uses ``pygame.midi`` for I/O.
 
-Supports all 18 messages except System Exclusive (``sysex``).
-(Todo: check if this is correct.)
+Can send but not receive ``sysex`` and ``active_sensing``.
 
 Callbacks are currently not implemented.
 
