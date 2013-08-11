@@ -112,6 +112,4 @@ def set_backend(path):
 
 set_backend(os.environ.get('MIDO_BACKEND', 'mido.backends.portmidi'))
 
-print(backends)
-
 del os, absolute_import

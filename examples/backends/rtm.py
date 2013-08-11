@@ -21,12 +21,11 @@ import os
 import time
 import mido
 import rtmidi_python as rtmidi
-from ..ports import BaseInput, BaseOutput
+from mido.ports import BaseInput, BaseOutput
 
 def get_devices():
     devices = []
 
-    print(rtmidi.MidiIn())
     input_names = set(rtmidi.MidiIn().ports)
     output_names = set(rtmidi.MidiOut().ports)
 
