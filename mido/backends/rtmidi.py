@@ -29,9 +29,6 @@ def _get_api_id(name=None):
     if name is None:
         return rtmidi.API_UNSPECIFIED
 
-    if name == 'LINUX_ALSA_FIXNAMES':
-        name = 'LINUX_ALSA'
-
     try:
         api = _name_to_api[name]
     except KeyError:
@@ -42,35 +39,6 @@ def _get_api_id(name=None):
     else:
         raise ValueError('API {} not compiled in'.format(name))
     
-def _fix_name(name, is_input, api=None):
-    """Remove client:port from LINUX_ALSA port name."""
-    # RtMidi adds client:port numbers inconsistently.
-    # For input ports:
-    #     'Midi Through 14:0'
-    # For output ports:
-    #     'Midi Through:0'
-    # Just remove them.
-
-    if api == 'LINUX_ALSA_FIXNAMES':
-        if is_input:
-            if ':' in name:
-                return name.rsplit(None, 1)[0]
-        else:
-            if ':' in name:
-                return name.rsplit(':', 1)[0]
-    
-    return name
-
-def _unfix_name(name, is_input, api=None):
-    state = (is_input, not is_input)
-
-    if api == 'LINUX_ALSA_FIXNAMES':
-        for device in get_devices(api=api):
-            if device['name'] == name:
-                if state == (device['is_input'], device['is_output']):
-                    return device['origname']
-
-    return name
 
 def get_devices(api=None):
     devices = []
@@ -81,8 +49,7 @@ def get_devices(api=None):
 
     for name in sorted(input_names | output_names):
         devices.append({
-                'name': _fix_name(name, (name in input_names), api),
-                'origname': name,
+                'name': name,
                 'is_input': name in input_names,
                 'is_output': name in output_names,
                 })
@@ -98,8 +65,6 @@ class PortCommon(object):
         rtapi = _get_api_id(api)
         opening_input = hasattr(self, 'receive')
         
-        name = _unfix_name(self.name, opening_input, api)
-
         if opening_input:
             self._rt = rtmidi.MidiIn(rtapi=rtapi)
             self._rt.ignore_types(False, False, False)
@@ -121,7 +86,7 @@ class PortCommon(object):
         if virtual:
             if self.name is None:
                 raise IOError('virtual port must have a name')
-            self._rt.open_virtual_port(name)
+            self._rt.open_virtual_port(self.name)
         else:
             if self.name is None:
                 # Todo: this could fail if list is empty.
@@ -132,7 +97,7 @@ class PortCommon(object):
                     raise IOError('no ports available')
 
             try:
-                port_id = ports.index(name)
+                port_id = ports.index(self.name)
             except ValueError:
                 raise IOError('unknown port {!r}'.format(self.name))
 
