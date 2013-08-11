@@ -116,8 +116,11 @@ class ByteWriter(object):
 
 
 class DeltaTimer(object):
-    def __init__(self, ticks_per_beat=None, tempo=500000):
-        self.ticks_per_beat = ticks_per_beat
+    def __init__(self, midifile=None, division=None, tempo=500000):
+        self.midifile = None
+        if self.midifile:
+            self.division = midifile.division
+        self.division = division
         self.tempo = tempo
         self.timer = timeit.default_timer
         self.then = self.timer()
@@ -127,9 +130,9 @@ class DeltaTimer(object):
         delta = now - self.then
         self.then = now
         
-        if self.ticks_per_beat is not None:
+        if self.division is not None:
             seconds_per_beat = self.tempo / 1000000.0
-            seconds_per_tick = seconds_per_beat / float(self.ticks_per_beat)
+            seconds_per_tick = seconds_per_beat / float(self.division)
             new_delta = int(delta / seconds_per_tick)
             print(delta, new_delta)
             return new_delta
@@ -173,7 +176,7 @@ class RecordPort(BaseOutput):
     def __init__(self, midifile):
         BaseOutput.__init__(self)
         self.midifile = midifile
-        self.delta = DeltaTimer(ticks_per_beat=midifile.ticks_per_beat,
+        self.delta = DeltaTimer(division=midifile.division,
                                tempo=DEFAULT_TEMPO)
         self.track = self.midifile.add_track()
     
@@ -189,7 +192,7 @@ class RecordPort(BaseOutput):
 
 
 class MidiFile:
-    def __init__(self, name=None, format=1):
+    def __init__(self, name=None, format=1, division=None):
         self.name = name
         self.tracks = []
 
@@ -199,7 +202,7 @@ class MidiFile:
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
             self.format = format
             # Todo: is this a good default value?
-            self.ticks_per_beat = 120
+            self.division = 120
         else:
             self._load()
 
@@ -228,7 +231,7 @@ class MidiFile:
 
             self.format = self._file.read_short()
             number_of_tracks = self._file.read_short()
-            self.ticks_per_beat = self._file.read_short()
+            self.division = self._file.read_short()
 
             for i in range(number_of_tracks):
                 self.tracks.append(self._read_track())
@@ -340,9 +343,9 @@ class MidiFile:
 
         return messages
 
-    def _compute_tick_time(self, milliseconds_per_beat):
+    def _compute_tick_time(self, tempo):
         """Compute seconds per tick."""
-        return (milliseconds_per_beat / 1000000.0) / self.ticks_per_beat
+        return (tempo / 1000000.0) / self.division
 
     def _get_length(self):
         if not self.tracks:
@@ -457,7 +460,7 @@ class MidiFile:
             self._file.write_long(6)  # Header size. (Next three shorts.)
             self._file.write_short(self.format)
             self._file.write_short(len(self.tracks))
-            self._file.write_short(self.ticks_per_beat)
+            self._file.write_short(self.division)
 
             for track in self.tracks:
                 bytes = []

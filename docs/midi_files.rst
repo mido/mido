@@ -158,16 +158,16 @@ Examples::
 
 Each message in a MIDI file has a delta time, which tells how many
 ticks has passed since the last message. The length of a tick is
-defined in ticks per beat. This value is stored in the file header and
-remains fixed throughout the song. It is used when converting delta
-times to and from real time.
+defined in ticks per beat. This value is stored as ``division`` in the
+file header and remains fixed throughout the song. It is used when
+converting delta times to and from real time.
 
 (Todo: what's the default value?) 
 
 Computations::
 
     seconds_per_beat = tempo / 1000000.0
-    seconds_per_tick = seconds_per_beat / float(ticks_per_beat)
+    seconds_per_tick = seconds_per_beat / float(division)
     time_in_seconds = time_in_ticks * seconds_per_tick
     time_in_ticks = time_in_seconds / seconds_per_tick
 
@@ -180,6 +180,6 @@ Examples::
 
 (Todo: update with default value.)
 
-MidiFile objects have a ``ticks_per_beat`` attribute, while
-``message.time`` is used for delta time. Tempo is updated by
-``set_tempo`` meta messages.
+MidiFile objects have a ``division`` attribute, while ``message.time``
+is used for delta time. Tempo is updated by ``set_tempo`` meta
+messages.
