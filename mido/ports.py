@@ -285,7 +285,7 @@ class EchoPort(BaseIOPort):
 # Todo: i don't know how to implement yield_ports here, so for now I haven't.
 class MultiPort(BaseIOPort):
     def __init__(self, ports):
-        BaseIO.__init__(self, 'multi')
+        BaseIOPort.__init__(self, 'multi')
         self.ports = ports
 
     def _send(self, message):
