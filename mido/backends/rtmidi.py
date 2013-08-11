@@ -89,7 +89,7 @@ class PortCommon(object):
         self.name = _fix_name(self.name, opening_input, api)
 
         if opening_input:
-            self._rt = rtmidi.MidiIn(rtapi=api)
+            self._rt = rtmidi.MidiIn(rtapi=rtapi)
             self._rt.ignore_types(False, False, False)
             if callback:
                 def callback_wrapper(message_data, data):
@@ -102,7 +102,7 @@ class PortCommon(object):
             else:
                 self._has_callback = False
         else:
-            self._rt = rtmidi.MidiOut(rtapi=api)
+            self._rt = rtmidi.MidiOut(rtapi=rtapi)
             # Turn of ignore of sysex, time and active_sensing.
 
         ports = self._rt.get_ports()
