@@ -173,6 +173,10 @@ class TestMessages(unittest.TestCase):
         message = mido.Message('sysex', data=data)
         self.assertTrue(isinstance(message.data, tuple))
 
+        a = mido.Message('sysex', data=(1, 2))
+        b = mido.parse(a.bytes())
+        self.assertTrue(isinstance(b.data, tuple))
+
 
 class TestStringFormat(unittest.TestCase):
     def test_parse_string(self):

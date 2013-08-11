@@ -343,7 +343,7 @@ def build_message(spec, bytes):
         arguments['channel'] = bytes[0] & 0x0f
 
     elif spec.type == 'sysex':
-        arguments = {'data': bytes[1:]}
+        arguments = {'data': tuple(bytes[1:])}
 
     elif spec.type == 'songpos':
         pos = bytes[1] | (bytes[2] << 7)
