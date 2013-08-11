@@ -39,19 +39,40 @@ def _get_api_id(name=None):
     else:
         raise ValueError('API {} not compiled in'.format(name))
     
+def _fix_name(name, is_input, api=None):
+    """Remove client:port from LINUX_ALSA port name."""
+    # RtMidi adds client:port numbers inconsistently.
+    # For input ports:
+    #     'Midi Through 14:0'
+    # For output ports:
+    #     'Midi Through:0'
+    # Just remove them.
+
+    if api is None:
+        api = get_api_names()[0]
+
+    if api == 'LINUX_ALSA':
+        if is_input:
+            if ':' in name:
+                return name.rsplit(None, 1)[0]
+        else:
+            if ':' in name:
+                return name.rsplit(':', 1)[0]
+    
+    return name
 
 def get_devices(api=None):
     devices = []
 
-    api = _get_api_id(api)
-    input_names = set(rtmidi.MidiIn(rtapi=api).get_ports())
-    output_names = set(rtmidi.MidiOut(rtapi=api).get_ports())
+    rtapi = _get_api_id(api)
+    input_names = set(rtmidi.MidiIn(rtapi=rtapi).get_ports())
+    output_names = set(rtmidi.MidiOut(rtapi=rtapi).get_ports())
 
     for name in sorted(input_names | output_names):
         devices.append({
-                'name' : name,
-                'is_input' : name in input_names,
-                'is_output' : name in output_names,
+                'name': _fix_name(name, (name in input_names), api),
+                'is_input': name in input_names,
+                'is_output': name in output_names,
                 })
 
     return devices
@@ -62,8 +83,10 @@ def get_api_names():
 class PortCommon(object):
     def _open(self, api=None, virtual=False, callback=None):
 
-        api = _get_api_id(api)
+        rtapi = _get_api_id(api)
         opening_input = hasattr(self, 'receive')
+
+        self.name = _fix_name(self.name, opening_input, api)
 
         if opening_input:
             self._rt = rtmidi.MidiIn(rtapi=api)
