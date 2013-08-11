@@ -9,10 +9,6 @@ import sys
 import array
 from ctypes import *
 
-from ctypes import *
-import array
-import sys
-
 dll_name = ''
 if sys.platform == 'darwin':
     dll_name = 'libportmidi.dylib'
