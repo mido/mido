@@ -13,21 +13,15 @@ import time
 import random
 import pprint
 import traceback
-import protomidi
-from protomidi.msg import *
-import protomidi.portmidi as pm
+import mido
 
-pm._flags['debug'] = True
-
-try:
-    out = pm.Output()
-except IO:
-    traceback.print_exc()
+out = mido.open_output()
 
 print('Sleeping for 2 seconds before opening input')
 time.sleep(2)
 print('Opening input')
-input = pm.Input()
+# input = mido.open_input()
+mido.open_input('MidiKeys')
 print('Please play something on Midi Keys now')
 
 """
