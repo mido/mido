@@ -33,6 +33,10 @@ class Backend(object):
         else:
             self.name = module
             self._module = None
+            
+            # Expand shortcut for included backend.
+            if self.name.startswith('.'):
+                self.name = 'mido.backends{}'.format(self.name)
 
             if '/' in self.name:
                 self.name, self.api = self.name.split('/', 1)
