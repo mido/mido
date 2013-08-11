@@ -113,7 +113,7 @@ Name: ``.rtmidi``
 The RtMidi backend is a thin wrapper around `python-rtmidi
 <https://pypi.python.org/pypi/python-rtmidi/>`_
 
-Sends and receives all 18 message types.
+Sends but doesn't receive active sensing.
 
 Callbacks use RtMidi's own mechanism.
 
