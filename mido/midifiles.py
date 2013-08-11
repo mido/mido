@@ -36,9 +36,7 @@ class ByteReader(object):
     def __init__(self, filename):
         self._buffer = list(bytearray(open(filename, 'rb').read()))
         self.pos = 0
-
-    def _eof(self):
-        return 
+        self._eof = EOFError('unexpected end of file')
 
     def read_byte(self):
         """Read one byte."""
@@ -353,15 +351,19 @@ class MidiFile:
 
     def _encode_delta_time(self, delta):
         bytes = []
-        while 1:
-            byte = delta & 0x7f
-            bytes.append(byte)
+        while delta:
+            bytes.append(delta & 0x7f)
+            delta >>= 7
+        
+        if bytes:
+            bytes.reverse()
 
-            if byte <= 0x80:
-                bytes.reverse()
-                return bytes
-
-            delta = delta >> 7
+            # Set high bit in every byte but the last.
+            for i in range(len(bytes) - 1):
+                bytes[i] |= 0x80
+            return bytes
+        else:
+            return [0]
 
     def _has_end_of_track(self, track):
         """Return True if there is an end_of_track at the end of the track."""
