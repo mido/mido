@@ -61,11 +61,6 @@ class Backend(object):
             self.load()    
         return self._module
 
-    def _fixkw(self, kwargs):
-        if self.api and 'api' not in kwargs:
-            kwargs['api'] = self.api
-        return kwargs
-
     module = property(fget=_get_module)
     # del _get_module
 
@@ -80,10 +75,15 @@ class Backend(object):
             return None
 
     def __getattr__(self, name):
-        if name in ['Input', 'Output', 'IOPort', 'get_devices']:
-            return getattr(self.module, name)
+        if self._module and not name.startswith('_'):
+            return getattr(self._module, name)
         else:
             raise AttributeError(name)
+
+    def _fixkw(self, kwargs):
+        if self.api and 'api' not in kwargs:
+            kwargs['api'] = self.api
+        return kwargs
 
     def open_input(self, name=None, **kwargs):
         """Open an input port.
@@ -157,9 +157,6 @@ class Backend(object):
         inputs = [device['name'] for device in devices if device['is_intput']]
         outputs = [device['name'] for device in devices if device['is_output']]
         return sorted(set(inputs) & set(outputs))
-
-    def __getattr__(self, name):
-        return getattr(self.module, name)
 
     def __repr__(self):
         if self._module is not None or self.name in sys.modules:
