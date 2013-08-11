@@ -22,6 +22,8 @@ from __future__ import print_function, division
 import os
 import sys
 import time
+import timeit
+from .ports import BaseOutput
 from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage
 
@@ -113,6 +115,28 @@ class ByteWriter(object):
         return False
 
 
+class DeltaTimer(object):
+    def __init__(self, ticks_per_beat=None, tempo=500000):
+        self.ticks_per_beat = ticks_per_beat
+        self.tempo = tempo
+        self.timer = timeit.default_timer
+        self.then = self.timer()
+
+    def __call__(self):
+        now = self.timer()
+        delta = now - self.then
+        self.then = now
+        
+        if self.ticks_per_beat is not None:
+            seconds_per_beat = self.tempo / 1000000.0
+            seconds_per_tick = seconds_per_beat / float(self.ticks_per_beat)
+            new_delta = int(delta / seconds_per_tick)
+            print(delta, new_delta)
+            return new_delta
+
+        return delta
+
+
 class MidiTrack(list):
     def __init__(self):
         list.__init__([])
@@ -145,6 +169,25 @@ class MidiTrack(list):
         return '<midi track {} {} messages>'.format(name, len(self))
 
 
+class RecordPort(BaseOutput):
+    def __init__(self, midifile):
+        BaseOutput.__init__(self)
+        self.midifile = midifile
+        self.delta = DeltaTimer(ticks_per_beat=midifile.ticks_per_beat,
+                               tempo=DEFAULT_TEMPO)
+        self.track = self.midifile.add_track()
+    
+    def send(self, message):
+        # This overrides the public send() because the
+        # original one doesn't accept meta messages.
+        self.track.append(message.copy(time=self.delta()))
+        if message.type == 'set_tempo':
+            self.delta.tempo = message.tempo
+
+    def _close(self):
+        self.track.append(MetaMessage('end_of_track'))
+
+
 class MidiFile:
     def __init__(self, name=None, format=1):
         self.name = name
@@ -159,6 +202,18 @@ class MidiFile:
             self.ticks_per_beat = 120
         else:
             self._load()
+
+    def add_track(self, name=None):
+        """Add a new track to the file.
+
+        This will create a new MidiTrack object and append it to the
+        track list.
+        """
+        track = MidiTrack()
+        if name is not None:
+            track.name = name
+        self.tracks.append(track)
+        return track
 
     def _load(self):
         with ByteReader(self.name) as self._file:
