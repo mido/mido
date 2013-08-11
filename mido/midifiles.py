@@ -115,7 +115,7 @@ class ByteWriter(object):
         return False
 
 
-class Track(list):
+class MidiTrack(list):
     def __init__(self):
         list.__init__([])
 
@@ -218,7 +218,7 @@ class MidiFile:
         return message
 
     def _read_track(self):
-        track = Track()
+        track = MidiTrack()
 
         magic = self._file.read_list(4)
         if bytearray(magic) != bytearray(b'MTrk'):

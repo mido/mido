@@ -67,10 +67,10 @@ Creating a New File
 You can create a new file by calling MidiFile without the ``filename``
 argument. The file can then be saved by calling the ``save()`` method::
 
-    from mido.midifies import Track
+    from mido.midifies import MidiTrack
 
     with MidiFile() as mid:
-        track = Track()
+        track = MidiTrack()
         tracks.append(track)
 
         tracks.append(midi.Message('program_change', program=12, time=0))
@@ -79,7 +79,7 @@ argument. The file can then be saved by calling the ``save()`` method::
 
         mid.save('new_song.mid')
 
-The ``Track`` class is a subclass of list, so you can use all the
+The ``MidiTrack`` class is a subclass of list, so you can use all the
 usual methods.
 
 All messages must be tagged with delta time (in ticks). (A delta time

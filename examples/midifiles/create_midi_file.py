@@ -7,12 +7,12 @@ The file is saved to test.mid.
 
 import random
 from mido import Message
-from mido.midifiles import MidiFile, Track
+from mido.midifiles import MidiFile, MidiTrack
 
 notes = [64, 64+7, 64+12]
 
 with MidiFile() as f:
-    track = Track()
+    track = MidiTrack()
     f.tracks.append(track)
 
     track.append(Message('program_change', program=12))
