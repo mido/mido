@@ -67,7 +67,7 @@ class PortCommon(object):
         
         if opening_input:
             self._rt = rtmidi.MidiIn(rtapi=rtapi)
-            self._rt.ignore_types(False, False, False)
+            self._rt.ignore_types(False, False, True)
             if callback:
                 def callback_wrapper(message_data, data):
                     message = parse(message_data[0])
