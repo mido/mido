@@ -74,12 +74,6 @@ class Backend(object):
         else:
             return None
 
-    def __getattr__(self, name):
-        if self._module and not name.startswith('_'):
-            return getattr(self._module, name)
-        else:
-            raise AttributeError(name)
-
     def _fixkw(self, kwargs):
         if self.api and 'api' not in kwargs:
             kwargs['api'] = self.api
