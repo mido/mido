@@ -11,7 +11,7 @@ Example:
 
 This simply iterates through all incoming messages. More advanced and
 flexible servers can be written by calling the ``accept()`` and
-``accept(block=False) methods directly. See PortServer.__init__() for
+``accept(block=False) methods directly. See Server.__init__() for
 an example.
 """
 import sys
@@ -23,7 +23,7 @@ from mido.ports import MultiPort
 out = MultiPort([mido.open_output(name) for name in sys.argv[2:]])
 
 (hostname, port) = sockets.parse_address(sys.argv[1])
-with sockets.PortServer(hostname, port) as server:
+with sockets.Server(hostname, port) as server:
     for message in server:
         print('Received {}'.format(message))
         out.send(message)
