@@ -16,8 +16,8 @@ You can open a file with::
 
 The ``tracks`` attribute is a list of tracks. Each track is a list of
 messages and meta messages, with the ``time`` attribute of each
-messages set to its delta time (in ticks). (See Tempo and Time
-Resolution below for more on delta times.)
+messages set to its delta time (in ticks). (See Tempo and Beat
+Division below for more on delta times.)
 
 To print out all messages in the file, you can do::
 
@@ -134,15 +134,18 @@ Meta messages are only found in MIDI files and can not be sent to
 ports.
 
 
-Tempo and Time Resolution
---------------------------
+Tempo and Beat Division
+------------------------
 
 Timing in MIDI files is all centered around beats. A beat is the same
 as a quarter note.
 
-Tempo is given in microseconds per beat. It defaults to 500000, which
-is half a second per beat, or 120 beats per minute. The meta message
-'set_tempo' can be used to change tempo during a song.
+Tempo is given in microseconds per beat, and beats are divided into
+ticks.
+
+The default tempo is 500000 microseconds per beat, which is half a
+second per beat or 120 beats per minute. The meta message 'set_tempo'
+can be used to change tempo during a song.
 
 Computations::
 
