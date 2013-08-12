@@ -225,6 +225,9 @@ class BaseOutput(BasePort):
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels
         """
+        if self.closed:
+            return
+
         ALL_NOTES_OFF = 123
         RESET_ALL_CONTROLLERS = 121
         message = Message('control_change')
@@ -239,6 +242,9 @@ class BaseOutput(BasePort):
         envelopes. Useful when notes are hanging and nothing else
         helps.
         """
+        if self.closed:
+            return
+
         ALL_SOUNDS_OFF = 120
         message = Message('control_change', control=ALL_SOUNDS_OFF)
         for message.channel in range(16):
