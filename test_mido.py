@@ -374,7 +374,7 @@ class TestParser(unittest.TestCase):
 
     def test_undefined_realtime_inside_sysex(self):
         """Undefined realtime message inside sysex should ignored."""
-        messages = mido.parse_all([0xf0, 0, 0xf5, 0xf9, 0, 0xf7])
+        messages = mido.parse_all([0xf0, 0, 0xf9, 0xfd, 0, 0xf7])
         self.assertTrue(len(messages) == 1)
         self.assertTrue(messages[0].type == 'sysex')
 

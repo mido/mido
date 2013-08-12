@@ -1,4 +1,17 @@
 #!/bin/sh
+#
+# Run tests with Python 2 and 3:
+#
+#     ./run_tests.sh
+# 
+# If you don't have Python 3, you can run tests with:
+#
+#     python test_mido.py
+#
+# To run only one test, you can do:
+#
+#     ./run_tests.sh TestParser.test_realtime_inside_sysex
+#
 
 export PYTHONPATH=$(pwd):$PYTHONPATH
 
@@ -17,4 +30,4 @@ else
     python3=python3
 fi
 
-$python2 test_mido.py && $python3 test_mido.py
+$python2 test_mido.py $* && $python3 test_mido.py $*

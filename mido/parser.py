@@ -37,53 +37,45 @@ class Parser(object):
     def _reset(self):
         self._spec = None
         self._bytes = []
+        self._inside_sysex = False
 
-    def _deliver(self, message):
+    def _deliver(self, message=None):
+        if not message:
+            message = build_message(self._spec, self._bytes)
         self._parsed_messages.append(message)
 
     def _handle_status_byte(self, byte):
-        if 0xf8 <= byte <= 0xff:
-            if self._spec:
-                if self._bytes[0] == 0xf0:
-                    try:
-                        spec = get_spec(byte)
-                    except LookupError:
-                        return
-                    self._deliver(build_message(spec, [byte]))
-                else:
-                    # Realtime message arrived inside a non-sysex
-                    # message. Discard the message we were parsing.
-                    self._reset()
+        try:
+            spec = get_spec(byte)
+            valid = True
+        except LookupError:
+            valid = False
+
+        if self._inside_sysex:
+            if byte == 0xf7:
+                # End of sysex.
+                self._deliver()
+                self._reset()
+                return
+            elif 0xf8 <= byte <= 0xff:
+                # Real time message.
+                # This is allowed inside sysex.
+                if valid:
+                    # Deliver right away.
+                    message = build_message(get_spec(byte), [byte])
+                    self._deliver(message)
+                return
             else:
-                try:
-                    self._spec = get_spec(byte)
-                except LookupError:
-                    return  # Skip unknown status byte.
+                pass  # Fall down to code below.
 
-                self._bytes = [byte]
-
-        elif byte == 0xf7:
-            # End of sysex
-            if self._spec and self._bytes[0] == 0xf0:
-                # We were inside a sysex message. Deliver it.
-                self._deliver(build_message(self._spec, self._bytes))
-            self._reset()
-        else:
-            # Start of new message
-            try:
-                self._spec = get_spec(byte)
-            except LookupError:
-                return  # Skip unknown status byte.
+        if valid:
+            # Start new message.
+            self._spec = spec
             self._bytes = [byte]
-
-    def _handle_data_byte(self, byte):
-        self._bytes.append(byte)
-
-        if self._spec:
-            pass
+            self._inside_sysex = byte == 0xf0
         else:
-            # Todo: handle delta time.
-            pass
+            # Ignore message.
+            self._reset()
 
     def feed_byte(self, byte):
         """Feed one MIDI byte into the parser.
@@ -101,23 +93,13 @@ class Parser(object):
         if byte >= 0x80:
             self._handle_status_byte(byte)
         else:
-            self._handle_data_byte(byte)
+            # Data byte.
+            self._bytes.append(byte)
 
         # If we have a complete messages, deliver it.
         if self._spec and len(self._bytes) == self._spec.length:
             self._deliver(build_message(self._spec, self._bytes))
-
-            if self._bytes[0] < 0xf0:
-                # Delete data bytes, but keep the
-                # status byte around to handle running
-                # status.
-
-                self._reset()
-                #del self._bytes[1:]
-            else:
-                # System common messages have no running status.
-                self._reset()
-
+            self._reset()
 
     def feed(self, data):
         """Feed MIDI data to the parser.
