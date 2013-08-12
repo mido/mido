@@ -81,22 +81,21 @@ def get_message_specs():
 
         # System common messages
         MessageSpec(0xf0, 'sysex', ('data',), float('inf')),
-        MessageSpec(0xf1, 'undefined_f1', (), 1),  # Todo: support this.
-        # MessageSpec(0xf1, 'time_code', ('value'), 2),
+        MessageSpec(0xf1, 'quarter_frame', ('frame_type', 'frame_value'), 2),
         MessageSpec(0xf2, 'songpos', ('pos',), 3),
         MessageSpec(0xf3, 'song_select', ('song',), 2),
-        MessageSpec(0xf4, 'undefined_f4', (), 1),
-        MessageSpec(0xf5, 'undefined_f5', (), 1),
+        # 0xf4 is undefined.
+        # 0xf5 is undefined.
         MessageSpec(0xf6, 'tune_request', (), 1),
-        MessageSpec(0xf7, 'sysex_end', (), 1),
+        # 0xf7 is the stop byte for sysex messages, so should not be a message.
 
         # System real time messages
         MessageSpec(0xf8, 'clock', (), 1),
-        MessageSpec(0xf9, 'undefined_f9', (), 1),
+        # 0xf9 is undefined.
         MessageSpec(0xfa, 'start', (), 1),
         MessageSpec(0xfb, 'continue', (), 1),
         MessageSpec(0xfc, 'stop', (), 1),
-        MessageSpec(0xfd, 'undefined_fd', (), 1),
+        # 0xfd is undefined.
         MessageSpec(0xfe, 'active_sensing', (), 1),
         MessageSpec(0xff, 'reset', (), 1),
     ]

@@ -74,13 +74,21 @@ class Parser(object):
         if 0xf8 <= byte <= 0xff:
             if self._spec:
                 if self._bytes[0] == 0xf0:
+                    try:
+                        spec = get_spec(byte)
+                    except LookupError:
+                        return
                     self._deliver(Message(byte))
                 else:
                     # Realtime message arrived inside a non-sysex
                     # message. Discard the message we were parsing.
                     self._reset()
             else:
-                self._spec = get_spec(byte)
+                try:
+                    self._spec = get_spec(byte)
+                except LookupError:
+                    return  # Skip unknown status byte.
+
                 self._bytes = [byte]
 
         elif byte == 0xf7:
@@ -91,7 +99,10 @@ class Parser(object):
             self._reset()
         else:
             # Start of new message
-            self._spec = get_spec(byte)
+            try:
+                self._spec = get_spec(byte)
+            except LookupError:
+                return  # Skip unknown status byte.
             self._bytes = [byte]
 
     def _handle_data_byte(self, byte):
