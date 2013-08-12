@@ -98,7 +98,7 @@ class Parser(object):
 
         # If we have a complete messages, deliver it.
         if self._spec and len(self._bytes) == self._spec.length:
-            self._deliver(build_message(self._spec, self._bytes))
+            self._deliver()
             self._reset()
 
     def feed(self, data):
