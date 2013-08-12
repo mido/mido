@@ -1,7 +1,7 @@
 """
 MIDI over TCP/IP.
 """
-
+import sys
 import time
 import socket
 import select
@@ -9,6 +9,8 @@ from collections import deque
 from .parser import Parser
 from .ports import MultiPort, BaseIOPort, multi_iter_pending, sleep
 from .messages import parse_string
+
+PY2 = (sys.version_info.major == 2)
 
 def _is_readable(socket):
     """Return True if there is data to be read on the socket."""
@@ -88,7 +90,13 @@ class SocketPort(BaseIOPort):
         else:
             self._socket = conn
 
-        self._file = self._socket.makefile('r+', bufsize=0)
+        if PY2:
+            kwargs = {'bufsize': 0}
+        else:
+            kwargs = {'buffering': None}
+
+        self._rfile = self._socket.makefile('rb', **kwargs)
+        self._wfile = self._socket.makefile('wb', **kwargs)
 
     def _get_device_type(self):
         return 'socket'
@@ -99,7 +107,7 @@ class SocketPort(BaseIOPort):
                 break
 
             try:
-                byte = self._file.read(1)
+                byte = self._rfile.read(1)
             except socket.error:
                 # Todo: handle this more gracefully?
                 self.close()
@@ -112,8 +120,20 @@ class SocketPort(BaseIOPort):
                 self._parser.feed_byte(ord(byte))
 
     def _send(self, message):
-        self._file.write(message.bin())
-        self._file.flush()
+        close = False
+
+        try:
+            self._wfile.write(message.bin())
+            self._wfile.flush()
+        except socket.error as err:
+            # socket.error: [Errno 32] Broken pipe
+            if err.errno == 32:
+                close = True
+            else:
+                raise
+
+        if close:
+            self.close()
 
     def _close(self):
         self._socket.close()
