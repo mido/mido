@@ -51,28 +51,22 @@ class Parser(object):
         except LookupError:
             valid = False
 
-        if self._inside_sysex:
-            if byte == 0xf7:
-                # End of sysex.
+        if self._inside_sysex and (0xf8 <= byte <= 0xff):
+            # Realtime message inside sysex.
+            # Deliver it straigh away.
+            if valid:
+                message = build_message(spec, [byte])
+                self._deliver(message)
+        elif byte == 0xf7:
+            # End of sysex.
+            if self._inside_sysex:
                 self._deliver()
-                self._reset()
-                return
-            elif 0xf8 <= byte <= 0xff:
-                # Real time message.
-                # This is allowed inside sysex.
-                if valid:
-                    # Deliver right away.
-                    message = build_message(get_spec(byte), [byte])
-                    self._deliver(message)
-                return
-            else:
-                pass  # Fall down to code below.
-
-        if valid:
+            self._reset()
+        elif valid:
             # Start new message.
             self._spec = spec
             self._bytes = [byte]
-            self._inside_sysex = byte == 0xf0
+            self._inside_sysex = (byte == 0xf0)
         else:
             # Ignore message.
             self._reset()
