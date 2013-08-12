@@ -24,12 +24,12 @@ with mido.open_output(portname) as port:
         while 1:
             note = random.choice(notes)
 
-            message = mido.Message('note_on', note=note, velocity=100)
+            message = mido.Message('note_on', note=note)
             print('Sending {}'.format(message))
             port.send(message)
             time.sleep(0.05)
             
-            message = mido.Message('note_off', note=note, velocity=100)
+            message = mido.Message('note_off', note=note)
             print('Sending {}'.format(message))
             port.send(message)
             time.sleep(0.1)
