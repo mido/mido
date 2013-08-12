@@ -26,7 +26,6 @@ import timeit
 from .ports import BaseOutput
 from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage
-from ._types import signed, unsigned
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -226,13 +225,17 @@ class MidiFile:
             if not bytearray(magic) == bytearray(b'MThd'):
                 raise IOError('MThd not found. Probably not a MIDI file')
 
-            # Skip header size. (It's always 6, referring to the size
-            # of the next three shorts.)
-            self._file.read_long()
+            # This is always 6 for any file created under the MIDI 1.0
+            # specification, but this allows for future expansion.
+            header_size = self._file.read_long()
 
             self.format = self._file.read_short()
             number_of_tracks = self._file.read_short()
-            self.division = signed('short', self._file.read_short())
+            self.division = self._file.read_short()
+
+            # Skip the rest of the header.
+            for _ in range(header_size - 6):
+                self._file.read_byte()
 
             for i in range(number_of_tracks):
                 self.tracks.append(self._read_track())
@@ -461,7 +464,7 @@ class MidiFile:
             self._file.write_long(6)  # Header size. (Next three shorts.)
             self._file.write_short(self.format)
             self._file.write_short(len(self.tracks))
-            self._file.write_short(unsigned('short', self.division))
+            self._file.write_short(self.division)
 
             for track in self.tracks:
                 bytes = []
