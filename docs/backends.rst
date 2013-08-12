@@ -1,6 +1,8 @@
-=========
 Backends
 =========
+
+Selecting Backend
+------------------
 
 Mido comes with backends for PortMidi and RtMidi, and an incomplete
 one for Pygame. The default is PortMidi.
