@@ -21,7 +21,7 @@ def _is_readable(socket):
     
     return bool(rlist)
 
-class Server(MultiPort):
+class PortServer(MultiPort):
     # Todo: queue size.
 
     def __init__(self, host, portno, backlog=1):

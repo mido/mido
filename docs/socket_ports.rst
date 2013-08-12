@@ -15,11 +15,11 @@ Sending Messages to a Server
 
 First, let's import some things::
 
-    from mido.sockets import Server, connect
+    from mido.sockets import PortServer, connect
 
 After that, a simple server is only two lines::
 
-    for message in Server('localhost', 8080):
+    for message in PortServer('localhost', 8080):
         print(message)
 
 You can then connect to the server and send it messages::
@@ -37,7 +37,7 @@ Turning Things on their Head
 If you want the server to send messages the client, you can instead
 do::
 
-    server = Server('localhost', 8080):
+    server = PortServer('localhost', 8080):
     while 1:
         server.send(message)
         ...
@@ -60,10 +60,10 @@ ports. This makes it easy to write simple servers, but you don't have
 any control connections and the way messages are sent and received.
 
 To get more control, you can ignore all the other methods of the
-Server object and use only ``accept()``. Here's a simple server
-implemented this way::
+``PortServer`` object and use only ``accept()``. Here's a simple
+server implemented this way::
 
-    with Server('localhost', 8080) as server:
+    with PortServer('localhost', 8080) as server:
         while 1:
             client = server.accept()
             for message in client:
@@ -80,7 +80,7 @@ there is connection yet.
 
 Using this, you can write the server any way you like, for example::
 
-    with Server('localhost', 8080) as server:
+    with PortServer('localhost', 8080) as server:
         clients = []
         while 1:
             # Handle connections.

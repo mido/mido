@@ -18,7 +18,7 @@ else:
 try:
     (hostname, portno) = sockets.parse_address(address)
     print('Serving on {}'.format(address))
-    with sockets.Server(hostname, portno) as server:
+    with sockets.PortServer(hostname, portno) as server:
         for message in server:
             print(message)
 except KeyboardInterrupt:
