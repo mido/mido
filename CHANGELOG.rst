@@ -1,4 +1,10 @@
-1.0.1 - 2013-07-31
+1.0.3 - 2013-07-12
+-------------------
+
+* bugfix: __exit__() didn't close port.
+
+
+1.0.2 - 2013-07-31
 -------------------
 
 * fixed some errors in the documentation.

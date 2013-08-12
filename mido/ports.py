@@ -54,6 +54,7 @@ class BasePort(object):
         return self
 
     def __exit__(self, type, value, traceback):
+        self.close()
         return False
 
     def __repr__(self):
