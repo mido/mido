@@ -5,7 +5,7 @@
 
 * changed repr format of message to start with "message".
 
-* removed support for undefined messages.
+* removed support for undefined messages. (0xf4, 0xf5, 0xf7, 0xf9 and 0xfd.)
 
 * default value of velocity is now 64 (0x40).
   (This is the recommended default for devices that don't support velocity.)
