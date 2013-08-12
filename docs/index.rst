@@ -50,12 +50,13 @@ Contents
    installing
    about_midi
    tutorial
-   message_types
    parsing_and_encoding
+   backends
    midi_files
    socket_ports
    string_encoding
    new_port_types
+   message_types
    lib
    license
    author
