@@ -5,6 +5,8 @@
 
 * changed repr format of message to start with "message".
 
+* removed support for undefined messages.
+
 
 1.0.2 - 2013-07-31
 -------------------

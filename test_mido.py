@@ -301,10 +301,11 @@ class TestParser(unittest.TestCase):
         self.assertRaises(ValueError, parser.feed_byte, 256)    
 
     # Todo: Parser should not crash when parsing random data
-    def test_parse_random_bytes(self):
+    def not_test_parse_random_bytes(self):
+        r = random.Random('a_random_seed')
         parser = mido.Parser()
         for _ in range(10000):
-            byte = random.randrange(256)
+            byte = r.randrange(256)
             parser.feed_byte(byte)
 
     def test_running_status(self):
@@ -334,5 +335,23 @@ class TestParser(unittest.TestCase):
         self.assertTrue(len(messages) == 1)
         self.assertTrue(messages[0].type == 'tune_request')
  
+    def test_undefined_messages(self):
+        """The parser should ignore undefined status bytes and sysex_end."""
+        messages = mido.parse_all([0xf4, 0xf5, 0xf7, 0xf9, 0xfd])
+        self.assertTrue(messages == [])
+
+    def test_realtime_inside_sysex(self):
+        """Realtime message inside sysex should be delivered first."""
+        messages = mido.parse_all([0xf0, 0, 0xfb, 0, 0xf7])
+        self.assertTrue(len(messages) == 2)
+        self.assertTrue(messages[0].type == 'continue')
+        self.assertTrue(messages[1].type == 'sysex')
+
+    def test_undefined_realtime_inside_sysex(self):
+        """Undefined realtime message inside sysex should ignored."""
+        messages = mido.parse_all([0xf0, 0, 0xf5, 0xf9, 0, 0xf7])
+        self.assertTrue(len(messages) == 1)
+        self.assertTrue(messages[0].type == 'sysex')
+
 if __name__ == '__main__':
     unittest.main()
