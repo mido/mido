@@ -365,6 +365,19 @@ class TestParser(unittest.TestCase):
         messages = mido.parse_all([0xf4, 0xf5, 0xf7, 0xf9, 0xfd])
         self.assertTrue(messages == [])
 
+    def test_realtime_inside_sysex(self):
+        """Realtime message inside sysex should be delivered first."""
+        messages = mido.parse_all([0xf0, 0, 0xfb, 0, 0xf7])
+        self.assertTrue(len(messages) == 2)
+        self.assertTrue(messages[0].type == 'continue')
+        self.assertTrue(messages[1].type == 'sysex')
+
+    def test_undefined_realtime_inside_sysex(self):
+        """Undefined realtime message inside sysex should ignored."""
+        messages = mido.parse_all([0xf0, 0, 0xf5, 0xf9, 0, 0xf7])
+        self.assertTrue(len(messages) == 1)
+        self.assertTrue(messages[0].type == 'sysex')
+
 
 class TestSockets(unittest.TestCase):
     
