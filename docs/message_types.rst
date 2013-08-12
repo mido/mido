@@ -42,7 +42,7 @@ note      0..127                  0
 program   0..127                  0
 song      0..127                  0
 value     0..127                  0
-velocity  0..127                  0
+velocity  0..127                  64
 data      (0..127, 0..127, ...)   () (empty tuple)
 pitch     -8192..8191             0
 pos       0..16383                0

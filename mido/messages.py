@@ -278,18 +278,20 @@ class Message(BaseMessage):
 
     def _set_attributes_to_default_values(self, type_):
         for name in self._spec.arguments:
-            if name == 'data':
-                self.data = ()
+            if name == 'velocity':
+                self._set('velocity', 0x40)
             elif name == 'channel':
                 # This is a channel message, so if the first
                 # argument to this function was a status_byte,
                 # the lower 4 bits will contain the channel.
                 if isinstance(type_, int):
-                    self.channel = type_ & 0x0f
+                    self._set('channel', type_ & 0x0f)
                 else:
-                    self.channel = 0
+                    self._set('channel', 0)
+            elif name == 'data':
+                self._set('data', ())
             else:
-                setattr(self, name, 0)
+                self._set(name, 0)
         self._set('time', 0)
 
     def _override_attributes(self, parameters):

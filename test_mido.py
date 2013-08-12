@@ -188,7 +188,7 @@ class TestStringFormat(unittest.TestCase):
         f = mido.messages._format_as_string
 
         msg = Message('note_on', channel=9)
-        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=0 time=0')
+        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=64 time=0')
 
         msg = Message('sysex', data=(1, 2, 3))
         self.assertEqual(f(msg), 'sysex data=(1,2,3) time=0')

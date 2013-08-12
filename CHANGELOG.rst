@@ -7,6 +7,9 @@
 
 * removed support for undefined messages.
 
+* default value of velocity is now 64 (0x40).
+  (This is the recommended default for devices that don't support velocity.)
+
 
 1.0.2 - 2013-07-31
 -------------------
