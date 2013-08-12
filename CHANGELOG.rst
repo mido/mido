@@ -3,6 +3,8 @@
 
 * bugfix: __exit__() didn't close port.
 
+* changed repr format of message to start with "message".
+
 
 1.0.2 - 2013-07-31
 -------------------

@@ -40,14 +40,14 @@ Parsing
 To parse a message, you can use ``mido.parse_string()``::
 
     >>> parse_string('control_change control=1 value=122 time=0.5')
-    <control_change message channel=0, control=1, value=122, time=0.5>
+    <message control_change channel=0, control=1, value=122, time=0.5>
 
 Parameters that are left out are set to their default
 values. ``ValueError`` is raised if the message could not be
 parsed. Extra whitespace is ignored::
 
     >>> parse_string('  control_change   control=1  value=122')
-    <control_change message channel=0, control=1, value=122, time=0>
+    <message control_change channel=0, control=1, value=122, time=0>
 
 To parse messages from a stream, you can use
 ``mido.messages.parse_string_stream()``::

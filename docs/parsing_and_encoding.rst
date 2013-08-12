@@ -41,7 +41,7 @@ functions and one class that make this easy.
 To parse a single message::
 
     >>> mido.parse([0x92, 0x10, 0x20])
-    <note_on message channel=0, note=16, velocity=32, time=0>
+    <message note_on channel=0, note=16, velocity=32, time=0>
 
 ``parse()`` will only return the first message in the byte stream. To
 get all messages, use ``parse_all()``.
@@ -55,12 +55,12 @@ messages. Here are a few examples of how it can be used::
     >>> p.pending()
     1
     >>> p.get_message()
-    <note_on message channel=0, note=16, velocity=32, time=0>
+    <message note_on channel=0, note=16, velocity=32, time=0>
     >>> p.feed_byte(0x90)
     >>> p.feed_byte(0x10)
     >>> p.feed_byte(0x20)
     >>> p.get_message()
-    <note_on message channel=0, note=16, velocity=32, time=0>
+    <message note_on channel=0, note=16, velocity=32, time=0>
 
 `get_message()` will return `None` if there are no messages ready to
 be gotten.
