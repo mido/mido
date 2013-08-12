@@ -32,14 +32,17 @@ designed to be as straight forward and Pythonic as possible.
 
 Mido is short for MIDi Objects.
 
-The latest stable version of the source code is available at:
-http://github.com/olemb/mido/
 
-The latest development version (incomplete and probably buggy) can
-be found at: http://github.com/olemb/mido/tree/develop/
+Source Code
+------------
+
+Latest version of the code: http://github.com/olemb/mido/ .
+
+Latest development version: http://github.com/olemb/mido/tree/develop/
 
 
-Contents:
+Contents
+------------
 
 .. toctree::
    :maxdepth: 2
