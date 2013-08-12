@@ -105,6 +105,8 @@ class PortCommon(object):
 
         api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(api)
+        if virtual:
+            self._device_type = 'virtual {}'.format(self._device_type)
 
     def _close(self):
         self._rt.close_port()
