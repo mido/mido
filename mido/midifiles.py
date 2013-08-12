@@ -26,6 +26,7 @@ import timeit
 from .ports import BaseOutput
 from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage
+from ._types import signed, unsigned
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -231,7 +232,7 @@ class MidiFile:
 
             self.format = self._file.read_short()
             number_of_tracks = self._file.read_short()
-            self.division = self._file.read_short()
+            self.division = signed('short', self._file.read_short())
 
             for i in range(number_of_tracks):
                 self.tracks.append(self._read_track())
@@ -460,7 +461,7 @@ class MidiFile:
             self._file.write_long(6)  # Header size. (Next three shorts.)
             self._file.write_short(self.format)
             self._file.write_short(len(self.tracks))
-            self._file.write_short(self.division)
+            self._file.write_short(unsigned('short', self.division))
 
             for track in self.tracks:
                 bytes = []
