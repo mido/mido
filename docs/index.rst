@@ -30,6 +30,7 @@ designed to be as straight forward and Pythonic as possible.
     >>> msg2 = msg.copy(program=9)
     <message program_change channel=2, program=9, time=0>
 
+
 Mido is short for MIDi Objects.
 
 
@@ -71,4 +72,3 @@ Indices and tables
 * :ref:`modindex`
 
 * :ref:`search`
-

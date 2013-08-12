@@ -45,15 +45,17 @@ note         0..127                  0
 program      0..127                  0
 song         0..127                  0
 value        0..127                  0
-velocity     0..127                  0
+velocity     0..127                  64
 data         (0..127, 0..127, ...)   () (empty tuple)
 pitch        -8192..8191             0
 pos          0..16383                0
 time         any integer or float    0
 ========     ======================  ================
 
-``velocity`` for ``note_off`` is release velocity, that is how quickly the
-note was released. Few instruments support this.
+``velocity`` is how fast the note was struck or released. It defaults
+to 64 so that if you don't set it, you will still get a reasonable
+value. (64 is the recommended default for devices that don't support
+it attack or release velocity.)
 
 The ``time`` parameter is not included in the encoded message, and is
 (currently) not used by Mido in any way. You can use it for whatever

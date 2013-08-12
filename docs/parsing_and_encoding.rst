@@ -24,45 +24,51 @@ For the full table of MIDI binary encoding, see:
 Parsing Messages
 -----------------
 
-Mido comes with a parser that parses byte streams. Each input port
-comes with a parser built in (available internally as ``self._parser``).
+If you're implementing a new port type or support for a binary file
+format, you may need to parse binary MIDI messages. Mido has a few
+functions and one class that make this easy.
 
-If you want to parse data from another source, you can create your own parser
-object::
+To parse a single message::
+
+    >>> mido.parse([0x92, 0x10, 0x20])
+    <message note_on channel=0, note=16, velocity=32, time=0>
+
+``parse()`` will only return the first message in the byte stream. To
+get all messages as a list, use ``parse_all()``::
+
+    >>> mido.parse_all([0x92, 0x10, 0x20, 0x82, 0x10, 0x20])
+    [<message note_on channel=2, note=16, velocity=32, time=0>,
+     <message note_off channel=2, note=16, velocity=32, time=0>]
+
+The functions are just shortcuts for the full ``Parser`` class. This
+is the parser used inside input ports to parse incoming messages.
+Here are a few examples of how it can be used::
 
     >>> p = mido.Parser()
-
-You can then feed it bytes individually or in chunks::
+    >>> p.feed([0x90, 0x10, 0x20])
+    >>> p.pending()
+    1
+    >>> p.get_message()
+    <message note_on channel=0, note=16, velocity=32, time=0>
 
     >>> p.feed_byte(0x90)
     >>> p.feed_byte(0x10)
     >>> p.feed_byte(0x20)
     >>> p.feed([0x80, 0x10, 0x20])
-
-You can then fetch parsed messages out of the parser one by one or by
-iteration::
-
-    >>> p.pending()
-    2
-    >>> p.get_message()
     <message note_on channel=0, note=16, velocity=32, time=0>
-    >>> for message in p:
-    ...     print(message)
-    <message note_off channel=0, note=16, velocity=32, time=0>
 
-`feed()` accepts any iterable that generates integers in 0..255.
-The parser will skip and stray status bytes or data bytes, so you can
+``feed()`` accepts any iterable that generates integers in 0..255. The
+parser will skip and stray status bytes or data bytes, so you can
 safely feed it random data and see what comes out the other end.
 
-There are a couple of shortcuts for when you only want to parse one message
-or a short list of bytes::
+``get_message()`` will return ``None`` if there are no messages ready
+to be gotten.
 
-    >>> mido.parse([0x92, 0x10, 0x20])
-    <message note_on channel=0, note=16, velocity=32, time=0>
+You can also fetch parsed messages out of the parser by iterating over
+it::
 
-    >>> mido.parse_all([0x92, 0x10, 0x20, 0x82, 0x10, 0x20])
-    <message note_on channel=0, note=16, velocity=32, time=0>
-    <message note_off channel=0, note=16, velocity=32, time=0>
-
-The messages will stay in an internal queue intil you pull them out
-with `get_message()` or `for message in parser:`.
+    >>> p.feed([0x92, 0x10, 0x20, 0x82, 0x10, 0x20])
+    >>> for message in p:
+    ...    print(message)
+    note_on channel=2 note=16 velocity=32 time=0
+    note_off channel=2 note=16 velocity=32 time=0

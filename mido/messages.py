@@ -387,7 +387,9 @@ class Message(BaseMessage):
 
         # Set default values.
         for name in spec.arguments:
-            if name == 'data':
+            if name == 'velocity':
+                self.__dict__['velocity'] = 0x40
+            elif name == 'data':
                 self.__dict__['data'] = ()
             else:
                 self.__dict__[name] = 0

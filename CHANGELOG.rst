@@ -18,7 +18,8 @@
 
 * added support for SMPTE time code quarter frames.
 
-* port constructors can now take keyword arguments.
+* port constructors and ``open_*()`` functions can now take keyword
+  arguments.
 
 * output ports now have reset() and panic() methods.
 
@@ -26,28 +27,32 @@
   and MIDO_DEFAULT_IOPORT. If these are set, the open_*() functions
   will use them instead of the backend's default ports.
 
-* added ports.Broadcast, a port contains a list of ports and
-  sends its messages to all of these.
+* added new meta ports MultiPort and EchoPort.
 
 * added new examples and updated the old ones.
 
 * format_as_string() now takes an include_time argument (defaults to True)
   so you can leave out the time attribute.
 
-* added new virtual ports MultiPort and EchoPort.
-
-* sleep time in poll and wait inside sockets can now be changed.
-
-* removed the message type 'sysex_end'. It had no use and only caused problems.
+* sleep time inside sockets can now be changed.
 
 * Message() no longer accepts a status byte as its first argument. (This was
   only meant to be used internally.)
 
-* removed undefined_xx messages. They served no purpose, and could not
-  be handled in any meaningful way.
+* Added (experimental) support for callbacks in PortMidi backend using threads.
 
-* Added (experimental) support for callbacks in PortMidi backend
-  using threads.
+
+1.0.3 - 2013-07-12
+-------------------
+
+* bugfix: __exit__() didn't close port.
+
+* changed repr format of message to start with "message".
+
+* removed support for undefined messages. (0xf4, 0xf5, 0xf7, 0xf9 and 0xfd.)
+
+* default value of velocity is now 64 (0x40).
+  (This is the recommended default for devices that don't support velocity.)
 
 
 1.0.2 - 2013-07-31

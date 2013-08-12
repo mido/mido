@@ -32,16 +32,21 @@ create a new message, you can do::
     <message note_on channel=0, note=60, velocity=100, time=0>
 
 All message parameters are optional, and if not explicitly set, will
-default to ``0`` (or ``()`` for sysex data)::
+default to ``0``. The exceptions are velocity which will be 64 and
+``sysex_data`` which will be ``()``::
 
     >>> Message('note_on')
-    <message note_on channel=0, note=0, velocity=0, time=0>
-    >>> Message('sysex')
-    <message sysex data=() time=0>
+    <message note_on channel=0, note=0, velocity=64, time=0>
 
-This means that it's important to remember to pass the ``velocity``
-parameter for ``note_on`` messages, or the note will interpreted as a
-``note_off`` on many devices.
+    >>> Message('note_off')
+    <message note_off channel=0, note=0, velocity=64, time=0>
+
+    >>> Message('sysex')
+    <message sysex data=(), time=0>
+
+64 is half way between 0 and 127, which means you can leave it out and
+still have a reasonable value. (This is the recommended default for
+devices that don't support velocity.)
 
 The parameters for each message type are listed in
 :doc:`message_types`.
@@ -233,7 +238,7 @@ messages are available::
     >>> port.pending()
     2
     >>> port.receive()
-    <message message channel=2, note=60, velocity=50, time=0>
+    <message note_on channel=2, note=60, velocity=50, time=0>
     >>> port.receive()
     <message note_on channel=2, note=72, velocity=50, time=0>
     >>> port.receive()

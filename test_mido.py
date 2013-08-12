@@ -217,7 +217,7 @@ class TestStringFormat(unittest.TestCase):
         f = mido.messages.format_as_string
 
         msg = Message('note_on', channel=9)
-        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=0 time=0')
+        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=64 time=0')
 
         msg = Message('sysex', data=(1, 2, 3))
         self.assertEqual(f(msg), 'sysex data=(1,2,3) time=0')
@@ -377,7 +377,6 @@ class TestParser(unittest.TestCase):
         messages = mido.parse_all([0xf0, 0, 0xf5, 0xf9, 0, 0xf7])
         self.assertTrue(len(messages) == 1)
         self.assertTrue(messages[0].type == 'sysex')
-
 
 class TestSockets(unittest.TestCase):
     
