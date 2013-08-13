@@ -293,72 +293,6 @@ class BaseMessage(object):
 
         return self.bytes() == other.bytes()
 
-def build_message(spec, bytes):
-    """Build message from bytes.
-
-    This is used by Parser and MidiFile. bytes is a full list
-    of bytes for the message including the status byte. For sysex
-    messages, the end byte is not included. Examples:
-
-        build_message(spec, [0x80, 20, 100])
-        build_message(spec, [0xf0, 1, 2, 3])
-
-    No type or value checking is done, so you need to do that before you
-    call this function. 0xf7 is not allowed as status byte.
-    """
-    message = Message.__new__(Message)
-    attrs = message.__dict__
-    message.__dict__.update({
-            'type': spec.type,
-            '_spec': spec,
-            'time': 0,
-            })
-
-    # This could be written in a more general way, but most messages
-    # are note_on or note_off so doing it this way is faster.
-    if spec.type in ['note_on', 'note_off']:
-        message.__dict__.update({
-                'channel': bytes[0] & 0x0f,
-                'note': bytes[1],
-                'velocity': bytes[2],
-                })
-        return message
-
-    elif spec.type == 'control_change':
-        message.__dict__.update({
-                'channel': bytes[0] & 0x0f,
-                'control': bytes[1],
-                'value': bytes[2],
-                })
-        return message
-
-    elif spec.status_byte < 0xf0:
-        # Channel message. The most common type.
-        if spec.type == 'pitchwheel':
-            pitch = bytes[1] | ((bytes[2] << 7) + MIN_PITCHWHEEL)
-            arguments = {'pitch': pitch}
-        else:
-            arguments = dict(zip(spec.arguments, bytes))
-        # Replace status_bytes sneakily with channel.
-        arguments['channel'] = bytes[0] & 0x0f
-
-    elif spec.type == 'sysex':
-        arguments = {'data': tuple(bytes[1:])}
-
-    elif spec.type == 'songpos':
-        pos = bytes[1] | (bytes[2] << 7)
-        arguments = {'pos': pos}
-
-    elif spec.type == 'quarter_frame':
-        arguments = {'frame_type': bytes[1] >> 4,
-                     'frame_value' : bytes[1] & 15}
-
-    else:
-        arguments = dict(zip(spec.arguments, bytes[1:]))
-
-    message.__dict__.update(arguments)
-    return message
-
 class Message(BaseMessage):
     """
     MIDI message class.
@@ -491,6 +425,73 @@ class Message(BaseMessage):
             return len(self.data) + 2
         else:
             return self._spec.length
+
+
+def build_message(spec, bytes):
+    """Build message from bytes.
+
+    This is used by Parser and MidiFile. bytes is a full list
+    of bytes for the message including the status byte. For sysex
+    messages, the end byte is not included. Examples:
+
+        build_message(spec, [0x80, 20, 100])
+        build_message(spec, [0xf0, 1, 2, 3])
+
+    No type or value checking is done, so you need to do that before you
+    call this function. 0xf7 is not allowed as status byte.
+    """
+    message = Message.__new__(Message)
+    attrs = message.__dict__
+    message.__dict__.update({
+            'type': spec.type,
+            '_spec': spec,
+            'time': 0,
+            })
+
+    # This could be written in a more general way, but most messages
+    # are note_on or note_off so doing it this way is faster.
+    if spec.type in ['note_on', 'note_off']:
+        message.__dict__.update({
+                'channel': bytes[0] & 0x0f,
+                'note': bytes[1],
+                'velocity': bytes[2],
+                })
+        return message
+
+    elif spec.type == 'control_change':
+        message.__dict__.update({
+                'channel': bytes[0] & 0x0f,
+                'control': bytes[1],
+                'value': bytes[2],
+                })
+        return message
+
+    elif spec.status_byte < 0xf0:
+        # Channel message. The most common type.
+        if spec.type == 'pitchwheel':
+            pitch = bytes[1] | ((bytes[2] << 7) + MIN_PITCHWHEEL)
+            arguments = {'pitch': pitch}
+        else:
+            arguments = dict(zip(spec.arguments, bytes))
+        # Replace status_bytes sneakily with channel.
+        arguments['channel'] = bytes[0] & 0x0f
+
+    elif spec.type == 'sysex':
+        arguments = {'data': tuple(bytes[1:])}
+
+    elif spec.type == 'songpos':
+        pos = bytes[1] | (bytes[2] << 7)
+        arguments = {'pos': pos}
+
+    elif spec.type == 'quarter_frame':
+        arguments = {'frame_type': bytes[1] >> 4,
+                     'frame_value' : bytes[1] & 15}
+
+    else:
+        arguments = dict(zip(spec.arguments, bytes[1:]))
+
+    message.__dict__.update(arguments)
+    return message
 
 
 def parse_time(text):
