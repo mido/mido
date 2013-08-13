@@ -117,42 +117,6 @@ class MetaMessage(BaseMessage):
         return '<meta message type={}, data={!r}, time={}>'.format(
             self.meta_type, self.data, self.time)
 
-# Todo: This should use build_message() from mido.parser
-
-def build_message(bytes, spec=None):
-    if spec is None:
-        spec = mido.messages.get_spec(bytes[0])
-
-    type_ = spec.type
-
-    if type_ == 'sysex':
-        arguments = {'data': bytes[1:]}
-
-    elif type_ == 'pitchwheel':
-        pitch = bytes[1]
-        pitch |= ((bytes[2] << 7) + MIN_PITCHWHEEL)
-        arguments = {'pitch': pitch}
-
-    elif type_ == 'songpos':
-        pos = bytes[1]
-        pos |= ([2] << 7)
-        arguments = {'pos': pos}
-
-    else:
-        if bytes[0] < 0xf0:
-            # Channel message. Skip channel.
-            attribute_names = spec.arguments[1:]
-        else:
-            attribute_names = spec.arguments
-
-        arguments = dict(zip(attribute_names, bytes[1:]))
-
-    # Note: we're using the status byte here, not type.
-    # If we used type, the channel would be discarded.
-    return mido.Message(bytes[0], **arguments)
-
-
-
 
 class MidiFile:
     def __init__(self, filename):
@@ -238,7 +202,7 @@ class MidiFile:
         # dbg('    bytes for message: {}'.format(bytes))
 
         # message = mido.parse(bytes)
-        message = build_message(bytes)
+        message = build_message(spec, bytes)
         # dbg('    {}'.format(message))
 
         return message

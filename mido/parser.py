@@ -14,7 +14,7 @@ available in the top level module.
 
 import sys
 from collections import deque
-from .messages import Message, MIN_PITCHWHEEL, get_spec
+from .messages import Message, build_message, get_spec
 
 PY2 = (sys.version_info.major == 2)
 
@@ -37,82 +37,39 @@ class Parser(object):
     def _reset(self):
         self._spec = None
         self._bytes = []
+        self._inside_sysex = False
 
-    def _build_message(self):
-        type_ = self._spec.type
-
-        if type_ == 'sysex':
-            arguments = {'data': self._bytes[1:]}
-
-        elif type_ == 'pitchwheel':
-            pitch = self._bytes[1]
-            pitch |= ((self._bytes[2] << 7) + MIN_PITCHWHEEL)
-            arguments = {'pitch': pitch}
-
-        elif type_ == 'songpos':
-            pos = self._bytes[1]
-            pos |= (self._bytes[2] << 7)
-            arguments = {'pos': pos}
-
-        else:
-            if self._bytes[0] < 0xf0:
-                # Channel message. Skip channel.
-                attribute_names = self._spec.arguments[1:]
-            else:
-                attribute_names = self._spec.arguments
-
-            arguments = dict(zip(attribute_names, self._bytes[1:]))
-
-        # Note: we're using the status byte here, not type.
-        # If we used type, the channel would be discarded.
-        return Message(self._bytes[0], **arguments)
-
-    def _deliver(self, message):
+    def _deliver(self, message=None):
+        if not message:
+            message = build_message(self._spec, self._bytes)
         self._parsed_messages.append(message)
 
     def _handle_status_byte(self, byte):
-        if 0xf8 <= byte <= 0xff:
-            if self._spec:
-                if self._bytes[0] == 0xf0:
-                    try:
-                        spec = get_spec(byte)
-                    except LookupError:
-                        return
-                    self._deliver(Message(byte))
-                else:
-                    # Realtime message arrived inside a non-sysex
-                    # message. Discard the message we were parsing.
-                    self._reset()
-            else:
-                try:
-                    self._spec = get_spec(byte)
-                except LookupError:
-                    return  # Skip unknown status byte.
+        try:
+            spec = get_spec(byte)
+            valid = True
+        except LookupError:
+            valid = False
 
-                self._bytes = [byte]
-
+        if self._inside_sysex and (0xf8 <= byte <= 0xff):
+            # Realtime message inside sysex.
+            # Deliver it straigh away.
+            if valid:
+                message = build_message(spec, [byte])
+                self._deliver(message)
         elif byte == 0xf7:
-            # End of sysex
-            if self._spec and self._bytes[0] == 0xf0:
-                # We were inside a sysex message. Deliver it.
-                self._deliver(self._build_message())
+            # End of sysex.
+            if self._inside_sysex:
+                self._deliver()
             self._reset()
-        else:
-            # Start of new message
-            try:
-                self._spec = get_spec(byte)
-            except LookupError:
-                return  # Skip unknown status byte.
+        elif valid:
+            # Start new message.
+            self._spec = spec
             self._bytes = [byte]
-
-    def _handle_data_byte(self, byte):
-        self._bytes.append(byte)
-
-        if self._spec:
-            pass
+            self._inside_sysex = (byte == 0xf0)
         else:
-            # Todo: handle delta time.
-            pass
+            # Ignore message.
+            self._reset()
 
     def feed_byte(self, byte):
         """Feed one MIDI byte into the parser.
@@ -130,23 +87,13 @@ class Parser(object):
         if byte >= 0x80:
             self._handle_status_byte(byte)
         else:
-            self._handle_data_byte(byte)
+            # Data byte.
+            self._bytes.append(byte)
 
         # If we have a complete messages, deliver it.
         if self._spec and len(self._bytes) == self._spec.length:
-            self._deliver(self._build_message())
-
-            if self._bytes[0] < 0xf0:
-                # Delete data bytes, but keep the
-                # status byte around to handle running
-                # status.
-
-                self._reset()
-                #del self._bytes[1:]
-            else:
-                # System common messages have no running status.
-                self._reset()
-
+            self._deliver()
+            self._reset()
 
     def feed(self, data):
         """Feed MIDI data to the parser.
