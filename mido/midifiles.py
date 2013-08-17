@@ -472,10 +472,12 @@ class MidiFile:
             for track in self.tracks:
                 bytes = []
                 for message in track:
-                    if message.type == 'reset':
-                        # Todo: should be IOError?
-                        raise ValueError(
-                            'reset message is not allowed in a MIDI file')
+                    if not isinstance(message, MetaMessage):
+                        if message._spec.status_byte >= 0xf8:
+                            raise ValueError(
+                                ("realtime message '{}' is not "
+                                 "allowed in a MIDI file".format(
+                                        message.type)))
 
                     # Todo: running status?
                     bytes += self._encode_delta_time(message.time)
