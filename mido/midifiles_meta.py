@@ -139,11 +139,14 @@ class MetaSpec_set_tempo(MetaSpec):
 
 class MetaSpec_time_signature(MetaSpec):
     type_byte = 0x58
+    # Todo: these need more sensible names.
+    # Todo: use 
     attributes = ['numerator',
                   'denominator',
                   'clocks_per_click',
                   'notatated_32nd_notes_per_beat']
-    defaults = [0, 0, 0, 0]
+    # Todo: find good defaults here.
+    defaults = [4, 4, 0, 0]
 
     def encode(self, values):
         return [values[name] for name in self.attributes]
