@@ -17,6 +17,10 @@ from .types import signed, unsigned
 
 PY2 = (sys.version_info.major == 2)
 
+def reverse_table(table):
+    """Return value: key for dictionary."""
+    return {value: key for (key, value) in table.items()}
+
 _key_signature_lookup = {
         (-7, 0): ('Cb', 'major'),
         (-6, 0): ('Gb', 'major'),
@@ -49,6 +53,7 @@ _key_signature_lookup = {
         (6, 1): ('D#', 'minor'),
         (7, 1): ('A#', 'minor'),
     }
+_key_signature_lookup.update(reverse_table(_key_signature_lookup))
 
 
 def encode_text(text):
@@ -164,11 +169,15 @@ class MetaSpec_key_signature(MetaSpec):
     defaults = ['C', 'minor']
 
     def encode(self, values):
-        return [unsigned('byte', values['key']), values['mode']]
+        key, mode = _key_signature_lookup[values['key'], values['mode']]
+        return [unsigned('byte', key), mode]
 
     def decode(self, data):
-        return {'key': signed('byte', data[0]),
-                'mode': data[1]}
+        key = signed('byte', data[0])
+        mode = data[1]
+        key, mode = _key_signature_lookup[(key, mode)]
+        return {'key': key,
+                'mode': mode}
 
 _specs = {}
 

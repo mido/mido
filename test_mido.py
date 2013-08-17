@@ -394,7 +394,18 @@ class TestSockets(unittest.TestCase):
         self.assertRaises(ValueError, parse_address, ':65536')  # Out of range.
 
 class TestMidiFiles(unittest.TestCase):
-    pass
+    def test_meta_specs(self):
+        """Test that meta specs are implemented correctly."""
+        from mido.midifiles_meta import MetaMessage, _specs
+
+        for key in _specs:
+            # Specs are indexed by name and type byte.
+            # Make sure we don't check them twice.
+            if isinstance(key, int):
+                spec = _specs[key]
+                m = MetaMessage(spec.type)
+                b = m.bytes()[3:]  # [3:] skips 0xff, type and length.
+                self.assertTrue(b == spec.encode(spec.decode(b)))
 
 if __name__ == '__main__':
     unittest.main()
