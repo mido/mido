@@ -110,6 +110,6 @@ def set_backend(path):
         if name.split('_')[0] in ['open', 'get']:
             glob[name] = getattr(backend, name)
 
-set_backend(os.environ.get('MIDO_BACKEND', '.portmidi'))
+set_backend(Backend(load=False, use_environ=True))
 
 del os, absolute_import

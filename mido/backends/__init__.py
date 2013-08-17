@@ -21,17 +21,25 @@ def find_dotted_module(name, path=None):
     except ImportError:
         raise ImportError('No module named {}'.format(name))
 
+DEFAULT_BACKEND = '.portmidi'
+
 class Backend(object):
     # Todo: doc strings.
-    def __init__(self, module, load=False, use_environ=False, api=None):
+    def __init__(self, path=None, load=False, use_environ=False, api=None):
         self.use_environ = use_environ
 
-        if isinstance(module, types.ModuleType):
+        if path is None:
+            path = os.environ.get('MIDO_BACKEND', DEFAULT_BACKEND)
+            if path == '':
+                path = DEFAULT_BACKEND
+
+        if isinstance(path, types.ModuleType):
+            module = path
             self.name = module.__name__
             self._module = module
             self.api = api
         else:
-            self.name = module
+            self.name = path
             self._module = None
             
             # Expand shortcut for included backend.
