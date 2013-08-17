@@ -323,6 +323,7 @@ class MidiFile:
                 message = self._read_message(status_byte)
 
             message.time = delta
+            track.append(message)
 
             if message.type == 'end_of_track':
                 break

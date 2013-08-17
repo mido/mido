@@ -172,16 +172,22 @@ class MetaSpec_key_signature(MetaSpec):
 
 _specs = {}
 
-def add_specs():
+# Todo: rethink this before launch.
+#       Should this take an object or a class?
+def add_meta_spec(klass):
+    spec = klass()
+    if not hasattr(spec, 'type'):
+        name = klass.__name__.replace('MetaSpec_', '')
+        spec.type = name
+    _specs[spec.byte] = spec
+    _specs[spec.type] = spec
+    
+def _add_builtin_meta_specs():
     for name in globals():
         if name.startswith('MetaSpec_'):
-            spec = globals()[name]()
-            name = name.replace('MetaSpec_', '')
-            spec.type = name
-            _specs[spec.byte] = spec
-            _specs[name] = spec
+            add_meta_spec(globals()[name])
 
-add_specs()
+_add_builtin_meta_specs()
 
 
 def _build_meta_message(type_, data):
