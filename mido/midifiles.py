@@ -472,6 +472,11 @@ class MidiFile:
             for track in self.tracks:
                 bytes = []
                 for message in track:
+                    if message.type == 'reset':
+                        # Todo: should be IOError?
+                        raise ValueError(
+                            'reset message is not allowed in a MIDI file')
+
                     # Todo: running status?
                     bytes += self._encode_delta_time(message.time)
                     bytes += message.bytes()
