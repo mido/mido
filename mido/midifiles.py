@@ -370,7 +370,7 @@ class MidiFile:
 
     length = property(fget=_get_length)
 
-    def play(self, yield_meta_messages=False):
+    def play(self, meta_messages=False):
         """Play back all tracks.
 
         The generator will sleep between each message, so that
@@ -401,15 +401,13 @@ class MidiFile:
             else:
                 sleep_time = 0.0
 
-            if yield_meta_messages or isinstance(message, Message):
+            if meta_messages or isinstance(message, Message):
                 message.time = sleep_time
                 yield message
 
             now += delta
             if message.type == 'set_tempo':
                 seconds_per_tick = self._compute_tick_time(message.tempo)
-
-    __iter__ = play
 
     def _encode_delta_time(self, delta):
         bytes = []

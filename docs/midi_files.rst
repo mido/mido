@@ -34,23 +34,20 @@ method. (More on this below.)
 Playing Back The File
 ----------------------
 
-You can play back a MIDI file by iterating over it and sending the
-messages to a port. The generator will call ``time.sleep()`` before
-each messages is yielded, so you get them at the correct time::
+You can play back a MIDI file with the play() method::
 
-    for message in mid:
+    for message in mid.play():
         output.send(message)
 
-The ``time`` attribute will be set to delta time (the number of
-seconds slept before the message was yielded).
+This will yield each message at the appropriate time for playback.
 
-If you also want to receive meta messages, you can call the ``play()``
-method directly. Meta messages can not be sent to ports, so they need
-to be filtered out::
+If you also want to receive meta messages, you can pass
+``meta_messages=True``. Meta messages can not be sent to ports, so
+they need to be filtered out::
 
     from mido.midifiles import MetaMessage
 
-    for message in mid:
+    for message in mid.play(meta_messages=True):
         if isinstance(message, MetaMessage):
             print('Got meta message', MetaMessage)
         else:

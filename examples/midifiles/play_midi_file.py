@@ -20,7 +20,7 @@ with mido.open_output(port_name) as output:
     try:
         print(output)
         with MidiFile(sys.argv[1]) as midi_file:
-            for message in midi_file:
+            for message in midi_file.play():
                 print(message)
                 output.send(message)
     except KeyboardInterrupt:

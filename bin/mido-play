@@ -33,7 +33,7 @@ with mido.open_output() as output:
                 for i, track in enumerate(midi_file.tracks):
                     print('  {:2d}: {!r}'.format(i, track.name.strip()))
 
-                for message in midi_file.play(yield_meta_messages=True):
+                for message in midi_file.play(meta_messages=True):
                     if isinstance(message, mido.Message):
                         # print(message)
                         output.send(message)
