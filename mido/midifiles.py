@@ -47,6 +47,7 @@ class ByteReader(object):
         """Read one byte."""
         try:
             byte = self._buffer[self.pos]
+            # print('{:02x}'.format(byte))
             self.pos += 1
             return byte
         except IndexError:
@@ -65,6 +66,8 @@ class ByteReader(object):
         """Read n bytes and return as a list."""
         i = self.pos
         ret = self._buffer[i:i + n]
+        # for byte in ret:
+        #     print('  {:02x} {!r}'.format(byte, chr(byte)))
         if len(ret) < n:
             raise self._eof
 
@@ -472,6 +475,7 @@ class MidiFile:
                     # Todo: running status?
                     bytes += self._encode_delta_time(message.time)
                     bytes += message.bytes()
+
                 if not self._has_end_of_track(track):
                     # Write end_of_track.
                     bytes += self._encode_delta_time(0)

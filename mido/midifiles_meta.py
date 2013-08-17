@@ -227,7 +227,7 @@ class MetaMessage(BaseMessage):
 
     def bytes(self):
         data = self._spec.encode(self.__dict__)
-        return [0xff, len(data)] + data
+        return [0xff, self._spec.byte, len(data)] + data
     
     def __repr__(self):
         attributes = []
@@ -256,5 +256,4 @@ class UnknownMetaMessage(MetaMessage):
                                                                 self.data)
 
     def bytes(self):
-        return [0xff, len(self.data)] + self.data
-
+        return [0xff, self.byte, len(self.data)] + self.data
