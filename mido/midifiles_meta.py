@@ -1,5 +1,14 @@
 """
 Meta messages for MIDI files.
+
+Todo:
+     - what if an unknown meta message is implemented and someone depends on
+       the 'data' attribute?
+     - 'byte' should be renamed to something more meaningful.
+     - 'values' is not a good name for a dictionary.
+     - type and value safety?
+     - copy().
+     - expose _key_signature_lookup?
 """
 from __future__ import print_function, division
 import sys
@@ -42,8 +51,11 @@ _key_signature_lookup = {
     }
 
 
-def parse_text(data):
-    # Todo: which encoding?
+def encode_text(text):
+    return [ord(char) for char in text]  
+
+def decode_text(data):
+        # Todo: which encoding?
     if PY2:
         convert = unichr
     else:
@@ -53,125 +65,190 @@ def parse_text(data):
     return text
 
 
-def decode_text(message, data):
-    message.value = parse_text(data)
-
-
-def decode_track_name(message, data):
-    message.name = parse_text(data)
-
-
-def decode_midi_port(message, data):
-    # Todo: check if this has to be run through decode_signed_byte
-    message.port_number = data[0]
-
-
-def decode_copyright(message, data):
-    message.text = parse_text(data)
-
-
-def decode_time_signature(message, data):
-    # Todo: NEEDS WORK
-    # data[0] = numerator of time signature
-    # data[1] = denominator of time signature
-    # data[2] = number of MIDI clocks in metronome click (erm... yeahhh....)
-    # data[3] = "number of notated 32nd notes in a MIDI quarter note"
-    
-    # message.time_numerator =
-    # message.time_denominator =
-    # message.clocks_per_click =
-    # message. NOT SURE FOR THIS ONE
-    message.data = "TIME SIGNATURE MESSAGE, IN DEVELOPMENT"
-
-
-def decode_key_signature(message, data):
-    key, mode = _key_signature_lookup[(signed('byte', data[0]), data[1])]
-    message.key = key
-    message.mode = mode
-
-
-def decode_set_tempo(message, data):
-    # Tempo is in microseconds per beat.
-    message.tempo = (data[0] << 16) | (data[1] << 8) | (data[2])
-
-
-def decode_text(message, data):
-    # Todo: which encoding?
-
-    text = ''.join([chr(byte) for byte in data])
-    if PY2:
-        text = unicode(text, 'ascii')
-
-    message.text = text
-
-
-def decode_end_of_track(message, data):
-    pass  # No data.
-
-
 def encode_tempo(tempo):
     return [tempo >> 16, tempo >> 8 & 0xff, tempo & 0xff]
 
 def decode_tempo(data):
     return (data[0] << 16) | (data[1] << 8) | (data[2])
 
+class MetaSpec(object):
+    pass
+
+class MetaSpec_text(MetaSpec):
+    byte = 0x01
+    attributes = ['text']
+    defaults = ['']
+
+    def encode(self, values):
+        return encode_text(values['text'])
+
+    def decode(self, data):
+        return {'text': decode_text(data)}
+
+class MetaSpec_copyright(MetaSpec_text):
+    byte = 0x02
+
+class MetaSpec_track_name(MetaSpec):
+    byte = 0x03
+    attributes = ['name']
+    defaults = ['']
+    
+    def encode(self, values):
+        return encode_text(values['name'])
+
+    def decode(self, data):
+        return {'name': decode_text(data)}
+
+class MetaSpec_midi_port(MetaSpec):
+    byte = 0x21
+    attributes = ['port']
+    defaults = [0]
+
+    def encode(self, values):
+        return [values['port']]
+
+    def decode(self, data):
+        return {'port': data[0]}
+
+class MetaSpec_end_of_track(MetaSpec):
+    byte = 0x2f
+    attributes = []
+    defaults = []
+
+    def encode(self, values):
+        return []
+
+    def decode(self, data):
+        return {}
+
+class MetaSpec_set_tempo(MetaSpec):
+    byte = 0x51
+    attributes = ['tempo']
+    defaults = [500000]
+
+    def encode(self, values):
+        return encode_tempo(values['tempo'])
+
+    def decode(self, data):
+        return {'tempo': decode_tempo(data)}
+
+class MetaSpec_time_signature(MetaSpec):
+    byte = 0x58
+    attributes = ['numerator',
+                  'denominator',
+                  'clocks_per_click',
+                  'notatated_32nd_notes_per_beat']
+    defaults = [0, 0, 0, 0]
+
+    def encode(self, values):
+        return [values[name] for name in self.attributes]
+
+    def decode(self, data):
+        # Todo: NEEDS WORK
+        # data[0] = numerator of time signature
+        # data[1] = denominator of time signature
+        # data[2] = number of MIDI clocks in metronome click
+        #           (erm... yeahhh....)
+        # data[3] = "number of notated 32nd notes in a MIDI quarter note"
+
+        # message.time_numerator =
+        # message.time_denominator =
+        # message.clocks_per_click =
+        # message. NOT SURE FOR THIS ONE
+
+        return {name: value for (name, value) in zip(self.attributes, data)}
+
+class MetaSpec_key_signature(MetaSpec):
+    byte = 0x59
+    attributes = ['key', 'mode']
+    defaults = ['C', 'minor']
+
+    def encode(self, values):
+        return [unsigned('byte', values['key']), values['mode']]
+
+    def decode(self, data):
+        return {'key': signed('byte', data[0]),
+                'mode': data[1]}
+
+_specs = {}
+
+def add_specs():
+    for name in globals():
+        if name.startswith('MetaSpec_'):
+            spec = globals()[name]()
+            name = name.replace('MetaSpec_', '')
+            spec.type = name
+            _specs[spec.byte] = spec
+            _specs[name] = spec
+
+add_specs()
+
+
+def _build_meta_message(type_, data):
+    # Todo: handle unknown type.
+    try:
+        spec = _specs[type_]
+    except KeyError:
+        return UnknownMetaMessage(type_, data)
+
+    return MetaMessage(spec, **spec.decode(data))
 
 class MetaMessage(BaseMessage):
-    _type_name_lookup = {
-        # Todo: this needs to be a two_way lookup when we implement
-        # saving of files.
-        0x01: 'text',
-        0x02: 'copyright',
-        0x2f: 'end_of_track',
-        0x51: 'set_tempo',
-        0x03: 'track_name',
-        0x58: 'time_signature',
-        0x59: 'key_signature',
-        0x21: 'midi_port',
-        }
-
-    def __init__(self, type_, data=None, **kwargs):
-        self.time = 0  # Todo: will this be set by the parser?
-
-        if isinstance(type_, int):
-            try:
-                self.type = self._type_name_lookup[type_]
-            except KeyError:
-                self.type = 'meta_unknown_{:02x}'.format(type_)
-                self.data = data
-            self._data = data
-
-            try:
-                decode = globals()['decode_{}'.format(self.type)]
-                decode(self, data)
-            except LookupError:
-                pass  # Ignore unknown type.
-
+    def __init__(self, type_, **kwargs):
+        # Todo: allow type_ to be a type byte?
+        # Todo: handle unknown type.
+        if isinstance(type_, MetaSpec):
+            self._spec = type_
         else:
-            # This is a copy.
-            self.type = type_
-            self.__dict__.update(kwargs)
+            self._spec = _specs[type_]
 
-    def _get_values(self):
-        values = self.__dict__.copy()
-        for key in ['_data', 'type']:
-            if key in values:
-                del values[key]
-        
-        return values
+        self.type = self._spec.type
 
-    def copy(self, **overrides):
-        """Return a copy of the meta message.
+        for name in kwargs:
+            if name == 'time':
+                continue  # Time is always allowed.
 
-        Attributes can be overriden with keyword arguments.
-        """
-        values = self._get_values()
-        values.update(overrides)
-        return MetaMessage(self.type, **values)
+            if name not in self._spec.attributes:
+                raise ValueError(
+                    '{} is not a valid argument for this message type'.format(
+                        name))
+
+        for name, value in zip(self._spec.attributes, self._spec.defaults):
+            setattr(self, name, value)
+        self.time = 0
+
+        self.__dict__.update(kwargs)
+
+    def bytes(self):
+        data = self._spec.encode(self.__dict__)
+        return [0xff, len(data)] + data
+    
+    def __repr__(self):
+        attributes = []
+        for name in self._spec.attributes:
+            attributes.append('{}={!r}'.format(name, getattr(self, name)))
+        attributes = ', '.join(attributes)
+        if attributes:
+            attributes = (' {}'.format(attributes))
+
+        return '<meta message {}{} time={}>'.format(self.type,
+                                                    attributes, self.time)
+
+# Todo: what if one of these messages is implemented?
+class UnknownMetaMessage(MetaMessage):
+    def __init__(self, type_, data=None, time=0):
+        if data is None:
+            data = []
+
+        self.type = 'unknown'
+        self.byte = type_
+        self.data = data
+        self.time = time
 
     def __repr__(self):
-        # Todo: this needs to be changed, but don't worry about it for now.
-        #return '<meta message type={}, data={!r}, time={}>'.format(
-        #    self.type, self._data, self.time)
-        values = self._get_values()
-        return '{} {!r}'.format(self.type, self._get_values())
+        return '<unknown meta message 0x{:02x} data={!r}'.format(self.byte,
+                                                                self.data)
+
+    def bytes(self):
+        return [0xff, len(self.data)] + self.data
+

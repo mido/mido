@@ -3,6 +3,8 @@ MIDI file reading and playback.
 
 Todo:
     - make it more fault tolerant (handle errors in MIDI files?)
+    - 'reset' message should not be allowed in MIDI file.
+      (Does this apply to all real time messages?)
 
 References:
 
@@ -25,7 +27,7 @@ import time
 import timeit
 from .ports import BaseOutput
 from .messages import build_message, Message, get_spec
-from .midifiles_meta import MetaMessage
+from .midifiles_meta import MetaMessage, _build_meta_message
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -134,7 +136,6 @@ class DeltaTimer(object):
             seconds_per_beat = self.tempo / 1000000.0
             seconds_per_tick = seconds_per_beat / float(self.division)
             new_delta = int(delta / seconds_per_tick)
-            print(delta, new_delta)
             return new_delta
 
         return delta
@@ -265,7 +266,7 @@ class MidiFile:
         type = self._file.read_byte()
         length = self._file.read_byte()
         data = self._file.read_list(length)
-        return MetaMessage(type, data)
+        return _build_meta_message(type, data)
 
     def _read_sysex(self):
         length = self._file.read_byte()
@@ -322,7 +323,6 @@ class MidiFile:
                 message = self._read_message(status_byte)
 
             message.time = delta
-            track.append(message)
 
             if message.type == 'end_of_track':
                 break
@@ -467,25 +467,13 @@ class MidiFile:
             for track in self.tracks:
                 bytes = []
                 for message in track:
-                    # Todo: support meta messages.
-                    if isinstance(message, MetaMessage):
-                        if message.type == 'end_of_track':
-                            # Write end of track.
-                            bytes += self._encode_delta_time(message.time)
-                            bytes += [0xff, 0x2f, 0]
-                        else:
-                            # Todo: implement bytes() method in MetaMessage.
-                            # For now just skip this message.
-                            continue
-                    else:
-                        # Todo: running status?
-                        bytes += self._encode_delta_time(message.time)
-                        bytes += message.bytes()
-
+                    # Todo: running status?
+                    bytes += self._encode_delta_time(message.time)
+                    bytes += message.bytes()
                 if not self._has_end_of_track(track):
                     # Write end_of_track.
                     bytes += self._encode_delta_time(0)
-                    bytes += [0xff, 0x2f, 0]
+                    bytes += MetaMessage('end_of_track').bytes()
 
                 self._file.write(b'MTrk')
                 self._file.write_long(len(bytes))
