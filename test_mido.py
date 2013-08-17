@@ -394,35 +394,7 @@ class TestSockets(unittest.TestCase):
         self.assertRaises(ValueError, parse_address, ':65536')  # Out of range.
 
 class TestMidiFiles(unittest.TestCase):
-    def test_encode_decode_signed_byte(self):
-        from mido.midifiles_meta import encode_signed_byte, decode_signed_byte
-
-        for i in range(0, 256):
-            self.assertEqual(i, encode_signed_byte(decode_signed_byte(i)))
-
-    def test_encode_signed_byte(self):
-        from mido.midifiles_meta import encode_signed_byte as encode
-
-        self.assertEqual(encode(0), 0)
-        self.assertEqual(encode(-1), 255)
-
-        self.assertRaises(ValueError, encode, 'not an integer')
-        self.assertRaises(ValueError, encode, None)
-        # Out of range
-        self.assertRaises(ValueError, encode, -129)
-        self.assertRaises(ValueError, encode, 128)
-
-    def test_decode_signed_byte(self):
-        from mido.midifiles_meta import decode_signed_byte as decode
-
-        self.assertEqual(decode(0), 0)
-        self.assertEqual(decode(255), -1)
-
-        self.assertRaises(ValueError, decode, 'not an integer')
-        self.assertRaises(ValueError, decode, None)
-        # Out of range
-        self.assertRaises(ValueError, decode, -1)
-        self.assertRaises(ValueError, decode, 256)
+    pass
 
 if __name__ == '__main__':
     unittest.main()

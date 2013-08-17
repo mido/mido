@@ -4,37 +4,9 @@ Meta messages for MIDI files.
 from __future__ import print_function, division
 import sys
 from .messages import BaseMessage
+from .types import signed, unsigned
 
 PY2 = (sys.version_info.major == 2)
-
-def encode_signed_byte(byte):
-    """Encode integer as two's complement signed byte."""
-    if not isinstance(byte, int):
-        raise ValueError('argument must be an integer')
-
-    if not -128 <= byte <= 127:
-        raise ValueError('signed byte must be in range -128..127')
-
-    if byte < 0:
-        # -1 => 255, -2 => 254, ..., -128 => 128
-        return 256 + byte
-    else:
-        return byte
-
-
-def decode_signed_byte(byte):
-    """Convert two's complement signed byte to integer."""
-    if not isinstance(byte, int):
-        raise ValueError('argument must be an integer')
-
-    if not 0 <= byte <= 255:
-        raise ValueError('signed byte must be in range -128..127')
-
-    if byte > 127:
-        # 255 => -1, 254 => -2, ..., 128 => -128
-        return byte - 256
-    else:
-        return byte
 
 _key_signature_lookup = {
         (-7, 0): ('Cb', 'major'),
@@ -113,7 +85,7 @@ def decode_time_signature(message, data):
 
 
 def decode_key_signature(message, data):
-    key, mode = _key_signature_lookup[(decode_signed_byte(data[0]), data[1])]
+    key, mode = _key_signature_lookup[(signed('byte', data[0]), data[1])]
     message.key = key
     message.mode = mode
 
