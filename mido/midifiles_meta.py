@@ -4,7 +4,7 @@ Meta messages for MIDI files.
 Todo:
      - what if an unknown meta message is implemented and someone depends on
        the 'data' attribute?
-     - 'byte' should be renamed to something more meaningful.
+     - is 'type_byte' a good name?
      - 'values' is not a good name for a dictionary.
      - type and value safety?
      - copy().
@@ -80,7 +80,7 @@ class MetaSpec(object):
     pass
 
 class MetaSpec_text(MetaSpec):
-    byte = 0x01
+    type_byte = 0x01
     attributes = ['text']
     defaults = ['']
 
@@ -91,10 +91,10 @@ class MetaSpec_text(MetaSpec):
         return {'text': decode_text(data)}
 
 class MetaSpec_copyright(MetaSpec_text):
-    byte = 0x02
+    type_byte = 0x02
 
 class MetaSpec_track_name(MetaSpec):
-    byte = 0x03
+    type_byte = 0x03
     attributes = ['name']
     defaults = ['']
     
@@ -105,7 +105,7 @@ class MetaSpec_track_name(MetaSpec):
         return {'name': decode_text(data)}
 
 class MetaSpec_midi_port(MetaSpec):
-    byte = 0x21
+    type_byte = 0x21
     attributes = ['port']
     defaults = [0]
 
@@ -116,7 +116,7 @@ class MetaSpec_midi_port(MetaSpec):
         return {'port': data[0]}
 
 class MetaSpec_end_of_track(MetaSpec):
-    byte = 0x2f
+    type_byte = 0x2f
     attributes = []
     defaults = []
 
@@ -127,7 +127,7 @@ class MetaSpec_end_of_track(MetaSpec):
         return {}
 
 class MetaSpec_set_tempo(MetaSpec):
-    byte = 0x51
+    type_byte = 0x51
     attributes = ['tempo']
     defaults = [500000]
 
@@ -138,7 +138,7 @@ class MetaSpec_set_tempo(MetaSpec):
         return {'tempo': decode_tempo(data)}
 
 class MetaSpec_time_signature(MetaSpec):
-    byte = 0x58
+    type_byte = 0x58
     attributes = ['numerator',
                   'denominator',
                   'clocks_per_click',
@@ -164,7 +164,7 @@ class MetaSpec_time_signature(MetaSpec):
         return {name: value for (name, value) in zip(self.attributes, data)}
 
 class MetaSpec_key_signature(MetaSpec):
-    byte = 0x59
+    type_byte = 0x59
     attributes = ['key', 'mode']
     defaults = ['C', 'minor']
 
@@ -188,7 +188,7 @@ def add_meta_spec(klass):
     if not hasattr(spec, 'type'):
         name = klass.__name__.replace('MetaSpec_', '')
         spec.type = name
-    _specs[spec.byte] = spec
+    _specs[spec.type_byte] = spec
     _specs[spec.type] = spec
     
 def _add_builtin_meta_specs():
@@ -236,7 +236,7 @@ class MetaMessage(BaseMessage):
 
     def bytes(self):
         data = self._spec.encode(self.__dict__)
-        return [0xff, self._spec.byte, len(data)] + data
+        return [0xff, self._spec.type_byte, len(data)] + data
     
     def __repr__(self):
         attributes = []
@@ -251,18 +251,19 @@ class MetaMessage(BaseMessage):
 
 # Todo: what if one of these messages is implemented?
 class UnknownMetaMessage(MetaMessage):
-    def __init__(self, type_, data=None, time=0):
+    def __init__(self, type_byte, data=None, time=0):
         if data is None:
             data = []
 
-        self.type = 'unknown'
-        self.byte = type_
+        self.type = 'meta_unknown'
+        self.type_byte = type_byte
         self.data = data
         self.time = time
 
     def __repr__(self):
-        return '<unknown meta message 0x{:02x} data={!r}'.format(self.byte,
-                                                                self.data)
+        return '<unknown meta message 0x{:02x} data={!r}'.format(
+            self.type_byte,
+            self.data)
 
     def bytes(self):
-        return [0xff, self.byte, len(self.data)] + self.data
+        return [0xff, self.type_byte, len(self.data)] + self.data
