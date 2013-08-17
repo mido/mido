@@ -109,6 +109,13 @@ def decode_end_of_track(message, data):
     pass  # No data.
 
 
+def encode_tempo(tempo):
+    return [tempo >> 16, tempo >> 8 & 0xff, tempo & 0xff]
+
+def decode_tempo(data):
+    return (data[0] << 16) | (data[1] << 8) | (data[2])
+
+
 class MetaMessage(BaseMessage):
     _type_name_lookup = {
         # Todo: this needs to be a two_way lookup when we implement
