@@ -9,6 +9,17 @@ Todo:
      - type and value safety?
      - copy().
      - expose _key_signature_lookup?
+
+
+     -Meta Types to be added:
+            - 0x00, Sequence Number
+            - 0x04, Instrument Name
+            - 0x05, Lyrics
+            - 0x06, Marker
+            - 0x07, Cue Marker
+            - 0x20, Channel Prefix
+            - 0x54, SMPTE offset
+            - 0x7F, Sequencer message
 """
 from __future__ import print_function, division
 import sys
@@ -91,7 +102,16 @@ class MetaSpec_text(MetaSpec):
         return {'text': decode_text(data)}
 
 class MetaSpec_copyright(MetaSpec_text):
+    # Is the attribute name "text" appropriate for a copyright?
     type_byte = 0x02
+    attributes = ['text']
+    defaults = ['']
+
+    def encode(self, values):
+        return encode_text(values['text'])
+
+    def decode(self, data):
+        return {'text': decode_text(data)}
 
 class MetaSpec_track_name(MetaSpec):
     type_byte = 0x03
@@ -152,18 +172,6 @@ class MetaSpec_time_signature(MetaSpec):
         return [values[name] for name in self.attributes]
 
     def decode(self, data):
-        # Todo: NEEDS WORK
-        # data[0] = numerator of time signature
-        # data[1] = denominator of time signature
-        # data[2] = number of MIDI clocks in metronome click
-        #           (erm... yeahhh....)
-        # data[3] = "number of notated 32nd notes in a MIDI quarter note"
-
-        # message.time_numerator =
-        # message.time_denominator =
-        # message.clocks_per_click =
-        # message. NOT SURE FOR THIS ONE
-
         return {name: value for (name, value) in zip(self.attributes, data)}
 
 class MetaSpec_key_signature(MetaSpec):
