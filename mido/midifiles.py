@@ -507,21 +507,20 @@ class MidiFile:
     def __exit__(self, type, value, traceback):
         return False
 
-    def print_tracks(self, showOnlyMetaMessages=False):
-        # Todo: The argument "showOnlyMetaMessages" does not work as expected. Most likely an easy tweak is still required.
+    def print_tracks(self, meta_only=False):
         """Prints out all messages in a .midi file.
 
-        May take argument showOnlyMetaMessages to show only meta messages.
+        May take argument meta_only to show only meta messages.
 
         Use:
-        MidiFile.print_tracks() -> will print all messages
-        MidiFile.print_tracks(showOnlyMetaMessages) -> will print only MetaMessages
+        print_tracks() -> will print all messages
+        print_tracks(meta_only=True) -> will print only MetaMessages
         """
         for i, track in enumerate(self.tracks):
             print('=== Track {}\n'.format(i))
             for message in track:
-                if not isinstance(message, MetaMessage) and showOnlyMetaMessages:
+                if not isinstance(message, MetaMessage) and meta_only:
                     pass
                 else:
-                    print('  {!r}\n'.format(message))
+                    print('{!r}\n'.format(message))
                 
