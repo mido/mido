@@ -508,6 +508,7 @@ class MidiFile:
         return False
 
     def print_tracks(self, showOnlyMetaMessages=False):
+        # Todo: The argument "showOnlyMetaMessages" does not work as expected. Most likely an easy tweak is still required.
         """Prints out all messages in a .midi file.
 
         May take argument showOnlyMetaMessages to show only meta messages.
