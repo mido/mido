@@ -102,16 +102,7 @@ class MetaSpec_text(MetaSpec):
         return {'text': decode_text(data)}
 
 class MetaSpec_copyright(MetaSpec_text):
-    # Is the attribute name "text" appropriate for a copyright?
     type_byte = 0x02
-    attributes = ['text']
-    defaults = ['']
-
-    def encode(self, values):
-        return encode_text(values['text'])
-
-    def decode(self, data):
-        return {'text': decode_text(data)}
 
 class MetaSpec_track_name(MetaSpec):
     type_byte = 0x03
