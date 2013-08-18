@@ -68,18 +68,10 @@ _key_signature_lookup.update(reverse_table(_key_signature_lookup))
 
 
 def encode_text(text):
-    return [ord(char) for char in text]  
+    return list(bytearray(text.encode(_charset)))
 
 def decode_text(data):
-        # Todo: which encoding?
-    if PY2:
-        convert = unichr
-    else:
-        convert = chr
-
-    text = ''.join([convert(byte) for byte in data])
-    return text
-
+    return bytearray(data).decode(_charset)
 
 def encode_tempo(tempo):
     return [tempo >> 16, tempo >> 8 & 0xff, tempo & 0xff]

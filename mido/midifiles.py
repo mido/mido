@@ -29,6 +29,7 @@ import timeit
 from .ports import BaseOutput
 from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage, _build_meta_message
+from . import midifiles_meta
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -197,9 +198,11 @@ class RecordPort(BaseOutput):
 
 
 class MidiFile:
-    def __init__(self, name=None, format=1, ticks_per_beat=None):
+    def __init__(self, name=None, format=1, ticks_per_beat=None,
+                 charset='latin1'):
         self.name = name
         self.tracks = []
+        self.charset = charset
 
         if name is None:
             if format not in range(3):
@@ -224,6 +227,8 @@ class MidiFile:
         return track
 
     def _load(self):
+        midifiles_meta._charset = self.charset
+
         with ByteReader(self.name) as self._file:
             # Read header (16 bytes)
             magic = self._file.read_list(4)
@@ -451,6 +456,7 @@ class MidiFile:
         Raises ValueError both filename and self.name are None,
         or if a format 1 file has != one track.
         """
+        midifiles_meta._charset = self.charset
 
         if self.format == 0 and len(self.tracks) != 1:
             raise ValueError('format 1 file must have exactly 1 track')
