@@ -213,7 +213,7 @@ class MetaMessage(BaseMessage):
             self._spec = _specs[type_]
 
         self.type = self._spec.type
-        self.type_byte = hex(type_byte)
+        self.type_byte = "0x{:02x}".format(type_byte)
 
         for name in kwargs:
             if name == 'time':
