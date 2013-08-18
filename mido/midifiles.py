@@ -154,7 +154,7 @@ class MidiTrack(list):
             if message.type == 'track_name':
                 return message.name
         else:
-            return 'u'
+            return u''
 
     def _set_name(self, name):
         # Find the first track_name message and modify it.
@@ -518,10 +518,10 @@ class MidiFile:
         MidiFile.print_tracks(showOnlyMetaMessages) -> will print only MetaMessages
         """
         for i, track in enumerate(self.tracks):
-            sys.stdout.write('=== Track {}\n'.format(i))
+            print('=== Track {}\n'.format(i))
             for message in track:
                 if not isinstance(message, MetaMessage) and showOnlyMetaMessages:
                     pass
                 else:
-                    sys.stdout.write('  {!r}\n'.format(message))
+                    print('  {!r}\n'.format(message))
                 
