@@ -21,11 +21,6 @@ Todo:
             - 0x54, SMPTE offset
             - 0x7F, Sequencer message
 
-    !!!!TAKE THIS OUT BEFORE COMMITING!!!!
-    OK, can you change the UnknownMetaMessage class to use raw_data
-    instead of data, and also change _build_meta_message() to add it to
-    all messages? (And also to add type_byte to normal meta messages.)
-
 """
 from __future__ import print_function, division
 import sys
