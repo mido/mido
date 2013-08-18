@@ -523,7 +523,7 @@ class MidiFile:
         print_tracks(meta_only=True) -> will print only MetaMessages
         """
         for i, track in enumerate(self.tracks):
-            print('=== Track {}\n'.format(i))
+            print('=== Track {}'.format(i))
             for message in track:
                 if not isinstance(message, MetaMessage) and meta_only:
                     pass

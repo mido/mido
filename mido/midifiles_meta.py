@@ -20,6 +20,12 @@ Todo:
             - 0x20, Channel Prefix
             - 0x54, SMPTE offset
             - 0x7F, Sequencer message
+
+    !!!!TAKE THIS OUT BEFORE COMMITING!!!!
+    OK, can you change the UnknownMetaMessage class to use raw_data
+    instead of data, and also change _build_meta_message() to add it to
+    all messages? (And also to add type_byte to normal meta messages.)
+
 """
 from __future__ import print_function, division
 import sys
@@ -200,10 +206,10 @@ def _build_meta_message(type_, data):
     except KeyError:
         return UnknownMetaMessage(type_, data)
 
-    return MetaMessage(spec, **spec.decode(data))
+    return MetaMessage(spec, type_, **spec.decode(data))
 
 class MetaMessage(BaseMessage):
-    def __init__(self, type_, **kwargs):
+    def __init__(self, type_, type_byte, **kwargs):
         # Todo: allow type_ to be a type byte?
         # Todo: handle unknown type.
         if isinstance(type_, MetaSpec):
@@ -212,6 +218,7 @@ class MetaMessage(BaseMessage):
             self._spec = _specs[type_]
 
         self.type = self._spec.type
+        self.type_byte = hex(type_byte)
 
         for name in kwargs:
             if name == 'time':
@@ -240,8 +247,8 @@ class MetaMessage(BaseMessage):
         if attributes:
             attributes = (' {}'.format(attributes))
 
-        return '<meta message {}{} time={}>'.format(self.type,
-                                                    attributes, self.time)
+        return '<meta message {}{} time={} type_byte={}> '.format(self.type,
+                                                    attributes, self.time, self.type_byte)
 
 # Todo: what if one of these messages is implemented?
 class UnknownMetaMessage(MetaMessage):
@@ -251,13 +258,13 @@ class UnknownMetaMessage(MetaMessage):
 
         self.type = 'meta_unknown'
         self.type_byte = type_byte
-        self.data = data
+        self.raw_data = data
         self.time = time
 
     def __repr__(self):
-        return '<unknown meta message 0x{:02x} data={!r}'.format(
+        return '<unknown meta message 0x{:02x} raw_data={!r}'.format(
             self.type_byte,
-            self.data)
+            self.raw_data)
 
     def bytes(self):
         return [0xff, self.type_byte, len(self.data)] + self.data
