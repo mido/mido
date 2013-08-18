@@ -154,7 +154,7 @@ class MidiTrack(list):
             if message.type == 'track_name':
                 return message.name
         else:
-            return 'u'
+            return u''
 
     def _set_name(self, name):
         # Find the first track_name message and modify it.
