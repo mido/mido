@@ -522,5 +522,5 @@ class MidiFile:
                 if not isinstance(message, MetaMessage) and meta_only:
                     pass
                 else:
-                    print('{!r}\n'.format(message))
+                    print('{!r}'.format(message))
                 
