@@ -261,7 +261,7 @@ class UnknownMetaMessage(MetaMessage):
         self.time = time
 
     def __repr__(self):
-        return '<unknown meta message 0x{:02x} raw_data={!r}>'.format(
+        return '<unknown meta message _type_byte=\'0x{:02x}\' _raw_data={!r}>'.format(
             self.type_byte,
             self.raw_data)
 
