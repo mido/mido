@@ -82,19 +82,19 @@ def decode_tempo(data):
 class MetaSpec(object):
     pass
 
-#class MetaSpec_text(MetaSpec):
-#    type_byte = 0x01
-#    attributes = ['text']
-#    defaults = ['']
-#
-#    def encode(self, values):
-#        return encode_text(values['text'])
-#
-#    def decode(self, data):
-#        return {'text': decode_text(data)}
+class MetaSpec_text(MetaSpec):
+    type_byte = 0x01
+    attributes = ['text']
+    defaults = ['']
 
-#class MetaSpec_copyright(MetaSpec_text):
-#    type_byte = 0x02
+    def encode(self, values):
+        return encode_text(values['text'])
+
+    def decode(self, data):
+        return {'text': decode_text(data)}
+
+class MetaSpec_copyright(MetaSpec_text):
+    type_byte = 0x02
 
 class MetaSpec_track_name(MetaSpec):
     type_byte = 0x03
