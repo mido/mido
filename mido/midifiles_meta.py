@@ -20,7 +20,6 @@ Todo:
             - 0x20, Channel Prefix
             - 0x54, SMPTE offset
             - 0x7F, Sequencer message
-
 """
 from __future__ import print_function, division
 import sys
@@ -201,10 +200,10 @@ def _build_meta_message(type_, data):
     except KeyError:
         return UnknownMetaMessage(type_, data)
 
-    return MetaMessage(spec, type_, **spec.decode(data))
+    return MetaMessage(spec, **spec.decode(data))
 
 class MetaMessage(BaseMessage):
-    def __init__(self, type_, type_byte, **kwargs):
+    def __init__(self, type_, **kwargs):
         # Todo: allow type_ to be a type byte?
         # Todo: handle unknown type.
         if isinstance(type_, MetaSpec):
@@ -213,7 +212,6 @@ class MetaMessage(BaseMessage):
             self._spec = _specs[type_]
 
         self.type = self._spec.type
-        self.type_byte = "0x{:02x}".format(type_byte)
 
         for name in kwargs:
             if name == 'time':
@@ -242,8 +240,8 @@ class MetaMessage(BaseMessage):
         if attributes:
             attributes = (' {}'.format(attributes))
 
-        return '<meta message {}{} time={} type_byte={}> '.format(self.type,
-                                                    attributes, self.time, self.type_byte)
+        return '<meta message {}{} time={}>'.format(self.type,
+                                                    attributes, self.time)
 
 # Todo: what if one of these messages is implemented?
 class UnknownMetaMessage(MetaMessage):
@@ -263,7 +261,7 @@ class UnknownMetaMessage(MetaMessage):
         self.time = time
 
     def __repr__(self):
-        return '<unknown meta message 0x{:02x} raw_data={!r}'.format(
+        return '<unknown meta message 0x{:02x} raw_data={!r}>'.format(
             self.type_byte,
             self.raw_data)
 
