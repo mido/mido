@@ -251,13 +251,19 @@ class UnknownMetaMessage(MetaMessage):
 
         self.type = 'meta_unknown'
         self.type_byte = type_byte
-        self.data = data
+
+        raw_data = []
+
+        for number in data:
+            raw_data.append("%X" % number)
+        
+        self.raw_data = ''.join(raw_data)
         self.time = time
 
     def __repr__(self):
-        return '<unknown meta message 0x{:02x} data={!r}'.format(
+        return '<unknown meta message 0x{:02x} raw_data={!r}>'.format(
             self.type_byte,
-            self.data)
+            self.raw_data)
 
     def bytes(self):
         return [0xff, self.type_byte, len(self.data)] + self.data
