@@ -253,7 +253,13 @@ class UnknownMetaMessage(MetaMessage):
 
         self.type = 'meta_unknown'
         self.type_byte = type_byte
-        self.raw_data = data
+
+        raw_data = []
+
+        for number in data:
+            raw_data.append("%X" % number)
+        
+        self.raw_data = ''.join(raw_data)
         self.time = time
 
     def __repr__(self):
