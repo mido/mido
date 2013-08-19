@@ -82,19 +82,19 @@ def decode_tempo(data):
 class MetaSpec(object):
     pass
 
-class MetaSpec_text(MetaSpec):
-    type_byte = 0x01
-    attributes = ['text']
-    defaults = ['']
+#class MetaSpec_text(MetaSpec):
+#    type_byte = 0x01
+#    attributes = ['text']
+#    defaults = ['']
+#
+#    def encode(self, values):
+#        return encode_text(values['text'])
+#
+#    def decode(self, data):
+#        return {'text': decode_text(data)}
 
-    def encode(self, values):
-        return encode_text(values['text'])
-
-    def decode(self, data):
-        return {'text': decode_text(data)}
-
-class MetaSpec_copyright(MetaSpec_text):
-    type_byte = 0x02
+#class MetaSpec_copyright(MetaSpec_text):
+#    type_byte = 0x02
 
 class MetaSpec_track_name(MetaSpec):
     type_byte = 0x03
@@ -249,21 +249,16 @@ class UnknownMetaMessage(MetaMessage):
         if data is None:
             data = []
 
-        self.type = 'meta_unknown'
-        self.type_byte = type_byte
-
-        raw_data = []
-
-        for number in data:
-            raw_data.append("%X" % number)
-        
-        self.raw_data = ''.join(raw_data)
+        self.type = 'unknown_meta'
+        self._type_byte = type_byte
+        self._data = data
         self.time = time
 
     def __repr__(self):
-        return '<unknown meta message _type_byte=\'0x{:02x}\' _raw_data={!r}>'.format(
-            self.type_byte,
-            self.raw_data)
+        return '<unknown meta message 0x{:02x} _data={!r}, time={}>'.format(
+            self._type_byte,
+            self._data,
+            self.time)
 
     def bytes(self):
-        return [0xff, self.type_byte, len(self.data)] + self.data
+        return [0xff, self._type_byte, len(self._data)] + self._data
