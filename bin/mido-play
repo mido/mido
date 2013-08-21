@@ -8,7 +8,6 @@ Example:
 
 Todo:
 
-  - add option for output port
   - add option for printing messages
 """
 from __future__ import print_function, division
@@ -21,11 +20,16 @@ def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     arg = parser.add_argument
 
-    parser = argparse.ArgumentParser(description=__doc__)
-    arg = parser.add_argument
+    arg('--output-port',
+        help='Mido port to send output to')
+
+    arg('--quiet',
+        dest='quiet',
+        action='store_true',
+        default=False,
+        help='print nothing')
 
     arg('files',
-        # Todo: --output-port and --quiet
         metavar='FILE',
         nargs='+',
         help='MIDI file to play')
@@ -56,20 +60,22 @@ def play_file(output, filename):
 
 def main():
     try:
-        with mido.open_output() as output:
+        with mido.open_output(args.output_port) as output:
             print('Using output {!r}.'.format(output.name))
-
             output.reset()
-
-            for filename in args.files:
-                play_file(output, filename)
-
+            try:
+                for filename in args.files:
+                    play_file(output, filename)
+            finally:
+                print()
+                output.reset()
     except KeyboardInterrupt:
         pass
-    finally:
-        print()
-        output.reset()
 
 args = parse_args()
-args.quiet = False  # Todo: remove when --quiet is implemented.
+
+if args.quiet:
+    def print(*args):
+        pass
+
 main()
