@@ -14,11 +14,6 @@ if sys.argv[-1] == "publish":
     os.system("python setup.py sdist upload")
     sys.exit()
 
-# Todo: what about python 3?
-if sys.argv[-1] == "test":
-    os.system("python tests.py")
-    sys.exit()
-
 required = []
 
 setup(
@@ -35,6 +30,7 @@ setup(
                'bin/mido-ports',
                'bin/mido-serve',
                'bin/mido-forward'],
+    test_suite = 'tests',
     include_package_data=True,
     url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3

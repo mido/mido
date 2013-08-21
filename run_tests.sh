@@ -6,7 +6,7 @@
 # 
 # If you don't have Python 3, you can run tests with:
 #
-#     python test_mido.py
+#     python tests.py
 #
 # To run only one test, you can do:
 #
@@ -30,4 +30,4 @@ else
     python3=python3
 fi
 
-$python2 test_mido.py $* && $python3 test_mido.py $*
+$python2 setup.py test $* && $python3 setup.py test $*
