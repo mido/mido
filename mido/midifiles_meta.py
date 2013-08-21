@@ -28,6 +28,8 @@ from .types import signed, unsigned
 
 PY2 = (sys.version_info.major == 2)
 
+_charset = 'latin1'
+
 def reverse_table(table):
     """Return value: key for dictionary."""
     return {value: key for (key, value) in table.items()}
