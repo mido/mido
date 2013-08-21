@@ -228,6 +228,14 @@ class MetaMessage(BaseMessage):
 
         self.__dict__.update(kwargs)
 
+    def copy(self, **overrides):
+        # Todo: check attribute names (and types and values).
+        klass = self.__class__
+        message = klass.__new__(klass)
+        message.__dict__.update(self.__dict__)
+        message.__dict__.update(overrides)
+        return message
+
     def bytes(self):
         data = self._spec.encode(self.__dict__)
         return [0xff, self._spec.type_byte, len(data)] + data
