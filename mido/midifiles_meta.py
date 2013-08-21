@@ -107,6 +107,23 @@ class MetaSpec_track_name(MetaSpec):
     def decode(self, data):
         return {'name': decode_text(data)}
 
+class MetaSpec_instrument_name(MetaSpec):
+    type_byte = 0x04
+    attributes = ['instrument']
+    defaults = ['']
+
+    def encode(self, values):
+        return encode_text(values['instrument'])
+
+    def decode(self, data):
+        return {'instrument': decode_text(data)}
+
+class MetaSpec_lyrics(MetaSpec_text):
+    type_byte = 0x05
+
+class MetaSpec_marker(MetaSpec_text):
+    type_byte = 0x06
+
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
     attributes = ['port']
@@ -117,6 +134,17 @@ class MetaSpec_midi_port(MetaSpec):
 
     def decode(self, data):
         return {'port': data[0]}
+
+class MetaSpec_channel_prefix(MetaSpec):
+    type_byte = 0x20
+    attributes = ['channel']
+    defaults = [0]
+
+    def encode(self, values):
+        return [values['channel']]
+
+    def decode(self, data):
+        return {'channel': data[0]}
 
 class MetaSpec_end_of_track(MetaSpec):
     type_byte = 0x2f
@@ -172,6 +200,17 @@ class MetaSpec_key_signature(MetaSpec):
         key, mode = _key_signature_lookup[(key, mode)]
         return {'key': key,
                 'mode': mode}
+
+class MetaSpec_sequencer_specific(MetaSpec):
+    type_byte = 0x7f
+    attributes = ['data']
+    defaults = []
+
+    def encode(self, values):
+        return [values['data']]
+
+    def decode(self, data):
+        return {'data': data}
 
 _specs = {}
 
