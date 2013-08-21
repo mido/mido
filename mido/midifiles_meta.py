@@ -69,17 +69,11 @@ _key_signature_lookup = {
 _key_signature_lookup.update(reverse_table(_key_signature_lookup))
 
 
-def encode_text(text):
-    return list(bytearray(text.encode(_charset)))
-
 def decode_text(data):
     return bytearray(data).decode(_charset)
 
-def encode_tempo(tempo):
-    return [tempo >> 16, tempo >> 8 & 0xff, tempo & 0xff]
-
-def decode_tempo(data):
-    return (data[0] << 16) | (data[1] << 8) | (data[2])
+def encode_text(text):
+    return list(bytearray(text.encode(_charset)))
 
 class MetaSpec(object):
     pass
@@ -89,11 +83,11 @@ class MetaSpec_text(MetaSpec):
     attributes = ['text']
     defaults = ['']
 
-    def encode(self, values):
-        return encode_text(values['text'])
+    def decode(self, message, data):
+        message.text = decode_text(data)
 
-    def decode(self, data):
-        return {'text': decode_text(data)}
+    def encode(self, message):
+        return encode_text(message.text)
 
 class MetaSpec_copyright(MetaSpec_text):
     type_byte = 0x02
@@ -103,22 +97,22 @@ class MetaSpec_track_name(MetaSpec):
     attributes = ['name']
     defaults = ['']
     
-    def encode(self, values):
-        return encode_text(values['name'])
+    def decode(self, message, data):
+        message.name = decode_text(data)
 
-    def decode(self, data):
-        return {'name': decode_text(data)}
+    def encode(self, message):
+        return encode_text(message.name)
 
 class MetaSpec_instrument_name(MetaSpec):
     type_byte = 0x04
-    attributes = ['instrument']
+    attributes = ['name']
     defaults = ['']
 
-    def encode(self, values):
-        return encode_text(values['instrument'])
+    def decode(self, message, data):
+        message.name = decode_text(data)
 
-    def decode(self, data):
-        return {'instrument': decode_text(data)}
+    def encode(self, message):
+        return encode_text(message.name)
 
 class MetaSpec_lyrics(MetaSpec_text):
     type_byte = 0x05
@@ -131,44 +125,45 @@ class MetaSpec_midi_port(MetaSpec):
     attributes = ['port']
     defaults = [0]
 
-    def encode(self, values):
-        return [values['port']]
+    def decode(self, message, data):
+        message.port = data[0]
 
-    def decode(self, data):
-        return {'port': data[0]}
+    def encode(self, message):
+        return [message.port]
 
 class MetaSpec_channel_prefix(MetaSpec):
     type_byte = 0x20
     attributes = ['channel']
     defaults = [0]
 
-    def encode(self, values):
-        return [values['channel']]
+    def decode(self, message, data):
+        message.channel = data[0]
 
-    def decode(self, data):
-        return {'channel': data[0]}
+    def encode(self, message):
+        return [message.channel]
 
 class MetaSpec_end_of_track(MetaSpec):
     type_byte = 0x2f
     attributes = []
     defaults = []
 
-    def encode(self, values):
-        return []
+    def decode(self, message, data):
+        pass
 
-    def decode(self, data):
-        return {}
+    def encode(self, message):
+        return []
 
 class MetaSpec_set_tempo(MetaSpec):
     type_byte = 0x51
     attributes = ['tempo']
     defaults = [500000]
 
-    def encode(self, values):
-        return encode_tempo(values['tempo'])
+    def decode(self, message, data):
+        message.tempo = (data[0] << 16) | (data[1] << 8) | (data[2])
 
-    def decode(self, data):
-        return {'tempo': decode_tempo(data)}
+    def encode(self, message):
+        tempo = message.tempo
+        return [tempo >> 16, tempo >> 8 & 0xff, tempo & 0xff]
 
 class MetaSpec_time_signature(MetaSpec):
     type_byte = 0x58
@@ -181,38 +176,40 @@ class MetaSpec_time_signature(MetaSpec):
     # Todo: find good defaults here.
     defaults = [4, 4, 0, 0]
 
-    def encode(self, values):
-        return [values[name] for name in self.attributes]
+    def decode(self, message, data):
+        for name, value in zip(self.attributes, data):
+            setattr(message, name, value)
 
-    def decode(self, data):
-        return {name: value for (name, value) in zip(self.attributes, data)}
+    def encode(self, message):
+        data = []
+        for name in self.attributes:
+            data.append(getattr(message, name))
+        return data
 
 class MetaSpec_key_signature(MetaSpec):
     type_byte = 0x59
     attributes = ['key', 'mode']
     defaults = ['C', 'minor']
 
-    def encode(self, values):
-        key, mode = _key_signature_lookup[values['key'], values['mode']]
-        return [unsigned('byte', key), mode]
-
-    def decode(self, data):
+    def decode(self, message, data):
         key = signed('byte', data[0])
         mode = data[1]
-        key, mode = _key_signature_lookup[(key, mode)]
-        return {'key': key,
-                'mode': mode}
+        message.key, message.mode = _key_signature_lookup[(key, mode)]
+
+    def encode(self, message):
+        key, mode = _key_signature_lookup[message.key, message.mode]
+        return [unsigned('byte', key), mode]
 
 class MetaSpec_sequencer_specific(MetaSpec):
     type_byte = 0x7f
     attributes = ['data']
-    defaults = []
+    defaults = [[]]
 
-    def encode(self, values):
-        return [values['data']]
+    def decode(self, message, data):
+        message.data = data
 
-    def decode(self, data):
-        return {'data': data}
+    def encode(self, message):
+        return message.data
 
 _specs = {}
 
@@ -241,7 +238,9 @@ def _build_meta_message(type_, data):
     except KeyError:
         return UnknownMetaMessage(type_, data)
 
-    return MetaMessage(spec, **spec.decode(data))
+    message = MetaMessage(spec)
+    spec.decode(message, data)
+    return message
 
 class MetaMessage(BaseMessage):
     def __init__(self, type_, **kwargs):
@@ -278,7 +277,7 @@ class MetaMessage(BaseMessage):
         return message
 
     def bytes(self):
-        data = self._spec.encode(self.__dict__)
+        data = self._spec.encode(self)
         return [0xff, self._spec.type_byte, len(data)] + data
     
     def __repr__(self):

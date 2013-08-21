@@ -404,8 +404,11 @@ class TestMidiFiles(unittest.TestCase):
             if isinstance(key, int):
                 spec = _specs[key]
                 m = MetaMessage(spec.type)
-                b = m.bytes()[3:]  # [3:] skips 0xff, type and length.
-                self.assertTrue(b == spec.encode(spec.decode(b)))
+                encoded1 = m.bytes()[3:]  # [3:] skips 0xff, type and length.
+                decoded = spec.decode(m, encoded1)
+                encoded2 = spec.encode(m)
+
+                self.assertTrue(encoded1 == encoded2)
 
 if __name__ == '__main__':
     unittest.main()
