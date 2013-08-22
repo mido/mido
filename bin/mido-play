@@ -20,10 +20,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     arg = parser.add_argument
 
-    arg('--output-port',
+    arg('-o', '--output-port',
         help='Mido port to send output to')
 
-    arg('--quiet',
+    arg('-q', '--quiet',
         dest='quiet',
         action='store_true',
         default=False,
