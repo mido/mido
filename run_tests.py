@@ -39,6 +39,7 @@ def get_pythons():
     return (pythons[2], pythons[3])
 
 for python in get_pythons():
-    proc = Popen([python, 'setup.py', 'test'])
+    proc = Popen([python, 'tests.py'])
     proc.wait()
-
+    if proc.returncode != 0:
+        print('Tests failed with {}.'.format(python))

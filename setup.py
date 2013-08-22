@@ -14,6 +14,10 @@ if sys.argv[-1] == "publish":
     os.system("python setup.py sdist upload")
     sys.exit()
 
+if sys.argv[-1] == "test":
+    os.system("python run_tests.py")
+    sys.exit()
+
 required = []
 
 setup(
@@ -30,7 +34,6 @@ setup(
                'bin/mido-ports',
                'bin/mido-serve',
                'bin/mido-forward'],
-    test_suite = 'tests',
     include_package_data=True,
     url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3
