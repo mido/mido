@@ -12,9 +12,8 @@ Todo:
 
 
      -Meta Types to be added:
-            - 0x00, Sequence Number
-            - 0x07, Cue MarkerS
-            - 0x54, SMPTE offset
+            - 0x00, Sequence Numbe
+            - 0x07, Cue Marker
 """
 from __future__ import print_function, division
 import sys
@@ -176,7 +175,7 @@ class MetaSpec_SMPTE_offset(MetaSpec):
                   'sub_frames'
                 ]
     # Todo: What are some good defaults?
-    defaults = [24, 0, 0, 0, 0, 0, []]
+    defaults = [24, 0, 0, 0, 0, 0]
 
     def decode(self, message, data):
         message.frame_rate = _SMPTE_framerate_lookup[(data[0] >> 6)]
