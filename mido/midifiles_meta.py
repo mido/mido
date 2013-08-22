@@ -12,7 +12,7 @@ Todo:
 
 
      -Meta Types to be added:
-            - 0x00, Sequence Numbe
+            - 0x00, Sequence Number
             - 0x07, Cue Marker
 """
 from __future__ import print_function, division
@@ -62,12 +62,13 @@ _key_signature_lookup = {
     }
 _key_signature_lookup.update(reverse_table(_key_signature_lookup))
 
-_SMPTE_framerate_lookup = {
+_smpte_framerate_lookup = {
         0: 24,
         1: 25,
         2: 29.97
+        3: 30
     }
-_SMPTE_framerate_lookup.update(reverse_table(_SMPTE_framerate_lookup))
+_smpte_framerate_lookup.update(reverse_table(_SMPTE_framerate_lookup))
 
 def decode_text(data):
     return bytearray(data).decode(_charset)
@@ -165,7 +166,7 @@ class MetaSpec_set_tempo(MetaSpec):
         tempo = message.tempo
         return [tempo >> 16, tempo >> 8 & 0xff, tempo & 0xff]
 
-class MetaSpec_SMPTE_offset(MetaSpec):
+class MetaSpec_smpte_offset(MetaSpec):
     type_byte = 0x54
     attributes = ['frame_rate',
                   'hours',
@@ -186,9 +187,13 @@ class MetaSpec_SMPTE_offset(MetaSpec):
         message.sub_frames = data[4]
 
     def encode(self, message):
-        tempo = message.tempo
         # message.frame_rate has to be undictionaried
-        return [((_SMPTE_framerate_lookup[message.frame_rate] << 6) + message.hours), message.minutes, message.seconds, message.frames, message.sub_frames]
+        frame_rate_lookup = _smpte_framerate_lookup[message.frame_rate] << 6
+        return [frame_rate_lookup | message.hours,
+                message.minutes,
+                message.seconds,
+                message.frames,
+                message.sub_frames]
 
 class MetaSpec_time_signature(MetaSpec):
     type_byte = 0x58
