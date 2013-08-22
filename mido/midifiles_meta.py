@@ -187,7 +187,6 @@ class MetaSpec_smpte_offset(MetaSpec):
         message.sub_frames = data[4]
 
     def encode(self, message):
-        # message.frame_rate has to be undictionaried
         frame_rate_lookup = _smpte_framerate_lookup[message.frame_rate] << 6
         return [frame_rate_lookup | message.hours,
                 message.minutes,
