@@ -410,5 +410,7 @@ class TestMidiFiles(unittest.TestCase):
 
                 self.assertTrue(encoded1 == encoded2)
 
+                self.assertTrue(len(spec.attributes) == len(spec.defaults))
+
 if __name__ == '__main__':
     unittest.main()
