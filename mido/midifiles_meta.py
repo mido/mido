@@ -65,10 +65,10 @@ _key_signature_lookup.update(reverse_table(_key_signature_lookup))
 _smpte_framerate_lookup = {
         0: 24,
         1: 25,
-        2: 29.97
-        3: 30
+        2: 29.97,
+        3: 30,
     }
-_smpte_framerate_lookup.update(reverse_table(_SMPTE_framerate_lookup))
+_smpte_framerate_lookup.update(reverse_table(_smpte_framerate_lookup))
 
 def decode_text(data):
     return bytearray(data).decode(_charset)
@@ -179,7 +179,7 @@ class MetaSpec_smpte_offset(MetaSpec):
     defaults = [24, 0, 0, 0, 0, 0]
 
     def decode(self, message, data):
-        message.frame_rate = _SMPTE_framerate_lookup[(data[0] >> 6)]
+        message.frame_rate = _smpte_framerate_lookup[(data[0] >> 6)]
         message.hours = (data[0] & 0x3f)
         message.minutes = data[1]
         message.seconds = data[2]
