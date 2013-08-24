@@ -9,11 +9,6 @@ Todo:
      - type and value safety?
      - copy().
      - expose _key_signature_lookup?
-
-
-     -Meta Types to be added:
-            - 0x00, Sequence Number
-            - 0x07, Cue Marker
 """
 from __future__ import print_function, division
 import sys
@@ -65,10 +60,10 @@ _key_signature_lookup.update(reverse_table(_key_signature_lookup))
 _smpte_framerate_lookup = {
         0: 24,
         1: 25,
-        2: 29.97
-        3: 30
+        2: 29.97,
+        3: 30,
     }
-_smpte_framerate_lookup.update(reverse_table(_SMPTE_framerate_lookup))
+_smpte_framerate_lookup.update(reverse_table(_smpte_framerate_lookup))
 
 def decode_text(data):
     return bytearray(data).decode(_charset)
@@ -78,6 +73,17 @@ def encode_text(text):
 
 class MetaSpec(object):
     pass
+
+class MetaSpec_sequence_number(MetaSpec):
+    type_byte = 0x00
+    attributes = ['number']
+    defaults = [0]
+
+    def decode(self, message, data):
+        message.number = (data[0] << 8) | data[1]
+
+    def encode(self, message):
+        return [message.number >> 8, message.number & 0xff]
 
 class MetaSpec_text(MetaSpec):
     type_byte = 0x01
@@ -120,6 +126,9 @@ class MetaSpec_lyrics(MetaSpec_text):
 
 class MetaSpec_marker(MetaSpec_text):
     type_byte = 0x06
+
+class MetaSpec_cue_marker(MetaSpec_text):
+    type_byte = 0x07
 
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
@@ -179,7 +188,7 @@ class MetaSpec_smpte_offset(MetaSpec):
     defaults = [24, 0, 0, 0, 0, 0]
 
     def decode(self, message, data):
-        message.frame_rate = _SMPTE_framerate_lookup[(data[0] >> 6)]
+        message.frame_rate = _smpte_framerate_lookup[(data[0] >> 6)]
         message.hours = (data[0] & 0x3f)
         message.minutes = data[1]
         message.seconds = data[2]
