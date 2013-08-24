@@ -76,7 +76,7 @@ class MetaSpec(object):
 
 class MetaSpec_sequence_number(MetaSpec):
     type_byte = 0x00
-    attributes = ['number']
+    attributes = ['sequence_number']
     defaults = [0]
 
     def decode(self, message, data):
