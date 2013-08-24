@@ -9,11 +9,6 @@ Todo:
      - type and value safety?
      - copy().
      - expose _key_signature_lookup?
-
-
-     -Meta Types to be added:
-            - 0x00, Sequence Number
-            - 0x07, Cue Marker
 """
 from __future__ import print_function, division
 import sys
@@ -79,6 +74,17 @@ def encode_text(text):
 class MetaSpec(object):
     pass
 
+class MetaSpec_sequence_number(MetaSpec):
+    type_byte = 0x00
+    attributes = ['sequence_number']
+    defaults = [0]
+
+    def decode(self, message, data):
+        message.number = (data[0] << 8) | data[1]
+
+    def encode(self, message):
+        return [message.number >> 8, message.number & 0xff]
+
 class MetaSpec_text(MetaSpec):
     type_byte = 0x01
     attributes = ['text']
@@ -120,6 +126,9 @@ class MetaSpec_lyrics(MetaSpec_text):
 
 class MetaSpec_marker(MetaSpec_text):
     type_byte = 0x06
+
+class MetaSpec_cue_marker(MetaSpec_text):
+    type_byte = 0x07
 
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
