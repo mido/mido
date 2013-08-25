@@ -42,4 +42,4 @@ for python in get_pythons():
     proc = Popen([python, 'tests.py'])
     proc.wait()
     if proc.returncode != 0:
-        print('Tests failed with {}.'.format(python))
+        sys.exit('Tests failed with {}.'.format(python))
