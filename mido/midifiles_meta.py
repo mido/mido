@@ -227,7 +227,7 @@ class MetaSpec_time_signature(MetaSpec):
 class MetaSpec_key_signature(MetaSpec):
     type_byte = 0x59
     attributes = ['key', 'mode']
-    defaults = ['C', 'minor']
+    defaults = ['C', 'major']
 
     def decode(self, message, data):
         key = signed('byte', data[0])
