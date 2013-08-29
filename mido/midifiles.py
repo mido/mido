@@ -498,21 +498,6 @@ class MidiFile:
                 self._file.write_long(len(bytes))
                 self._file.write(bytes)
               
-    def __repr__(self):
-        name = repr(self.name)
-        if name.startswith('u'):
-            # Python 2.
-            name = name[1:]
-        return '<midi file {} format {}, {} tracks, {} messages>'.format(
-            name, self.format, len(self.tracks),
-            sum([len(track) for track in self.tracks]))
- 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        return False
-
     def print_tracks(self, meta_only=False):
         """Prints out all messages in a .midi file.
 
@@ -530,3 +515,17 @@ class MidiFile:
                 else:
                     print('{!r}'.format(message))
                 
+    def __repr__(self):
+        name = repr(self.name)
+        if name.startswith('u'):
+            # Python 2.
+            name = name[1:]
+        return '<midi file {} format {}, {} tracks, {} messages>'.format(
+            name, self.format, len(self.tracks),
+            sum([len(track) for track in self.tracks]))
+ 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        return False
