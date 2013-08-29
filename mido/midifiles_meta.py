@@ -244,10 +244,10 @@ class MetaSpec_sequencer_specific(MetaSpec):
     defaults = [[]]
 
     def decode(self, message, data):
-        message.data = data
+        message.data = tuple(data)
 
     def encode(self, message):
-        return message.data
+        return list(message.data)
 
 _specs = {}
 
