@@ -361,7 +361,8 @@ class MidiFile:
         """Compute seconds per tick."""
         return (tempo / 1000000.0) / self.ticks_per_beat
 
-    def _get_length(self):
+    @property
+    def length(self):
         if not self.tracks:
             return 0.0
 
@@ -377,8 +378,6 @@ class MidiFile:
             track_lengths.append(length)
 
         return max(track_lengths)
-
-    length = property(fget=_get_length)
 
     def play(self, meta_messages=False):
         """Play back all tracks.
