@@ -87,17 +87,14 @@ class BasePort(object):
             (False, False): 'mute',
             }[capabilities]
 
-        name = repr(self.name or '')
-        if name.startswith('u'):
-            # Python 2.
-            name = name[1:]
+        name = self.name or ''
 
         try:
             device_type = self._device_type
         except AttributeError:
             device_type = self.__class__.__name__
 
-        return '<{} {} {} ({})>'.format(
+        return '<{} {} {!r} ({})>'.format(
             state, port_type, name, device_type)
 
 

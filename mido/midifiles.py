@@ -172,11 +172,7 @@ class MidiTrack(list):
     del _get_name, _set_name
 
     def __repr__(self):
-        name = repr(self.name)
-        if name.startswith('u'):
-            # Python 2.
-           name = name[1:]
-        return '<midi track {} {} messages>'.format(name, len(self))
+        return '<midi track {!r} {} messages>'.format(self.name, len(self))
 
 
 class RecordPort(BaseOutput):
@@ -500,12 +496,8 @@ class MidiFile:
                     print('{!r}'.format(message))
                 
     def __repr__(self):
-        name = repr(self.name)
-        if name.startswith('u'):
-            # Python 2.
-            name = name[1:]
-        return '<midi file {} format {}, {} tracks, {} messages>'.format(
-            name, self.format, len(self.tracks),
+        return '<midi file {!r} format {}, {} tracks, {} messages>'.format(
+            self.name, self.format, len(self.tracks),
             sum([len(track) for track in self.tracks]))
  
     def __enter__(self):
