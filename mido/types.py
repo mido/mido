@@ -23,3 +23,27 @@ def signed(to_type, n):
 
 def unsigned(to_type, n):
     return signed('u{}'.format(to_type), n)
+
+def encode_variable_int(delta):
+    """Encode variable length integer.
+
+    Returns the integer as a list of bytes,
+    where the last byte is < 128.
+
+    This is used for delta times and meta message payload
+    length.
+    """
+    bytes = []
+    while delta:
+        bytes.append(delta & 0x7f)
+        delta >>= 7
+
+    if bytes:
+        bytes.reverse()
+
+        # Set high bit in every byte but the last.
+        for i in range(len(bytes) - 1):
+            bytes[i] |= 0x80
+        return bytes
+    else:
+        return [0]

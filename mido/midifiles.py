@@ -27,6 +27,7 @@ import sys
 import time
 import timeit
 from .ports import BaseOutput
+from .types import encode_variable_int
 from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage, _build_meta_message
 from . import midifiles_meta
@@ -251,7 +252,7 @@ class MidiFile:
                 self.tracks.append(self._read_track())
                 # Todo: used to ignore EOFError. I hope things still work.
 
-    def _read_delta_time(self):
+    def _read_variable_int(self):
         delta = 0
 
         while 1:
@@ -273,7 +274,7 @@ class MidiFile:
 
     def _read_meta_message(self):
         type = self._file.read_byte()
-        length = self._file.read_byte()
+        length = self._read_variable_int()
         data = self._file.read_list(length)
         return _build_meta_message(type, data)
 
@@ -304,7 +305,7 @@ class MidiFile:
             if self._file.pos - start == length:
                 break
 
-            delta = self._read_delta_time()
+            delta = self._read_variable_int()
 
             # Todo: not all messages have running status
             peek_status = self._file.peek_byte()
@@ -418,22 +419,6 @@ class MidiFile:
             if message.type == 'set_tempo':
                 seconds_per_tick = self._compute_tick_time(message.tempo)
 
-    def _encode_delta_time(self, delta):
-        bytes = []
-        while delta:
-            bytes.append(delta & 0x7f)
-            delta >>= 7
-        
-        if bytes:
-            bytes.reverse()
-
-            # Set high bit in every byte but the last.
-            for i in range(len(bytes) - 1):
-                bytes[i] |= 0x80
-            return bytes
-        else:
-            return [0]
-
     def _has_end_of_track(self, track):
         """Return True if there is an end_of_track at the end of the track."""
         last_i = len(track) - 1
@@ -485,12 +470,12 @@ class MidiFile:
                                         message.type)))
 
                     # Todo: running status?
-                    bytes += self._encode_delta_time(message.time)
+                    bytes += encode_variable_int(message.time)
                     bytes += message.bytes()
 
                 if not self._has_end_of_track(track):
                     # Write end_of_track.
-                    bytes += self._encode_delta_time(0)
+                    bytes += [0]  # Delta time.
                     bytes += MetaMessage('end_of_track').bytes()
 
                 self._file.write(b'MTrk')

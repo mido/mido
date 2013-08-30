@@ -13,7 +13,7 @@ Todo:
 from __future__ import print_function, division
 import sys
 from .messages import BaseMessage
-from .types import signed, unsigned
+from .types import signed, unsigned, encode_variable_int
 
 PY2 = (sys.version_info.major == 2)
 
@@ -316,7 +316,9 @@ class MetaMessage(BaseMessage):
 
     def bytes(self):
         data = self._spec.encode(self)
-        return [0xff, self._spec.type_byte, len(data)] + data
+        return ([0xff, self._spec.type_byte]
+                + encode_variable_int(len(data))
+                + data)
     
     def __repr__(self):
         attributes = []
@@ -347,4 +349,6 @@ class UnknownMetaMessage(MetaMessage):
             self.time)
 
     def bytes(self):
-        return [0xff, self._type_byte, len(self._data)] + self._data
+        return ([0xff, self._type_byte]
+                + encode_variable_int(len(self._data))
+                + self._data)
