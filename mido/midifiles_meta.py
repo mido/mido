@@ -206,13 +206,12 @@ class MetaSpec_smpte_offset(MetaSpec):
 class MetaSpec_time_signature(MetaSpec):
     type_byte = 0x58
     # Todo: these need more sensible names.
-    # Todo: use 
     attributes = ['numerator',
                   'denominator',
                   'clocks_per_click',
-                  'notatated_32nd_notes_per_beat']
-    # Todo: find good defaults here.
-    defaults = [4, 4, 0, 0]
+                  'notated_32nd_notes_per_beat']
+    # Todo: are these defaults OK?
+    defaults = [4, 2, 24, 8]
 
     def decode(self, message, data):
         for name, value in zip(self.attributes, data):
