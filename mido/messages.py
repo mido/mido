@@ -265,6 +265,32 @@ class BaseMessage(object):
 
     Can be subclassed to create meta messages, for example.
     """
+    def copy(self, **overrides):
+        """Return a copy of the message.
+
+        Attributes will be overriden by the passed keyword arguments.
+        Only message specific attributes can be overridden. The message
+        type can not be changed.
+
+        Example:
+
+            a = Message('note_on')
+            b = a.copy(velocity=32)
+        """
+        for name in overrides:
+            if name not in self._spec.valid_attributes:
+                text = '{!r} is an invalid argument for this message type'
+                raise ValueError(text.format(name))
+
+        # Get values from this object
+        arguments = {}
+        for name in self._spec.valid_attributes:
+            if name in overrides:
+                arguments[name] = overrides[name]
+            else:
+                arguments[name] = getattr(self, name)
+
+        return self.__class__(self.type, **arguments)
 
     def bytes(self):
         raise ValueError('bytes() is not implemented in this class')
@@ -332,33 +358,6 @@ class Message(BaseMessage):
         # Override defaults.
         for name, value in arguments.items():
             setattr(self, name, value)
-
-    def copy(self, **overrides):
-        """Return a copy of the message.
-
-        Attributes will be overriden by the passed keyword arguments.
-        Only message specific attributes can be overridden. The message
-        type can not be changed.
-
-        Example:
-
-            a = Message('note_on')
-            b = a.copy(velocity=32)
-        """
-        for name in overrides:
-            if name not in self._spec.valid_attributes:
-                text = '{!r} is an invalid argument for this message type'
-                raise ValueError(text.format(name))
-
-        # Get values from this object
-        arguments = {}
-        for name in self._spec.valid_attributes:
-            if name in overrides:
-                arguments[name] = overrides[name]
-            else:
-                arguments[name] = getattr(self, name)
-
-        return self.__class__(self.type, **arguments)
 
     def _set(self, name, value):
         """Sets an attribute directly, bypassing all type and value checks"""

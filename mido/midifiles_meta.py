@@ -256,6 +256,8 @@ def add_meta_spec(klass):
     if not hasattr(spec, 'type'):
         name = klass.__name__.replace('MetaSpec_', '')
         spec.type = name
+    # This is used by copy().
+    spec.valid_attributes = set(spec.attributes) | {'time'}
     _specs[spec.type_byte] = spec
     _specs[spec.type] = spec
     
@@ -293,7 +295,7 @@ class MetaMessage(BaseMessage):
             if name == 'time':
                 continue  # Time is always allowed.
 
-            if name not in self._spec.attributes:
+            if name not in self._spec.valid_attributes:
                 raise ValueError(
                     '{} is not a valid argument for this message type'.format(
                         name))
@@ -303,14 +305,6 @@ class MetaMessage(BaseMessage):
         self.time = 0
 
         self.__dict__.update(kwargs)
-
-    def copy(self, **overrides):
-        # Todo: check attribute names (and types and values).
-        klass = self.__class__
-        message = klass.__new__(klass)
-        message.__dict__.update(self.__dict__)
-        message.__dict__.update(overrides)
-        return message
 
     def bytes(self):
         data = self._spec.encode(self)
