@@ -285,11 +285,11 @@ class MetaMessage(BaseMessage):
         # Todo: allow type_ to be a type byte?
         # Todo: handle unknown type.
         if isinstance(type_, MetaSpec):
-            self._spec = type_
+            self.__dict__['_spec'] = type_
         else:
-            self._spec = _specs[type_]
+            self.__dict__['_spec'] = _specs[type_]
 
-        self.type = self._spec.type
+        self.__dict__['type'] = self._spec.type
 
         for name in kwargs:
             if name == 'time':
@@ -301,10 +301,20 @@ class MetaMessage(BaseMessage):
                         name))
 
         for name, value in zip(self._spec.attributes, self._spec.defaults):
-            setattr(self, name, value)
-        self.time = 0
+            self.__dict__[name] = value
+        self.__dict__['time'] = 0
 
-        self.__dict__.update(kwargs)
+        for name, value in kwargs.items():
+            setattr(self, name, value)
+
+    def __setattr__(self, name, value):
+        if name in self._spec.valid_attributes:
+            self.__dict__[name] = value
+        elif name in self.__dict__:
+            raise AttributeError('{} attribute is read only'.format(name))
+        else:
+            raise AttributeError(
+                '{} message has no attribute {}'.format(self.type, name))
 
     def bytes(self):
         data = self._spec.encode(self)
