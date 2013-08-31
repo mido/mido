@@ -8,11 +8,11 @@ Todo:
      - 'values' is not a good name for a dictionary.
      - type and value safety?
      - copy().
-     - expose _key_signature_lookup?
+     - expose _key_signature_encode/decode?
 """
 from __future__ import print_function, division
 import sys
-from .messages import BaseMessage
+from .messages import BaseMessage, check_time
 from .types import signed, unsigned, encode_variable_int
 
 PY2 = (sys.version_info.major == 2)
@@ -23,7 +23,7 @@ def reverse_table(table):
     """Return value: key for dictionary."""
     return {value: key for (key, value) in table.items()}
 
-_key_signature_lookup = {
+_key_signature_decode = {
         (-7, 0): ('Cb', 'major'),
         (-6, 0): ('Gb', 'major'),
         (-5, 0): ('Db', 'major'),
@@ -55,15 +55,15 @@ _key_signature_lookup = {
         (6, 1): ('D#', 'minor'),
         (7, 1): ('A#', 'minor'),
     }
-_key_signature_lookup.update(reverse_table(_key_signature_lookup))
+_key_signature_encode = reverse_table(_key_signature_decode)
 
-_smpte_framerate_lookup = {
+_smpte_framerate_decode = {
         0: 24,
         1: 25,
         2: 29.97,
         3: 30,
     }
-_smpte_framerate_lookup.update(reverse_table(_smpte_framerate_lookup))
+_smpte_framerate_encode = reverse_table(_smpte_framerate_decode)
 
 def decode_text(data):
     return bytearray(data).decode(_charset)
@@ -71,8 +71,23 @@ def decode_text(data):
 def encode_text(text):
     return list(bytearray(text.encode(_charset)))
 
+def check_int(value, low, high):
+    if not isinstance(value, int):
+        raise TypeError('attribute must be an integer')
+    elif not low <= value <= high:
+        raise ValueError('attribute must be in range {}..{}'.format(low, high))
+
+def check_str(value):
+    if PY2:
+        if not isinstance(value, unicode) and not isinstance(value, str):
+            raise TypeError('attribute must be unicode or string')
+    else:
+        if not isinstance(value, str):
+            raise TypeError('attribute must a string')
+
 class MetaSpec(object):
-    pass
+    def check(self, name, value):
+        pass
 
 class MetaSpec_sequence_number(MetaSpec):
     type_byte = 0x00
@@ -85,6 +100,9 @@ class MetaSpec_sequence_number(MetaSpec):
     def encode(self, message):
         return [message.number >> 8, message.number & 0xff]
 
+    def check(self, name, value):
+        check_int(value, 0, 255)
+            
 class MetaSpec_text(MetaSpec):
     type_byte = 0x01
     attributes = ['text']
@@ -96,10 +114,13 @@ class MetaSpec_text(MetaSpec):
     def encode(self, message):
         return encode_text(message.text)
 
+    def check(self, name, value):
+        check_str(value)
+
 class MetaSpec_copyright(MetaSpec_text):
     type_byte = 0x02
 
-class MetaSpec_track_name(MetaSpec):
+class MetaSpec_track_name(MetaSpec_text):
     type_byte = 0x03
     attributes = ['name']
     defaults = ['']
@@ -110,7 +131,7 @@ class MetaSpec_track_name(MetaSpec):
     def encode(self, message):
         return encode_text(message.name)
 
-class MetaSpec_instrument_name(MetaSpec):
+class MetaSpec_instrument_name(MetaSpec_text):
     type_byte = 0x04
     attributes = ['name']
     defaults = ['']
@@ -141,6 +162,9 @@ class MetaSpec_midi_port(MetaSpec):
     def encode(self, message):
         return [message.port]
 
+    def check(self, name, value):
+        check_int(value, 0, 255)
+
 class MetaSpec_channel_prefix(MetaSpec):
     type_byte = 0x20
     attributes = ['channel']
@@ -151,6 +175,9 @@ class MetaSpec_channel_prefix(MetaSpec):
 
     def encode(self, message):
         return [message.channel]
+
+    def check(self, name, value):
+        check_int(value, 0, 15)
 
 class MetaSpec_end_of_track(MetaSpec):
     type_byte = 0x2f
@@ -175,6 +202,9 @@ class MetaSpec_set_tempo(MetaSpec):
         tempo = message.tempo
         return [tempo >> 16, tempo >> 8 & 0xff, tempo & 0xff]
 
+    def check(self, name, value):
+        check_int(value, 0, 0xffffff)
+
 class MetaSpec_smpte_offset(MetaSpec):
     type_byte = 0x54
     attributes = ['frame_rate',
@@ -188,7 +218,7 @@ class MetaSpec_smpte_offset(MetaSpec):
     defaults = [24, 0, 0, 0, 0, 0]
 
     def decode(self, message, data):
-        message.frame_rate = _smpte_framerate_lookup[(data[0] >> 6)]
+        message.frame_rate = _smpte_framerate_decode[(data[0] >> 6)]
         message.hours = (data[0] & 0x3f)
         message.minutes = data[1]
         message.seconds = data[2]
@@ -196,12 +226,22 @@ class MetaSpec_smpte_offset(MetaSpec):
         message.sub_frames = data[4]
 
     def encode(self, message):
-        frame_rate_lookup = _smpte_framerate_lookup[message.frame_rate] << 6
+        frame_rate_lookup = _smpte_framerate_encode[message.frame_rate] << 6
         return [frame_rate_lookup | message.hours,
                 message.minutes,
                 message.seconds,
                 message.frames,
                 message.sub_frames]
+
+    def check(self, name, value):
+        if name == 'frame_rate':
+            if value not in _smpte_framerate_encode:
+                valid = ' '.join(sorted(_smpte_framerate_encode.keys()))
+                raise ValueError('frame_rate must be one of {}'.format(valid))
+        elif name == 'hours':
+            check_int(value, 0, 0x3f)
+        else:
+            check_int(value, 0, 255)
 
 class MetaSpec_time_signature(MetaSpec):
     type_byte = 0x58
@@ -222,6 +262,11 @@ class MetaSpec_time_signature(MetaSpec):
             data.append(getattr(message, name))
         return data
 
+    def check(self, name, value):
+        # Todo: (if converting denominator)
+        #       check if denominator is a power of 2.
+        check_int(value, 0, 255)
+
 class MetaSpec_key_signature(MetaSpec):
     type_byte = 0x59
     attributes = ['key', 'mode']
@@ -230,11 +275,20 @@ class MetaSpec_key_signature(MetaSpec):
     def decode(self, message, data):
         key = signed('byte', data[0])
         mode = data[1]
-        message.key, message.mode = _key_signature_lookup[(key, mode)]
+        message.key, message.mode = _key_signature_decode[(key, mode)]
 
     def encode(self, message):
-        key, mode = _key_signature_lookup[message.key, message.mode]
+        key, mode = _key_signature_encode[message.key, message.mode]
         return [unsigned('byte', key), mode]
+
+    def check(self, name, value):
+        if name == 'key':
+            check_str(value)
+            if not (value, 'minor') in _key_signature_encode:
+                raise ValueError('invalid key {!r}'.format(value))
+        elif name == 'mode':
+            if value not in ['minor', 'major']:
+                raise ValueError("mode must be 'minor' or 'major")
 
 class MetaSpec_sequencer_specific(MetaSpec):
     type_byte = 0x7f
@@ -309,6 +363,10 @@ class MetaMessage(BaseMessage):
 
     def __setattr__(self, name, value):
         if name in self._spec.valid_attributes:
+            if name == 'time':
+                check_time(value)
+            else:
+                self._spec.check(name, value)
             self.__dict__[name] = value
         elif name in self.__dict__:
             raise AttributeError('{} attribute is read only'.format(name))
