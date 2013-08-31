@@ -359,10 +359,6 @@ class Message(BaseMessage):
         for name, value in arguments.items():
             setattr(self, name, value)
 
-    def _set(self, name, value):
-        """Sets an attribute directly, bypassing all type and value checks"""
-        self.__dict__[name] = value
-
     def __setattr__(self, name, value):
         """Set an attribute."""
         if name in self._spec.valid_attributes:
