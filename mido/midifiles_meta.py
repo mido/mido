@@ -132,16 +132,8 @@ class MetaSpec_track_name(MetaSpec_text):
     def encode(self, message):
         return encode_text(message.name)
 
-class MetaSpec_instrument_name(MetaSpec_text):
+class MetaSpec_instrument_name(MetaSpec_track_name):
     type_byte = 0x04
-    attributes = ['name']
-    defaults = ['']
-
-    def decode(self, message, data):
-        message.name = decode_text(data)
-
-    def encode(self, message):
-        return encode_text(message.name)
 
 class MetaSpec_lyrics(MetaSpec_text):
     type_byte = 0x05
@@ -151,6 +143,9 @@ class MetaSpec_marker(MetaSpec_text):
 
 class MetaSpec_cue_marker(MetaSpec_text):
     type_byte = 0x07
+
+class MetaSpec_device_name(MetaSpec_track_name):
+    type_byte = 0x09
 
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
