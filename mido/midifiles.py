@@ -195,7 +195,7 @@ class RecordPort(BaseOutput):
 
 
 class MidiFile:
-    def __init__(self, name=None, format=1, ticks_per_beat=None,
+    def __init__(self, name=None, format=1, ticks_per_beat=480,
                  charset='latin1'):
         self.name = name
         self.tracks = []
@@ -206,8 +206,7 @@ class MidiFile:
                 raise ValueError(
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
             self.format = format
-            # Todo: is this a good default value?
-            self.ticks_per_beat = 120
+            self.ticks_per_beat = ticks_per_beat
         else:
             self._load()
 
