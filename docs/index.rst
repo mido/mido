@@ -58,6 +58,7 @@ Contents
    string_encoding
    new_port_types
    message_types
+   meta_message_types
    lib
    license
    author
