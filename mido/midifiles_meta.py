@@ -324,7 +324,7 @@ def add_meta_spec(klass):
         name = klass.__name__.replace('MetaSpec_', '')
         spec.type = name
     # This is used by copy().
-    spec.valid_attributes = set(spec.attributes) | {'time'}
+    spec.settable_attributes = set(spec.attributes) | {'time'}
     _specs[spec.type_byte] = spec
     _specs[spec.type] = spec
     
@@ -362,7 +362,7 @@ class MetaMessage(BaseMessage):
             if name == 'time':
                 continue  # Time is always allowed.
 
-            if name not in self._spec.valid_attributes:
+            if name not in self._spec.settable_attributes:
                 raise ValueError(
                     '{} is not a valid argument for this message type'.format(
                         name))
@@ -375,7 +375,7 @@ class MetaMessage(BaseMessage):
             setattr(self, name, value)
 
     def __setattr__(self, name, value):
-        if name in self._spec.valid_attributes:
+        if name in self._spec.settable_attributes:
             if name == 'time':
                 check_time(value)
             else:

@@ -44,7 +44,7 @@ class MessageSpec(object):
         self.length = length
    
         # Attributes that can be set on the object
-        self.valid_attributes = set(self.arguments) | {'time'}
+        self.settable_attributes = set(self.arguments) | {'time'}
 
     def signature(self):
         """Return call signature for Message constructor for this type.
@@ -278,13 +278,13 @@ class BaseMessage(object):
             b = a.copy(velocity=32)
         """
         for name in overrides:
-            if name not in self._spec.valid_attributes:
+            if name not in self._spec.settable_attributes:
                 text = '{!r} is an invalid argument for this message type'
                 raise ValueError(text.format(name))
 
         # Get values from this object
         arguments = {}
-        for name in self._spec.valid_attributes:
+        for name in self._spec.settable_attributes:
             if name in overrides:
                 arguments[name] = overrides[name]
             else:
@@ -361,7 +361,7 @@ class Message(BaseMessage):
 
     def __setattr__(self, name, value):
         """Set an attribute."""
-        if name in self._spec.valid_attributes:
+        if name in self._spec.settable_attributes:
             try:
                 if name == 'data':
                     value = check_data(value)
