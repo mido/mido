@@ -122,31 +122,6 @@ class ByteWriter(object):
         self.file.close()
         return False
 
-
-class DeltaTimer(object):
-    def __init__(self, midifile=None, ticks_per_beat=None, tempo=500000):
-        self.midifile = None
-        if self.midifile:
-            self.ticks_per_beat = midifile.ticks_per_beat
-        self.ticks_per_beat = ticks_per_beat
-        self.tempo = tempo
-        self.timer = timeit.default_timer
-        self.then = self.timer()
-
-    def __call__(self):
-        now = self.timer()
-        delta = now - self.then
-        self.then = now
-        
-        if self.ticks_per_beat is not None:
-            seconds_per_beat = self.tempo / 1000000.0
-            seconds_per_tick = seconds_per_beat / float(self.ticks_per_beat)
-            new_delta = int(delta / seconds_per_tick)
-            return new_delta
-
-        return delta
-
-
 class MidiTrack(list):
     def __init__(self):
         list.__init__([])
@@ -173,25 +148,6 @@ class MidiTrack(list):
 
     def __repr__(self):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
-
-
-class RecordPort(BaseOutput):
-    def __init__(self, midifile):
-        BaseOutput.__init__(self)
-        self.midifile = midifile
-        self.delta = DeltaTimer(ticks_per_beat=midifile.ticks_per_beat,
-                               tempo=DEFAULT_TEMPO)
-        self.track = self.midifile.add_track()
-    
-    def send(self, message):
-        # This overrides the public send() because the
-        # original one doesn't accept meta messages.
-        self.track.append(message.copy(time=self.delta()))
-        if message.type == 'set_tempo':
-            self.delta.tempo = message.tempo
-
-    def _close(self):
-        self.track.append(MetaMessage('end_of_track'))
 
 
 class MidiFile:
