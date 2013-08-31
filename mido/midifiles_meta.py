@@ -12,6 +12,7 @@ Todo:
 """
 from __future__ import print_function, division
 import sys
+import math
 from .messages import BaseMessage, check_time
 from .types import signed, unsigned, encode_variable_int
 
@@ -253,19 +254,31 @@ class MetaSpec_time_signature(MetaSpec):
     defaults = [4, 2, 24, 8]
 
     def decode(self, message, data):
-        for name, value in zip(self.attributes, data):
-            setattr(message, name, value)
+        message.numerator = data[0]
+        message.denominator = 2 ** data[1]
+        message.clocks_per_click = data[2]
+        message.notated_32nd_notes_per_beat = data[3]
 
     def encode(self, message):
-        data = []
-        for name in self.attributes:
-            data.append(getattr(message, name))
-        return data
+        return [
+            message.numerator,
+            int(math.log(message.denominator, 2)),
+            message.clocks_per_click,
+            message.notated_32nd_notes_per_beat,
+            ]
 
     def check(self, name, value):
-        # Todo: (if converting denominator)
-        #       check if denominator is a power of 2.
-        check_int(value, 0, 255)
+        if name == 'denominator':
+            # This allows for the ridiculous time signature of
+            # 4/57896044618658097711785492504343953926634...
+            #   992332820282019728792003956564819968
+            check_int(value, 1, 2 ** 255)
+            encoded = math.log(value, 2)
+            encoded_int = int(encoded)
+            if encoded != encoded_int:
+                raise ValueError('denominator must be a power of 2')
+        else:
+            check_int(value, 0, 255)
 
 class MetaSpec_key_signature(MetaSpec):
     type_byte = 0x59
