@@ -96,7 +96,7 @@ MIDI Files
    :members:
    :inherited-members:
 
-.. autoclass:: Track
+.. autoclass:: MidiTrack
    :members:
    :inherited-members:
 

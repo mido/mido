@@ -34,9 +34,9 @@ http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/MTC.htm
 Parameter Types
 ----------------
 
-========     ======================  ================
+===========  ======================  ================
 Name         Valid Range             Default Value
-========     ======================  ================
+===========  ======================  ================
 channel      0..15                   0
 frame_type   0..7                    0
 frame_value  0..15                   0
@@ -50,7 +50,7 @@ data         (0..127, 0..127, ...)   () (empty tuple)
 pitch        -8192..8191             0
 pos          0..16383                0
 time         any integer or float    0
-========     ======================  ================
+===========  ======================  ================
 
 ``velocity`` is how fast the note was struck or released. It defaults
 to 64 so that if you don't set it, you will still get a reasonable
