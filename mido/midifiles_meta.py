@@ -404,7 +404,6 @@ class MetaMessage(BaseMessage):
         return '<meta message {}{} time={}>'.format(self.type,
                                                     attributes, self.time)
 
-# Todo: what if one of these messages is implemented?
 class UnknownMetaMessage(MetaMessage):
     def __init__(self, type_byte, data=None, time=0):
         if data is None:
@@ -420,6 +419,10 @@ class UnknownMetaMessage(MetaMessage):
             self._type_byte,
             self._data,
             self.time)
+
+    # Override all checking.
+    def __setattr__(self, name, value):
+        self.__dict__[name] = value
 
     def bytes(self):
         return ([0xff, self._type_byte]
