@@ -163,14 +163,14 @@ sub_frames      0..99			   0
 time_signature (0x58)
 -----------------------
 
-============================  	==============  ========
-Attribute       				Values          Default
-============================  	==============  ========
-numerator       				0..255          4
-denominator     				1..2**255		2
-clocks_per_click    			0..255     		24
-notated_32nd_notes_per_beat     0..255			8
-============================  	==============  ========
+============================  	===============  ========
+Attribute       				 Values          Default
+============================  	===============  ========
+numerator       				 0..255           4
+denominator     				 1..2**255        2
+clocks_per_click    			 0..255           24
+notated_32nd_notes_per_beat      0..255           8
+============================  	===============  ========
 
 Time signature of:
 4/4 : MetaMessage('time_signature', numerator=4, denominator=4)
