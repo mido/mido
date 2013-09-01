@@ -230,12 +230,13 @@ class MetaSpec_smpte_offset(MetaSpec):
                 message.sub_frames]
 
     def check(self, name, value):
+        print(name, value)
         if name == 'frame_rate':
             if value not in _smpte_framerate_encode:
                 valid = ' '.join(sorted(_smpte_framerate_encode.keys()))
                 raise ValueError('frame_rate must be one of {}'.format(valid))
         elif name == 'hours':
-            check_int(value, 0, 23)
+            check_int(value, 0, 255)
         elif name in ['minutes', 'seconds']:
             check_int(value, 0, 59)
         elif name == 'frames':

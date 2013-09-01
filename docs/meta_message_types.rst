@@ -166,7 +166,7 @@ smpte_offset (0x54)
 Attribute       Values             Default
 ==============  =================  ========
 frame_rate      24, 25, 29.97, 30  24
-hours           0..23              0
+hours           0..255             0
 minutes         0..59              0
 seconds         0..59              0
 frames          0..29              0
