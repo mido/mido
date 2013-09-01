@@ -1,8 +1,187 @@
 Meta Message Types
 ===================
 
-key_signature
---------------
+sequence_number (0x00)
+-----------------------
+
+===============  ==============  ======
+Attribute        Values          Default
+===============  ==============  ======
+number  		 0..65536        0
+===============  ==============  ======
+
+Determines the sequence number in type 0 and 1 MIDI files;
+determines the pattern number in type 2 MIDI files.
+
+text (0x01)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+text            string          ''
+==============  ==============  ========
+
+General "Text" Meta Message. Can be used for any text-based data.
+
+copyright (0x02)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+text            string          ''
+==============  ==============  ========
+
+Provides information about a MIDI file's copyright.
+
+track_name (0x03)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+name            string          ''
+==============  ==============  ========
+
+Stores a MIDI track's name.
+
+instrument_name (0x04)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+name            string          ''
+==============  ==============  ========
+
+Store an instrument's name.
+
+lyrics (0x05)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+text            string          ''
+==============  ==============  ========
+
+Stores the lyrics of a song. Typically one syllable per Meta Message.
+
+marker (0x06)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+text            string          ''
+==============  ==============  ========
+
+Marks a point of interest in a MIDI file. 
+Can be used as the marker for the beginning of a verse, solo, etc.
+
+cue_marker (0x07)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+text            string          ''
+==============  ==============  ========
+
+Marks a cue. IE: 'Cue performer 1', etc
+
+device_name (0x09)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+name            string          ''
+==============  ==============  ========
+
+Gives the name of the device.
+
+channel_prefix (0x20)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+channel         0..255          0
+==============  ==============  ========
+
+Gives the prefix for the channel on which events are played.
+
+midi_port (0x21)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+port            0..255          0
+==============  ==============  ========
+
+Gives the MIDI Port on which events are played.
+
+end_of_track (0x2f)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+n/a             n/a             n/a
+==============  ==============  ========
+
+An empty Meta Message that marks the end of a track.
+
+set_tempo (0x51)
+-----------------------
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+tempo           0..16777215     500000
+==============  ==============  ========
+
+Contains the number of microseconds per quarter note.
+
+smpte_offset (0x54)
+-----------------------
+# Todo: frame_rate value before or after lookup
+# Todo: description or no description?
+
+==============  ==============  ========
+Attribute       Values          Default
+==============  ==============  ========
+frame_rate      0..3            24
+hours           0..23			0
+minutes         0..59			0
+seconds         0..59			0
+frames          0..29			0
+sub_frames      0..99			0
+==============  ==============  ========
+
+time_signature (0x58)
+-----------------------
+# Todo: keep description or remove description?
+
+============================  	==============  ========
+Attribute       				Values          Default
+============================  	==============  ========
+numerator       				0..255          4
+denominator     				0..255			2
+clocks_per_click    			0..255     		24
+notated_32nd_notes_per_beat     0..255			8
+============================  	==============  ========
+
+Provides the fractional time signature; 
+the rate at which the metronome will click; 
+and how many notes per beat.
+
+key_signature (0x59)
+-----------------------
+# Todo: key before or after look up? no description?
 
 =========  ==================  ========
 Attribute  Values              Default
@@ -11,84 +190,26 @@ key        'C', 'Cb', ...      'C'
 mode       'minor' or 'major'  'major'
 =========  ==================  ========
 
-[list of valid keys here?]
-
-
-set_tempo
-----------
-
-=========  ==================  ========
-Attribute  Values              Default
-=========  ==================  ========
-tempo      0..0xffffff         500000
-=========  ==================  ========
-
-[This is used to blablabla.]
-
-Sequence Number (0x00)
------------------------
-
-===============  ==============  ======
-Attribute          Values           Default
-===============  ==============  ======
-sequence number    0 - 65536           0
-===============  ==============  ======
-
-[The value from this Meta Message is used to determine the sequence number in type 0 and 1 MIDI files; it determines the pattern number in type 2 MIDI files.]
-
-Text (0x01)
------------------------
+sequencer_specific (0x7f)
+--------------------------
 
 ==============  ==============  ========
-Attribute          Values        Default
+Attribute       Values          Default
 ==============  ==============  ========
-text              string            ''
-==============  ==============  ========
-
-[This Meta Message is a general "Text" Meta Message. It can be used for any text-based data.]
-
-Copyright (0x02)
------------------------
-
-==============  ==============  ========
-Attribute          Values        Default
-==============  ==============  ========
-text              string            ''
+data            [..]			[]
 ==============  ==============  ========
 
-[This Meta Message will provide information about a MIDI file's copyright.]
+An unprocessed sequencer specific message containing raw data.
 
-Track Name (0x03)
------------------------
+unknown meta message (0x??)
+----------------------------
+# Todo: keep this at all, or just erase it?
 
-==============  ==============  ========
-Attribute          Values        Default
-==============  ==============  ========
-name              string            ''
-==============  ==============  ========
-
-[This Meta Message is used to store a MIDI track's name.]
-
-Instrument Name (0x04)
------------------------
-
-==============  ==============  ========
-Attribute          Values        Default
-==============  ==============  ========
-name              string            ''
-==============  ==============  ========
-
-[This Meta Message is used to store an instrument's name.]
-
-
-
-class MetaSpec_lyrics(MetaSpec_text):
-    type_byte = 0x05
-
-class MetaSpec_marker(MetaSpec_text):
-    type_byte = 0x06
-
-class MetaSpec_cue_marker(MetaSpec_text):
-    type_byte = 0x07
-
+==============  ==============
+Attribute       Values        
+==============  ==============
+type            'unknown meta'
+_type_byte		type byte 0x??
+_data			raw data [..]
+==============  ==============
 
