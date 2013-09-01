@@ -10,8 +10,8 @@ Attribute        Values        Default
 number           0..65535      0
 ===============  ============  ========
 
-Determines the sequence number in type 0 and 1 MIDI files;
-determines the pattern number in type 2 MIDI files.
+Sequence number in type 0 and 1 MIDI files;
+pattern number in type 2 MIDI files.
 
 
 text (0x01)
@@ -187,7 +187,9 @@ notated_32nd_notes_per_beat      0..255           8
 ============================  ===============  ========
 
 Time signature of:
+
 4/4 : MetaMessage('time_signature', numerator=4, denominator=4)
+
 3/8 : MetaMessage('time_signature', numerator=3, denominator=8)
 
 
