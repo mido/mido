@@ -24,7 +24,7 @@ def signed(to_type, n):
 def unsigned(to_type, n):
     return signed('u{}'.format(to_type), n)
 
-def encode_variable_int(delta):
+def encode_variable_int(value):
     """Encode variable length integer.
 
     Returns the integer as a list of bytes,
@@ -33,10 +33,13 @@ def encode_variable_int(delta):
     This is used for delta times and meta message payload
     length.
     """
+    if not isinstance(value, int) or value < 0:
+        raise ValueError('variable int must be a positive integer')
+
     bytes = []
-    while delta:
-        bytes.append(delta & 0x7f)
-        delta >>= 7
+    while value:
+        bytes.append(value & 0x7f)
+        value >>= 7
 
     if bytes:
         bytes.reverse()
