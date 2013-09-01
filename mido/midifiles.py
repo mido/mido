@@ -151,13 +151,13 @@ class MidiTrack(list):
 
 
 class MidiFile:
-    def __init__(self, name=None, format=1, ticks_per_beat=480,
+    def __init__(self, filename=None, format=1, ticks_per_beat=480,
                  charset='latin1'):
-        self.name = name
+        self.filename = filename
         self.tracks = []
         self.charset = charset
 
-        if name is None:
+        if filename is None:
             if format not in range(3):
                 raise ValueError(
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
@@ -181,7 +181,7 @@ class MidiFile:
     def _load(self):
         midifiles_meta._charset = self.charset
 
-        with ByteReader(self.name) as self._file:
+        with ByteReader(self.filename) as self._file:
             # Read header (16 bytes)
             magic = self._file.read_list(4)
             if not bytearray(magic) == bytearray(b'MThd'):
@@ -384,11 +384,11 @@ class MidiFile:
     def save(self, filename=None):
         """Save to a file.
 
-        If filename is passed, self.name will be set to this
+        If filename is passed, self.filename will be set to this
         value, and the data will be saved to this file. Otherwise
-        self.name is used.
+        self.filename is used.
 
-        Raises ValueError both filename and self.name are None,
+        Raises ValueError both filename and self.filename are None,
         or if a format 1 file has != one track.
         """
         midifiles_meta._charset = self.charset
@@ -396,13 +396,13 @@ class MidiFile:
         if self.format == 0 and len(self.tracks) != 1:
             raise ValueError('format 1 file must have exactly 1 track')
 
-        if filename is self.name is None:
+        if filename is self.filename is None:
             raise ValueError('no file name')
 
         if filename is not None:
-            self.name = filename
+            self.filename = filename
 
-        with ByteWriter(self.name) as self._file:
+        with ByteWriter(self.filename) as self._file:
             self._file.write(b'MThd')
 
             self._file.write_long(6)  # Header size. (Next three shorts.)
@@ -452,7 +452,7 @@ class MidiFile:
                 
     def __repr__(self):
         return '<midi file {!r} format {}, {} tracks, {} messages>'.format(
-            self.name, self.format, len(self.tracks),
+            self.filename, self.format, len(self.tracks),
             sum([len(track) for track in self.tracks]))
  
     def __enter__(self):
