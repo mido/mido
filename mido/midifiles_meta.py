@@ -235,11 +235,6 @@ class MetaSpec_smpte_offset(MetaSpec):
                 valid = ' '.join(sorted(_smpte_framerate_encode.keys()))
                 raise ValueError('frame_rate must be one of {}'.format(valid))
         elif name == 'hours':
-<<<<<<< HEAD
-            check_int(value, 0, 0x17)
-        else:
-            check_int(value, 0, 255)
-=======
             check_int(value, 0, 23)
         elif name in ['minutes', 'seconds']:
             check_int(value, 0, 59)
@@ -247,7 +242,6 @@ class MetaSpec_smpte_offset(MetaSpec):
             check_int(value, 0, 29)
         elif name == 'sub_frames':
             check_int(value, 0, 99)
->>>>>>> upstream/develop
 
 class MetaSpec_time_signature(MetaSpec):
     type_byte = 0x58
