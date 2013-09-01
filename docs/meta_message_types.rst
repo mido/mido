@@ -4,11 +4,11 @@ Meta Message Types
 sequence_number (0x00)
 -----------------------
 
-===============  ==============  ======
-Attribute        Values          Default
-===============  ==============  ======
-number  		 0..65536        0
-===============  ==============  ======
+===============  ============  ========
+Attribute        Values        Default
+===============  ============  ========
+number           0..65536      0
+===============  ============  ========
 
 Determines the sequence number in type 0 and 1 MIDI files;
 determines the pattern number in type 2 MIDI files.
