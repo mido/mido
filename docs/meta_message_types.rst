@@ -164,7 +164,7 @@ time_signature (0x58)
 -----------------------
 
 ============================  	===============  ========
-Attribute       				 Values          Default
+Attribute                        Values          Default
 ============================  	===============  ========
 numerator                        0..255           4
 denominator                      1..2**255        2
