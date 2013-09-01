@@ -148,40 +148,37 @@ Contains the number of microseconds per quarter note.
 
 smpte_offset (0x54)
 -----------------------
-# Todo: frame_rate value before or after lookup
-# Todo: description or no description?
 
-==============  ==============  ========
-Attribute       Values          Default
-==============  ==============  ========
-frame_rate      0..3            24
-hours           0..23			0
-minutes         0..59			0
-seconds         0..59			0
-frames          0..29			0
-sub_frames      0..99			0
-==============  ==============  ========
+==============  =================  ========
+Attribute       Values             Default
+==============  =================  ========
+frame_rate      24, 25, 29.97, 30  24
+hours           0..23			   0
+minutes         0..59			   0
+seconds         0..59			   0
+frames          0..29			   0
+sub_frames      0..99			   0
+==============  =================  ========
 
 time_signature (0x58)
 -----------------------
-# Todo: keep description or remove description?
 
 ============================  	==============  ========
 Attribute       				Values          Default
 ============================  	==============  ========
 numerator       				0..255          4
-denominator     				0..255			2
+denominator     				1..2**255		2
 clocks_per_click    			0..255     		24
 notated_32nd_notes_per_beat     0..255			8
 ============================  	==============  ========
 
-Provides the fractional time signature; 
-the rate at which the metronome will click; 
-and how many notes per beat.
+Time signature of:
+4/4 : MetaMessage('time_signature', numerator=4, denominator=4)
+3/8 : MetaMessage('time_signature', numerator=3, denominator=8)
+
 
 key_signature (0x59)
 -----------------------
-# Todo: key before or after look up? no description?
 
 =========  ==================  ========
 Attribute  Values              Default
@@ -201,15 +198,13 @@ data            [..]			[]
 
 An unprocessed sequencer specific message containing raw data.
 
-unknown meta message (0x??)
+Unknown Meta Messages
 ----------------------------
-# Todo: keep this at all, or just erase it?
 
-==============  ==============
-Attribute       Values        
-==============  ==============
-type            'unknown meta'
-_type_byte		type byte 0x??
-_data			raw data [..]
-==============  ==============
+In the event that there is an unimplemented MetaMessage type,
+it will be returned as an UnknownMetaMessage object.
 
+This object takes the following form:
+<unknown meta message 0x## _data=[...], time=0>
+and has the attributes:
+type = 'unknown meta', _type_byte = '0x##', and _data = [...]
