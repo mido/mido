@@ -166,9 +166,9 @@ time_signature (0x58)
 ============================  	===============  ========
 Attribute       				 Values          Default
 ============================  	===============  ========
-numerator       				 0..255           4
-denominator     				 1..2**255        2
-clocks_per_click    			 0..255           24
+numerator                        0..255           4
+denominator                      1..2**255        2
+clocks_per_click                 0..255           24
 notated_32nd_notes_per_beat      0..255           8
 ============================  	===============  ========
 
@@ -204,7 +204,11 @@ Unknown Meta Messages
 In the event that there is an unimplemented MetaMessage type,
 it will be returned as an UnknownMetaMessage object.
 
+
 This object takes the following form:
+
 <unknown meta message 0x## _data=[...], time=0>
+
 and has the attributes:
+
 type = 'unknown meta', _type_byte = '0x##', and _data = [...]
