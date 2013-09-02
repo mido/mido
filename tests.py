@@ -177,6 +177,19 @@ class TestMessages(unittest.TestCase):
         b = mido.parse(a.bytes())
         self.assertTrue(isinstance(b.data, tuple))
 
+    def test_copy(self):
+        orig = Message('note_on', note=22, time=123)
+        copy = orig.copy()
+
+        self.assertTrue(orig == copy)
+        self.assertTrue(orig.time == copy.time)
+
+        copy = orig.copy(velocity=1)
+        orig.velocity = 1
+
+        self.assertTrue(orig == copy)
+
+        self.assertTrue(orig.__dict__ == copy.__dict__)
 
 class TestStringFormat(unittest.TestCase):
     def test_parse_string(self):
@@ -409,8 +422,23 @@ class TestMidiFiles(unittest.TestCase):
                 encoded2 = spec.encode(m)
 
                 self.assertTrue(encoded1 == encoded2)
-
                 self.assertTrue(len(spec.attributes) == len(spec.defaults))
+
+    def test_meta_copy(self):
+        # Todo: this could probably be combined with the test_copy().
+        from mido.midifiles import MetaMessage
+
+        orig = MetaMessage('key_signature', key='Bb', mode='major')
+        copy = orig.copy()
+
+        self.assertTrue(orig == copy)
+        self.assertTrue(orig.time == copy.time)
+
+        copy = orig.copy(key='F#')
+        orig.key = 'F#'
+
+        self.assertTrue(orig == copy)
+        self.assertTrue(orig.__dict__ == copy.__dict__)
 
 if __name__ == '__main__':
     unittest.main()
