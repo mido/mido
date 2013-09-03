@@ -90,8 +90,13 @@ __version__ = '1.0.3'
 # Prevent splat import.
 __all__ = []
 
-def set_backend(path):
+def set_backend(name=None):
     """Set current backend.
+
+    name can be a module name like 'mido.backends.rtmidi' or
+    a Backend object.
+
+    If no name is passed, the default backend will be used.
 
     This will replace all the open_*() and get_*_name() functions
     in top level mido module. The module will be loaded the first
@@ -99,16 +104,16 @@ def set_backend(path):
 
     glob = globals()
 
-    if isinstance(path, Backend):
-        backend = path
+    if isinstance(name, Backend):
+        backend = name
     else:
-        backend = Backend(path, load=False, use_environ=True)
+        backend = Backend(name, load=False, use_environ=True)
     glob['backend'] = backend
 
     for name in dir(backend):
         if name.split('_')[0] in ['open', 'get']:
             glob[name] = getattr(backend, name)
 
-set_backend(Backend(load=False, use_environ=True))
+set_backend()
 
 del os, absolute_import
