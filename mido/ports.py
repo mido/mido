@@ -60,6 +60,12 @@ class BasePort(object):
         is garbage collected.
         """
         if not self.closed:
+            if hasattr(self, 'autoreset') and self.autoreset:
+                try:
+                    self.reset()
+                except IOError:
+                    pass
+
             self._close()
             self.closed = True
 
@@ -197,13 +203,14 @@ class BaseOutput(BasePort):
     portmidi.py for how to do this.)
     """
 
-    def __init__(self, name='', **kwargs):
+    def __init__(self, name='', autoreset=False, **kwargs):
         """Create an output port
         
         name is the port name, as returned by output_names(). If
         name is not passed, the default output is used instead.
         """
         BasePort.__init__(self, name, **kwargs)
+        self.autoreset = autoreset
 
     def _send(self, message):
         pass
