@@ -126,14 +126,16 @@ class MidiTrack(list):
     def __init__(self):
         list.__init__([])
 
-    def _get_name(self):
+    @property
+    def name(self):
         for message in self:
             if message.type == 'track_name':
                 return message.name
         else:
             return u''
 
-    def _set_name(self, name):
+    @name.setter
+    def name(self, name):
         # Find the first track_name message and modify it.
         for message in self:
             if message.type == 'track_name':
@@ -142,9 +144,6 @@ class MidiTrack(list):
         else:
             # No track name found, add one.
             self.insert(0, MetaMessage('track_name', name=name, time=0))
-
-    name = property(fget=_get_name, fset=_set_name)
-    del _get_name, _set_name
 
     def __repr__(self):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
