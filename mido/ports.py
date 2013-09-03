@@ -177,7 +177,7 @@ class BaseInput(BasePort):
             elif not block:
                 return None
             elif self.closed:
-                raise ValueError('port closed inside receive()')
+                raise IOError('port closed inside receive()')
             sleep()
 
     def __iter__(self):

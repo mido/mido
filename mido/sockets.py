@@ -130,7 +130,7 @@ class SocketPort(BaseIOPort):
             if err.errno == 32:
                 close = True
             else:
-                raise
+                raise IOError('Lost connection')
 
         if close:
             self.close()
