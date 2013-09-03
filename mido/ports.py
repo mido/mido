@@ -128,23 +128,17 @@ class BaseInput(BasePort):
     def pending(self):
         """Return how many messages are ready to be received.
 
-        This can be used for non-blocking receive(), for example:
+        This will read data from the device and put it in the
+        parser. I will then return the number of messages available to
+        be received.
 
-             for _ in range(port.pending()):
-                 message = port.receive()
-
-        If this is called on a closed port, it will work as if
-        the port was opened, but no new messages will be returned
-        once the buffered ones run out.
+        If this is called on a closed port it will work as normal
+        except it won't try to read from the device.
         """
-        if self.closed:
-            return len(self._messages)
-        else:
-            num_messages = self._pending()
-            if num_messages is None:
-                return len(self._messages)
-            else:
-                return num_messages
+        if not self.closed:
+            self._pending()
+
+        return len(self._messages)
 
     def iter_pending(self):
         """Iterate through pending messages."""
@@ -172,8 +166,7 @@ class BaseInput(BasePort):
             
         if self.closed:
             if block:
-                # Todo: which error?
-                raise ValueError('receive() called on closed port')
+                raise IOError('receive() called on closed port')
             else:
                 return None
 
