@@ -469,7 +469,7 @@ class TestPorts(unittest.TestCase):
             # Send message.
             message = Message('note_on')
 
-            self.assertRaises(ValueError, port.send, 'not a message')
+            self.assertRaises(TypeError, port.send, 'not a message')
 
             # Receive a message. (Blocking.)
             port.send(message)

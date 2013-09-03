@@ -213,7 +213,7 @@ class BaseOutput(BasePort):
 
         The message is sent immediately."""
         if not isinstance(message, Message):
-            raise ValueError('argument to send() must be a Message')
+            raise TypeError('argument to send() must be a Message')
         elif self.closed:
             raise ValueError('send() called on closed port')
 
