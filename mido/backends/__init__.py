@@ -21,59 +21,40 @@ def find_dotted_module(name, path=None):
     except ImportError:
         raise ImportError('No module named {}'.format(name))
 
-DEFAULT_BACKEND = '.portmidi'
+DEFAULT_BACKEND = 'mido.backends.portmidi'
 
 class Backend(object):
     # Todo: doc strings.
-    def __init__(self, path=None, load=False, use_environ=False, api=None):
+    def __init__(self, name=None, api=None, load=False, use_environ=True):
+        self.name = name or os.environ.get('MIDO_BACKEND', DEFAULT_BACKEND)
+        self.api = api
         self.use_environ = use_environ
 
-        if path is None:
-            path = os.environ.get('MIDO_BACKEND', DEFAULT_BACKEND)
-            if path == '':
-                path = DEFAULT_BACKEND
-
-        if isinstance(path, types.ModuleType):
-            module = path
-            self.name = module.__name__
-            self._module = module
-            self.api = api
-        else:
-            self.name = path
-            self._module = None
-            
-            # Expand shortcut for included backend.
-            if self.name.startswith('.'):
-                self.name = 'mido.backends{}'.format(self.name)
-
-            if '/' in self.name:
-                self.name, self.api = self.name.split('/', 1)
-                if self.api.strip() == '':
-                    self.api = None
-            else:
-                self.api = None
-
-            if self.name in sys.modules:
-                self._module = sys.modules[self.name]
-            elif not load:
-                # Raise ImportError if module is not found.
-                find_dotted_module(self.name)
-            else:
-                self.load()
-
+        # Split out api (if present).
         if api:
             self.api = api
+        elif self.name and '/' in self.name:
+            self.name, self.api = self.name.split('/', 1)
+        else:
+            self.api = None
+            
+        if load:
+            self.load()
+        else:
+            # Raise ImportError if module is not found.
+            find_dotted_module(self.name)
 
-    def _get_module(self):
-        if not self._module:
-            self.load()    
-        return self._module
+    @property
+    def module(self):
+        self.load()
+        return sys.modules[self.name]
 
-    module = property(fget=_get_module)
-    # del _get_module
+    @property
+    def loaded(self):
+        return self.name in sys.modules
 
     def load(self):
-        if self._module is None:
+        if not self.loaded:
             self._module = importlib.import_module(self.name)
 
     def _env(self, name):
@@ -161,7 +142,7 @@ class Backend(object):
         return sorted(set(inputs) & set(outputs))
 
     def __repr__(self):
-        if self._module is not None or self.name in sys.modules:
+        if self.loaded:
             status = 'loaded'
         else:
             status = 'not loaded'
