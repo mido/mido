@@ -346,7 +346,7 @@ class MidiFile:
         # The tracks of format 2 files are not in sync, so they can
         # not be played back like this.
         if self.format == 2:
-            raise ValueError('format 2 file can not be played back like this')
+            raise TypeError('format 2 file can not be played back like this')
 
         seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
 
