@@ -27,6 +27,7 @@ import sys
 import time
 import timeit
 from .ports import BaseOutput
+from .types import encode_variable_int
 from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage, _build_meta_message
 from . import midifiles_meta
@@ -121,43 +122,20 @@ class ByteWriter(object):
         self.file.close()
         return False
 
-
-class DeltaTimer(object):
-    def __init__(self, midifile=None, ticks_per_beat=None, tempo=500000):
-        self.midifile = None
-        if self.midifile:
-            self.ticks_per_beat = midifile.ticks_per_beat
-        self.ticks_per_beat = ticks_per_beat
-        self.tempo = tempo
-        self.timer = timeit.default_timer
-        self.then = self.timer()
-
-    def __call__(self):
-        now = self.timer()
-        delta = now - self.then
-        self.then = now
-        
-        if self.ticks_per_beat is not None:
-            seconds_per_beat = self.tempo / 1000000.0
-            seconds_per_tick = seconds_per_beat / float(self.ticks_per_beat)
-            new_delta = int(delta / seconds_per_tick)
-            return new_delta
-
-        return delta
-
-
 class MidiTrack(list):
     def __init__(self):
         list.__init__([])
 
-    def _get_name(self):
+    @property
+    def name(self):
         for message in self:
             if message.type == 'track_name':
                 return message.name
         else:
             return u''
 
-    def _set_name(self, name):
+    @name.setter
+    def name(self, name):
         # Find the first track_name message and modify it.
         for message in self:
             if message.type == 'track_name':
@@ -167,50 +145,23 @@ class MidiTrack(list):
             # No track name found, add one.
             self.insert(0, MetaMessage('track_name', name=name, time=0))
 
-    name = property(fget=_get_name, fset=_set_name)
-    del _get_name, _set_name
-
     def __repr__(self):
-        name = repr(self.name)
-        if name.startswith('u'):
-            # Python 2.
-           name = name[1:]
-        return '<midi track {} {} messages>'.format(name, len(self))
-
-
-class RecordPort(BaseOutput):
-    def __init__(self, midifile):
-        BaseOutput.__init__(self)
-        self.midifile = midifile
-        self.delta = DeltaTimer(ticks_per_beat=midifile.ticks_per_beat,
-                               tempo=DEFAULT_TEMPO)
-        self.track = self.midifile.add_track()
-    
-    def send(self, message):
-        # This overrides the public send() because the
-        # original one doesn't accept meta messages.
-        self.track.append(message.copy(time=self.delta()))
-        if message.type == 'set_tempo':
-            self.delta.tempo = message.tempo
-
-    def _close(self):
-        self.track.append(MetaMessage('end_of_track'))
+        return '<midi track {!r} {} messages>'.format(self.name, len(self))
 
 
 class MidiFile:
-    def __init__(self, name=None, format=1, ticks_per_beat=None,
+    def __init__(self, filename=None, format=1, ticks_per_beat=480,
                  charset='latin1'):
-        self.name = name
+        self.filename = filename
         self.tracks = []
         self.charset = charset
 
-        if name is None:
+        if filename is None:
             if format not in range(3):
                 raise ValueError(
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
             self.format = format
-            # Todo: is this a good default value?
-            self.ticks_per_beat = 120
+            self.ticks_per_beat = ticks_per_beat
         else:
             self._load()
 
@@ -229,7 +180,7 @@ class MidiFile:
     def _load(self):
         midifiles_meta._charset = self.charset
 
-        with ByteReader(self.name) as self._file:
+        with ByteReader(self.filename) as self._file:
             # Read header (16 bytes)
             magic = self._file.read_list(4)
             if not bytearray(magic) == bytearray(b'MThd'):
@@ -251,7 +202,7 @@ class MidiFile:
                 self.tracks.append(self._read_track())
                 # Todo: used to ignore EOFError. I hope things still work.
 
-    def _read_delta_time(self):
+    def _read_variable_int(self):
         delta = 0
 
         while 1:
@@ -273,7 +224,7 @@ class MidiFile:
 
     def _read_meta_message(self):
         type = self._file.read_byte()
-        length = self._file.read_byte()
+        length = self._read_variable_int()
         data = self._file.read_list(length)
         return _build_meta_message(type, data)
 
@@ -304,7 +255,7 @@ class MidiFile:
             if self._file.pos - start == length:
                 break
 
-            delta = self._read_delta_time()
+            delta = self._read_variable_int()
 
             # Todo: not all messages have running status
             peek_status = self._file.peek_byte()
@@ -361,7 +312,8 @@ class MidiFile:
         """Compute seconds per tick."""
         return (tempo / 1000000.0) / self.ticks_per_beat
 
-    def _get_length(self):
+    @property
+    def length(self):
         if not self.tracks:
             return 0.0
 
@@ -378,8 +330,6 @@ class MidiFile:
 
         return max(track_lengths)
 
-    length = property(fget=_get_length)
-
     def play(self, meta_messages=False):
         """Play back all tracks.
 
@@ -395,7 +345,7 @@ class MidiFile:
         # The tracks of format 2 files are not in sync, so they can
         # not be played back like this.
         if self.format == 2:
-            raise ValueError('format 2 file can not be played back like this')
+            raise TypeError('format 2 file can not be played back like this')
 
         seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
 
@@ -419,22 +369,6 @@ class MidiFile:
             if message.type == 'set_tempo':
                 seconds_per_tick = self._compute_tick_time(message.tempo)
 
-    def _encode_delta_time(self, delta):
-        bytes = []
-        while delta:
-            bytes.append(delta & 0x7f)
-            delta >>= 7
-        
-        if bytes:
-            bytes.reverse()
-
-            # Set high bit in every byte but the last.
-            for i in range(len(bytes) - 1):
-                bytes[i] |= 0x80
-            return bytes
-        else:
-            return [0]
-
     def _has_end_of_track(self, track):
         """Return True if there is an end_of_track at the end of the track."""
         last_i = len(track) - 1
@@ -449,11 +383,11 @@ class MidiFile:
     def save(self, filename=None):
         """Save to a file.
 
-        If filename is passed, self.name will be set to this
+        If filename is passed, self.filename will be set to this
         value, and the data will be saved to this file. Otherwise
-        self.name is used.
+        self.filename is used.
 
-        Raises ValueError both filename and self.name are None,
+        Raises ValueError both filename and self.filename are None,
         or if a format 1 file has != one track.
         """
         midifiles_meta._charset = self.charset
@@ -461,13 +395,13 @@ class MidiFile:
         if self.format == 0 and len(self.tracks) != 1:
             raise ValueError('format 1 file must have exactly 1 track')
 
-        if filename is self.name is None:
+        if filename is self.filename is None:
             raise ValueError('no file name')
 
         if filename is not None:
-            self.name = filename
+            self.filename = filename
 
-        with ByteWriter(self.name) as self._file:
+        with ByteWriter(self.filename) as self._file:
             self._file.write(b'MThd')
 
             self._file.write_long(6)  # Header size. (Next three shorts.)
@@ -486,33 +420,18 @@ class MidiFile:
                                         message.type)))
 
                     # Todo: running status?
-                    bytes += self._encode_delta_time(message.time)
+                    bytes += encode_variable_int(message.time)
                     bytes += message.bytes()
 
                 if not self._has_end_of_track(track):
                     # Write end_of_track.
-                    bytes += self._encode_delta_time(0)
+                    bytes += [0]  # Delta time.
                     bytes += MetaMessage('end_of_track').bytes()
 
                 self._file.write(b'MTrk')
                 self._file.write_long(len(bytes))
                 self._file.write(bytes)
               
-    def __repr__(self):
-        name = repr(self.name)
-        if name.startswith('u'):
-            # Python 2.
-            name = name[1:]
-        return '<midi file {} format {}, {} tracks, {} messages>'.format(
-            name, self.format, len(self.tracks),
-            sum([len(track) for track in self.tracks]))
- 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        return False
-
     def print_tracks(self, meta_only=False):
         """Prints out all messages in a .midi file.
 
@@ -523,10 +442,20 @@ class MidiFile:
         print_tracks(meta_only=True) -> will print only MetaMessages
         """
         for i, track in enumerate(self.tracks):
-            print('=== Track {}\n'.format(i))
+            print('=== Track {}'.format(i))
             for message in track:
                 if not isinstance(message, MetaMessage) and meta_only:
                     pass
                 else:
-                    print('{!r}\n'.format(message))
+                    print('{!r}'.format(message))
                 
+    def __repr__(self):
+        return '<midi file {!r} format {}, {} tracks, {} messages>'.format(
+            self.filename, self.format, len(self.tracks),
+            sum([len(track) for track in self.tracks]))
+ 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        return False

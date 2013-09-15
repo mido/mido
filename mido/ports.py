@@ -60,6 +60,12 @@ class BasePort(object):
         is garbage collected.
         """
         if not self.closed:
+            if hasattr(self, 'autoreset') and self.autoreset:
+                try:
+                    self.reset()
+                except IOError:
+                    pass
+
             self._close()
             self.closed = True
 
@@ -87,17 +93,14 @@ class BasePort(object):
             (False, False): 'mute',
             }[capabilities]
 
-        name = repr(self.name or '')
-        if name.startswith('u'):
-            # Python 2.
-            name = name[1:]
+        name = self.name or ''
 
         try:
             device_type = self._device_type
         except AttributeError:
             device_type = self.__class__.__name__
 
-        return '<{} {} {} ({})>'.format(
+        return '<{} {} {!r} ({})>'.format(
             state, port_type, name, device_type)
 
 
@@ -125,23 +128,17 @@ class BaseInput(BasePort):
     def pending(self):
         """Return how many messages are ready to be received.
 
-        This can be used for non-blocking receive(), for example:
+        This will read data from the device and put it in the
+        parser. I will then return the number of messages available to
+        be received.
 
-             for _ in range(port.pending()):
-                 message = port.receive()
-
-        If this is called on a closed port, it will work as if
-        the port was opened, but no new messages will be returned
-        once the buffered ones run out.
+        If this is called on a closed port it will work as normal
+        except it won't try to read from the device.
         """
-        if self.closed:
-            return len(self._messages)
-        else:
-            num_messages = self._pending()
-            if num_messages is None:
-                return len(self._messages)
-            else:
-                return num_messages
+        if not self.closed:
+            self._pending()
+
+        return len(self._messages)
 
     def iter_pending(self):
         """Iterate through pending messages."""
@@ -169,8 +166,7 @@ class BaseInput(BasePort):
             
         if self.closed:
             if block:
-                # Todo: which error?
-                raise ValueError('receive() called on closed port')
+                raise IOError('receive() called on closed port')
             else:
                 return None
 
@@ -180,7 +176,11 @@ class BaseInput(BasePort):
             elif not block:
                 return None
             elif self.closed:
+<<<<<<< HEAD
                 raise ValueError('port closed during receive()')
+=======
+                raise IOError('port closed inside receive()')
+>>>>>>> 66d13de30b51c2c7fa2d586e0a40e4922343e940
             sleep()
 
     def __iter__(self):
@@ -200,13 +200,14 @@ class BaseOutput(BasePort):
     portmidi.py for how to do this.)
     """
 
-    def __init__(self, name='', **kwargs):
+    def __init__(self, name='', autoreset=False, **kwargs):
         """Create an output port
         
         name is the port name, as returned by output_names(). If
         name is not passed, the default output is used instead.
         """
         BasePort.__init__(self, name, **kwargs)
+        self.autoreset = autoreset
 
     def _send(self, message):
         pass
@@ -216,7 +217,7 @@ class BaseOutput(BasePort):
 
         The message is sent immediately."""
         if not isinstance(message, Message):
-            raise ValueError('argument to send() must be a Message')
+            raise TypeError('argument to send() must be a Message')
         elif self.closed:
             raise ValueError('send() called on closed port')
 

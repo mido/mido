@@ -177,6 +177,19 @@ class TestMessages(unittest.TestCase):
         b = mido.parse(a.bytes())
         self.assertTrue(isinstance(b.data, tuple))
 
+    def test_copy(self):
+        orig = Message('note_on', note=22, time=123)
+        copy = orig.copy()
+
+        self.assertTrue(orig == copy)
+        self.assertTrue(orig.time == copy.time)
+
+        copy = orig.copy(velocity=1)
+        orig.velocity = 1
+
+        self.assertTrue(orig == copy)
+
+        self.assertTrue(orig.__dict__ == copy.__dict__)
 
 class TestStringFormat(unittest.TestCase):
     def test_parse_string(self):
@@ -404,8 +417,105 @@ class TestMidiFiles(unittest.TestCase):
             if isinstance(key, int):
                 spec = _specs[key]
                 m = MetaMessage(spec.type)
-                b = m.bytes()[3:]  # [3:] skips 0xff, type and length.
-                self.assertTrue(b == spec.encode(spec.decode(b)))
+                encoded1 = m.bytes()[3:]  # [3:] skips 0xff, type and length.
+                decoded = spec.decode(m, encoded1)
+                encoded2 = spec.encode(m)
+
+                self.assertTrue(encoded1 == encoded2)
+                self.assertTrue(len(spec.attributes) == len(spec.defaults))
+
+    def test_meta_copy(self):
+        # Todo: this could probably be combined with the test_copy().
+        from mido.midifiles import MetaMessage
+
+        orig = MetaMessage('key_signature', key='Bb', mode='major')
+        copy = orig.copy()
+
+        self.assertTrue(orig == copy)
+        self.assertTrue(orig.time == copy.time)
+
+        copy = orig.copy(key='F#')
+        orig.key = 'F#'
+
+        self.assertTrue(orig == copy)
+        self.assertTrue(orig.__dict__ == copy.__dict__)
+
+class TestPorts(unittest.TestCase):
+    def test_base_ioport(self):
+        from mido.ports import BaseIOPort
+
+        class Port(BaseIOPort):
+            def _open(self):
+                self.test_value = True
+
+            def _send(self, message):
+               self._messages.append(message)
+
+            def _pending(self):
+                pass
+
+            def _receive(self):
+                return self._messages.popleft()
+
+            def _close(self):
+                self.test_value = False
+
+        with Port('Name') as port:
+            self.assertTrue(port.name == 'Name')
+            self.assertFalse(port.closed)
+
+            self.assertTrue(port._messages is port._parser._parsed_messages)
+
+            # Send message.
+            message = Message('note_on')
+
+            self.assertRaises(TypeError, port.send, 'not a message')
+
+            # Receive a message. (Blocking.)
+            port.send(message)
+            self.assertTrue(port.receive() is message)
+
+            # Receive a message. (Non-blocking.)
+            port.send(message)
+            self.assertTrue(port.receive(block=False) is message)
+            self.assertTrue(port.receive(block=False) is None)
+
+            port.send(message)
+            port.send(message)
+            self.assertTrue(port.pending() == 2)
+            self.assertTrue(list(port.iter_pending()) == [message, message])
+
+            # Todo: should this type of port close (and/or stop iteration)
+            # when there are no messages?
+            # port.send(message)
+            # port.send(message)
+            # self.assertTrue(port.pending() == 2)
+            # self.assertTrue(list(port) == [message, message])
+
+        self.assertTrue(port.closed)
+
+    def test_non_finite_port(self):
+        # This type of port can close when it runs out of messages.
+        # (And example of this is socket ports.)
+        #
+        # Iteration should then stop after all messages in the
+        # internal queue have been received.
+        from mido.ports import BaseIOPort
+
+        message = Message('note_on')
+
+        class Port(BaseIOPort):
+            def _open(self):
+                # Simulate some messages that arrived
+                # earlier.
+                self._messages.extend([message, message])
+
+            def _pending(self):
+                # Oops, the other end hung up.
+                self.close()
+
+        with Port() as port:
+            self.assertTrue(len(list(port)) == 2)
 
 if __name__ == '__main__':
     unittest.main()

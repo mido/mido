@@ -108,32 +108,25 @@ class SocketPort(BaseIOPort):
 
             try:
                 byte = self._rfile.read(1)
-            except socket.error:
-                # Todo: handle this more gracefully?
-                self.close()
-                break
+            except socket.error as err:
+                raise IOError(err.args[1])
             if byte == '':
-                # End of stream.
+                # The other end has disconnected.
                 self.close()
                 break
             else:
                 self._parser.feed_byte(ord(byte))
 
     def _send(self, message):
-        close = False
-
         try:
             self._wfile.write(message.bin())
             self._wfile.flush()
         except socket.error as err:
-            # socket.error: [Errno 32] Broken pipe
             if err.errno == 32:
-                close = True
-            else:
-                raise
+                # Broken pipe. The other end has disconnected.
+                self.close()
 
-        if close:
-            self.close()
+            raise IOError(err.args[1])
 
     def _close(self):
         self._socket.close()

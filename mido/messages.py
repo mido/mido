@@ -44,7 +44,7 @@ class MessageSpec(object):
         self.length = length
    
         # Attributes that can be set on the object
-        self.valid_attributes = set(self.arguments) | {'time'}
+        self.settable_attributes = set(self.arguments) | {'time'}
 
     def signature(self):
         """Return call signature for Message constructor for this type.
@@ -265,6 +265,32 @@ class BaseMessage(object):
 
     Can be subclassed to create meta messages, for example.
     """
+    def copy(self, **overrides):
+        """Return a copy of the message.
+
+        Attributes will be overriden by the passed keyword arguments.
+        Only message specific attributes can be overridden. The message
+        type can not be changed.
+
+        Example:
+
+            a = Message('note_on')
+            b = a.copy(velocity=32)
+        """
+        for name in overrides:
+            if name not in self._spec.settable_attributes:
+                text = '{!r} is an invalid argument for this message type'
+                raise ValueError(text.format(name))
+
+        # Get values from this object
+        arguments = {}
+        for name in self._spec.settable_attributes:
+            if name in overrides:
+                arguments[name] = overrides[name]
+            else:
+                arguments[name] = getattr(self, name)
+
+        return self.__class__(self.type, **arguments)
 
     def bytes(self):
         raise ValueError('bytes() is not implemented in this class')
@@ -333,40 +359,9 @@ class Message(BaseMessage):
         for name, value in arguments.items():
             setattr(self, name, value)
 
-    def copy(self, **overrides):
-        """Return a copy of the message.
-
-        Attributes will be overriden by the passed keyword arguments.
-        Only message specific attributes can be overridden. The message
-        type can not be changed.
-
-        Example:
-
-            a = Message('note_on')
-            b = a.copy(velocity=32)
-        """
-        for name in overrides:
-            if name not in self._spec.valid_attributes:
-                text = '{!r} is an invalid argument for this message type'
-                raise ValueError(text.format(name))
-
-        # Get values from this object
-        arguments = {}
-        for name in self._spec.valid_attributes:
-            if name in overrides:
-                arguments[name] = overrides[name]
-            else:
-                arguments[name] = getattr(self, name)
-
-        return self.__class__(self.type, **arguments)
-
-    def _set(self, name, value):
-        """Sets an attribute directly, bypassing all type and value checks"""
-        self.__dict__[name] = value
-
     def __setattr__(self, name, value):
         """Set an attribute."""
-        if name in self._spec.valid_attributes:
+        if name in self._spec.settable_attributes:
             try:
                 if name == 'data':
                     value = check_data(value)

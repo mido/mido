@@ -8,43 +8,74 @@ Example:
 
 Todo:
 
-  - do proper argument parsing
-  - add option for output port
   - add option for printing messages
 """
 from __future__ import print_function, division
 import sys
+import argparse
 import mido
 from mido.midifiles import MidiFile
 
-with mido.open_output() as output:
-    output.reset()
-    try:
-        print('Using output {!r}.'.format(output.name))
-        print()
-        for filename in sys.argv[1:]:
-            with MidiFile(filename) as midi_file:
-                print('Playing {}.'.format(midi_file.name))
-                length = midi_file.length
-                print('Song length: {} minutes, {} seconds.'.format(
-                        int(length / 60),
-                        int(length % 60)))
-                print('Tracks:')
-                for i, track in enumerate(midi_file.tracks):
-                    print('  {:2d}: {!r}'.format(i, track.name.strip()))
+def parse_args():
+    parser = argparse.ArgumentParser(description=__doc__)
+    arg = parser.add_argument
 
-                for message in midi_file.play(meta_messages=True):
-                    if isinstance(message, mido.Message):
-                        # print(message)
-                        output.send(message)
-                    elif message.type == 'set_tempo':
-                        bpm = 60 / (message.tempo / 1000000)
-                        if int(bpm) == bpm:
-                            bpm = int(bpm)
-                        print('Tempo changed to {} BPM.'.format(bpm))
-            print()
+    arg('-o', '--output-port',
+        help='Mido port to send output to')
+
+    arg('-q', '--quiet',
+        dest='quiet',
+        action='store_true',
+        default=False,
+        help='print nothing')
+
+    arg('files',
+        metavar='FILE',
+        nargs='+',
+        help='MIDI file to play')
+
+    return parser.parse_args()
+
+def play_file(output, filename):
+    with MidiFile(filename) as midi_file:
+        print('Playing {}.'.format(midi_file.name))
+        length = midi_file.length
+        print('Song length: {} minutes, {} seconds.'.format(
+                int(length / 60),
+                int(length % 60)))
+        print('Tracks:')
+        for i, track in enumerate(midi_file.tracks):
+            print('  {:2d}: {!r}'.format(i, track.name.strip()))
+
+        for message in midi_file.play(meta_messages=True):
+            if isinstance(message, mido.Message):
+                # print(message)
+                output.send(message)
+            elif message.type == 'set_tempo':
+                bpm = 60 / (message.tempo / 1000000)
+                if int(bpm) == bpm:
+                    bpm = int(bpm)
+                print('Tempo changed to {} BPM.'.format(bpm))
+    print()
+
+def main():
+    try:
+        with mido.open_output(args.output_port) as output:
+            print('Using output {!r}.'.format(output.name))
+            output.reset()
+            try:
+                for filename in args.files:
+                    play_file(output, filename)
+            finally:
+                print()
+                output.reset()
     except KeyboardInterrupt:
         pass
-    finally:
-        print()
-        output.reset()
+
+args = parse_args()
+
+if args.quiet:
+    def print(*args):
+        pass
+
+main()

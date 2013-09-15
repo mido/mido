@@ -1,51 +1,40 @@
 Backends
 =========
 
-Selecting Backend
-------------------
+Choosing Backend
+-----------------
 
-Mido comes with backends for PortMidi and RtMidi, and an incomplete
-one for Pygame. The default is PortMidi.
+Mido comes with backends for PortMidi, RtMidi and Pygame.
 
-For more on writing backends, see :doc:`new_port_types`.
+By default, Mido uses PortMidi. You can override this with the
+``MIDO_BACKEND`` environment variable, for example::
 
-(Todo: loaded on demand.)
+    $ MIDO_BACKEND=mido.backends.rtmidi ./program.py
 
-You can choose backend by setting the ``MIDO_BACKEND`` environment
-variable::
+Alternatively, you can set the backend from withing your program::
 
-    $ MIDO_BACKEND=.rtmidi python program.py
-
-Alternatively, you can set the backend from your program::
-
-    >>> mido.set_backend('.rtmidi')
+    >>> mido.set_backend('mido.backends.rtmidi')
     >>> mido.backend
     <backend mido.backends.rtmidi (not loaded)>
 
-In either case, the ``mido.open_*()`` and ``mido.get_*()`` will now
-use the RtMidi backend.
+This will override the environment variable.
 
-(The "." in front of the name is a shortcut for ``mido.backends.``, so
-the full name is ``mido.backends.rtmidi``.)
+If you want to use more than one backend at a time, you can do::
 
-You can use multiple backends at the same time. For example, to send
-messages from an RtMidi port to a PortMidi port::
-
-    rtmidi = mido.Backend('.rtmidi')
-    portmidi = mido.Backend('.portmidi')
+    rtmidi = mido.Backend('mido.backends.rtmidi')
+    portmidi = mido.Backend('mido.backends.portmidi')
 
     input = rtmidi.open_input()
     output = portmidi.open_output()
     for message in input:
         output.send(message)
 
-By default, ``mido.Backend`` will load the module immediately. If you
-want the module loaded on demand you can pass ``load=False``. (This is
-what Mido does when it starts up, so the intial backend is not loaded
-until you actually use it.)
+The backend will not be loaded until you call one of the ``open_`` or
+``get_`` methods. You can pass ``load=True`` to have it loaded right
+away.
 
-If you want the ``Backend`` object to respect environment variables
-like ``MIDO_DEFAULT_INPUT`` you can pass ``use_environ=True``.
+If you pass ``use_environ=True`` the module will use the environment
+variables ``MIDO_DEFAULT_INPUT`` etc. for default ports.
 
 
 Callbacks
@@ -90,7 +79,7 @@ or::
 PortMidi
 ---------
 
-Name: ``.portmidi``
+Name: ``mido.backends.portmidi``
 
 The PortMidi backend is written with ``ctypes`` and requires only the
 shared library file ``portmidi.so`` or ``portmidi.dll``.
@@ -110,7 +99,7 @@ loaded. (Todo: is this true on other platforms?)
 RtMidi
 -------
 
-Name: ``.rtmidi``
+Name: ``mido.backends.rtmidi``
 
 The RtMidi backend is a thin wrapper around `python-rtmidi
 <https://pypi.python.org/pypi/python-rtmidi/>`_
@@ -166,7 +155,7 @@ implementation.
 Pygame
 -------
 
-Name: ``.pygame``
+Name: ``mido.backends.pygame``
 
 The Pygame backend uses ``pygame.midi`` for I/O.
 

@@ -14,9 +14,8 @@ if sys.argv[-1] == "publish":
     os.system("python setup.py sdist upload")
     sys.exit()
 
-# Todo: what about python 3?
 if sys.argv[-1] == "test":
-    os.system("python tests.py")
+    os.system("python run_tests.py")
     sys.exit()
 
 required = []
