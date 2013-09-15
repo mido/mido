@@ -67,10 +67,10 @@ _key_signature_lookup = {
 _key_signature_lookup.update(reverse_table(_key_signature_lookup))
 
 
-def encode_text(text):
-    return list(bytearray(text.encode(_charset)))
+def encode_string(string):
+    return list(bytearray(string.encode(_charset)))
 
-def decode_text(data):
+def decode_string(data):
     return bytearray(data).decode(_charset)
 
 def encode_tempo(tempo):
@@ -88,10 +88,10 @@ class MetaSpec_text(MetaSpec):
     defaults = ['']
 
     def encode(self, values):
-        return encode_text(values['text'])
+        return encode_string(values['text'])
 
     def decode(self, data):
-        return {'text': decode_text(data)}
+        return {'text': decode_string(data)}
 
 class MetaSpec_copyright(MetaSpec_text):
     type_byte = 0x02
@@ -102,10 +102,10 @@ class MetaSpec_track_name(MetaSpec):
     defaults = ['']
     
     def encode(self, values):
-        return encode_text(values['name'])
+        return encode_string(values['name'])
 
     def decode(self, data):
-        return {'name': decode_text(data)}
+        return {'name': decode_string(data)}
 
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
