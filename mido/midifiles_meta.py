@@ -58,10 +58,6 @@ _key_signature_decode = {
     }
 _key_signature_encode = reverse_table(_key_signature_decode)
 
-<<<<<<< HEAD
-def encode_string(string):
-    return list(bytearray(string.encode(_charset)))
-=======
 _smpte_framerate_decode = {
         0: 24,
         1: 25,
@@ -69,13 +65,12 @@ _smpte_framerate_decode = {
         3: 30,
     }
 _smpte_framerate_encode = reverse_table(_smpte_framerate_decode)
->>>>>>> 66d13de30b51c2c7fa2d586e0a40e4922343e940
+
+def encode_string(string):
+    return list(bytearray(string.encode(_charset)))
 
 def decode_string(data):
     return bytearray(data).decode(_charset)
-
-def encode_text(text):
-    return list(bytearray(text.encode(_charset)))
 
 def check_int(value, low, high):
     if not isinstance(value, int):
@@ -114,22 +109,14 @@ class MetaSpec_text(MetaSpec):
     attributes = ['text']
     defaults = ['']
 
-<<<<<<< HEAD
-    def encode(self, values):
-        return encode_string(values['text'])
-
-    def decode(self, data):
-        return {'text': decode_string(data)}
-=======
     def decode(self, message, data):
-        message.text = decode_text(data)
+        message.text = decode_string(data)
 
     def encode(self, message):
-        return encode_text(message.text)
+        return encode_string(message.text)
 
     def check(self, name, value):
         check_str(value)
->>>>>>> 66d13de30b51c2c7fa2d586e0a40e4922343e940
 
 class MetaSpec_copyright(MetaSpec_text):
     type_byte = 0x02
@@ -139,18 +126,11 @@ class MetaSpec_track_name(MetaSpec_text):
     attributes = ['name']
     defaults = ['']
     
-<<<<<<< HEAD
-    def encode(self, values):
-        return encode_string(values['name'])
-
-    def decode(self, data):
-        return {'name': decode_string(data)}
-=======
     def decode(self, message, data):
-        message.name = decode_text(data)
+        message.name = decode_string(data)
 
     def encode(self, message):
-        return encode_text(message.name)
+        return encode_string(message.name)
 
 class MetaSpec_instrument_name(MetaSpec_track_name):
     type_byte = 0x04
@@ -166,7 +146,6 @@ class MetaSpec_cue_marker(MetaSpec_text):
 
 class MetaSpec_device_name(MetaSpec_track_name):
     type_byte = 0x09
->>>>>>> 66d13de30b51c2c7fa2d586e0a40e4922343e940
 
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
