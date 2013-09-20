@@ -1,13 +1,12 @@
-=======================
-Writing new Port Types
-=======================
+Writing new Port Types and Backends
+===================================
 
 The Mido port API allows you to write new ports to do practically
 anything.
 
 
-Creating a new Port class
-==========================
+Writing a new Port class
+------------------------
 
 ``mido.ports`` defines base classes that you can use to create your
 new port type: ``BaseInput``, ``BaseOutput`` and ``BaseIOPort``.
@@ -35,7 +34,7 @@ If you want your port to support both input and output, you can use
 
 
 Attributes
------------
+^^^^^^^^^^
 
 ``name``
 
@@ -60,7 +59,7 @@ Attributes
 
 
 Overridable Methods
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 ``_open(self)``, ``_open(self, **kwargs)``
 
@@ -105,7 +104,7 @@ Overridable Methods
 
 
 Writing a New Backend
-======================
+---------------------
 
 Mido comes with backends for PortMidi, python-rtmidi and pygame.midi,
 but you can easily add your own.

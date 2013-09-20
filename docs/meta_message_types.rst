@@ -15,7 +15,7 @@ pattern number in type 2 MIDI files.
 
 
 text (0x01)
------------------------
+------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -27,7 +27,7 @@ General "Text" Meta Message. Can be used for any text-based data.
 
 
 copyright (0x02)
------------------------
+-----------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -39,7 +39,7 @@ Provides information about a MIDI file's copyright.
 
 
 track_name (0x03)
------------------------
+------------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -63,7 +63,7 @@ Store an instrument's name.
 
 
 lyrics (0x05)
------------------------
+--------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -75,7 +75,7 @@ Stores the lyrics of a song. Typically one syllable per Meta Message.
 
 
 marker (0x06)
------------------------
+--------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -88,7 +88,7 @@ Can be used as the marker for the beginning of a verse, solo, etc.
 
 
 cue_marker (0x07)
------------------------
+------------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -100,7 +100,7 @@ Marks a cue. IE: 'Cue performer 1', etc
 
 
 device_name (0x09)
------------------------
+-------------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -124,7 +124,7 @@ Gives the prefix for the channel on which events are played.
 
 
 midi_port (0x21)
------------------------
+-----------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -136,7 +136,7 @@ Gives the MIDI Port on which events are played.
 
 
 end_of_track (0x2f)
------------------------
+--------------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -148,7 +148,7 @@ An empty Meta Message that marks the end of a track.
 
 
 set_tempo (0x51)
------------------------
+-----------------
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -215,11 +215,10 @@ data            [..]			[]
 An unprocessed sequencer specific message containing raw data.
 
 Unknown Meta Messages
-----------------------------
+----------------------
 
-In the event that there is an unimplemented MetaMessage type,
-it will be returned as an UnknownMetaMessage object.
-
+In the event that there is an unimplemented MetaMessage type, it will
+be returned as an UnknownMetaMessage object.
 
 This object takes the following form:
 

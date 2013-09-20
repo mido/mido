@@ -81,4 +81,3 @@ Further Reading
 * `MIDI Manufacturers Association <http://www.midi.org/>`_
 
 * `A full table of MIDI messages <http://www.midi.org/techspecs/midimessages.php>`_
-
