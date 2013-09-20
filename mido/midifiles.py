@@ -128,6 +128,15 @@ class MidiTrack(list):
 
     @property
     def name(self):
+        """Name of the track.
+
+        This will return the name from the first track_name meta
+        message in the track, or '' if there is no such message.
+
+        Setting this property will update the name field of the first
+        track_name message in the track. If no such message is found,
+        one will be added to the beginning of the track with a delta
+        time of 0."""
         for message in self:
             if message.type == 'track_name':
                 return message.name
@@ -314,6 +323,15 @@ class MidiFile:
 
     @property
     def length(self):
+        """
+        Playback time in seconds.
+
+        This will be computed by going through every message in every
+        track and adding up delta times.
+        """
+        # Todo: should fail if format == 2.
+        #       (There's no way to know where each track starts.)
+
         if not self.tracks:
             return 0.0
 

@@ -11,6 +11,7 @@ Messages
 .. autoclass:: Message
    :members:
    :inherited-members:
+   :undoc-members:
 
 
 Ports
@@ -35,6 +36,7 @@ Backends
 .. autoclass:: Backend
    :members:
    :inherited-members:
+   :undoc-members:
 
 
 Parsing
@@ -45,6 +47,7 @@ Parsing
 .. autoclass:: Parser
    :members:
    :inherited-members:
+   :undoc-members:
 
 
 String Serialization
@@ -70,18 +73,22 @@ Port Classes and Functions
 .. autoclass:: BaseInput
    :members:
    :inherited-members:
+   :undoc-members:
 
 .. autoclass:: BaseOutput
    :members:
    :inherited-members:
+   :undoc-members:
 
 .. autoclass:: IOPort
    :members:
    :inherited-members:
+   :undoc-members:
 
 .. autoclass:: MultiPort
    :members:
    :inherited-members:
+   :undoc-members:
 
 .. autofunction:: multi_receive
 .. autofunction:: multi_iter_pending
@@ -95,14 +102,17 @@ MIDI Files
 .. autoclass:: MidiFile
    :members:
    :inherited-members:
+   :undoc-members:
 
 .. autoclass:: MidiTrack
-   :members:
+   :members: 
    :inherited-members:
+   :undoc-members:
 
 .. autoclass:: MetaMessage
    :members:
    :inherited-members:
+   :undoc-members:
 
 
 Socket Ports
@@ -113,9 +123,11 @@ Socket Ports
 .. autoclass:: PortServer
    :members:
    :inherited-members:
+   :undoc-members:
 
 .. autoclass:: SocketPort
    :members:
    :inherited-members:
+   :undoc-members:
 
 .. autofunction:: parse_address
