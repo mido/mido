@@ -3,4 +3,4 @@ Authors
 
 Ole Martin Bjørndalen (lead programmer)
 
-Rapolas Binkys (assistant programmer)
+Rapolas Binkys
