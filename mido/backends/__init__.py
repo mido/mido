@@ -24,7 +24,14 @@ def find_dotted_module(name, path=None):
 DEFAULT_BACKEND = 'mido.backends.portmidi'
 
 class Backend(object):
-    # Todo: doc strings.
+    """
+    Wrapper for backend module.
+
+    A backend module implements classes for input and output ports for
+    a specific MIDI library. The Backend object wraps around the
+    object and provides convenient 'open_*()' and 'get_*_names()'
+    functions.
+    """
     def __init__(self, name=None, api=None, load=False, use_environ=True):
         self.name = name or os.environ.get('MIDO_BACKEND', DEFAULT_BACKEND)
         self.api = api
@@ -46,14 +53,27 @@ class Backend(object):
 
     @property
     def module(self):
+        """A reference module implementing the backend.
+
+        This will always be a valid reference to a module. Accessing
+        this property will load the module. Use .loaded to check if
+        the module is loaded.
+        """
         self.load()
         return sys.modules[self.name]
 
     @property
     def loaded(self):
+        """Return True if the module is loaded."""
         return self.name in sys.modules
 
     def load(self):
+        """Load the module.
+
+        Does nothing if the module is already loaded.
+        
+        This function will be called if you access the 'module'
+        property."""
         if not self.loaded:
             self._module = importlib.import_module(self.name)
 

@@ -49,6 +49,7 @@ Contents
    :maxdepth: 2
 
    installing
+   why_mido
    about_midi
    tutorial
    parsing_and_encoding
@@ -61,7 +62,7 @@ Contents
    meta_message_types
    lib
    license
-   author
+   authors
    acknowledgements
 
 

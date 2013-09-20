@@ -31,12 +31,12 @@ Ports
 Backends
 ---------
 
-.. autofunction:: set_backend
-
 .. autoclass:: Backend
    :members:
    :inherited-members:
    :undoc-members:
+
+.. autofunction:: set_backend
 
 
 Parsing
