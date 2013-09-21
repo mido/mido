@@ -454,9 +454,6 @@ class TestPorts(unittest.TestCase):
             def _pending(self):
                 pass
 
-            def _receive(self):
-                return self._messages.popleft()
-
             def _close(self):
                 self.test_value = False
 
@@ -510,7 +507,7 @@ class TestPorts(unittest.TestCase):
                 # earlier.
                 self._messages.extend([message, message])
 
-            def _pending(self):
+            def _receive(self, block=True):
                 # Oops, the other end hung up.
                 self.close()
 

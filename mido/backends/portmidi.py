@@ -179,12 +179,16 @@ class Input(PortCommon, BaseInput):
             self._parser.feed_byte(byte)
             packed_message >>= 8
 
-    def _pending(self):
+    def _receive(self, block=True):
         if self._has_callback:
             raise IOError('a callback is currently set for this port')
-
-        while pm.lib.Pm_Poll(self._stream):
-            self._read()
+        
+        if block:
+            while not self._messages:
+                self._read()
+        else:
+            while pm.lib.Pm_Poll(self._stream):
+                self._read()
 
     def _thread_main(self):
         while self._has_callback:

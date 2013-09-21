@@ -91,16 +91,27 @@ Overridable Methods
 
     If an error occurs, ``IOError`` should be raised.
 
-``_pending(self):``
+``_receive(block=True)``
 
-    Called by ``pending()``.
+    Called by ``receive()``, ``pending()``, ``__iter__()`` and
+    ``iter_pending()``.
 
-    Checks the device for new messages and appends them to
-    ``self._messages``. Returns the number of messages now pending. If
-    you would just have returned ``len(self._messages)``, you can return
-    ``None`` and just let ``pending()`` take care of the return value.
+    Will only be called if ``_messages`` is empty.
 
-    If an error occurs, ``IOError`` should be raised.
+    Reads messages from the device and feeds them to the parser (or
+    inserts them directly into ._messages). Always returns None.
+
+    If ``block=True``, reads messages from the device in a blocking
+    way until ._messages is non-empty, and then returns. (If there is
+    no way to read from the device in a blocking way, you can return
+    after polling the device, and the caller will take care of the
+    blocking.)
+
+    If ``block=False``, go in a loop and read data from the device
+    until ``_messages`` is non-empty, the return ``None``.
+
+    Do not call ``pending()`` from inside here, since it calls
+    you. Use ``len(self._messages)`` instead.
 
 
 Writing a New Backend

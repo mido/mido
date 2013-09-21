@@ -122,9 +122,6 @@ class BaseInput(BasePort):
         self._messages = self._parser._parsed_messages  # Shortcut.
         BasePort.__init__(self, name, **kwargs)
 
-    def _pending(self):
-        return None
-
     def pending(self):
         """Return how many messages are ready to be received.
 
@@ -136,13 +133,14 @@ class BaseInput(BasePort):
         except it won't try to read from the device.
         """
         if not self.closed:
-            self._pending()
+            self._receive(block=False)
 
         return len(self._messages)
 
     def iter_pending(self):
         """Iterate through pending messages."""
-        for _ in range(self.pending()):
+        self._receive(block=False)
+        while self._messages:
             yield self._messages.popleft()
 
     def receive(self, block=True):
@@ -160,10 +158,11 @@ class BaseInput(BasePort):
         If block=False is passed, None will be returned if there are no
         pending messages or if the port is closed.
         """
+        # print('Receive')
         # If there is a message pending, return it right away.
         if self._messages:
             return self._messages.popleft()
-            
+
         if self.closed:
             if block:
                 raise IOError('receive() called on closed port')
@@ -171,23 +170,37 @@ class BaseInput(BasePort):
                 return None
 
         while 1:
-            if self.pending():
+            self._receive(block=block)
+            if self._messages:
                 return self._messages.popleft()
             elif not block:
                 return None
             elif self.closed:
                 raise IOError('port closed during receive()')
 
+            # print('Sleeping')
             sleep()
+
+    def _receive(self, block=True):
+        # Block forever to for default behaviour.
+        # (Nothing will ever arrive on the default port.)g
+        if block:
+            while 1:
+                sleep()
+        else:
+            return None
 
     def __iter__(self):
         """Iterate through messages until the port closes."""
         while 1:
-            for message in self.iter_pending():
-                yield message
-            if self.closed:
-                return
-            sleep()
+            self._receive(block=True)
+            if self._messages:
+                for message in self.iter_pending():
+                    yield message
+                if self.closed:
+                    return
+            else:
+                sleep()
 
 class BaseOutput(BasePort):
     """
@@ -272,11 +285,11 @@ class IOPort(BaseIOPort):
         self.input.close()
         self.output.close()
 
-    def _pending(self):
-        return self.input._pending()
-
     def _send(self, message):
         self.output._send(message)
+
+    def _receive(self, block=True):
+        return self.input._receive()
 
 
 class EchoPort(BaseIOPort):
@@ -298,7 +311,7 @@ class MultiPort(BaseIOPort):
                 # Todo: what if a SocketPort connection closes in-between here?
                 port.send(message)
 
-    def _pending(self):
+    def _receive(self, block=True):
         ports = list(self.ports)
         random.shuffle(ports)
         for port in ports:
