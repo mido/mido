@@ -9,6 +9,15 @@ network.
 
 The protocol is standard MIDI bytes over a TCP stream.
 
+*Security note:* The data is sent over an unencrypted channel. Also,
+the default server allows connections from any host and also accepts
+arbitrary sysex messages, which could allow anyone to for example
+overwrite patches on your synths (or worse). Use only on trusted
+networks.
+
+If you need more security, you can build a custom server with a white
+list of clients that are allowed to connect.
+
 
 Sending Messages to a Server
 -----------------------------
@@ -102,3 +111,10 @@ Using this, you can write the server any way you like, for example::
             # Do other things
             ...
 
+
+Possible Future Additions
+--------------------------
+
+Optional HTTP-style headers could be added. As long as these are 7-bit
+ASCII, they will be counted as data bytes and ignored by clients or
+servers who don't expect them.
