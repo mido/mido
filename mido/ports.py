@@ -192,15 +192,20 @@ class BaseInput(BasePort):
 
     def __iter__(self):
         """Iterate through messages until the port closes."""
+        # This could have simply called receive() in a loop, but that
+        # could result in a "port closed during receive()" error which
+        # is hard to catch here.
         while 1:
-            self._receive(block=True)
-            if self._messages:
-                for message in self.iter_pending():
-                    yield message
+            try:
+                yield self.receive()
+            except IOError:
                 if self.closed:
+                    # The port closed before or inside receive().
+                    # (This makes the assumption that this is the reason,
+                    # at the risk of masking other errors.)
                     return
-            else:
-                sleep()
+                else:
+                    raise
 
 class BaseOutput(BasePort):
     """
