@@ -68,12 +68,12 @@ class PortServer(MultiPort):
         self._update_ports()
         return MultiPort._send(self, message)
 
-    def _pending(self):
+    def _receive(self, block=True):
         port = self.accept(block=False)
         if port:
             self.ports.append(port)
         self._update_ports()
-        return MultiPort._pending(self)
+        return MultiPort._receive(self)
 
 
 class SocketPort(BaseIOPort):
@@ -101,11 +101,8 @@ class SocketPort(BaseIOPort):
     def _get_device_type(self):
         return 'socket'
 
-    def _pending(self):
-        while 1:
-            if not _is_readable(self._socket):
-                break
-
+    def _receive(self, block=True):
+        while _is_readable(self._socket):
             try:
                 byte = self._rfile.read(1)
             except socket.error as err:

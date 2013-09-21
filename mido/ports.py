@@ -52,6 +52,12 @@ class BasePort(object):
     def _close(self):
         pass
 
+    def _send(self, message):
+        pass
+
+    def _receive(self, block=True):
+        pass
+
     def close(self):
         """Close the port.
 
@@ -158,7 +164,6 @@ class BaseInput(BasePort):
         If block=False is passed, None will be returned if there are no
         pending messages or if the port is closed.
         """
-        # print('Receive')
         # If there is a message pending, return it right away.
         if self._messages:
             return self._messages.popleft()
@@ -178,11 +183,7 @@ class BaseInput(BasePort):
             elif self.closed:
                 raise IOError('port closed during receive()')
 
-            # print('Sleeping')
             sleep()
-
-    def _receive(self, block=True):
-        return
 
     def __iter__(self):
         """Iterate through messages until the port closes."""
@@ -217,9 +218,6 @@ class BaseOutput(BasePort):
         """
         BasePort.__init__(self, name, **kwargs)
         self.autoreset = autoreset
-
-    def _send(self, message):
-        pass
 
     def send(self, message):
         """Send a message on the port.
