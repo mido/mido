@@ -144,6 +144,20 @@ Meta messages are only found in MIDI files and can not be sent to
 ports.
 
 
+About the Time Attribute
+-------------------------
+
+The ``time`` attribute is used in several different ways:
+
+    * inside a track, it is delta time in ticks
+
+    * in messages yielded from ``play()``, it is delta time in seconds
+      (time elapsed since the last yielded message)
+
+    * (only important to implementers) inside certain methods it is
+      used for absolute time in ticks or seconds
+
+
 Tempo and Beat Resolution
 --------------------------
 
