@@ -39,6 +39,10 @@ You can then connect to the server and send it messages::
 Each end of the connection behaves like a normal Mido I/O port, with
 all the usual methods.
 
+The host may be a DNS host name or IP address (as a string). It may
+also be '', in which case connections are accepted on any ip address
+on the computer.
+
 
 Turning Things on their Head
 -----------------------------
