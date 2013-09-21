@@ -156,7 +156,7 @@ class BaseInput(BasePort):
         behavior, you can use pending() to see how many messages can
         safely be received without blocking.
 
-        If the port is closed and there are no pending messages, ValueError
+        If the port is closed and there are no pending messages, IOError
         will be raised. If the port closes while waiting inside receive(),
         IOError will be raised. Todo: this seems a bit inconsistent. Should
         different errors be raised? What's most useful here?
