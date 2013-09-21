@@ -182,13 +182,7 @@ class BaseInput(BasePort):
             sleep()
 
     def _receive(self, block=True):
-        # Block forever to for default behaviour.
-        # (Nothing will ever arrive on the default port.)g
-        if block:
-            while 1:
-                sleep()
-        else:
-            return None
+        return
 
     def __iter__(self):
         """Iterate through messages until the port closes."""
