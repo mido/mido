@@ -34,3 +34,20 @@ python-rtmidi can be installed with:
 
 It requires ``librtmidi.so``, which is available in Ubuntu as
 ``librtmidi-dev``.
+
+
+Installing python-rtmidi
+-------------------------
+
+::
+
+    $ pip install python-rtmidi
+
+That may fail in OS X due to a problem with the package. If this
+happens, you can try::
+
+   $ pip install --pre python-rtmidi
+
+The ``--pre`` is because pip refuses to install when the library looks
+like a pre-release, and says: "Could not find a version that satisfies
+the requirement XYZ.")
