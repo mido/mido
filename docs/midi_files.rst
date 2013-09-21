@@ -108,6 +108,19 @@ if you attempt to save a file with no tracks or with more than one
 track.
 
 
+Playback Length
+----------------
+
+You can get the total playback time in seconds by accessing the
+``length`` property::
+
+   mid.length
+
+This is only supported for type 0 and 1 files. Accessing ``length`` on
+a type 2 file will raise ``ValueError``, since it is impossible to
+compute the playback time of an asynchronous file.
+
+
 Meta Messages
 --------------
 
