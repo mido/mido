@@ -113,7 +113,7 @@ class PortCommon(object):
         del self._rt  # Virtual ports are closed when this is deleted.
 
 class Input(PortCommon, BaseInput):
-    def _pending(self):
+    def _receive(self, block=True):
         if self._has_callback:
             raise IOError('a callback is currently set for this port')
 

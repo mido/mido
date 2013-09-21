@@ -27,10 +27,10 @@ class QueuePort(BaseInput, BaseOutput):
     def _send(self, message):
         self._queue.put(message)
 
-    def _pending(self):
+    def _receive(self, block=True):
         while 1:
             try:
-                message = self._queue.get_nowait()
+                message = self._queue.get(block=block)
                 self._messages.append(message)
             except Empty:
                 break

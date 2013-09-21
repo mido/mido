@@ -451,9 +451,6 @@ class TestPorts(unittest.TestCase):
             def _send(self, message):
                self._messages.append(message)
 
-            def _pending(self):
-                pass
-
             def _close(self):
                 self.test_value = False
 

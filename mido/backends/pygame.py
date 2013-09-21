@@ -93,7 +93,7 @@ class Input(PortCommon, BaseInput):
     PortMidi Input port
     """
 
-    def _pending(self):
+    def _receive(self, block=True):
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
         # resort to calling Pm_Read() in a loop until there are no
         # more pending events.

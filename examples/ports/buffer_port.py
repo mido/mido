@@ -6,9 +6,6 @@ class BufferPort(BaseInput, BaseOutput):
     def _send(self, message):
         self._messages.append(message)
 
-    def _pending(self):
-        return len(self._messages)
-    
     def _get_device_type(self):
         return 'buffer'
 

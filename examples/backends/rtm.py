@@ -87,7 +87,7 @@ class PortCommon(object):
 
 class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
-    def _pending(self):
+    def _receive(self, block=True):
         if self._has_callback:
             raise IOError('a callback is currently set for this port')
 
