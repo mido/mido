@@ -39,11 +39,12 @@ Source code
 
 Latest stable release: http://github.com/olemb/mido/
 
-Development version: http://github.com/olemb/mido/tree/develop/
+Latest development version: http://github.com/olemb/mido/tree/develop/
 
 
 Contents
----------
+------------
+>>>>>>> master
 
 .. toctree::
    :maxdepth: 2

@@ -42,6 +42,12 @@
 * Added (experimental) support for callbacks in PortMidi backend using threads.
 
 
+1.0.4 - 2013-08-15
+-------------------
+
+* rewrote parser
+
+
 1.0.3 - 2013-07-12
 -------------------
 
