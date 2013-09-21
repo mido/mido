@@ -86,11 +86,19 @@ shared library file ``portmidi.so`` or ``portmidi.dll``.
 
 Can send but doesn't receive ``active_sensing`` messages.
 
+The port name lists are creates once when PortMidi is
+initialized. This means that if you plug in a devices after the
+backend is loaded, you will not be able to access it. (The RtMidi
+backend updates its list dynamically.)
+
+The device list is created when PortMidi is initialized, so if devices
+are added later they will not be shown in the names lists and can not
+be opened as ports. (RtMidi, however, updates the names lists when you
+ask for them.)
+
 PortMidi has no callback mechanism, so callbacks are implemented in
 Python with threads. Each port with a callback has a dedicated thread
 which does blocking reads from the device.
-
-PortMidi doesn't update its list of ports
 
 In Linux, the list of port names remains fixed after the library has
 loaded. (Todo: is this true on other platforms?)
