@@ -332,6 +332,10 @@ class MidiFile:
         # Todo: should fail if format == 2.
         #       (There's no way to know where each track starts.)
 
+        if self.format == 2:
+            raise ValueError('impossible to compute length'
+                             ' for type 2 (asynchronous) file')
+
         if not self.tracks:
             return 0.0
 
