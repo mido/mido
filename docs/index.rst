@@ -50,10 +50,10 @@ Contents
    :maxdepth: 2
 
    installing
-   why_mido
-   about_midi
-   tutorial
+   quickstart
+   messages
    parsing_and_encoding
+   ports
    backends
    midi_files
    socket_ports
@@ -61,6 +61,7 @@ Contents
    new_port_types
    message_types
    meta_message_types
+   about_midi
    lib
    license
    authors
