@@ -159,7 +159,7 @@ class MidiTrack(list):
 
 
 class MidiFile:
-    def __init__(self, filename=None, format=1, ticks_per_beat=480,
+    def __init__(self, filename=None, type=1, ticks_per_beat=480,
                  charset='latin1'):
         self.filename = filename
         self.tracks = []
@@ -169,7 +169,7 @@ class MidiFile:
             if format not in range(3):
                 raise ValueError(
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
-            self.format = format
+            self.type = type
             self.ticks_per_beat = ticks_per_beat
         else:
             self._load()
@@ -199,7 +199,7 @@ class MidiFile:
             # specification, but this allows for future expansion.
             header_size = self._file.read_long()
 
-            self.format = self._file.read_short()
+            self.type = self._file.read_short()
             number_of_tracks = self._file.read_short()
             self.ticks_per_beat = self._file.read_short()
 
@@ -329,10 +329,10 @@ class MidiFile:
         This will be computed by going through every message in every
         track and adding up delta times.
         """
-        # Todo: should fail if format == 2.
+        # Todo: should fail if type == 2.
         #       (There's no way to know where each track starts.)
 
-        if self.format == 2:
+        if self.type == 2:
             raise ValueError('impossible to compute length'
                              ' for type 2 (asynchronous) file')
 
@@ -364,10 +364,10 @@ class MidiFile:
         safely modify them without ruining the tracks.
         """
 
-        # The tracks of format 2 files are not in sync, so they can
+        # The tracks of type 2 files are not in sync, so they can
         # not be played back like this.
-        if self.format == 2:
-            raise TypeError('format 2 file can not be played back like this')
+        if self.type == 2:
+            raise TypeError('type 2 file can not be played back like this')
 
         seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
 
@@ -410,12 +410,12 @@ class MidiFile:
         self.filename is used.
 
         Raises ValueError both filename and self.filename are None,
-        or if a format 1 file has != one track.
+        or if a type 1 file has != one track.
         """
         midifiles_meta._charset = self.charset
 
-        if self.format == 0 and len(self.tracks) != 1:
-            raise ValueError('format 1 file must have exactly 1 track')
+        if self.type == 0 and len(self.tracks) != 1:
+            raise ValueError('type 1 file must have exactly 1 track')
 
         if filename is self.filename is None:
             raise ValueError('no file name')
@@ -427,7 +427,7 @@ class MidiFile:
             self._file.write(b'MThd')
 
             self._file.write_long(6)  # Header size. (Next three shorts.)
-            self._file.write_short(self.format)
+            self._file.write_short(self.type)
             self._file.write_short(len(self.tracks))
             self._file.write_short(self.ticks_per_beat)
 
@@ -472,8 +472,8 @@ class MidiFile:
                     print('{!r}'.format(message))
                 
     def __repr__(self):
-        return '<midi file {!r} format {}, {} tracks, {} messages>'.format(
-            self.filename, self.format, len(self.tracks),
+        return '<midi file {!r} type {}, {} tracks, {} messages>'.format(
+            self.filename, self.type, len(self.tracks),
             sum([len(track) for track in self.tracks]))
  
     def __enter__(self):

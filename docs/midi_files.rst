@@ -88,22 +88,22 @@ be written anyway.
 A complete example can be found in ``examples/midifiles/``.
 
 
-File Formats
--------------
+File Types
+-----------
 
-MIDI files have three different formats:
+There are three types of MIDI files:
 
-* format 0 (single track): all messages are saved in one track
-* format 1 (synchronous): all tracks start at the same time
-* format 2 (asynchronous): each track is independent of the others
+* type 0 (single track): all messages are saved in one track
+* type 1 (synchronous): all tracks start at the same time
+* type 2 (asynchronous): each track is independent of the others
 
-You can select file format by passing the ``format`` keyword argument,
-or by setting the ``format`` attribute::
+When creating a new file, you can select type by passing the ``type``
+keyword argument, or by setting the ``type`` attribute::
 
-   mid = MidiFile(format=2)
-   mid.format = 1
+   mid = MidiFile(type=2)
+   mid.type = 1
 
-Format 0 files must have exactly one track. A ``ValueError`` is raised
+Type 0 files must have exactly one track. A ``ValueError`` is raised
 if you attempt to save a file with no tracks or with more than one
 track.
 
