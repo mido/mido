@@ -47,7 +47,7 @@ Input and I/O ports (which support both input and output) are opened
 with ``open_input()`` and ``open_ioport()`` respectively. If you call
 these without a port name like above, you will get the (system
 specific) default port. You can override this by setting the
-``MIDO_OUTPUT_PORT`` etc. environment variables.
+``MIDO_DEFAULT_OUTPUT`` etc. environment variables.
 
 To get a list of available ports, you can do::
 
