@@ -44,7 +44,6 @@ Latest development version: http://github.com/olemb/mido/tree/develop/
 
 Contents
 ------------
->>>>>>> master
 
 .. toctree::
    :maxdepth: 2
