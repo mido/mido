@@ -24,22 +24,25 @@ To install::
 
     $ pip install mido
 
+
+Installing PortMidi (Optional)
+-------------------------------
+
 PortMidi is available in Ubuntu as ``libportmidi-dev`` and in
 `MacPorts <http://www.macports.org/>`_ and `Homebrew
 <http://mxcl.github.io/homebrew/>`_ as ``portmidi``.
 
-python-rtmidi can be installed with:
+
+Installing python-rtmidi (Optional)
+------------------------------------
+
+python-rtmidi requires ``librtmidi.so``, which is available in Ubuntu
+as ``librtmidi-dev`` (and possible also available as a package in
+MacPorts and Homebrew.
+
+python-rtmidi can be installed with::
 
     $ pip install python-rtmidi
-
-It requires ``librtmidi.so``, which is available in Ubuntu as
-``librtmidi-dev``.
-
-
-Installing python-rtmidi
--------------------------
-
-::
 
     $ pip install python-rtmidi
 
