@@ -1,9 +1,6 @@
 Introduction (Basic Concepts)
 ==============================
 
-Basics Concepts
-----------------
-
 Mido is all about messages and ports.
 
 
