@@ -50,17 +50,17 @@ Contents
    :maxdepth: 2
 
    installing
-   quickstart
+   intro
    messages
-   parsing_and_encoding
    ports
    backends
+   parsing_and_encoding
+   string_encoding
    midi_files
    socket_ports
-   string_encoding
-   new_port_types
    message_types
    meta_message_types
+   new_port_types
    about_midi
    lib
    license
