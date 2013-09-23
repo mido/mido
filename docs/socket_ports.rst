@@ -9,14 +9,20 @@ network.
 
 The protocol is standard MIDI bytes over a TCP stream.
 
-*Security note:* The data is sent over an unencrypted channel. Also,
-the default server allows connections from any host and also accepts
-arbitrary sysex messages, which could allow anyone to for example
-overwrite patches on your synths (or worse). Use only on trusted
-networks.
+
+Caveats
+--------
+
+The data is sent over an unencrypted channel. Also, the default server
+allows connections from any host and also accepts arbitrary sysex
+messages, which could allow anyone to for example overwrite patches on
+your synths (or worse). Use only on trusted networks.
 
 If you need more security, you can build a custom server with a white
 list of clients that are allowed to connect.
+
+If timing is critical, latency and jitter (especially on wireless
+networks) may make socket ports unusable.
 
 
 Sending Messages to a Server
