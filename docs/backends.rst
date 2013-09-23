@@ -71,7 +71,7 @@ For example::
 
 or::
 
-    $ export MIDO_DEFAULT_OUTPUT='SH-201'
+    $ export MIDO_DEFAULT_OUTPUT='Integra-7'
     $ python program1.py
     $ python program2.py
 
