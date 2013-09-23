@@ -53,14 +53,14 @@ Contents
    messages
    message_types
    ports
+   implementing_ports
    backends
+   implementing_backends
    parsing_and_encoding
    string_encoding
    socket_ports
    midi_files
    meta_message_types
-   implementing_ports
-   implementing_backends
    lib
    about_midi
    license
