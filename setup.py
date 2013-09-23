@@ -33,7 +33,7 @@ setup(
     scripts = ['bin/mido-play',
                'bin/mido-ports',
                'bin/mido-serve',
-               'bin/mido-forward'],
+               'bin/mido-connect'],
     include_package_data=True,
     url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3
