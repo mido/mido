@@ -46,8 +46,6 @@ python-rtmidi can be installed with::
 
     $ pip install python-rtmidi
 
-    $ pip install python-rtmidi
-
 That may fail in OS X due to a problem with the package. If this
 happens, you can try::
 
