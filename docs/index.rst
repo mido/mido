@@ -62,6 +62,7 @@ Contents
    midi_files
    meta_message_types
    lib
+   bin
    about_midi
    license
    authors
