@@ -31,18 +31,14 @@ Full documentation at http://mido.readthedocs.org/
 Main Features
 --------------
 
+  * works in Python 2 and 3.
+
   * convenient message objects.
 
-  * supports PortMidi, RtMidi and Pygame. New backends can be easily
-    written and used with Mido.
+  * supports PortMidi, RtMidi and Pygame. New backends are easy to
+    write.
 
   * full support for all 18 messages defined by the MIDI standard.
-
-  * full support for MIDI files (read, write, create and play) with
-    complete access to every message in the file.
-
-  * implements MIDI over TCP/IP with socket ports. This allows
-    wireless MIDI between two computers, among other things.
 
   * standard port API allows all kinds of input and output ports to be
     used interchangingly. New port types can be written by subclassing
@@ -50,16 +46,22 @@ Main Features
 
   * includes a reusable MIDI parser.
 
-  * includes programs for playing MIDI files, listing ports and
-    serving and forwarding ports over a network
+  * full support for MIDI files (read, write, create and play) with
+    complete access to every message in the file, including all common
+    meta messages.
 
-  * works in Python 2 and 3.
+  * implements (somewhat experimental) MIDI over TCP/IP with socket
+    ports. This allows for example wireless MIDI between two
+    computers.
+
+  * includes programs for playing MIDI files, listing ports and
+    serving and forwarding ports over a network.
 
 
 Status
 -------
 
-1.1 is the second stable release.
+1.1 is the second stable release which adds tons of new funcionality.
 
 1.0 established the basic functionality (messages, ports and parser),
 while 1.1 adds MIDI files, MIDI over TCP/IP (socket ports) and many
