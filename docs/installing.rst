@@ -42,11 +42,11 @@ python-rtmidi requires ``librtmidi.so``, which is available in Ubuntu
 as ``librtmidi-dev`` (and possible also available as a package in
 MacPorts and Homebrew.
 
-python-rtmidi can be installed with::
+To install::
 
     $ pip install python-rtmidi
 
-That may fail in OS X due to a problem with the package. If this
+This may fail in OS X due to a problem with the package. If this
 happens, you can try::
 
    $ pip install --pre python-rtmidi
