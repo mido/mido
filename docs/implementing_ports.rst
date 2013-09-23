@@ -4,10 +4,6 @@ Writing New Port Types
 The Mido port API allows you to write new ports to do practically
 anything.
 
-
-Writing a new Port type
-------------------------
-
 A new port type can be defined by subclassing one of the base classes
 and overriding one or more methods. Here is an example:;
 
@@ -23,6 +19,10 @@ and overriding one or more methods. Here is an example:;
 
 ``_send()`` will be called by ``send()``, and is responsible for
 actually sending the message somewhere (or in this case print it out).
+
+
+Overridable Methods
+--------------------
 
 There are four overridable methods (all of them default to doing
 nothing)::
@@ -84,6 +84,10 @@ about that.
 
 The base classes are ``BaseInput``, ``BaseOutput`` and ``BaseIOPort``
 (which is a subclass of the other two.)
+
+
+Examples
+---------
 
 An full example of a device port for the imaginary MIDI library
 ``fjopp``::
@@ -153,7 +157,7 @@ methods ```send()`` and ``receive()``, for example::
 
 
 Attributes
-^^^^^^^^^^
+-----------
 
 A port has some attributes that can be useful inside your methods.
 
