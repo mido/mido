@@ -48,7 +48,7 @@ Type and value checks are done when you pass parameters or assign to
 attributes, and the appropriate exceptions are raised. This ensures
 that the message is always valid.
 
-More on messages later, but first a bit about ports.
+For more about messages, see :doc:`messages`.
 
 
 Ports
@@ -84,7 +84,9 @@ To iterate through all incoming messages::
         ...
 
 You can also receive and iterate over messages in a non-blocking
-way. See :doc:`ports` for more on this.
+way.
+
+For more about ports, see :doc:`ports`.
 
 
 All Ports are Ports
@@ -136,9 +138,3 @@ Mido comes with backends for PortMidi and RtMidi and pygame. The
 default is PortMidi. You can select another backend or even use
 multiple backends at the same time. For more on this, see
 :doc:`backends`.
-
-
-Further Reading
-----------------
-
-For more about messages and ports, see :doc:`messages` and :doc:`ports`.
