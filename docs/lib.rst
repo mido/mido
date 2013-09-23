@@ -17,8 +17,6 @@ Messages
 Ports
 ------
 
-.. module:: mido
-
 .. autofunction:: open_input
 .. autofunction:: open_output
 .. autofunction:: open_ioport
@@ -52,8 +50,6 @@ Parsing
 
 String Serialization
 ---------------------
-
-.. module:: mido
 
 .. autofunction:: parse_string
 .. autofunction:: parse_string_stream

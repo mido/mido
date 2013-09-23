@@ -51,7 +51,7 @@ You can convert a message to MIDI bytes with one of these methods:
     >>> msg.hex()
     '90 00 40'
 
-You can turn bytes back into messages with the :doc:`parser`.
+You can turn bytes back into messages with the :doc:`parsing`.
 
 
 The Time Attribute
