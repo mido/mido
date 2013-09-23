@@ -126,17 +126,9 @@ Development version: http://github.com/olemb/mido/tree/develop/
 Known Bugs
 -----------
 
-* on OS X, PortMidi and RtMidi usually hang for a second or two seconds while
-  initializing. Sometimes longer.
-
-
-Future Plans
--------------
-
-* implement saving of MIDI meta messages
-
-* add a library of useful tools, such as delays, an event engine and
-  message filters.
+* in OS X, PortMidi and RtMidi usually hang for a second or two
+  seconds while initializing. This is actually not a Mido bug, but
+  something that happens at a lower level.
 
 
 License
