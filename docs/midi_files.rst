@@ -124,24 +124,29 @@ compute the playback time of an asynchronous file.
 Meta Messages
 --------------
 
-In addition to normal messages, MIDI files contain meta messages.
-These are used to set things like tempo, time signature, key
-signature and track name::
+Meta messages behave like normal messages and can be created in the
+usual way, for example::
 
-    >>> meta = MetaMessage('track_name', name='Just Another Track', time=222)
-    >>> meta.type
-    'track_name'
-    >>> meta.hex()
-    'FF 03 12 4A 75 73 74 20 41 6E 6F 74 68 65 72 20 54 72 61 63 6B'
+    >>> from mido.midifiles import MetaMessage
+    >>> MetaMessage('key_signature', key='C#', mode='major')
+    <meta message key_signature key='C#', mode='major' time=0>
 
-Both message types are subclassed from ``BaseMessage``. You can tell
-them apart by their class, so for example to filter out the meta
-messages from a track, you can do::
+You can tell meta messages apart from normal messages with::
 
-    messages = [m for m in track if not isinstance(m, MetaMessage)]
+    if isinstance(message, MetaMessage):
+        ...
 
-Meta messages are only found in MIDI files and can not be sent to
-ports.
+or if you know the message type you can use the ``type`` attribute::
+
+    if message.type == 'key_signature':
+        ...
+    elif message.type == 'note_on':
+        ...
+
+Meta messages can not be sent on ports.
+
+For a list of supported meta messages and their attributes, see
+:doc:`meta_message_types`.
 
 
 About the Time Attribute
@@ -149,13 +154,13 @@ About the Time Attribute
 
 The ``time`` attribute is used in several different ways:
 
-    * inside a track, it is delta time in ticks
+* inside a track, it is delta time in ticks
 
-    * in messages yielded from ``play()``, it is delta time in seconds
-      (time elapsed since the last yielded message)
+* in messages yielded from ``play()``, it is delta time in seconds
+  (time elapsed since the last yielded message)
 
-    * (only important to implementers) inside certain methods it is
-      used for absolute time in ticks or seconds
+* (only important to implementers) inside certain methods it is
+  used for absolute time in ticks or seconds
 
 
 Tempo and Beat Resolution

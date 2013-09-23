@@ -81,82 +81,67 @@ close the port for you::
     with mido.open_input('SH-201') as inport:
         ...
 
-You can also iterate through incoming messages::
+To iterate through all incoming messages::
 
     for msg in inport:
         ...
 
 You can also receive and iterate over messages in a non-blocking
-way. There's more about this in the (ports.rst ZZZZZZZZZ) section.
+way. See :doc:`ports` for more on this.
 
 
 All Ports are Ports
 --------------------
 
-The input and output ports used above are device ports. They
-communicate with a MIDI device external to the program.
+The input and output ports used above are device ports, which
+communicate with a (physical or virtual) MIDI device.
 
-There are many other types of ports, but since they all have exactly
-the same API, you can use any kind of port in place of any other kind.
+Other port types include:
 
-Some examples of non-device ports are:
+* ``MultiPort``, which wraps around a set of ports and allow you to send to all of them or receive from all of them as if they were one.
 
-    * ``IOPort``, which wraps around an input and an output port and
-      let's you use them as if they were one port. (You can get such a
-      port by calling ``mido.open_ioport()``, which opens the two
-      ports for you and returns the wrapper object. This assumes that
-      and input and an output port with the same name are avaiable.)
+* ``SocketPort``, which communicates with another port over a TCP/IP (network) connection.
 
-    * ``MultiPort``, which wraps around a list of ports and sends
-      all outgoing messages to all ports and receives messages
-      from all ports, all as if they were one.
+* ``IOPort``, which wraps around an input and an output port and allows you to send and receive messages as if the two were the same port.
 
-    * ``SocketPort``, which wraps about a TCP/IP socket, and allows
-      you to send and receive messages over a network connection.
+Ports of all types look and behave the same way, so they can be used
+interchangingly.
 
-This code sends every incoming messages to the output ports::
-
-    for msg in inport:
-        outport.send(msg)
-
-This will work no matter what kind of port ``inport`` and
-``outport``. You can turn outport into a ``MultiPort`` without any
-change to this part of the code.
-
-New port types can be easily written by subclassing and overloading
-1-4 methods. (See ZZZZZZZZZZZZZ for more about writing new port types.)
+It's easy to write new port types. See :doc:`implementing_ports`.
 
 
-The Time Attribute
+Parsing MIDI Bytes
 -------------------
 
-Each message has a ``time`` attribute, which can be set to any value
-of type ``int`` or ``float`` (and in Python 2 also ``long``). What you
-do with this value is entirely up to you.
+Mido comes with a parser that allows you to turn bytes into
+messages. You can create a new parser::
 
-Some parts of Mido uses the attribute for special purposes. In MIDI
-file tracks, it is used as delta time (in ticks).
+    >>> p = mido.Parser()
+    >>> p.feed([0x90, 0x40])
+    >>> p.feed_byte(0x60)
 
-*Note*: the ``time`` attribute is not included in comparisons, so if
- you want it included you'll have to do::
+You can then fetch messages out of the parser::
 
-    (msg1, msg1.time) == (msg2, msg2.time)
+    >>> p.pending()
+    1
+    >>> for message in p:
+    ...    print(message)
+    ...
+    note_on channel=0 note=64 velocity=96 time=0
+
+For more on parsers and parsing see :doc:`parsing`.
 
 
-Sysex Messages
----------------
+Backends
+---------
 
-Sytem Exclusive (SysEx) messages are used to send device specific
-data. They have one attribute, ``data``, which is the payload of the
-message::
+Mido comes with backends for PortMidi and RtMidi and pygame. The
+default is PortMidi. You can select another backend or even use
+multiple backends at the same time. For more on this, see
+:doc:`backends`.
 
-    >>> msg = Message('sysex', data=(1, 2, 3))
-    >>> msg
-    <message sysex data=(1, 2, 3), time=0>
 
-You can pass or set any (finite) iterable. It will be converted to
-a tuple::
+Further Reading
+----------------
 
-    >>> msg.data = range(3)
-    >>> msg.data
-    (0, 1, 2)
+For more about messages and ports, see :doc:`messages` and :doc:`ports`.

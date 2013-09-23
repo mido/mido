@@ -1,46 +1,20 @@
-Parsing and Encoding Messages
-==============================
+Parsing MIDI Bytes
+===================
 
 MIDI is a binary protocol. Each each message is encoded as a status byte
 followed by up to three data bytes. (Sysex messages can have any number of
 data bytes and use a stop byte instead.)
 
-Messages can be encoded by calling one of these methods::
-
-    >>> n = Message('note_on', channel=2, note=60, velocity=100, time=3)
-    >>> n.bytes()
-    [146, 60, 100]
-    >>> n.hex()
-    '92 3C 64'
-    >>> n.hex(sep='-')
-    '92-3C-64'
-    >>> n.bin()
-    bytearray(b'\x92<d')
-
-For the full table of MIDI binary encoding, see:
-`<http://www.midi.org/techspecs/midimessages.php>`_
-
-
-Parsing Messages
------------------
-
-If you're implementing a new port type or support for a binary file
-format, you may need to parse binary MIDI messages. Mido has a few
-functions and one class that make this easy.
-
-To parse a single message::
+Mido comes with a parser that turns MIDI bytes into messages. You can create a parser object, or call one of the utility functions::
 
     >>> mido.parse([0x92, 0x10, 0x20])
     <message note_on channel=0, note=16, velocity=32, time=0>
-
-``parse()`` will only return the first message in the byte stream. To
-get all messages as a list, use ``parse_all()``::
 
     >>> mido.parse_all([0x92, 0x10, 0x20, 0x82, 0x10, 0x20])
     [<message note_on channel=2, note=16, velocity=32, time=0>,
      <message note_off channel=2, note=16, velocity=32, time=0>]
 
-The functions are just shortcuts for the full ``Parser`` class. This
+These functions are just shortcuts for the full ``Parser`` class. This
 is the parser used inside input ports to parse incoming messages.
 Here are a few examples of how it can be used::
 
@@ -72,3 +46,6 @@ it::
     ...    print(message)
     note_on channel=2 note=16 velocity=32 time=0
     note_off channel=2 note=16 velocity=32 time=0
+
+For the full table of MIDI binary encoding, see:
+`<http://www.midi.org/techspecs/midimessages.php>`_
