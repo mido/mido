@@ -1,8 +1,11 @@
 Meta Message Types
 ===================
 
+Supported Messages
+-------------------
+
 sequence_number (0x00)
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ===============  ============  ========
 Attribute        Values        Default
@@ -15,7 +18,7 @@ pattern number in type 2 MIDI files.
 
 
 text (0x01)
-------------
+^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -23,11 +26,11 @@ Attribute       Values          Default
 text            string          ''
 ==============  ==============  ========
 
-General "Text" Meta Message. Can be used for any text-based data.
+General "Text" Meta Message. Can be used for any text^based data.
 
 
 copyright (0x02)
------------------
+^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -39,7 +42,7 @@ Provides information about a MIDI file's copyright.
 
 
 track_name (0x03)
-------------------
+^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -51,7 +54,7 @@ Stores a MIDI track's name.
 
 
 instrument_name (0x04)
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -63,7 +66,7 @@ Store an instrument's name.
 
 
 lyrics (0x05)
---------------
+^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -75,7 +78,7 @@ Stores the lyrics of a song. Typically one syllable per Meta Message.
 
 
 marker (0x06)
---------------
+^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -88,7 +91,7 @@ Can be used as the marker for the beginning of a verse, solo, etc.
 
 
 cue_marker (0x07)
-------------------
+^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -100,7 +103,7 @@ Marks a cue. IE: 'Cue performer 1', etc
 
 
 device_name (0x09)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -112,7 +115,7 @@ Gives the name of the device.
 
 
 channel_prefix (0x20)
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -124,7 +127,7 @@ Gives the prefix for the channel on which events are played.
 
 
 midi_port (0x21)
------------------
+^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -136,7 +139,7 @@ Gives the MIDI Port on which events are played.
 
 
 end_of_track (0x2f)
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -148,7 +151,7 @@ An empty Meta Message that marks the end of a track.
 
 
 set_tempo (0x51)
------------------
+^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -160,7 +163,7 @@ Contains the number of microseconds per quarter note.
 
 
 smpte_offset (0x54)
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ==============  =================  ========
 Attribute       Values             Default
@@ -175,7 +178,7 @@ sub_frames      0..99              0
 
 
 time_signature (0x58)
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ============================  ===============  ========
 Attribute                        Values          Default
@@ -194,7 +197,7 @@ Time signature of:
 
 
 key_signature (0x59)
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 =========  ==================  ========
 Attribute  Values              Default
@@ -204,7 +207,7 @@ mode       'minor' or 'major'  'major'
 =========  ==================  ========
 
 sequencer_specific (0x7f)
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -214,16 +217,31 @@ data            [..]			[]
 
 An unprocessed sequencer specific message containing raw data.
 
+
 Unknown Meta Messages
 ----------------------
 
-In the event that there is an unimplemented MetaMessage type, it will
-be returned as an UnknownMetaMessage object.
+Unknown meta messages are represented by the ``UnknownMetaMessage``
+class. ``type`` will be set to ``unknown_meta``, so you can detect
+unknown messages either by class or by the ``type`` attribute.
 
-This object takes the following form:
+Unknown messages will be saved back to the file.
 
-<unknown meta message 0x## _data=[...], time=0>
+It's best not to write code that depends on unknown messages, since
+your code will then break if they are ever implemented. Instead, use
+the ``repr()`` string::
 
-and has the attributes:
+    <unknown meta message 0x## _data=[...], time=0>
 
-type = 'unknown meta', _type_byte = '0x##', and _data = [...]
+or attributes ``_type_byte`` and ``_data`` to learn about the format
+of the message and implement it as described below. (Not implemented
+yet, sorry.)
+
+
+
+Implementing New Meta Messages
+-------------------------------
+
+There is currently no official way to implement new meta messages, but
+this is planned.
+
