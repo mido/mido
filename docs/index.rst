@@ -60,9 +60,10 @@ Contents
    socket_ports
    message_types
    meta_message_types
-   new_port_types
-   about_midi
+   implementing_ports
+   implementing_backends
    lib
+   about_midi
    license
    authors
    acknowledgements
