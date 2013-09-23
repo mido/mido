@@ -41,6 +41,9 @@
 
 * Added (experimental) support for callbacks in PortMidi backend using threads.
 
+* PortMidi and pygame input ports now actually block on the device
+  instead of polling and waiting.
+
 
 1.0.4 - 2013-08-15
 -------------------
