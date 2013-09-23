@@ -51,13 +51,13 @@ Contents
    installing
    intro
    messages
+   message_types
    ports
    backends
    parsing_and_encoding
    string_encoding
-   midi_files
    socket_ports
-   message_types
+   midi_files
    meta_message_types
    implementing_ports
    implementing_backends
