@@ -1,5 +1,5 @@
 Writing a New Backend
----------------------
+======================
 
 A backend is a Python module with one or more of these::
 

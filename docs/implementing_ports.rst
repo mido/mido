@@ -1,5 +1,5 @@
-Writing New Port Types
-=======================
+Writing a New Port
+===================
 
 The Mido port API allows you to write new ports to do practically
 anything.
