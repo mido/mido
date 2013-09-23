@@ -4,17 +4,19 @@ Installing Mido
 Requirements
 -------------
 
-Mido targets Python 2.7 and 3.2 and runs on Ubuntu and Mac OS X. May
-also run on other systems.
+Mido targets Python 2.7 and 3.2. It is developed and testeqd in Ubuntu
+and Mac OS X, but should also work in Windows.
 
-All backends are implemented in Python, so no compilation is
-required. The backends are loaded on demand, so there are no external
-dependencies unless they are used.
+Everything is implemented in pure Python, so no compilation is
+required.
 
-Mido currently supports three different backends: `PortMidi
-<http://portmedia.sourceforge.net/portmidi/>`_,
-`python-rtmidi <http://github.com/superquadratic/rtmidi-python>`_
-and `Pygame <http://www.pygame.org/docs/ref/midi.html>`_.
+There are no external dependencies unless you want to use the port
+backends, which are loaded on demand.
+
+Mido comes with backends for `PortMidi
+<http://portmedia.sourceforge.net/portmidi/>`_, `python-rtmidi
+<http://github.com/superquadratic/rtmidi-python>`_ and `Pygame
+<http://www.pygame.org/docs/ref/midi.html>`_.
 
 
 Installing
