@@ -37,24 +37,6 @@ If you pass ``use_environ=True`` the module will use the environment
 variables ``MIDO_DEFAULT_INPUT`` etc. for default ports.
 
 
-Callbacks
-----------
-
-Input ports take a callback argument::
-
-    def func(message):
-        print('Callback got{}'.format(message))
-
-    input = mido.open_input(callback=func)
-
-The callback function will be called with every message that arrives
-on the port. You can not use the normal methods like ``receive()`` and
-``pending()`` when the port has a callback. There is currently no way
-to remove or replace the callback.
-
-Callbacks are currently available in PortMidi and RtMidi.
-
-
 Environment Variables
 ----------------------
 
