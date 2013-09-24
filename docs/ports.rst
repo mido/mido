@@ -156,6 +156,19 @@ This will give you all messages as they arrive on the port until the
 port closes. (So far only socket ports actually close by
 themselves. This happens if the other end disconnects.)
 
+Input ports take an optional ``callback`` argument::
+
+    def print_message(message):
+        print(message)
+
+    input = mido.open_input('SH-201', callback=print_message)
+
+The function will be called with every message that arrives on the
+port. This is currently only implemented by device ports (PortMidi,
+RtMidi and pygame).
+
+The ``receive`` methods can not be used if a callback is set.
+
 
 Port API
 ---------
