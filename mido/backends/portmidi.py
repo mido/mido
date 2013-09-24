@@ -186,6 +186,10 @@ class Input(PortCommon, BaseInput):
                 self._read()
 
     def _thread_main(self):
+        # Todo: exceptions do not propagate to the main thread, so if
+        # something goes wrong here there is no way to detect it, and
+        # there is no warning. (An unknown variable, for example, will
+        # just make the thread stop silently.)
         while not self.closed:
             try:
                 self._read()
