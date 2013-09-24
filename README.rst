@@ -130,13 +130,18 @@ Known Bugs
   seconds while initializing. This is actually not a Mido bug, but
   something that happens at a lower level.
 
-* PortMidi and pygame (at least some versions) print out an error
-  message instead of returning an error value, so Mido has no way to
-  catch the error. This occurs in two situations: when closing a
-  PortMidi port which has a callback and when closing a pygame port::
+* PortMidi in Ubuntu is mistakenly compiled in debug mode, which means that
+  it prints out an error message instead of returning an error code::
 
     PortMidi: `Bad pointer'
     type ENTER...PortMidi call failed...
+
+  This means there is no way for Mido to catch the error and raise an
+  exception. See https://bugs.launchpad.net/mixxx/+bug/1097286
+
+  This occurs in two places: in PortMidi when you close a port that
+  has a callback and when exiting a progra that uses the pygame
+  backend. (pygame.midi has another bug on top of this one.)
 
 
 License
