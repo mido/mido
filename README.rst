@@ -136,7 +136,7 @@ Known Bugs
     PortMidi: `Bad pointer'
     type ENTER...PortMidi call failed...
 
-  See https://bugs.launchpad.net/mixxx/+bug/1097286
+  See https://bugs.launchpad.net/ubuntu/+source/portmidi/+bug/890600
 
   This means here is no way for Mido to catch the error and raise an
   exception.
