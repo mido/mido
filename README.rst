@@ -130,6 +130,14 @@ Known Bugs
   seconds while initializing. This is actually not a Mido bug, but
   something that happens at a lower level.
 
+* when you close a PortMidi port which has a callback set, an error
+  message will be printed. This is due to a bug in PortMidi. When
+  a port is closed during a read, the read function should return an
+  error value. Instead it returns success and prints an error message,
+  which means Mido can't detect the error and ignore it.
+
+  The same thing happens when pygame ports are closed.
+
 
 License
 --------
