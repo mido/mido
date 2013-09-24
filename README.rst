@@ -133,7 +133,10 @@ Known Bugs
 * PortMidi and pygame (at least some versions) print out an error
   message instead of returning an error value, so Mido has no way to
   catch the error. This occurs in two situations: when closing a
-  PortMidi port which has a callback and when closing a pygame port.
+  PortMidi port which has a callback and when closing a pygame port::
+
+    PortMidi: `Bad pointer'
+    type ENTER...PortMidi call failed...
 
 
 License
