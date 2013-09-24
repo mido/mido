@@ -161,11 +161,21 @@ Input ports take an optional ``callback`` argument::
     def print_message(message):
         print(message)
 
-    input = mido.open_input('SH-201', callback=print_message)
+    port = mido.open_input('SH-201', callback=print_message)
 
 The function will be called with every message that arrives on the
-port. This is currently only implemented by device ports (PortMidi,
-RtMidi and pygame).
+port. This is currently only implemented PortMidi and RtMidi ports.
+
+You can change the callback function later by setting the ``callback``
+attribute::
+
+    port.callback = print_message
+    ...
+    port.callback = None
+
+If ``callback`` is set to ``None``, no function will be called. This
+can be used to temporarily (or permanently) turn off message
+reception.
 
 The ``receive`` methods can not be used if a callback is set.
 

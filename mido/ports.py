@@ -42,9 +42,8 @@ class BasePort(object):
 
     def __init__(self, name='', **kwargs):
         self.name = name
-        self.closed = True
-        self._open(**kwargs)
         self.closed = False
+        self._open(**kwargs)
 
     def _open(self, **kwargs):
         pass
@@ -124,6 +123,7 @@ class BaseInput(BasePort):
         name is the port name, as returned by input_names(). If
         name is not passed, the default input is used instead.
         """
+        self.callback = kwargs.get('callback')
         self._parser = Parser()
         self._messages = self._parser._parsed_messages  # Shortcut.
         BasePort.__init__(self, name, **kwargs)

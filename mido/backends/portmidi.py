@@ -86,7 +86,7 @@ class PortCommon(object):
     """
     Mixin with common things for input and output ports.
     """
-    def _open(self, callback=False):
+    def _open(self, **kwargs):
         self._stream = pm.PortMidiStreamPtr()
 
         opening_input = hasattr(self, 'receive')
@@ -125,19 +125,14 @@ class PortCommon(object):
                          0))            # Latency
 
         if opening_input:
-            if callback:
-                self._has_callback = True
-                self._callback = callback
+            if self.callback:
                 self._callback_thread = threading.Thread(
                     target=self._thread_main)
-                self._callback_daemon = True
+                self._callback_thread.daemon = True
                 self._callback_thread.start()
 
                 # Make sure pending() doesn't see messages.
                 self._messages = deque()
-            else:
-                self._has_callback = False
-                self._callback_thread = None
 
         self._device_type = 'PortMidi/{}'.format(device['interface'])
 
@@ -191,11 +186,11 @@ class Input(PortCommon, BaseInput):
                 self._read()
 
     def _thread_main(self):
-        while self._has_callback:
+        while not self.closed:
             try:
                 self._read()
             except IOError:
-                if not self._has_callback:
+                if self.closed:
                     # If the port is closed (and _check_error() works),
                     # "IOError: PortMidi: `Bad pointer'" is raised
                     # if the port is closed in self._read().
@@ -206,10 +201,11 @@ class Input(PortCommon, BaseInput):
                     raise
 
             for message in self._parser:
-                self._callback(message)
-   
+                if self.callback:
+                    self.callback(message)
+
     def _close(self):
-        self._has_callback = False
+        self.callback = False
         PortCommon._close(self)
 
 class Output(PortCommon, BaseOutput):

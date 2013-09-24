@@ -60,7 +60,7 @@ def get_api_names():
     return [_api_to_name[n] for n in rtmidi.get_compiled_api()]
 
 class PortCommon(object):
-    def _open(self, api=None, virtual=False, callback=None):
+    def _open(self, api=None, virtual=False, **kwargs):
 
         rtapi = _get_api_id(api)
         opening_input = hasattr(self, 'receive')
@@ -68,15 +68,12 @@ class PortCommon(object):
         if opening_input:
             self._rt = rtmidi.MidiIn(rtapi=rtapi)
             self._rt.ignore_types(False, False, True)
-            if callback:
+            if self.callback:
                 def callback_wrapper(message_data, data):
                     message = parse(message_data[0])
-                    if message:
-                        callback(message)
+                    if message and self.callback:
+                        self.callback(message)
                 self._rt.set_callback(callback_wrapper)
-                self._has_callback = True
-            else:
-                self._has_callback = False
         else:
             self._rt = rtmidi.MidiOut(rtapi=rtapi)
             # Turn of ignore of sysex, time and active_sensing.
