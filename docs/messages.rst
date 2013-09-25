@@ -32,6 +32,12 @@ The ``type`` attribute can be used to determine message type::
     >>> msg.type
     'note_on'
 
+To make a copy of a message, optionally overriding one or more
+attributes::
+
+    >>> msg.copy(note=99, time=100.0)
+    <message note_on channel=0, note=99, velocity=64, time=100.0>
+
 Mido supports all message types defined by the MIDI standard. For a
 full list of messages and their attributes, see :doc:`message_types`.
 

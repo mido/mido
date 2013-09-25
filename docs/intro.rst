@@ -15,9 +15,6 @@ create a new message::
     >>> msg
     <message note_on channel=0, note=60, velocity=64, time=0)
 
-All message parameters are optional, and will be set to 0 if not
-passed. The exception is velocity which defaults to 64.
-
 A list of all supported message types and their parameters can be
 found in :doc:`message_types`.
 
@@ -38,6 +35,9 @@ All attributes are also settable::
 
 However, you can not change the type of a message.
 
+When you pass a keyword argument or set an attribute, the name, type
+and value is checked. This ensures that 
+
 You can make a copy of a message, optionally overriding one or more
 attributes, for example::
 
@@ -49,6 +49,41 @@ attributes, and the appropriate exceptions are raised. This ensures
 that the message is always valid.
 
 For more about messages, see :doc:`messages`.
+
+
+Type and Value Checking
+------------------------
+
+Mido messages come with type and value checking built in. This happens
+when you assign an out of range value to an attribute::
+
+    >>> n = mido.Message('note_on')
+    >>> n.channel = 2092389483249829834
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "./mido/messages.py", line 327, in __setattr__
+        ret = check(value)
+      File "./mido/messages.py", line 128, in check_channel
+        raise ValueError('channel must be in range 0..15')
+    ValueError: channel must be in range 0..15
+
+and when you pass some nonsense as a keyword argument to the
+constructor or the copy() method::
+
+    >>> n.copy(note=['This', 'is', 'wrong'])
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "./mido/messages.py", line 316, in copy
+        return Message(self.type, **args)
+      File "./mido/messages.py", line 290, in __init__
+        setattr(self, name, value)
+      File "./mido/messages.py", line 327, in __setattr__
+        ret = check(value)
+      File "./mido/messages.py", line 181, in check_databyte
+        raise TypeError('data byte must be an integer')
+    TypeError: data byte must be an integer
+
+This means that the message object is always a valid MIDI message.
 
 
 Ports
