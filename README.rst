@@ -160,7 +160,7 @@ Latest version of the code: http://github.com/olemb/mido/ .
 Latest development version: http://github.com/olemb/mido/tree/develop/
 
 
-Author
--------
+Contact
+--------
 
 Ole Martin Bjørndalen - ombdalen@gmail.com
