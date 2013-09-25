@@ -11,7 +11,7 @@ By default, Mido uses PortMidi. You can override this with the
 
     $ MIDO_BACKEND=mido.backends.rtmidi ./program.py
 
-Alternatively, you can set the backend from withing your program::
+Alternatively, you can set the backend from within your program::
 
     >>> mido.set_backend('mido.backends.rtmidi')
     >>> mido.backend
@@ -68,13 +68,13 @@ shared library file ``portmidi.so`` or ``portmidi.dll``.
 
 Can send but doesn't receive ``active_sensing`` messages.
 
-The port name lists are creates once when PortMidi is
-initialized. This means that if you plug in a devices after the
+The port name lists are created once when PortMidi is
+initialized. This means that if you plug in a device after the
 backend is loaded, you will not be able to access it. (The RtMidi
 backend updates its list dynamically.)
 
 The device list is created when PortMidi is initialized, so if devices
-are added later they will not be shown in the names lists and can not
+are added later, they will not be shown in the names lists and can not
 be opened as ports. (RtMidi, however, updates the names lists when you
 ask for them.)
 
@@ -106,9 +106,9 @@ RtMidi is the only backend that can create virtual ports::
 
 Other applications can now connect to this port. (One oddity is that,
 at least in Linux, RtMidi can't see its own virtual ports, while
-PortMidi can see the.)
+PortMidi can see them.)
 
-THE RtMidi library can be compiled with support for more than one
+The RtMidi library can be compiled with support for more than one
 API. You can select API by adding it after the module name, either in
 the environment variable::
 
@@ -136,7 +136,7 @@ There are a couple of problems with port names in Linux. First, RtMidi
 can't see some software ports such as ``amSynth MIDI IN``. PortMidi
 uses the same ALSA sequencer API, so this is problem in RtMidi.
 
-Second, ports are named inconsistently. For example the input port
+Second, ports are named inconsistently. For example, the input port
 'Midi Through 14:0' has a corresponding output named 'Midi
 Through:0'. Unless this was intended, it is a bug in RtMidi's ALSA
 implementation.

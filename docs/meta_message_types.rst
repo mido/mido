@@ -26,7 +26,7 @@ Attribute       Values          Default
 text            string          ''
 ==============  ==============  ========
 
-General "Text" Meta Message. Can be used for any text^based data.
+General "Text" Meta Message. Can be used for any text based data.
 
 
 copyright (0x02)
@@ -62,7 +62,7 @@ Attribute       Values          Default
 name            string          ''
 ==============  ==============  ========
 
-Store an instrument's name.
+Stores an instrument's name.
 
 
 lyrics (0x05)

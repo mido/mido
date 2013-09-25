@@ -9,7 +9,7 @@ To create a new message::
     >>> mido.Message('note_on')
     <message note_on channel=0, note=0, velocity=64, time=0>
 
-You can pass attribute as keyword arguments::
+You can pass attributes as keyword arguments::
 
     >>> mido.Message('note_on', note=100, velocity=3, time=6.2)
     <message note_on channel=0, note=100, velocity=3, time=6.2>
@@ -18,7 +18,7 @@ All attributes will default to 0. The exceptions are ``velocity``,
 which defaults to 64 (middle velocity) and ``data`` which defaults to
 ``()``.
 
-You can set and get attrbutes as you would expect::
+You can set and get attributes as you would expect::
 
     >>> msg = mido.Message('note_on')
     >>> msg.note

@@ -9,7 +9,7 @@ and other electronic music equipment.
 
 It was developed in 1981 by Dave Smith and Chet Wood of Sequential
 Circuits with the assistance of Ikutaro Kakehashi of Roland. MIDI was
-quickly embraced by all the major synth manufacturers, and led to
+quickly embraced by all the major synth manufacturers and led to
 developments such as microcomputer sequencers, and with them the
 electronic home studio. Although many attempts have been made to
 replace it, it is still the industry standard.
@@ -32,16 +32,16 @@ This message consists of::
 
 The first byte is called a status byte. It has the upper bit set,
 which is how you can tell it apart from the following data
-bytes. Data bytes as thus only 7 bits (0..127).
+bytes. Data bytes are thus only 7 bits (0..127).
 
 Each message type has a given number of data bytes, the exception
-being the System Exclusive message which has a start and a stop byte,
-and can have any number of data bytes in-between these two.
+being the System Exclusive message which has a start and a stop byte
+and any number of data bytes in-between these two.
 
 Messages can be divided into four groups:
 
 * Channel messages. These are used to turn notes on and off, to change
-  patches and change controllers (pitch bend, modulation wheel, pedal
+  patches, and change controllers (pitch bend, modulation wheel, pedal
   and many others). 
 
 * System common messages.
