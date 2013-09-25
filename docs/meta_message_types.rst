@@ -221,27 +221,94 @@ An unprocessed sequencer specific message containing raw data.
 Unknown Meta Messages
 ----------------------
 
-Unknown meta messages are represented by the ``UnknownMetaMessage``
-class. ``type`` will be set to ``unknown_meta``, so you can detect
-unknown messages either by class or by the ``type`` attribute.
+Unknown meta messages will be returned as ``UnknownMetaMessage``
+objects, with ``type`` set to ``unknown_meta``. The messages are saved
+back to the file exactly as they came out.
 
-Unknown messages will be saved back to the file.
+Code that depends on ``UnknownMetaMessage`` may break if the message
+in question is ever implemented, so it's best to only use these to
+learn about the format of the new message and then implement it as
+described below.
 
-It's best not to write code that depends on unknown messages, since
-your code will then break if they are ever implemented. Instead, use
-the ``repr()`` string::
+``UnknownMetaMessage`` have two attributes::
+
+    ``type_byte`` - a byte which uniquely identifies this message type
+    ``_data`` - the message data as a list of bytes
+
+These are also visible in the ``repr()`` string::
 
     <unknown meta message 0x## _data=[...], time=0>
-
-or attributes ``_type_byte`` and ``_data`` to learn about the format
-of the message and implement it as described below. (Not implemented
-yet, sorry.)
-
 
 
 Implementing New Meta Messages
 -------------------------------
 
-There is currently no official way to implement new meta messages, but
-this is planned.
+If you come across a meta message which is not implemented, or you
+want to use a custom meta message, you can add it by writing a new
+meta message spec::
 
+    from mido.midifiles_meta import MetaSpec, add_meta_spec
+
+    class MetaSpec_light_color(MetaSpec):
+        type_byte = 0xf0
+        attributes = ['r', 'g', 'b']
+        defaults = [0, 0, 0]
+
+    def decode(self, message, data):
+        # Interpret the data bytes and assign them to attributes.
+        (message.r, message.g, message.b) = data
+
+    def encode(self, message):
+        # Encode attributes to data bytes and
+        # return them as a list of ints.
+        return [message.r, message.g, message.b]
+
+    def check(self, name, value):
+        # (Optional)
+        # This is called when the user assigns
+        # to an attribute. You can use this for
+        # type and value checking. (Name checking
+        # is already done.
+        #
+        # If this method is left out, no type and
+        # value checking will be done.
+
+        if not isinstance(value, int):
+            raise TypeError('{} must be an integer'.format(name))
+
+        if not 0 <= value <= 255:
+            raise TypeError('{} must be in range 0..255'.format(name))
+
+Then you can add your new message type with::
+
+    add_meta_spec(MetaSpec_light_color)
+
+and create messages in the usual way::
+
+    >>> from mido.midifiles import MetaMessage
+    >>> MetaMessage('light_color', r=120, g=60, b=10)
+    <meta message light_color r=120, g=60, b=10 time=0>
+
+and the new message type will now work when reading and writing MIDI
+files.
+
+Some additional functions are available::
+
+    encode_string(unicode_string)
+    decode_string(byte_string)
+
+These convert between unicode strings and bytes strings using the
+current character set in the file. If your message contains only one
+string with the attribute name ``text`` or ``name``, you can subclass
+from one of the existing messages with these attributes, for example::
+
+    class MetaSpec_copyright(MetaSpec_text):
+        type_byte = 0x02
+
+    class MetaSpec_instrument_name(MetaSpec_track_name):
+        type_byte = 0x04
+
+This allows you to skip everything but ``type_byte``, since the rest
+is inherited.
+
+See ``midifiles_meta.py`` for more examples.

@@ -145,8 +145,8 @@ or if you know the message type you can use the ``type`` attribute::
 
 Meta messages can not be sent on ports.
 
-For a list of supported meta messages and their attributes, see
-:doc:`meta_message_types`.
+For a list of supported meta messages and their attributes, and also
+how to implement new meta messages, see :doc:`meta_message_types`.
 
 
 About the Time Attribute

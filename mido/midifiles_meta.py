@@ -315,8 +315,6 @@ class MetaSpec_sequencer_specific(MetaSpec):
 
 _specs = {}
 
-# Todo: rethink this before launch.
-#       Should this take an object or a class?
 def add_meta_spec(klass):
     spec = klass()
     if not hasattr(spec, 'type'):
