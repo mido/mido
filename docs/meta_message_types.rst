@@ -295,12 +295,14 @@ files.
 Some additional functions are available::
 
     encode_string(unicode_string)
-    decode_string(byte_string)
+    decode_string(byte_list)
 
-These convert between unicode strings and bytes strings using the
-current character set in the file. If your message contains only one
-string with the attribute name ``text`` or ``name``, you can subclass
-from one of the existing messages with these attributes, for example::
+These convert between a unicode string and a list of bytes using the
+current character set in the file.
+
+If your message contains only one string with the attribute name
+``text`` or ``name``, you can subclass from one of the existing
+messages with these attributes, for example::
 
     class MetaSpec_copyright(MetaSpec_text):
         type_byte = 0x02
