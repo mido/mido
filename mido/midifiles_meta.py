@@ -232,7 +232,7 @@ class MetaSpec_smpte_offset(MetaSpec):
     def check(self, name, value):
         if name == 'frame_rate':
             if value not in _smpte_framerate_encode:
-                valid = ' '.join(sorted(_smpte_framerate_encode.keys()))
+                valid = ', '.join(sorted(_smpte_framerate_encode.keys()))
                 raise ValueError('frame_rate must be one of {}'.format(valid))
         elif name == 'hours':
             check_int(value, 0, 255)
@@ -394,7 +394,7 @@ class MetaMessage(BaseMessage):
         attributes = []
         for name in self._spec.attributes:
             attributes.append('{}={!r}'.format(name, getattr(self, name)))
-        attributes = ', '.join(attributes)
+        attributes = ' '.join(attributes)
         if attributes:
             attributes = (' {}'.format(attributes))
 
@@ -412,10 +412,11 @@ class UnknownMetaMessage(MetaMessage):
         self.time = time
 
     def __repr__(self):
-        return '<unknown meta message 0x{:02x} _data={!r}, time={}>'.format(
-            self._type_byte,
-            self._data,
-            self.time)
+        return ('<unknown meta message'
+                ' _type_byte=0x{:02x} _data={!r} time={}>').format(
+                self._type_byte,
+                self._data,
+                self.time)
 
     # Override all checking.
     def __setattr__(self, name, value):

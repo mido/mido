@@ -13,7 +13,7 @@ create a new message::
     >>> from mido import Message
     >>> msg = Message('note_on', note=60)
     >>> msg
-    <message note_on channel=0, note=60, velocity=64, time=0)
+    <message note_on channel=0 note=60 velocity=64 time=0>
 
 A list of all supported message types and their parameters can be
 found in :doc:`message_types`.
@@ -31,7 +31,7 @@ All attributes are also settable::
 
     >>> msg.channel = 2
     >>> msg.note = 122
-    <message note_on channel=2, note=122, velocity=64, time=0)
+    <message note_on channel=2 note=122 velocity=64 time=0)
 
 However, you can not change the type of a message.
 
@@ -42,7 +42,7 @@ You can make a copy of a message, optionally overriding one or more
 attributes, for example::
 
     >>> msg.copy(note=100, velocity=127)
-    <message note_on channel=2, note=122, velocity=127, time=0)
+    <message note_on channel=2 note=122 velocity=127 time=0)
 
 Type and value checks are done when you pass parameters or assign to
 attributes, and the appropriate exceptions are raised. This ensures
