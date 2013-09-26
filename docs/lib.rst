@@ -63,7 +63,6 @@ Port Classes and Functions
 
 .. autofunction:: sleep
 .. autofunction:: set_sleep_time
-.. autofunction:: get_sleep_time
 
 
 .. autoclass:: BaseInput
