@@ -175,7 +175,7 @@ class Input(PortCommon, BaseInput):
             packed_message >>= 8
 
     def _receive(self, block=True):
-        if self._has_callback:
+        if self.callback:
             raise IOError('a callback is currently set for this port')
         
         if block:
