@@ -313,4 +313,4 @@ messages with these attributes, for example::
 This allows you to skip everything but ``type_byte``, since the rest
 is inherited.
 
-See ``midifiles_meta.py`` for more examples.
+See the existing MetaSpec classes for further examples.
