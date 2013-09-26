@@ -61,10 +61,6 @@ Port Classes and Functions
 
 .. module:: mido.ports
 
-.. autofunction:: sleep
-.. autofunction:: set_sleep_time
-
-
 .. autoclass:: BaseInput
    :members:
    :inherited-members:
@@ -87,6 +83,8 @@ Port Classes and Functions
 
 .. autofunction:: multi_receive
 .. autofunction:: multi_iter_pending
+.. autofunction:: sleep
+.. autofunction:: set_sleep_time
 
 
 MIDI Files
