@@ -8,7 +8,6 @@ import select
 from collections import deque
 from .parser import Parser
 from .ports import MultiPort, BaseIOPort, multi_iter_pending, sleep
-from .messages import parse_string
 
 PY2 = (sys.version_info.major == 2)
 

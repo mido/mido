@@ -48,14 +48,6 @@ Parsing
    :undoc-members:
 
 
-String Serialization
----------------------
-
-.. autofunction:: parse_string
-.. autofunction:: parse_string_stream
-.. autofunction:: format_as_string
-
-
 Port Classes and Functions
 ---------------------------
 

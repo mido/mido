@@ -27,12 +27,6 @@ Parsing MIDI streams:
     parse_all(bytes) -- parse all messages bytes
     Parser -- MIDI parser class
 
-Parsing objects serialized with str(message):
-
-    parse_string(string) -- parse a string containing a message
-    parse_string_stream(iterable) -- parse strings from an iterable and
-                                     generate messages
-
 Sub modules:
 
     ports -- useful tools for working with ports
@@ -78,7 +72,6 @@ import os
 from .backends import Backend
 from . import ports, sockets
 from .messages import Message
-from .messages import parse_string, parse_string_stream, format_as_string
 from .parser import Parser, parse, parse_all
 
 __author__ = 'Ole Martin Bjørndalen'

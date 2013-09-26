@@ -57,7 +57,6 @@ Contents
    backends
    implementing_backends
    parsing
-   string_encoding
    socket_ports
    midi_files
    meta_message_types
