@@ -52,6 +52,10 @@
   This also means that str() will now return the same as repr(), which
   is consistent Mido objects to the same.
 
+* removed commas from the repr() format of Message and MetaMessage
+  objects to remove the comma, again making them more consistent with
+  other classes.
+
 
 1.0.4 - 2013-08-15
 -------------------

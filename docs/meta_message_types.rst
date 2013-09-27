@@ -237,7 +237,7 @@ described below.
 
 These are also visible in the ``repr()`` string::
 
-    <unknown meta message 0x## _data=[...], time=0>
+    <unknown meta message _type_byte=0x## _data=[...], time=0>
 
 
 Implementing New Meta Messages
@@ -287,7 +287,7 @@ and create messages in the usual way::
 
     >>> from mido.midifiles import MetaMessage
     >>> MetaMessage('light_color', r=120, g=60, b=10)
-    <meta message light_color r=120, g=60, b=10 time=0>
+    <meta message light_color r=120 g=60 b=10 time=0>
 
 and the new message type will now work when reading and writing MIDI
 files.
