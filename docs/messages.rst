@@ -42,6 +42,40 @@ Mido supports all message types defined by the MIDI standard. For a
 full list of messages and their attributes, see :doc:`message_types`.
 
 
+Comparison
+-----------
+
+To compare two messages::
+
+    >>> Message('note_on', note=60) == Message('note_on', note=60)
+    True
+    >>> Message('note_on', note=60) == Message('note_on', note=120)
+    False
+
+Messages of different types are never equal::
+
+    >>> Message('note_on') == Message('program_change')
+    False
+
+The ``time`` attribute is not included in comparisons::
+
+    >>> a = Message('note_on', time=1)
+    >>> b = Message('note_on', time=2)
+    >>> a == b
+    True    
+
+The reson why time is not compared is that it's not regarded as part
+of the messages, but rather something that is tagged into it. To
+include ``time`` in the comparison you can do::
+
+    >>> a = Message('note_on', time=1)
+    >>> b = Message('note_on', time=2)
+    >>> (a, a.time) == (b, b.time)
+    False
+
+Sort ordering of messages is not defined.
+
+
 Converting To Bytes
 --------------------
 
@@ -57,7 +91,7 @@ You can convert a message to MIDI bytes with one of these methods:
     >>> msg.hex()
     '90 00 40'
 
-You can turn bytes back into messages with the :doc:`parsing`.
+You can turn bytes back into messages with the :doc:`parser <parsing>`.
 
 
 The Time Attribute
@@ -70,10 +104,18 @@ do with this value is entirely up to you.
 Some parts of Mido uses the attribute for special purposes. In MIDI
 file tracks, it is used as delta time (in ticks).
 
-*Note*: the ``time`` attribute is not included in comparisons, so if
- you want it included you'll have to do::
+The ``time`` attribute is not included in comparisons. (See
+"Comparison" above.)
 
-    (msg1, msg1.time) == (msg2, msg2.time)
+To sort messages on time you can do::
+
+    messages.sort(key=lambda message: message.time)
+
+or::
+
+    import operator
+
+    messages.sort(key=operator.attrgetter('time'))
 
 
 System Exclusive Messages
@@ -89,17 +131,7 @@ the payload of the message::
     >>> msg.hex()
     'F0 01 02 03 F7'
 
-Any sequence of integers is allowed, and will be converted to a
-tuple. Every data byte is type and value checked. For example, any one
-of these will give ``(65, 66, 67)``::
-
-    [65, 66, 67]
-    (i + 65 for i in range(3))
-    (ord(c) for c in 'ABC')
-    bytearray(b'ABC')
-    b'ABC'  # Python 3 only.
-
-You can also extend the existing tuple::
+You can also extend the existing data::
 
    >>> msg = Message('sysex', data=[1, 2, 3])
    >>> msg.data += [4, 5]
@@ -107,4 +139,21 @@ You can also extend the existing tuple::
    >>> msg
    <message sysex data=(1, 2, 3, 4, 5, 6, 7, 8) time=0>
 
-The same rules apply as with keyword argument and assignment.
+Any sequence of integers is allowed, and type and range checking is
+applied to each data byte. These are all valid::
+
+    (65, 66, 67)
+    [65, 66, 67]
+    (i + 65 for i in range(3))
+    (ord(c) for c in 'ABC')
+    bytearray(b'ABC')
+    b'ABC'  # Python 3 only.
+
+For example::
+
+    >>> msg = Message('sysex', data=bytearray(b'ABC'))
+    >>> msg
+    <message sysex data=(65, 66, 67) time=0>
+    >>> msg.data += bytearray(b'DEF')
+    >>> msg
+    <message sysex data=(65, 66, 67, 68, 69, 70) time=0>
