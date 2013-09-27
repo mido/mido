@@ -23,7 +23,7 @@ designed to be as straight forward and Pythonic as possible:
     'program_change'
     >>> msg.channel = 2
     >>> msg2 = msg.copy(program=9)
-    <message program_change channel=2 program=9 time=0>
+    <message program_change channel=2, program=9, time=0>
 
 Full documentation at http://mido.readthedocs.org/
 

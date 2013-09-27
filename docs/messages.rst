@@ -7,12 +7,12 @@ attributes will vary depending on message type.
 To create a new message::
 
     >>> mido.Message('note_on')
-    <message note_on channel=0 note=0 velocity=64 time=0>
+    <message note_on channel=0, note=0, velocity=64, time=0>
 
 You can pass attributes as keyword arguments::
 
     >>> mido.Message('note_on', note=100, velocity=3, time=6.2)
-    <message note_on channel=0 note=100 velocity=3 time=6.2>
+    <message note_on channel=0, note=100, velocity=3, time=6.2>
 
 All attributes will default to 0. The exceptions are ``velocity``,
 which defaults to 64 (middle velocity) and ``data`` which defaults to
@@ -36,7 +36,7 @@ To make a copy of a message, optionally overriding one or more
 attributes::
 
     >>> msg.copy(note=99, time=100.0)
-    <message note_on channel=0 note=99 velocity=64 time=100.0>
+    <message note_on channel=0, note=99, velocity=64, time=100.0>
 
 Mido supports all message types defined by the MIDI standard. For a
 full list of messages and their attributes, see :doc:`message_types`.
@@ -49,7 +49,7 @@ You can convert a message to MIDI bytes with one of these methods:
 
     >>> msg = mido.Message('note_on')
     >>> msg
-    <message note_on channel=0 note=0 velocity=64 time=0>
+    <message note_on channel=0, note=0, velocity=64, time=0>
     >>> msg.bytes()
     [144, 0, 64]
     >>> msg.bin()
@@ -85,7 +85,7 @@ message::
 
     >>> msg = Message('sysex', data=(1, 2, 3))
     >>> msg
-    <message sysex data=(1, 2, 3) time=0>
+    <message sysex data=(1, 2, 3), time=0>
 
 You can pass or set any (finite) iterable and will be converted to a
 tuple::
