@@ -8,11 +8,11 @@ MIDI is a simple binary protocol for communicating with synthesizers
 and other electronic music equipment.
 
 It was developed in 1981 by Dave Smith and Chet Wood of Sequential
-Circuits with the assistance of Ikutaro Kakehashi of Roland. MIDI was
-quickly embraced by all the major synth manufacturers and led to
-developments such as microcomputer sequencers, and with them the
-electronic home studio. Although many attempts have been made to
-replace it, it is still the industry standard.
+Systems. MIDI was quickly embraced by all the major synth
+manufacturers and led to developments such as microcomputer
+sequencers, and with them the electronic home studio. Although many
+attempts have been made to replace it, it is still the industry
+standard.
 
 MIDI was designed for the 8-bit micro controllers found in synthesizers
 at the beginning of the 80's. As such, it is a very minimal
