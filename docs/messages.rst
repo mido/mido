@@ -152,8 +152,6 @@ applied to each data byte. These are all valid::
 For example::
 
     >>> msg = Message('sysex', data=bytearray(b'ABC'))
-    >>> msg
-    <message sysex data=(65, 66, 67) time=0>
     >>> msg.data += bytearray(b'DEF')
     >>> msg
     <message sysex data=(65, 66, 67, 68, 69, 70) time=0>
