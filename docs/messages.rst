@@ -86,10 +86,30 @@ message::
     >>> msg = Message('sysex', data=(1, 2, 3))
     >>> msg
     <message sysex data=(1, 2, 3) time=0>
+    >>> msg.hex()
+    'F0 01 02 03 F7'
 
-You can pass or set any (finite) iterable and will be converted to a
-tuple::
+You can set ``data`` to any (finite) sequence of integers and will be
+converted to a tuple::
 
-    >>> msg.data = range(3)
+    >>> msg = Message('sysex', data=[])
     >>> msg.data
-    (0, 1, 2)
+    ()
+
+    >>> msg.data = (i + 1 for i in range(5))
+    >>> msg.data
+    (1, 2, 3, 4, 5)
+
+    >>> msg.data = {1, 2}
+    >>> msg.data
+    (1, 2)
+
+Typically it's built as a list an then assigned right before the
+message is sent::
+
+   data = []
+   data.append(0x10)  # Device ID
+   ... more
+   data.append(gen_checksum(data))
+
+   port.send(Message('sysex', data=data))
