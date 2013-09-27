@@ -44,17 +44,8 @@
 * PortMidi and pygame input ports now actually block on the device
   instead of polling and waiting.
 
-* The string serialization format is removed, as it was felt that it
-  doesn't belong in the base library, and that it's wrong to make one
-  format the standard. If there is a need for a standardized string
-  serialization format, a better one will be designed and included.
-
-  This also means that str() will now return the same as repr(), which
-  is consistent Mido objects to the same.
-
-* removed commas from the repr() format of Message and MetaMessage
-  objects to remove the comma, again making them more consistent with
-  other classes.
+* removed commas from repr() format of Message and MetaMessage to make
+  them more consistent with other classes.
 
 
 1.0.4 - 2013-08-15

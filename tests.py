@@ -191,6 +191,97 @@ class TestMessages(unittest.TestCase):
 
         self.assertTrue(orig.__dict__ == copy.__dict__)
 
+class TestStringFormat(unittest.TestCase):
+    def test_parse_string(self):
+        m = mido.messages
+
+        self.assertEqual(m.parse_string('note_on channel=2 note=3'),
+                         Message('note_on', channel=2, note=3))
+
+        self.assertEqual(m.parse_string('sysex data=(1,2,3)'),
+                         Message('sysex', data=(1, 2, 3)))
+
+        a = m.parse_string('note_on channel=2 note=3 time=0.5')
+        b = Message('sysex', data=(1, 2, 3), time=0.5)
+        self.assertEqual(a.time, b.time)
+
+        # nan and inf should be allowed
+        a = m.parse_string('note_on time=inf')
+        b = m.parse_string('note_on time=nan')
+        self.assertTrue(a.time == float('inf'))
+        self.assertTrue(str(b.time) == 'nan')
+
+        # Should raise ValueError if something is wrong with the string.
+        # Extra comma after 'channel=2':
+        self.assertRaises(ValueError,
+                          m.parse_string, 'note_on channel=2, note=3')      
+        self.assertRaises(ValueError,
+                          m.parse_string, 'note_on channel=2, note=3')
+        self.assertRaises(ValueError,
+                          m.parse_string, '++++S+S+SOIO(KOPKEPOKFWKF')
+        self.assertRaises(ValueError,
+                          m.parse_string, 'note_on banana=2')
+        self.assertRaises(ValueError,
+                          m.parse_string, 'sysex (1, 2, 3)')
+        self.assertRaises(ValueError,
+                          m.parse_string, 'sysex (1  2  3)')
+
+    def test_format_as_string(self):
+        f = mido.messages.format_as_string
+
+        msg = Message('note_on', channel=9)
+        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=64 time=0')
+
+        msg = Message('sysex', data=(1, 2, 3))
+        self.assertEqual(f(msg), 'sysex data=(1,2,3) time=0')
+
+        msg = Message('sysex', data=())
+        self.assertEqual(f(msg), 'sysex data=() time=0')
+
+        msg = Message('continue')
+        self.assertEqual(f(msg), 'continue time=0')
+
+    def test_parse_string_stream(self):
+        m = mido.messages
+
+        # Correct input.
+        stream = StringIO("""
+             note_on channel=1  # Ignore this
+             # and this
+             continue
+        """)
+        gen = m.parse_string_stream(stream)
+        self.assertEqual(next(gen), (Message('note_on', channel=1), None))
+        self.assertEqual(next(gen), (Message('continue'), None))
+
+        # Invalid input. It should catch the ValueError
+        # from parse_string() and return (None, 'Error message').
+        stream = StringIO('ijsoijfdsf\noiajoijfs')
+        gen = m.parse_string_stream(stream)
+        self.assertEqual(next(gen)[0], None)
+        self.assertEqual(next(gen)[0], None)
+        self.assertRaises(StopIteration, next, gen)
+
+    def test_parse_string_time(self):
+        parse_time = mido.messages.parse_time
+
+        # These should work:
+        parse_time('0')
+        parse_time('12')
+        parse_time('-9')
+        parse_time('0.5')
+        parse_time('10e10')
+        parse_time('inf')
+        parse_time('-inf')
+        parse_time('nan')
+        parse_time('2389284878375')  # Will be a long in Python 2
+
+        # These should not
+        self.assertRaises(ValueError, parse_time, 'banana')
+        self.assertRaises(ValueError, parse_time, 'None')
+        self.assertRaises(ValueError, parse_time, '-')
+        self.assertRaises(ValueError, parse_time, '938938958398593L')
+
 class TestParser(unittest.TestCase):
     
     def test_parse(self):
