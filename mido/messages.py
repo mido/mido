@@ -183,14 +183,14 @@ def check_pitch(pitch):
 def check_data(data_bytes):
     """Check type of data_byte and type and range of each data byte.
 
-    Returns the data bytes as a tuple of integers.
+    Returns the data bytes as a SysexData object.
 
     Raises TypeError if value is not iterable.
     Raises TypeError if one of the bytes is not an integer.
     Raises ValueError if one of the bytes is out of range 0..127.
     """
     # Make the sequence immutable.
-    data_bytes = tuple(data_bytes)
+    data_bytes = SysexData(data_bytes)
 
     for byte in data_bytes:
         check_databyte(byte)
@@ -319,6 +319,11 @@ class BaseMessage(object):
 
         return self.bytes() == other.bytes()
 
+class SysexData(tuple):
+    """Special kind of tuple accepts and converts any sequence in +=."""
+    def __iadd__(self, other):
+        return SysexData(self + check_data(other))
+
 class Message(BaseMessage):
     """
     MIDI message class.
@@ -350,7 +355,7 @@ class Message(BaseMessage):
             if name == 'velocity':
                 self.__dict__['velocity'] = 0x40
             elif name == 'data':
-                self.__dict__['data'] = ()
+                self.__dict__['data'] = SysexData()
             else:
                 self.__dict__[name] = 0
         self.__dict__['time'] = 0
