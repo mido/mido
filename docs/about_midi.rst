@@ -36,13 +36,18 @@ bytes. Data bytes are thus only 7 bits (0..127).
 
 Each message type has a given number of data bytes, the exception
 being the System Exclusive message which has a start and a stop byte
-and any number of data bytes in-between these two.
+and any number of data bytes in-between these two::
+
+    F0 ... F7
 
 Messages can be divided into four groups:
 
 * Channel messages. These are used to turn notes on and off, to change
   patches, and change controllers (pitch bend, modulation wheel, pedal
-  and many others). 
+  and many others). There are 16 channels, and the channel number is
+  encoded in the lower 4 bits of the status byte. Each synth can
+  choose which channel (or channels) it reponds to. This can typically
+  be configured.
 
 * System common messages.
 
@@ -58,18 +63,19 @@ Some Examples of Messages
 
 ::
 
-    # Turn on and off middle C
-    92 3C 64  note_on channel=2 note=60 velocity=100
-    82 3C 64  note_off channel=2 note=60 velocity=100
+    # Turn on middle C on channel 2:
+    92 3C 64
 
-    # Program change with program=4 on channel 2.
-    # (The synth will switch to another sound.)
+    # Turn is back off:
+    82 3C 64
+
+    # Change to program (sound) number 4 on channel 2:
     C2 04
 
-    # Continue. (Starts a song that has been paused.)
+    # Continue (Starts a song that has been paused):
     FB
 
-    # Data request for the Roland SH-201 synthesizer.
+    # Sysex data request for the Roland SH-201 synthesizer:
     F0 41 10 00 00 16 11 20 00 00 00 00 00 00 21 3F F7
 
 
