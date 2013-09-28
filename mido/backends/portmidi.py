@@ -124,6 +124,11 @@ class PortCommon(object):
                          pm.null,       # Time info
                          0))            # Latency
 
+        # This is set when we return, but the callback thread needs
+        # it to be False now (or it will just return right away.)
+        self.closed = False
+        
+
         if opening_input:
             if self.callback:
                 self._callback_thread = threading.Thread(

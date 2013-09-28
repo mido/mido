@@ -40,8 +40,9 @@ class BasePort(object):
 
     def __init__(self, name='', **kwargs):
         self.name = name
-        self.closed = False
+        self.closed = True
         self._open(**kwargs)
+        self.closed = False
 
     def _open(self, **kwargs):
         pass
