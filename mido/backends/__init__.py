@@ -136,7 +136,7 @@ class Backend(object):
             return ports.IOPort(self.module.Input(input_name, **kwargs),
                                 self.module.Output(output_name, **kwargs))
 
-    def get_devices(self, **kwargs):
+    def _get_devices(self, **kwargs):
         if hasattr(self.module, 'get_devices'):
             return self.module.get_devices(**self._fixkw(kwargs))
         else:
@@ -144,19 +144,19 @@ class Backend(object):
 
     def get_input_names(self, **kwargs):
         """Return a sorted list of all input port names."""
-        devices = self.get_devices(**self._fixkw(kwargs))
+        devices = self._get_devices(**self._fixkw(kwargs))
         names = [device['name'] for device in devices if device['is_input']]
         return list(sorted(names))
 
     def get_output_names(self, **kwargs):
         """Return a sorted list of all output port names."""
-        devices = self.get_devices(**self._fixkw(kwargs))
+        devices = self._get_devices(**self._fixkw(kwargs))
         names = [device['name'] for device in devices if device['is_output']]
         return list(sorted(names))
 
     def get_ioport_names(self, **kwargs):
         """Return a sorted list of all I/O port names."""
-        devices = self.get_devices(**self._fixkw(kwargs))
+        devices = self._get_devices(**self._fixkw(kwargs))
         inputs = [device['name'] for device in devices if device['is_input']]
         outputs = [device['name'] for device in devices if device['is_output']]
         return sorted(set(inputs) & set(outputs))
