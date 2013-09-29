@@ -77,7 +77,7 @@ def _get_named_device(name, get_input):
         raise IOError('unknown port {!r}'.format(name))
 
 
-def get_devices():
+def get_devices(**kwargs):
     """Return a list of devices as dictionaries."""
     return [_get_device(i) for i in range(pm.lib.Pm_CountDevices())]
 

@@ -28,7 +28,7 @@ both cases, the path of the module is used.
    ``open_ioport()`` will return ``mido.ports.IOPort(Input(),
    Output())``.
 
-``get_devices()``
+``get_devices(**kwargs)``
 
    Returns a list of devices, where each device is dictionary with at
    least these three values::

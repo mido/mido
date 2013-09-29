@@ -40,7 +40,7 @@ def _get_api_id(name=None):
         raise ValueError('API {} not compiled in'.format(name))
     
 
-def get_devices(api=None):
+def get_devices(api=None, **kwargs):
     devices = []
 
     rtapi = _get_api_id(api)

@@ -51,7 +51,7 @@ def _get_named_device(name, get_input):
         raise IOError('unknown port: {!r}'.format(name))
 
 
-def get_devices():
+def get_devices(**kwargs):
     midi.init()
     return [_get_device(device_id) for device_id in range(midi.get_count())]
 
