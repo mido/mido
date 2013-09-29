@@ -98,7 +98,10 @@ class PortCommon(object):
             except ValueError:
                 raise IOError('unknown port {!r}'.format(self.name))
 
-            self._rt.open_port(port_id)
+            try:
+                self._rt.open_port(port_id)
+            except RuntimeError, err:
+                raise IOError(*err.args)
 
         api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(api)
