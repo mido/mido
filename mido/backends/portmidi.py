@@ -144,10 +144,25 @@ class PortCommon(object):
     def _close(self):
         _check_error(pm.lib.Pm_Close(self._stream))
 
+class classproperty(object):
+    def __init__(self, getter):
+        self.getter = getter
+
+    def __get__(self, instance, owner):
+        return self.getter(owner)
+
 class Input(PortCommon, BaseInput):
     """
     PortMidi Input port
     """
+
+    @property
+    def names(cls):
+        names = []
+        for device in get_devices():
+            if device['is_input']:
+               names.append(device['name'])
+        retrurn names
 
     def _read(self):
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
