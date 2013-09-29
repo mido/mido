@@ -166,7 +166,7 @@ class MidiFile:
         self.charset = charset
 
         if filename is None:
-            if format not in range(3):
+            if type not in range(3):
                 raise ValueError(
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
             self.type = type
