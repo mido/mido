@@ -26,10 +26,11 @@ import os
 import sys
 import time
 import timeit
+from contextlib import contextmanager
 from .ports import BaseOutput
 from .types import encode_variable_int
 from .messages import build_message, Message, get_spec
-from .midifiles_meta import MetaMessage, _build_meta_message
+from .midifiles_meta import MetaMessage, _build_meta_message, meta_charset
 from . import midifiles_meta
 
 # The default tempo is 120 BPM.
@@ -187,9 +188,8 @@ class MidiFile:
         return track
 
     def _load(self):
-        midifiles_meta._charset = self.charset
-
-        with ByteReader(self.filename) as self._file:
+        with ByteReader(self.filename) as self._file, \
+                meta_charset(self.charset):
             # Read header (16 bytes)
             magic = self._file.read_list(4)
             if not bytearray(magic) == bytearray(b'MThd'):
@@ -412,8 +412,6 @@ class MidiFile:
         Raises ValueError both filename and self.filename are None,
         or if a type 1 file has != one track.
         """
-        midifiles_meta._charset = self.charset
-
         if self.type == 0 and len(self.tracks) != 1:
             raise ValueError('type 1 file must have exactly 1 track')
 
@@ -423,7 +421,8 @@ class MidiFile:
         if filename is not None:
             self.filename = filename
 
-        with ByteWriter(self.filename) as self._file:
+        with ByteWriter(self.filename) as self._file, \
+              meta_charset(self.charset):
             self._file.write(b'MThd')
 
             self._file.write_long(6)  # Header size. (Next three shorts.)

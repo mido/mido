@@ -13,6 +13,7 @@ Todo:
 from __future__ import print_function, division
 import sys
 import math
+from contextlib import contextmanager
 from .messages import BaseMessage, check_time
 from .types import signed, unsigned, encode_variable_int
 
@@ -71,6 +72,14 @@ def encode_string(string):
 
 def decode_string(data):
     return bytearray(data).decode(_charset)
+
+@contextmanager
+def meta_charset(tmp_charset):
+    global _charset
+    old = _charset
+    _charset = tmp_charset
+    yield
+    _charset = old
 
 def check_int(value, low, high):
     if not isinstance(value, int):
