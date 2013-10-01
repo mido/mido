@@ -1,18 +1,13 @@
-1.1 -
-------
-
-* added full support for MIDI files (read, write playback)
-
-* added MIDI over TCP/IP (socket ports)
+1.1 - 2013-10-01
+-----------------
 
 * added support for selectable backends (with MIDO_BACKEND) and
   included python-rtmidi and pygame backends in the official library
   (as mido.backend.rtmidi and mido.backend.pygame).
 
-* backend API simplified to so that you only need to implement
-  get_device(), Input and Output, and optionally IOPort. All of these
-  are optional, depending on how the backend will be used and what
-  functionality it provices.
+* added full support for MIDI files (read, write playback)
+
+* added MIDI over TCP/IP (socket ports)
 
 * added utility programs mido-play, mido-ports, mido-serve and mido-forward.
 
@@ -39,7 +34,7 @@
 * Message() no longer accepts a status byte as its first argument. (This was
   only meant to be used internally.)
 
-* Added (experimental) support for callbacks in PortMidi backend using threads.
+* added callbacks for input ports (PortMidi and python-rtmidi)
 
 * PortMidi and pygame input ports now actually block on the device
   instead of polling and waiting.
