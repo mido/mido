@@ -1,3 +1,9 @@
+1.1.1 - 2013-10-04
+-------------------
+
+* bugfix: mido.backends package was not included in distribution.
+
+
 1.1 - 2013-10-01
 -----------------
 

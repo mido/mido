@@ -29,7 +29,7 @@ setup(
     author_email=mido.__email__,
     package_data={'': ['LICENSE']},
     package_dir={'requests': 'requests'},
-    packages = ['mido'],
+    packages = ['mido', 'mido.backends'],
     scripts = ['bin/mido-play',
                'bin/mido-ports',
                'bin/mido-serve',
