@@ -100,7 +100,7 @@ class PortCommon(object):
 
             try:
                 self._rt.open_port(port_id)
-            except RuntimeError, err:
+            except RuntimeError as err:
                 raise IOError(*err.args)
 
         api = _api_to_name[self._rt.get_current_api()]
