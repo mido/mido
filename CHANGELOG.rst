@@ -1,3 +1,15 @@
+1.1.2 - 2013-10-05
+-------------------
+
+- bugfix: non-ASCII character caused trouble with installation when LC_ALL=C.
+  (Reported by Gene De Lisa)
+
+- bugfix: used old exception handling syntax in rtmidi backend which
+  broke in 3.3
+
+- fixed broken link in 
+
+
 1.1.1 - 2013-10-04
 -------------------
 
