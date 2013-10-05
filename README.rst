@@ -61,8 +61,6 @@ Main Features
 Status
 -------
 
-1.1.1 - bugfix: mido.backends package was not included in the distribution
-
 1.1 is the second stable release.
 
 See CHANGELOG.rst for a full list of changes.
