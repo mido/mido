@@ -24,7 +24,7 @@ setup(
     name='mido',
     version=mido.__version__,
     description='MIDI Objects for Python',
-    long_description=open('README.rst').read(),
+    long_description=open('README.rst', 'r').read(),
     author=mido.__author__,
     author_email=mido.__email__,
     package_data={'': ['LICENSE']},

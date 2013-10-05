@@ -160,4 +160,4 @@ Latest development version: http://github.com/olemb/mido/tree/develop/
 Contact
 --------
 
-Ole Martin Bjørndalen - ombdalen@gmail.com
+Ole Martin Bjorndalen - ombdalen@gmail.com

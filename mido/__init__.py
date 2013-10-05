@@ -81,7 +81,7 @@ from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
 from .parser import Parser, parse, parse_all
 
-__author__ = 'Ole Martin Bjørndalen'
+__author__ = 'Ole Martin Bjorndalen'
 __email__ = 'ombdalen@gmail.com'
 __url__ = 'http://mido.readthedocs.org/'
 __license__ = 'MIT'
