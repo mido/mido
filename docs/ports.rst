@@ -14,6 +14,10 @@ the output port::
     >>> msg = inport.receive():
     >>> outport.send(msg)
 
+The message is copied by ``send()``, so you can safely modify your
+original message without causing breakage in other parts of the
+system.
+
 In this case, the ports are device ports, and are connected to some
 sort of (physical or virtual) MIDI device, but a port can be
 anything. For example, you can use a ``MultiPort`` receive messages
