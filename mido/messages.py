@@ -362,10 +362,12 @@ class Message(BaseMessage):
 
         # Override defaults.
         for name, value in arguments.items():
-            setattr(self, name, value)
+            try:
+                self._setattr(name, value)
+            except AttributeError as err:
+                raise ValueError(*err.args)
 
-    def __setattr__(self, name, value):
-        """Set an attribute."""
+    def _setattr(self, name, value):
         if name in self._spec.settable_attributes:
             try:
                 if name == 'data':
@@ -381,6 +383,10 @@ class Message(BaseMessage):
         else:
             raise AttributeError(
                 '{} message has no attribute {}'.format(self.type, name))
+
+    def __setattr__(self, name, value):
+        """Set an attribute."""
+        self._setattr(name, value)
 
     def __delattr__(self, name):
         raise AttributeError('attribute can not be deleted')
@@ -427,7 +433,7 @@ class Message(BaseMessage):
             return self._spec.length
 
 
-def build_message(spec, bytes):
+def build_message(spec, bytes, time=0):
     """Build message from bytes.
 
     This is used by Parser and MidiFile. bytes is a full list
@@ -437,62 +443,61 @@ def build_message(spec, bytes):
         build_message(spec, [0x80, 20, 100])
         build_message(spec, [0xf0, 1, 2, 3])
 
-    No type or value checking is done, so you need to do that before you
-    call this function. 0xf7 is not allowed as status byte.
+    No type or value checking is done, so you need to do that before
+    you call this function. (This includes time.) 0xf7 is not allowed
+    as status byte.
     """
-    message = Message.__new__(Message)
-    attrs = message.__dict__
-    message.__dict__.update({
-            'type': spec.type,
-            '_spec': spec,
-            'time': 0,
-            })
-
     # This could be written in a more general way, but most messages
     # are note_on or note_off so doing it this way is faster.
     if spec.type in ['note_on', 'note_off']:
-        message.__dict__.update({
+        attributes = {
                 'channel': bytes[0] & 0x0f,
                 'note': bytes[1],
                 'velocity': bytes[2],
-                })
-        return message
+                }
 
     elif spec.type == 'control_change':
-        message.__dict__.update({
+        attributes = {
                 'channel': bytes[0] & 0x0f,
                 'control': bytes[1],
                 'value': bytes[2],
-                })
-        return message
+                }
 
     elif spec.status_byte < 0xf0:
         # Channel message. The most common type.
         if spec.type == 'pitchwheel':
             pitch = bytes[1] | ((bytes[2] << 7) + MIN_PITCHWHEEL)
-            arguments = {'pitch': pitch}
+            attributes = {'pitch': pitch}
         else:
-            arguments = dict(zip(spec.arguments, bytes))
+            attributes = dict(zip(spec.arguments, bytes))
         # Replace status_bytes sneakily with channel.
-        arguments['channel'] = bytes[0] & 0x0f
+        attributes['channel'] = bytes[0] & 0x0f
 
     elif spec.type == 'sysex':
-        arguments = {'data': tuple(bytes[1:])}
+        attributes = {'data': tuple(bytes[1:])}
 
     elif spec.type == 'songpos':
         pos = bytes[1] | (bytes[2] << 7)
-        arguments = {'pos': pos}
+        attributes = {'pos': pos}
 
     elif spec.type == 'quarter_frame':
-        arguments = {'frame_type': bytes[1] >> 4,
+        attributes = {'frame_type': bytes[1] >> 4,
                      'frame_value' : bytes[1] & 15}
 
     else:
-        arguments = dict(zip(spec.arguments, bytes[1:]))
+        attributes = dict(zip(spec.arguments, bytes[1:]))
 
-    message.__dict__.update(arguments)
+    # Message.__new__() is used as an optimization to
+    # get around argument checking. We already know that
+    # the values are valid.
+    message = Message.__new__(Message)
+    message.__dict__.update(attributes)
+    message.__dict__.update({
+            'type': spec.type,
+            '_spec': spec,
+            'time': time,
+            })
     return message
-
 
 def parse_time(text):
     if text.endswith('L'):
@@ -522,10 +527,12 @@ def parse_string(text):
     """
     words = text.split()
 
-    message = Message(words[0])
+    type_name = words[0]
     arguments = words[1:]
 
     names_seen = set()
+
+    kwargs = {}
 
     for argument in arguments:
         try:
@@ -545,27 +552,27 @@ def parse_string(text):
                 data_bytes = [int(byte) for byte in value[1:-1].split(',')]
             except ValueError:
                 raise ValueError('unable to parse data bytes')
-            setattr(message, 'data', data_bytes)
+            kwargs['data'] = data_bytes
         elif name == 'time':
             try:
                 time = parse_time(value)
             except ValueError:
                 raise ValueError('invalid value for time')
             try:
-                setattr(message, 'time', time)
+                kwargs['time'] = time
             except AttributeError as err:
                 raise ValueError(err.message)
             except TypeError as err:
                 raise ValueError(err.message)
         else:
             try:
-                setattr(message, name, int(value))
+                kwargs[name] = int(value)
             except AttributeError as exception:
                 raise ValueError(*exception.args)
             except ValueError:
                 raise ValueError('{!r} is not an integer'.format(value))
 
-    return message
+    return Message(type_name, **kwargs)
 
 
 def parse_string_stream(stream):

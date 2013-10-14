@@ -239,10 +239,11 @@ class BaseOutput(BasePort):
 
         ALL_NOTES_OFF = 123
         RESET_ALL_CONTROLLERS = 121
-        message = Message('control_change')
-        for message.channel in range(16):
-            for message.control in [ALL_NOTES_OFF, RESET_ALL_CONTROLLERS]:
-                self.send(message)
+        for channel in range(16):
+            for control in [ALL_NOTES_OFF, RESET_ALL_CONTROLLERS]:
+                self.send(Message('control_change',
+                                  channel=channel,
+                                  control=control))
 
     def panic(self):
         """Send "All Sounds Off" on all channels.
@@ -255,9 +256,10 @@ class BaseOutput(BasePort):
             return
 
         ALL_SOUNDS_OFF = 120
-        message = Message('control_change', control=ALL_SOUNDS_OFF)
-        for message.channel in range(16):
-            self.send(message)
+        for channel in range(16):
+            self.send(Message('control_change',
+                              channel=channel,
+                              control=ALL_SOUNDS_OFF))
 
 class BaseIOPort(BaseInput, BaseOutput):
     pass
