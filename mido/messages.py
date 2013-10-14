@@ -277,20 +277,19 @@ class BaseMessage(object):
             a = Message('note_on')
             b = a.copy(velocity=32)
         """
-        for name in overrides:
-            if name not in self._spec.settable_attributes:
-                text = '{!r} is an invalid argument for this message type'
-                raise ValueError(text.format(name))
 
-        # Get values from this object
-        arguments = {}
-        for name in self._spec.settable_attributes:
-            if name in overrides:
-                arguments[name] = overrides[name]
-            else:
-                arguments[name] = getattr(self, name)
+        # Make an exact copy of this object.
+        klass = self.__class__
+        message = klass.__new__(klass)
+        message.__dict__.update(self.__dict__)
 
-        return self.__class__(self.type, **arguments)
+        for name, value in overrides.items():
+            try:
+                setattr(message, name, value)
+            except AttributeError as err:
+                raise ValueError(*err.args)
+
+        return message
 
     def bytes(self):
         raise ValueError('bytes() is not implemented in this class')
