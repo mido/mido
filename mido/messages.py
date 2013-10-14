@@ -363,11 +363,11 @@ class Message(BaseMessage):
         # Override defaults.
         for name, value in arguments.items():
             try:
-                self._setattr(name, value)
+                setattr(self, name, value)
             except AttributeError as err:
                 raise ValueError(*err.args)
 
-    def _setattr(self, name, value):
+    def __setattr__(self, name, value):
         if name in self._spec.settable_attributes:
             try:
                 if name == 'data':
@@ -383,10 +383,6 @@ class Message(BaseMessage):
         else:
             raise AttributeError(
                 '{} message has no attribute {}'.format(self.type, name))
-
-    def __setattr__(self, name, value):
-        """Set an attribute."""
-        self._setattr(name, value)
 
     def __delattr__(self, name):
         raise AttributeError('attribute can not be deleted')
