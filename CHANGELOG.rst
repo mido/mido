@@ -1,4 +1,4 @@
-1.1.3 - 
+1.1.3 - 2013-10-14
 -------------------
 
 * messages are now copied on send. This allows the sender to modify the
