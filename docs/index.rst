@@ -51,19 +51,19 @@ Contents
    installing
    intro
    messages
-   message_types
    ports
-   implementing_ports
    backends
-   implementing_backends
    parsing
    string_encoding
    socket_ports
    midi_files
+   bin
+   implementing_ports
+   implementing_backends
+   about_midi
+   message_types
    meta_message_types
    lib
-   bin
-   about_midi
    license
    authors
    acknowledgements
