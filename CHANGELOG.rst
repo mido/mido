@@ -1,3 +1,11 @@
+1.1.3 - 
+-------------------
+
+* messages are now copied on send. This allows the sender to modify the
+  message and send it to another port while the two ports receive their
+  own personal copies that they can modify without any side effects.
+
+
 1.1.2 - 2013-10-05
 -------------------
 

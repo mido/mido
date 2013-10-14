@@ -467,11 +467,11 @@ class TestPorts(unittest.TestCase):
 
             # Receive a message. (Blocking.)
             port.send(message)
-            self.assertTrue(port.receive() is message)
+            self.assertTrue(isinstance(port.receive(), Message))
 
             # Receive a message. (Non-blocking.)
             port.send(message)
-            self.assertTrue(port.receive(block=False) is message)
+            self.assertTrue(isinstance(port.receive(block=False), Message))
             self.assertTrue(port.receive(block=False) is None)
 
             port.send(message)
