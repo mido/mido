@@ -191,6 +191,29 @@ class TestMessages(unittest.TestCase):
 
         self.assertTrue(orig.__dict__ == copy.__dict__)
 
+    def test_copy_invalid_attribute(self):
+        from mido.messages import get_spec
+        spec = get_spec('note_on')
+        orig = Message('note_on')
+
+        # Pass arguments with invalid names.
+        self.assertRaises(ValueError, orig.copy, **{'_spec': spec})
+        self.assertRaises(ValueError, orig.copy, **{'type': 'continue'})
+        self.assertRaises(ValueError, orig.copy, **{'banana': 1})
+
+        # Valid arguments should pass.
+        orig.copy(note=0, velocity=0, time=0)
+
+    def test_set_invalid_attribute(self):
+        """Set an attribute that is not settable."""
+        from mido.messages import get_spec
+        spec = get_spec('note_on')
+        msg = Message('note_on')
+
+        self.assertRaises(AttributeError, setattr, msg, '_spec', spec)
+        self.assertRaises(AttributeError, setattr, msg, 'type', 'continue')
+        self.assertRaises(AttributeError, setattr, msg, 'invalid', 'banana')
+
 class TestStringFormat(unittest.TestCase):
     def test_parse_string(self):
         m = mido.messages
