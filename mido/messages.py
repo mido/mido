@@ -285,6 +285,8 @@ class BaseMessage(object):
 
         for name, value in overrides.items():
             try:
+                # setattr() is responsible for checking the
+                # name and type of the atrribute.
                 setattr(message, name, value)
             except AttributeError as err:
                 raise ValueError(*err.args)
