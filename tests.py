@@ -1,7 +1,8 @@
 from __future__ import print_function
 import sys
 import random
-import unittest
+from unittest import TestCase, main
+from contextlib import contextmanager
 import mido
 from mido import Message
 
@@ -14,153 +15,173 @@ if PY2:
 else:
     from io import StringIO
 
-class TestMessages(unittest.TestCase):
-    def test_msg_equality(self):
-        """Two messages created with same parameters should be equal."""
-        msg1 = Message('note_on', channel=1, note=2, velocity=3)
-        msg2 = Message('note_on', channel=1, note=2, velocity=3)
+@contextmanager
+def raises(exception):
+    try:
+        yield
+        raise Exception('code should have raised exception')
+    except exception:
+        pass
 
-        self.assertTrue(msg1 == msg2)
+class TestMessages(TestCase):
+    def test_msg_equality(self):
+        args = dict(type='note_on', channel=1, note=2, velocity=3)
+        assert Message(**args) == Message(**args)
 
     def test_set_type(self):
-        a = Message('note_on')
-        self.assertRaises(AttributeError, setattr, a, 'type', 'sysex')
+        with raises(AttributeError):
+            Message('note_on').type = 'note_off'
 
     def test_pitchwheel(self):
         """Check if pitchwheel type check and encoding is working."""
         msg = Message('pitchwheel', pitch=mido.messages.MIN_PITCHWHEEL)
         bytes = msg.bytes()
-        self.assertTrue(bytes[1] == bytes[2] == 0)
+        assert bytes[1] == bytes[2]
 
         msg = Message('pitchwheel', pitch=mido.messages.MAX_PITCHWHEEL)
         bytes = msg.bytes()
-        self.assertTrue(bytes[1] == bytes[2] == 127)
+        assert bytes[1] == bytes[2] == 127
 
     def test_pitchwheel_encode_parse(self):
         """Encode and parse pitchwheel with value=0."""
-        a = Message('pitchwheel', pitch=0)
-        b = mido.parse(a.bytes())
-
-        self.assertTrue(a == b)
+        wheel = Message('pitchwheel', pitch=0)
+        assert wheel == mido.parse(wheel.bytes())
 
     def test_quarter_frame_encode_parse(self):
         """Encode and parse quarter_frame."""
-        a = Message('quarter_frame', frame_type=1, frame_value=2)
-        b = mido.parse(a.bytes())
-        
-        self.assertTrue(a == b)
+        frame = Message('quarter_frame', frame_type=1, frame_value=2)
+        assert frame == mido.parse(frame.bytes())
 
     def test_sysex(self):
-        original = Message('sysex', data=(1, 2, 3, 4, 5))
-        parsed = mido.parse(original.bytes())
-        self.assertTrue(original == parsed)
+        sysex = Message('sysex', data=(1, 2, 3, 4, 5))
+        assert sysex == mido.parse(sysex.bytes())
 
-    def test_check_functions(self):
-        """Test the check_*() functions."""
-        m = mido.messages
+    def test_check_time(self):
+        from mido.messages import check_time
 
-        # 'time' field only allows int and float.
-        m.check_time(1)
-        m.check_time(1.5)
+        check_time(1)
+        check_time(1.5)
+
         if PY2:
-            m.check_time(long('9829389283L'))
-        self.assertRaises(TypeError, m.check_time, None)
-        self.assertRaises(TypeError, m.check_time, 'abc')
+            # long should be allowed. (It doesn't exist in Python3,
+            # so there's no need to check for it here.)
+            check_time(long('9829389283L'))
 
-        # Channel
-        m.check_channel(0)
-        m.check_channel(15)
-        self.assertRaises(TypeError, m.check_channel, None)
-        self.assertRaises(TypeError, m.check_channel, 'abc')
-        self.assertRaises(TypeError, m.check_channel, 0.5)
-        self.assertRaises(ValueError, m.check_channel, -1)
-        self.assertRaises(ValueError, m.check_channel, 16)
+        with raises(TypeError): check_time(None)
+        with raises(TypeError): check_time('abc')
 
-        # Song position
-        m.check_pos(m.MIN_SONGPOS)
-        m.check_pos(m.MAX_SONGPOS)
-        self.assertRaises(TypeError, m.check_pos, None)
-        self.assertRaises(TypeError, m.check_pos, 'abc')
-        self.assertRaises(ValueError, m.check_pos, m.MIN_SONGPOS - 1)
-        self.assertRaises(ValueError, m.check_pos, m.MAX_SONGPOS + 1)
+        with raises(TypeError): check_time(None)
+        with raises(TypeError): check_time('abc')
+
+    def test_check_channel(self):
+        from mido.messages import check_channel
+
+        check_channel(0)
+        check_channel(15)
+        with raises(TypeError): check_channel(None)
+        with raises(TypeError): check_channel('abc')
+        with raises(TypeError): check_channel(0.5)
+        with raises(ValueError): check_channel(-1)
+        with raises(ValueError): check_channel(16)
+
+    def test_check_pos(self):
+        from mido.messages import check_pos, MIN_SONGPOS, MAX_SONGPOS
+
+        check_pos(0)
+        check_pos(MIN_SONGPOS)
+        check_pos(MAX_SONGPOS)
+        with raises(TypeError): check_pos(None)
+        with raises(TypeError): check_pos('abc')
+        with raises(ValueError): check_pos(MIN_SONGPOS - 1)
+        with raises(ValueError): check_pos(MAX_SONGPOS + 1)
+
+    def test_check_pitch(self):
+        from mido.messages import check_pitch, MIN_PITCHWHEEL, MAX_PITCHWHEEL
 
         # Pitchwheel pitch
-        m.check_pitch(m.MIN_PITCHWHEEL)
-        m.check_pitch(m.MAX_PITCHWHEEL)
-        self.assertRaises(TypeError, m.check_pitch, None)
-        self.assertRaises(TypeError, m.check_pitch, 0.5)
-        self.assertRaises(TypeError, m.check_pitch, 'abc')
-        self.assertRaises(ValueError, m.check_pitch, m.MIN_PITCHWHEEL - 1)
-        self.assertRaises(ValueError, m.check_pitch, m.MAX_PITCHWHEEL + 1)
+        check_pitch(MIN_PITCHWHEEL)
+        check_pitch(MAX_PITCHWHEEL)
+        with raises(TypeError): check_pitch(None)
+        with raises(TypeError): check_pitch(0.5)
+        with raises(TypeError): check_pitch('abc')
+        with raises(ValueError): check_pitch(MIN_PITCHWHEEL - 1)
+        with raises(ValueError): check_pitch(MAX_PITCHWHEEL + 1)
 
-        # Data (sysex)
-        self.assertEqual((0, 1, 2), m.check_data([0, 1, 2]))
-        self.assertEqual((0, 1, 2), m.check_data((i for i in range(3))))
-        self.assertRaises(TypeError, m.check_data, 1)
-        self.assertRaises(TypeError, m.check_data, ('a', 'b', 'c'))
-        self.assertRaises(ValueError, m.check_data, (-1, -2, -3))
+    def test_check_data(self):
+        from mido.messages import check_data
+
+        # check_data() should return the data as a tuple.
+        assert type(check_data([0, 1, 2]) == tuple)
+        assert check_data([0, 1, 2]) == (0, 1, 2)
+        assert check_data(i for i in [1, 2, 3]) == (1, 2, 3)
+
+        with raises(TypeError): check_data(1)
+        with raises(TypeError): check_data(('a', 'b', 'c'))
+        with raises(ValueError): check_data((-1, -2, -3))
+
+    def test_check_frame_type(self):
+        from mido.messages import check_frame_type
 
         # Qarter frame type
-        m.check_frame_type(0)
-        m.check_frame_type(7)
-        self.assertRaises(TypeError, m.check_frame_type, None)
-        self.assertRaises(TypeError, m.check_frame_type, 0.5)
-        self.assertRaises(ValueError, m.check_frame_type, -1)
-        self.assertRaises(ValueError, m.check_frame_type, 8)
+        check_frame_type(0)
+        check_frame_type(7)
+        with raises(TypeError): check_frame_type(None)
+        with raises(TypeError): check_frame_type(0.5)
+        with raises(ValueError): check_frame_type(-1)
+        with raises(ValueError): check_frame_type(8)
 
-        # Qarter frame value
-        m.check_frame_type(0)
-        m.check_frame_type(7)
-        self.assertRaises(TypeError, m.check_frame_type, None)
-        self.assertRaises(TypeError, m.check_frame_type, 0.5)
-        self.assertRaises(ValueError, m.check_frame_type, -1)
-        self.assertRaises(ValueError, m.check_frame_type, 16)
+    def test_check_databyte(self):
+        from mido.messages import check_databyte
 
         # Data byte
-        m.check_databyte(0)
-        m.check_databyte(15)
-        self.assertRaises(TypeError, m.check_databyte, None)
-        self.assertRaises(TypeError, m.check_databyte, 0.5)
-        self.assertRaises(ValueError, m.check_databyte, -1)
-        self.assertRaises(ValueError, m.check_databyte, 128)
+        check_databyte(0)
+        check_databyte(15)
+        with raises(TypeError): check_databyte(None)
+        with raises(TypeError): check_databyte(0.5)
+        with raises(ValueError): check_databyte(-1)
+        with raises(ValueError): check_databyte(128)
 
-    def test_encode_functions(self):
-        """Test the encode_*() functions."""
-        m = mido.messages
-
-        # These have no type and value checks, since the data
-        # is assumed to be correct already. (It was checked on
-        # the way into the object.)
+    def test_encode_channel(self):
+        from mido.messages import encode_channel
 
         # Channel should be ignored, and an empty list returned.
         # Thus, there is no reason to check for TypeError
         # and ValueError.
-        self.assertEqual(m.encode_channel(channel=0), [])
+        assert encode_channel(channel=0) == []
 
-        # Encode data
+    def test_encode_data(self):
+        from mido.messages import encode_data
+
         # Note: encode_data() includes the sysex end byte (0xf7) to avoid a
         # special case in bytes().
-        self.assertEqual([1, 2, 3, 0xf7], m.encode_data((1, 2, 3)))
+        assert encode_data([1, 2, 3]) == [1, 2, 3, 0xf7]
+
+    def test_encode_(self):
+        from mido.messages import encode_pitch, MIN_PITCHWHEEL, MAX_PITCHWHEEL
 
         # Pitchwheel pitch
-        self.assertEqual([0, 0], m.encode_pitch(m.MIN_PITCHWHEEL))
-        self.assertEqual([127, 127], m.encode_pitch(m.MAX_PITCHWHEEL))
-        self.assertEqual([0, 64], m.encode_pitch(0))
+        assert encode_pitch(MIN_PITCHWHEEL) == [0, 0]
+        assert encode_pitch(MAX_PITCHWHEEL) == [127, 127]
+        assert encode_pitch(0) == [0, 64]
 
-        # Song position
-        self.assertEqual([0, 0], m.encode_pos(0))
-        self.assertEqual([127, 127], m.encode_pos(m.MAX_SONGPOS))
+    def test_encode_pos(self):
+        from mido.messages import encode_pos, MIN_SONGPOS, MAX_SONGPOS
+
+        assert encode_pos(MIN_SONGPOS) == [0, 0]
+        assert encode_pos(MAX_SONGPOS) == [127, 127]
         # Check endian
-        self.assertEqual([16, 78], m.encode_pos(10000))
+        assert [16, 78] == encode_pos(10000)
 
     def test_get_spec(self):
-        get_spec = mido.messages.get_spec
+        from mido.messages import get_spec
 
-        self.assertTrue(get_spec('note_on').type == 'note_on')
-        self.assertTrue(get_spec(0x80).type == 'note_off')
-        self.assertTrue(get_spec(0x82).type == 'note_off')
+        assert get_spec('note_on').type == 'note_on'
+        assert get_spec(0x80).type == 'note_off'
+        assert get_spec(0x82).type == 'note_off'
 
-        self.assertRaises(LookupError, get_spec, 0)
+        with raises(LookupError): get_spec(-1)
+        with raises(LookupError): get_spec(0)
+        with raises(LookupError): get_spec('banana')
 
     def test_sysex_data_type(self):
         """Is messages.data turned into a tuple?"""
@@ -168,104 +189,91 @@ class TestMessages(unittest.TestCase):
 
         message = mido.Message('sysex')
         message.data = data
-        self.assertTrue(isinstance(message.data, tuple))
+        assert isinstance(message.data, tuple)
 
         message = mido.Message('sysex', data=data)
-        self.assertTrue(isinstance(message.data, tuple))
+        assert isinstance(message.data, tuple)
 
         a = mido.Message('sysex', data=(1, 2))
         b = mido.parse(a.bytes())
-        self.assertTrue(isinstance(b.data, tuple))
+        assert isinstance(b.data, tuple)
 
     def test_copy(self):
         orig = Message('note_on', note=22, time=123)
         copy = orig.copy()
 
-        self.assertTrue(orig == copy)
-        self.assertTrue(orig.time == copy.time)
+        assert orig == copy
+        assert orig.time == copy.time
+        assert orig.__dict__ == copy.__dict__
 
         copy = orig.copy(velocity=1)
         orig.velocity = 1
 
-        self.assertTrue(orig == copy)
-
-        self.assertTrue(orig.__dict__ == copy.__dict__)
+        assert orig == copy
 
     def test_copy_invalid_attribute(self):
-        from mido.messages import get_spec
-        spec = get_spec('note_on')
         orig = Message('note_on')
+        valid_spec = mido.messages.get_spec('note_on')
 
         # Pass arguments with invalid names.
-        self.assertRaises(ValueError, orig.copy, **{'_spec': spec})
-        self.assertRaises(ValueError, orig.copy, **{'type': 'continue'})
-        self.assertRaises(ValueError, orig.copy, **{'banana': 1})
+        with raises(ValueError): orig.copy(_spec=valid_spec)
+        with raises(ValueError): orig.copy(type='continue')
+        with raises(ValueError): orig.copy(banana=1)
 
         # Valid arguments should pass.
         orig.copy(note=0, velocity=0, time=0)
 
     def test_set_invalid_attribute(self):
         """Set an attribute that is not settable."""
-        from mido.messages import get_spec
-        spec = get_spec('note_on')
+        valid_spec = mido.messages.get_spec('note_on')
         msg = Message('note_on')
 
-        self.assertRaises(AttributeError, setattr, msg, '_spec', spec)
-        self.assertRaises(AttributeError, setattr, msg, 'type', 'continue')
-        self.assertRaises(AttributeError, setattr, msg, 'invalid', 'banana')
+        with raises(AttributeError): msg._spec = valid_spec
+        with raises(AttributeError): msg.type = 'continue'
+        with raises(AttributeError): msg.invalid = 'banana'
 
-class TestStringFormat(unittest.TestCase):
+class TestStringFormat(TestCase):
     def test_parse_string(self):
-        m = mido.messages
+        from mido import parse_string
 
-        self.assertEqual(m.parse_string('note_on channel=2 note=3'),
-                         Message('note_on', channel=2, note=3))
+        assert (parse_string('note_on channel=2 note=3')
+                == Message('note_on', channel=2, note=3))
 
-        self.assertEqual(m.parse_string('sysex data=(1,2,3)'),
-                         Message('sysex', data=(1, 2, 3)))
+        assert (parse_string('sysex data=(1,2,3)')
+                == Message('sysex', data=(1, 2, 3)))
 
-        a = m.parse_string('note_on channel=2 note=3 time=0.5')
-        b = Message('sysex', data=(1, 2, 3), time=0.5)
-        self.assertEqual(a.time, b.time)
+        assert (parse_string('note_on time=0.5').time
+                == Message('note_on', time=0.5).time)
 
         # nan and inf should be allowed
-        a = m.parse_string('note_on time=inf')
-        b = m.parse_string('note_on time=nan')
-        self.assertTrue(a.time == float('inf'))
-        self.assertTrue(str(b.time) == 'nan')
+        assert parse_string('note_on time=inf').time == float('inf')
+        assert str(parse_string('note_on time=nan').time) == 'nan'
 
-        # Should raise ValueError if something is wrong with the string.
-        # Extra comma after 'channel=2':
-        self.assertRaises(ValueError,
-                          m.parse_string, 'note_on channel=2, note=3')      
-        self.assertRaises(ValueError,
-                          m.parse_string, 'note_on channel=2, note=3')
-        self.assertRaises(ValueError,
-                          m.parse_string, '++++S+S+SOIO(KOPKEPOKFWKF')
-        self.assertRaises(ValueError,
-                          m.parse_string, 'note_on banana=2')
-        self.assertRaises(ValueError,
-                          m.parse_string, 'sysex (1, 2, 3)')
-        self.assertRaises(ValueError,
-                          m.parse_string, 'sysex (1  2  3)')
+        # Commas are not allowed
+        with raises(ValueError): parse_string('note_on channel=2, note=3')
+
+        with raises(ValueError): parse_string('++++S+S+SOIO(KOPKEPOKFWKF')
+        with raises(ValueError): parse_string('note_on banana=2')
+        with raises(ValueError): parse_string('sysex (1, 2, 3)')
+        with raises(ValueError): parse_string('sysex (1  2  3)')
 
     def test_format_as_string(self):
-        f = mido.messages.format_as_string
+        from mido import format_as_string
 
-        msg = Message('note_on', channel=9)
-        self.assertEqual(f(msg), 'note_on channel=9 note=0 velocity=64 time=0')
+        assert (format_as_string(Message('note_on', channel=9))
+                == 'note_on channel=9 note=0 velocity=64 time=0')
 
-        msg = Message('sysex', data=(1, 2, 3))
-        self.assertEqual(f(msg), 'sysex data=(1,2,3) time=0')
+        assert (format_as_string(Message('sysex', data=(1, 2, 3)))
+                == 'sysex data=(1,2,3) time=0')
 
-        msg = Message('sysex', data=())
-        self.assertEqual(f(msg), 'sysex data=() time=0')
+        assert (format_as_string(Message('sysex', data=()))
+                == 'sysex data=() time=0')
 
-        msg = Message('continue')
-        self.assertEqual(f(msg), 'continue time=0')
+        assert (format_as_string(Message('continue'))
+                == 'continue time=0')
 
     def test_parse_string_stream(self):
-        m = mido.messages
+        from mido import parse_string_stream
 
         # Correct input.
         stream = StringIO("""
@@ -273,20 +281,20 @@ class TestStringFormat(unittest.TestCase):
              # and this
              continue
         """)
-        gen = m.parse_string_stream(stream)
-        self.assertEqual(next(gen), (Message('note_on', channel=1), None))
-        self.assertEqual(next(gen), (Message('continue'), None))
+        gen = parse_string_stream(stream)
+        assert next(gen) == (Message('note_on', channel=1), None)
+        assert next(gen) == (Message('continue'), None)
 
         # Invalid input. It should catch the ValueError
         # from parse_string() and return (None, 'Error message').
         stream = StringIO('ijsoijfdsf\noiajoijfs')
-        gen = m.parse_string_stream(stream)
-        self.assertEqual(next(gen)[0], None)
-        self.assertEqual(next(gen)[0], None)
-        self.assertRaises(StopIteration, next, gen)
+        gen = parse_string_stream(stream)
+        assert next(gen)[0] == None
+        assert next(gen)[0] == None
+        with raises(StopIteration): next(gen)
 
     def test_parse_string_time(self):
-        parse_time = mido.messages.parse_time
+        from mido.messages import parse_time
 
         # These should work:
         parse_time('0')
@@ -300,73 +308,77 @@ class TestStringFormat(unittest.TestCase):
         parse_time('2389284878375')  # Will be a long in Python 2
 
         # These should not
-        self.assertRaises(ValueError, parse_time, 'banana')
-        self.assertRaises(ValueError, parse_time, 'None')
-        self.assertRaises(ValueError, parse_time, '-')
-        self.assertRaises(ValueError, parse_time, '938938958398593L')
+        with raises(ValueError): parse_time('banana')
+        with raises(ValueError): parse_time('None')
+        with raises(ValueError): parse_time('-')
+        with raises(ValueError): parse_time('938938958398593L')
 
-class TestParser(unittest.TestCase):
+class TestParser(TestCase):
     
     def test_parse(self):
         """Parse a note_on msg and compare it to one created with Message()."""
         parsed = mido.parse(b'\x90\x4c\x20')
         other = Message('note_on', channel=0, note=0x4c, velocity=0x20)
-        self.assertTrue(parsed == other)
+        assert parsed == other
 
     def test_parse_stray_data(self):
         """The parser should ignore stray data bytes."""
-        ret = mido.parse_all(b'\x20\x30')
-        
-        self.assertTrue(ret == [])
+        assert mido.parse_all(b'\x20\x30') == []
 
     def test_parse_stray_status_bytes(self):
         """The parser should ignore stray status bytes."""
-        ret = mido.parse_all(b'\x90\x90\xf0')
-        
-        self.assertTrue(ret == [])
+        assert mido.parse_all(b'\x90\x90\xf0') == []
 
     def test_encode_and_parse(self):
         """Encode a message and then parse it.
 
         Should return the same message.
         """
-        msg1 = Message('note_on')
-        msg2 = mido.parse(msg1.bytes())
-        self.assertTrue(msg1 == msg2)
+        note_on = Message('note_on')
+        assert note_on == mido.parse(note_on.bytes())
 
     def test_encode_and_parse_all(self):
         """Encode and then parse all message types.
 
         This checks mostly for errors in the parser.
         """
-        p = mido.Parser()
+        parser = mido.Parser()
         for spec in mido.messages.get_message_specs():
             msg = Message(spec.type)
-            p.feed(msg.bytes())
-            outmsg = p.get_message()
-            self.assertTrue(outmsg is not True)
-            self.assertTrue(outmsg.type == spec.type)
-
+            parser.feed(msg.bytes())
+            outmsg = parser.get_message()
+            assert outmsg is not True
+            assert outmsg.type == spec.type
 
     def test_feed_byte(self):
         """Put various things into feed_byte()."""
-        import mido.parser
-
-        parser = mido.parser.Parser()
+        parser = mido.Parser()
 
         parser.feed_byte(0)
         parser.feed_byte(255)
 
-        self.assertRaises(TypeError, parser.feed_byte, [1, 2, 3])
-        self.assertRaises(ValueError, parser.feed_byte, -1)
-        self.assertRaises(ValueError, parser.feed_byte, 256)    
+        with raises(TypeError): parser.feed_byte([1, 2, 3])
+        with raises(ValueError): parser.feed_byte(-1)
+        with raises(ValueError): parser.feed_byte(256)
+
+    def test_feed(self):
+        """Put various things into feed()."""
+        parser = mido.Parser()
+
+        parser.feed([])
+        parser.feed([1, 2, 3])
+        # Todo: add more valid types.
+
+        with raises(TypeError): parser.feed(1)
+        with raises(TypeError): parser.feed(None)
+        with raises(TypeError): parser.feed()
 
     # Todo: Parser should not crash when parsing random data
     def not_test_parse_random_bytes(self):
-        r = random.Random('a_random_seed')
+        randrange = random.Random('a_random_seed').randrange
         parser = mido.Parser()
         for _ in range(10000):
-            byte = r.randrange(256)
+            byte = randrange(256)
             parser.feed_byte(byte)
 
     def test_running_status(self):
@@ -374,62 +386,61 @@ class TestParser(unittest.TestCase):
 
         # Two note_on messages. (The second has no status byte,
         # so the last seen status byte is used instead.)
-        a = mido.parse_all([0x90, 0x01, 0x02, 0x01, 0x02])
-        b = [Message('note_on', note=1, velocity=2)] * 2
-        self.assertEqual(a, b)
+        assert (mido.parse_all([0x90, 0x01, 0x02, 0x01, 0x02])
+                == [Message('note_on', note=1, velocity=2)] * 2)
 
         # System common messages should cancel running status.
         # (0xf3 is 'songpos'. This should be 'song song=2'
         # followed by a stray data byte.
-        a = mido.parse_all([0xf3, 2, 3])
-        b = [Message('song', song=2)]
-        self.assertEqual(a, b)
+        assert mido.parse_all([0xf3, 2, 3]) == [Message('song', song=2)]
 
     def test_parse_channel(self):
         """Parser should not discard the channel in channel messages."""
-        self.assertTrue(mido.parse([0x90, 0x00, 0x00]).channel == 0)
-        self.assertTrue(mido.parse([0x92, 0x00, 0x00]).channel == 2)
-           
+        assert mido.parse([0x90, 0x00, 0x00]).channel == 0
+        assert mido.parse([0x92, 0x00, 0x00]).channel == 2
+ 
     def test_one_byte_message(self):
         """Messages that are one byte long should not wait for data bytes."""
         messages = mido.parse_all([0xf6])  # Tune request.
-        self.assertTrue(len(messages) == 1)
-        self.assertTrue(messages[0].type == 'tune_request')
+        assert len(messages) == 1
+        assert messages[0].type == 'tune_request'
 
     def test_undefined_messages(self):
         """The parser should ignore undefined status bytes and sysex_end."""
         messages = mido.parse_all([0xf4, 0xf5, 0xf7, 0xf9, 0xfd])
-        self.assertTrue(messages == [])
+        assert messages == []
 
     def test_realtime_inside_sysex(self):
         """Realtime message inside sysex should be delivered first."""
         messages = mido.parse_all([0xf0, 0, 0xfb, 0, 0xf7])
-        self.assertTrue(len(messages) == 2)
-        self.assertTrue(messages[0].type == 'continue')
-        self.assertTrue(messages[1].type == 'sysex')
+        assert len(messages) == 2
+        assert messages[0].type == 'continue'
+        assert messages[1].type == 'sysex'
 
     def test_undefined_realtime_inside_sysex(self):
         """Undefined realtime message inside sysex should ignored."""
         messages = mido.parse_all([0xf0, 0, 0xf9, 0xfd, 0, 0xf7])
-        self.assertTrue(len(messages) == 1)
-        self.assertTrue(messages[0].type == 'sysex')
+        assert len(messages) == 1
+        assert messages[0].type == 'sysex'
 
-class TestSockets(unittest.TestCase):
+class TestSockets(TestCase):
     
     def test_parse_address(self):
         from mido.sockets import parse_address
 
-        self.assertTrue(('', 8080) == parse_address(':8080'))
-        self.assertTrue(('localhost', 8080) == parse_address('localhost:8080'))
-        self.assertRaises(ValueError, parse_address, ':to_many_colons:8080')
-        self.assertRaises(ValueError, parse_address, 'only_hostname')
-        self.assertRaises(ValueError, parse_address, '')
-        self.assertRaises(ValueError, parse_address, ':')
-        self.assertRaises(ValueError, parse_address, ':shoe')
-        self.assertRaises(ValueError, parse_address, ':0')
-        self.assertRaises(ValueError, parse_address, ':65536')  # Out of range.
+        assert parse_address(':8080') == ('', 8080)
+        
 
-class TestMidiFiles(unittest.TestCase):
+        assert parse_address('localhost:8080') == ('localhost', 8080)
+        with raises(ValueError): parse_address(':to_many_colons:8080')
+        with raises(ValueError): parse_address('only_hostname')
+        with raises(ValueError): parse_address('')
+        with raises(ValueError): parse_address(':')
+        with raises(ValueError): parse_address(':shoe')
+        with raises(ValueError): parse_address(':0')
+        with raises(ValueError): parse_address(':65536')  # Out of range.
+
+class TestMidiFiles(TestCase):
     def test_meta_specs(self):
         """Test that meta specs are implemented correctly."""
         from mido.midifiles_meta import MetaMessage, _specs
@@ -444,8 +455,8 @@ class TestMidiFiles(unittest.TestCase):
                 decoded = spec.decode(m, encoded1)
                 encoded2 = spec.encode(m)
 
-                self.assertTrue(encoded1 == encoded2)
-                self.assertTrue(len(spec.attributes) == len(spec.defaults))
+                assert encoded1 == encoded2
+                assert len(spec.attributes) == len(spec.defaults)
 
     def test_meta_copy(self):
         # Todo: this could probably be combined with the test_copy().
@@ -454,16 +465,16 @@ class TestMidiFiles(unittest.TestCase):
         orig = MetaMessage('key_signature', key='Bb', mode='major')
         copy = orig.copy()
 
-        self.assertTrue(orig == copy)
-        self.assertTrue(orig.time == copy.time)
+        assert orig == copy
+        assert orig.time == copy.time
 
         copy = orig.copy(key='F#')
         orig.key = 'F#'
 
-        self.assertTrue(orig == copy)
-        self.assertTrue(orig.__dict__ == copy.__dict__)
+        assert orig == copy
+        assert orig.__dict__ == copy.__dict__
 
-class TestPorts(unittest.TestCase):
+class TestPorts(TestCase):
     def test_base_ioport(self):
         from mido.ports import BaseIOPort
 
@@ -478,38 +489,38 @@ class TestPorts(unittest.TestCase):
                 self.test_value = False
 
         with Port('Name') as port:
-            self.assertTrue(port.name == 'Name')
-            self.assertFalse(port.closed)
+            assert port.name == 'Name'
+            assert not port.closed
 
-            self.assertTrue(port._messages is port._parser._parsed_messages)
+            assert port._messages is port._parser._parsed_messages
+
+            with raises(TypeError): port.send('not a message')
 
             # Send message.
             message = Message('note_on')
-
-            self.assertRaises(TypeError, port.send, 'not a message')
+            port.send(message)
 
             # Receive a message. (Blocking.)
-            port.send(message)
-            self.assertTrue(isinstance(port.receive(), Message))
+            assert isinstance(port.receive(), Message)
 
             # Receive a message. (Non-blocking.)
             port.send(message)
-            self.assertTrue(isinstance(port.receive(block=False), Message))
-            self.assertTrue(port.receive(block=False) is None)
+            assert isinstance(port.receive(block=False), Message)
+            assert port.receive(block=False) is None
 
             port.send(message)
             port.send(message)
-            self.assertTrue(port.pending() == 2)
-            self.assertTrue(list(port.iter_pending()) == [message, message])
+            assert port.pending() == 2
+            assert list(port.iter_pending()) == [message, message]
 
             # Todo: should this type of port close (and/or stop iteration)
             # when there are no messages?
             # port.send(message)
             # port.send(message)
-            # self.assertTrue(port.pending() == 2)
-            # self.assertTrue(list(port) == [message, message])
+            # assert port.pending() == 2
+            # assert list(port) == [message, message]
 
-        self.assertTrue(port.closed)
+        assert port.closed
 
     def test_non_finite_port(self):
         # This type of port can close when it runs out of messages.
@@ -532,7 +543,7 @@ class TestPorts(unittest.TestCase):
                 self.close()
 
         with Port() as port:
-            self.assertTrue(len(list(port)) == 2)
+            assert len(list(port)) == 2
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
