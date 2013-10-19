@@ -19,7 +19,7 @@ else:
 def raises(exception):
     try:
         yield
-        raise Exception('code should have raised exception')
+        raise AssertionError('code should have raised exception')
     except exception:
         pass
 
