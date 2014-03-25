@@ -271,7 +271,7 @@ class MidiFile:
         length = self._file.read_long()
         start = self._file.pos
         last_status = None
-        last_systex = None
+        last_sysex = None
 
         while 1:
             # End of track reached.
@@ -299,7 +299,7 @@ class MidiFile:
                 last_sysex = message
             elif status_byte == 0xf7:
                 # Todo: check if this works as intended.
-                if last_systex is None:
+                if last_sysex is None:
                     raise IOError(
                         'sysex continuation without preceding sysex')
                 last_sysex.data += self._read_sysex()
