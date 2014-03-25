@@ -1,3 +1,12 @@
+1.1.4 -
+-------------------
+
+* fixed a typo in MidiFile._read_track(). Sysex continuation should
+  work now.
+
+* rewrote tests to make them more readable.
+
+
 1.1.3 - 2013-10-14
 -------------------
 
