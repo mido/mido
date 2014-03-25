@@ -46,11 +46,26 @@ class ByteReader(object):
         self.pos = 0
         self._eof = EOFError('unexpected end of file')
 
+    def _print_bytes(self, n):
+        """Print the next n bytes as hex and characters.
+
+        This is used for debugging.
+        """
+        data = self._buffer[self.pos:self.pos + n]
+        for pos, byte in enumerate(data):
+            char = chr(byte)
+            if repr(char).startswith(r"'\x"):
+                char = ''  # Character is not printable.
+            print('  {:06x}: {:02x} {}'.format(pos, byte, char))
+
+        if len(data) < n:
+            raise EOFError('end of file reached in read_list()')
+
     def read_byte(self):
         """Read one byte."""
         try:
             byte = self._buffer[self.pos]
-            # print('{:02x}'.format(byte))
+            # self._print_bytes(1)
             self.pos += 1
             return byte
         except IndexError:
@@ -67,10 +82,9 @@ class ByteReader(object):
 
     def read_list(self, n):
         """Read n bytes and return as a list."""
+        # self._print_bytes(n)
         i = self.pos
         ret = self._buffer[i:i + n]
-        # for byte in ret:
-        #     print('  {:02x} {!r}'.format(byte, chr(byte)))
         if len(ret) < n:
             raise self._eof
 
@@ -264,6 +278,8 @@ class MidiFile:
             if self._file.pos - start == length:
                 break
 
+            # print('--- New')
+
             delta = self._read_variable_int()
 
             # Todo: not all messages have running status
@@ -293,6 +309,8 @@ class MidiFile:
 
             message.time = delta
             track.append(message)
+
+            # print('---', message)
 
             if message.type == 'end_of_track':
                 break
