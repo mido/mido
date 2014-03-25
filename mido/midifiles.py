@@ -56,7 +56,7 @@ class ByteReader(object):
             char = chr(byte)
             if repr(char).startswith(r"'\x"):
                 char = ''  # Character is not printable.
-            print('  {:06x}: {:02x} {}'.format(pos, byte, char))
+            print('  {:06x}: {:02x} {}'.format(self.pos, byte, char))
 
         if len(data) < n:
             raise EOFError('end of file reached in read_list()')
