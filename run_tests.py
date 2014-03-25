@@ -2,6 +2,7 @@
 """
 Run unit tests in Python 2 and 3.
 """
+import re
 import sys
 from subprocess import Popen, PIPE
 
@@ -17,7 +18,7 @@ def get_pythons():
         for python in ['python', 'python2', 'python3']:
             try:
                 proc = Popen([python, '--version'], stderr=PIPE)
-                line = proc.stderr.read()
+                line = proc.stderr.read().decode('utf-8')
                 proc.wait()
             except OSError:
                 # Program was not found.
@@ -25,10 +26,11 @@ def get_pythons():
 
             # The line contains "Python 2.7.4".
             # Get the version number as a tuple of ints.
-            version = tuple(map(int, line.split()[1].split('.')))
-
-            if version[0] == major_version and version > requirement:
-                pythons[major_version] = python
+            match = re.search('Python (\d+)\.(\d+)\.(\d+)', line)
+            if match:
+                version = tuple(map(int, match.groups()))
+                if version[0] == major_version and version > requirement:
+                    pythons[major_version] = python
 
     for major_version in pythons:
         if pythons[major_version] is None:
