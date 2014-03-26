@@ -65,7 +65,7 @@ class ByteReader(object):
         """Read one byte."""
         try:
             byte = self._buffer[self.pos]
-            self._print_bytes(1)
+            # self._print_bytes(1)
             self.pos += 1
             return byte
         except IndexError:
@@ -82,7 +82,7 @@ class ByteReader(object):
 
     def read_list(self, n):
         """Read n bytes and return as a list."""
-        self._print_bytes(n)
+        # self._print_bytes(n)
         i = self.pos
         ret = self._buffer[i:i + n]
         if len(ret) < n:
@@ -278,7 +278,7 @@ class MidiFile:
             if self._file.pos - start == length:
                 break
 
-            print('--- New')
+            # print('--- New')
 
             delta = self._read_variable_int()
 
@@ -290,7 +290,9 @@ class MidiFile:
                 status_byte = last_status
             else:
                 status_byte = self._file.read_byte()
-                last_status = status_byte
+                if status_byte != 0xff:
+                    # Meta messages don't set running status.
+                    last_status = status_byte
 
             if status_byte == 0xff:
                 message = self._read_meta_message()
@@ -310,7 +312,7 @@ class MidiFile:
             message.time = delta
             track.append(message)
 
-            print('---', message)
+            # print('---', message)
 
             if message.type == 'end_of_track':
                 break

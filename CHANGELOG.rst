@@ -1,6 +1,12 @@
 1.1.4 -
 -------------------
 
+* bugfix: when reading some MIDI files Mido crashed with the message
+  "ValueError: attribute must be in range 0..255". The reason was that
+  Meta messages set running status, which caused the next statusless
+  message to be falsely interpreted as a meta message. (Reported by
+  Domino Marama).
+
 * fixed a typo in MidiFile._read_track(). Sysex continuation should
   work now.
 
