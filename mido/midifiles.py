@@ -52,11 +52,11 @@ class ByteReader(object):
         This is used for debugging.
         """
         data = self._buffer[self.pos:self.pos + n]
-        for pos, byte in enumerate(data):
+        for pos, byte in enumerate(data, start=self.pos):
             char = chr(byte)
             if repr(char).startswith(r"'\x"):
                 char = ''  # Character is not printable.
-            print('  {:06x}: {:02x} {}'.format(self.pos, byte, char))
+            print('  {:06x}: {:02x} {}'.format(pos, byte, char))
 
         if len(data) < n:
             raise EOFError('end of file reached in read_list()')
