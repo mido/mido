@@ -26,6 +26,7 @@ import os
 import sys
 import time
 import timeit
+import string
 from contextlib import contextmanager
 from .ports import BaseOutput
 from .types import encode_variable_int
@@ -54,8 +55,8 @@ class ByteReader(object):
         data = self._buffer[self.pos:self.pos + n]
         for pos, byte in enumerate(data, start=self.pos):
             char = chr(byte)
-            if repr(char).startswith(r"'\x"):
-                char = ''  # Character is not printable.
+            if not char in string.printable or char in string.whitespace:
+                char = ''
             print('  {:06x}: {:02x} {}'.format(pos, byte, char))
 
         if len(data) < n:
