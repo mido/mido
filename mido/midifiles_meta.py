@@ -58,6 +58,7 @@ _key_signature_decode = {
         (7, 1): ('A#', 'minor'),
     }
 _key_signature_encode = reverse_table(_key_signature_decode)
+_valid_keys = set(key for key, mode in _key_signature_encode)
 
 _smpte_framerate_decode = {
         0: 24,
@@ -305,7 +306,13 @@ class MetaSpec_key_signature(MetaSpec):
     def check(self, name, value):
         if name == 'key':
             check_str(value)
-            if not (value, 'minor') in _key_signature_encode:
+            # Todo: this is not exactly correct. It will allow invalid
+            # keys like Cb minor which will break when encoding the
+            # message.
+            #
+            # Both key and value should be checked in one operation,
+            # but that can't be done, as they can be set independently.
+            if not value in _valid_keys:
                 raise ValueError('invalid key {!r}'.format(value))
         elif name == 'mode':
             if value not in ['minor', 'major']:
