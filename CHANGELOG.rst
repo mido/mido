@@ -1,6 +1,9 @@
 1.1.4 -
 -------------------
 
+* bugfix: files with key signatures Cb, Db and Gb failed due to faulty
+  error handling.
+
 * bugfix: when reading some MIDI files Mido crashed with the message
   "ValueError: attribute must be in range 0..255". The reason was that
   Meta messages set running status, which caused the next statusless
