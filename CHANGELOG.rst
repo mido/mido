@@ -1,4 +1,4 @@
-1.1.4 -
+1.1.4 - 2014-10-04
 -------------------
 
 * bugfix: files with key signatures Cb, Db and Gb failed due to faulty
