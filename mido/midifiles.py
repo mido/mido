@@ -47,26 +47,10 @@ class ByteReader(object):
         self.pos = 0
         self._eof = EOFError('unexpected end of file')
 
-    def _print_bytes(self, n):
-        """Print the next n bytes as hex and characters.
-
-        This is used for debugging.
-        """
-        data = self._buffer[self.pos:self.pos + n]
-        for pos, byte in enumerate(data, start=self.pos):
-            char = chr(byte)
-            if not char in string.printable or char in string.whitespace:
-                char = ''
-            print('  {:06x}: {:02x} {}'.format(pos, byte, char))
-
-        if len(data) < n:
-            raise EOFError('end of file reached in read_list()')
-
     def read_byte(self):
         """Read one byte."""
         try:
             byte = self._buffer[self.pos]
-            # self._print_bytes(1)
             self.pos += 1
             return byte
         except IndexError:
@@ -81,17 +65,6 @@ class ByteReader(object):
         except IndexError:
             raise self._eof
 
-    def read_list(self, n):
-        """Read n bytes and return as a list."""
-        # self._print_bytes(n)
-        i = self.pos
-        ret = self._buffer[i:i + n]
-        if len(ret) < n:
-            raise self._eof
-
-        self.pos += n
-        return ret
-
     def read_short(self):
         """Read short (2 bytes little endian)."""
         a, b = self.read_list(2)
@@ -101,6 +74,16 @@ class ByteReader(object):
         """Read long (4 bytes little endian)."""
         a, b, c, d = self.read_list(4)
         return a << 24 | b << 16 | c << 8 | d
+
+    def read_list(self, n):
+        """Read n bytes and return as a list."""
+        i = self.pos
+        ret = self._buffer[i:i + n]
+        if len(ret) < n:
+            raise self._eof
+
+        self.pos += n
+        return ret
 
     def __enter__(self):
         return self
@@ -279,8 +262,6 @@ class MidiFile:
             if self._file.pos - start == length:
                 break
 
-            # print('--- New')
-
             delta = self._read_variable_int()
 
             # Todo: not all messages have running status
@@ -312,8 +293,6 @@ class MidiFile:
 
             message.time = delta
             track.append(message)
-
-            # print('---', message)
 
             if message.type == 'end_of_track':
                 break
@@ -501,3 +480,60 @@ class MidiFile:
 
     def __exit__(self, type, value, traceback):
         return False
+
+class _DebugByteReader(ByteReader):
+    parent = ByteReader
+
+    def _print_bytes(self, n):
+        """Print the next n bytes as hex and characters.
+
+        This is used for debugging.
+        """
+        data = self._buffer[self.pos:self.pos + n]
+        for pos, byte in enumerate(data, start=self.pos):
+            char = chr(byte)
+            if not char in string.printable or char in string.whitespace:
+                char = ''
+            print('  {:06x}: {:02x} {}'.format(pos, byte, char))
+        print()
+
+        if len(data) < n:
+            raise EOFError('end of file reached in read_list()')
+
+    def read_byte(self):
+        self._print_bytes(1)
+        return self.parent.read_byte(self)
+
+    def read_short(self):
+        self._print_bytes(2)
+        return self.parent.read_short(self)
+
+    def read_long(self):
+        self._print_bytes(4)
+        return self.parent.read_long(self)
+
+    def read_list(self, n):
+        self._print_bytes(n)
+        return self.parent.read_list(self, n)
+
+class _DebugMidiFile(MidiFile):
+    parent = MidiFile
+
+    def _read_message(self, status_byte):
+        print('( new message:')
+        message = self.parent._read_message(self, status_byte)
+        print(')', message)
+        return message
+
+    def _read_meta_message(self):
+        print('( new meta message')
+        message = self.parent._read_meta_message(self)
+        print(')', message)
+        return message
+
+def debug():
+    """Turn on debugging prints."""
+    global ByteReader, MidiFile
+
+    ByteReader = _DebugByteReader
+    MidiFile = _DebugMidiFile

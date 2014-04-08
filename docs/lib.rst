@@ -99,6 +99,8 @@ MIDI Files
    :inherited-members:
    :undoc-members:
 
+.. autofunction:: debug
+
 
 Socket Ports
 -------------
