@@ -519,6 +519,10 @@ class _DebugByteReader(ByteReader):
 class _DebugMidiFile(MidiFile):
     parent = MidiFile
 
+    def _read_track(self):
+        print('-- Track', len(self.tracks))
+        return self.parent._read_track(self)
+
     def _read_message(self, status_byte):
         print('( new message:')
         message = self.parent._read_message(self, status_byte)
