@@ -239,6 +239,9 @@ class MidiFile:
         length = self._read_variable_int()
         data = self._file.read_list(length)
 
+        # Strip start and end bytes.
+        if data and data[0] == 0xf0:
+            data = data[1:]
         if data and data[-1] == 0xf7:
             data = data[:-1]
 
@@ -255,7 +258,6 @@ class MidiFile:
         length = self._file.read_long()
         start = self._file.pos
         last_status = None
-        last_sysex = None
 
         while 1:
             # End of track reached.
@@ -278,16 +280,10 @@ class MidiFile:
 
             if status_byte == 0xff:
                 message = self._read_meta_message()
-            elif status_byte == 0xf0:
+            elif status_byte in [0xf0, 0xf7]:
+                # Todo: I'm not quite clear on the difference between
+                # f0 and f7 events.
                 message = self._read_sysex()
-                last_sysex = message
-            elif status_byte == 0xf7:
-                # Todo: check if this works as intended.
-                if last_sysex is None:
-                    raise IOError(
-                        'sysex continuation without preceding sysex')
-                last_sysex.data += self._read_sysex()
-                continue
             else:
                 message = self._read_message(status_byte)
 
