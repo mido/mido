@@ -438,7 +438,13 @@ class MidiFile:
 
                     # Todo: running status?
                     bytes += encode_variable_int(message.time)
-                    bytes += message.bytes()
+                    if message.type == 'sysex':
+                        bytes += [0xf0]
+                        bytes += encode_variable_int(len(message.data))
+                        bytes += message.data
+                        bytes += [0xf7]
+                    else:
+                        bytes += message.bytes()
 
                 if not self._has_end_of_track(track):
                     # Write end_of_track.
