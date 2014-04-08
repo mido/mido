@@ -236,7 +236,7 @@ class MidiFile:
         return _build_meta_message(type, data)
 
     def _read_sysex(self):
-        length = self._file.read_byte()
+        length = self._read_variable_int()
         data = self._file.read_list(length)
 
         if data and data[-1] == 0xf7:
