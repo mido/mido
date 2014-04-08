@@ -535,6 +535,12 @@ class _DebugMidiFile(MidiFile):
         print(')', message)
         return message
 
+    def _read_sysex(self):
+        print('( new sysex message')
+        message = self.parent._read_sysex(self)
+        print(')', message)
+        return message
+
 def debug():
     """Turn on debugging prints."""
     global ByteReader, MidiFile
