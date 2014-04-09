@@ -157,20 +157,6 @@ class MetaSpec_cue_marker(MetaSpec_text):
 class MetaSpec_device_name(MetaSpec_track_name):
     type_byte = 0x09
 
-class MetaSpec_midi_port(MetaSpec):
-    type_byte = 0x21
-    attributes = ['port']
-    defaults = [0]
-
-    def decode(self, message, data):
-        message.port = data[0]
-
-    def encode(self, message):
-        return [message.port]
-
-    def check(self, name, value):
-        check_int(value, 0, 255)
-
 class MetaSpec_channel_prefix(MetaSpec):
     type_byte = 0x20
     attributes = ['channel']
@@ -184,6 +170,20 @@ class MetaSpec_channel_prefix(MetaSpec):
 
     def check(self, name, value):
         check_int(value, 0, 15)
+
+class MetaSpec_midi_port(MetaSpec):
+    type_byte = 0x21
+    attributes = ['port']
+    defaults = [0]
+
+    def decode(self, message, data):
+        message.port = data[0]
+
+    def encode(self, message):
+        return [message.port]
+
+    def check(self, name, value):
+        check_int(value, 0, 255)
 
 class MetaSpec_end_of_track(MetaSpec):
     type_byte = 0x2f
