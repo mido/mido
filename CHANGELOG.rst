@@ -5,6 +5,8 @@
 
 * bugfix: didn't handle MIDI files without track headers.
 
+* bugfix: didn't handle channel prefix > 15 (in MIDI files)
+
 
 1.1.4 - 2014-10-04
 -------------------
