@@ -5,7 +5,9 @@
 
 * bugfix: didn't handle MIDI files without track headers.
 
-* bugfix: didn't handle channel prefix > 15 (in MIDI files)
+* bugfix: (MIDI files) didn't handle channel prefix > 15 
+
+* bugfix: (MIDI files) didn't handle SMPTE offset with frames > 29
 
 
 1.1.4 - 2014-10-04

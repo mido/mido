@@ -250,7 +250,7 @@ class MetaSpec_smpte_offset(MetaSpec):
         elif name in ['minutes', 'seconds']:
             check_int(value, 0, 59)
         elif name == 'frames':
-            check_int(value, 0, 29)
+            check_int(value, 0, 255)
         elif name == 'sub_frames':
             check_int(value, 0, 99)
 
