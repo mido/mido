@@ -65,6 +65,10 @@ class ByteReader(object):
         except IndexError:
             raise self._eof
 
+    def peek_list(self, n):
+        """Return a list of the next n bytes."""
+        return self._buffer[self.pos:self.pos+n]
+
     def read_short(self):
         """Read short (2 bytes little endian)."""
         a, b = self.read_list(2)
@@ -251,11 +255,17 @@ class MidiFile:
     def _read_track(self):
         track = MidiTrack()
 
-        magic = self._file.read_list(4)
-        if bytearray(magic) != bytearray(b'MTrk'):
-            raise IOError("track doesn't start with 'MTrk'")
+        magic = self._file.peek_list(4)
+        if bytearray(magic) == bytearray(b'MTrk'):
+            self._file.read_list(4)  # Skip 'MTrk'
+            length = self._file.read_long()
+        else:
+            # Todo: some files don't have track headers?
+            # These end with end_of_track or end of file,
+            # so we set length to infinite.
+            # raise IOError("track doesn't start with 'MTrk'")
+            length = float('inf')
 
-        length = self._file.read_long()
         start = self._file.pos
         last_status = None
 

@@ -3,6 +3,8 @@
 
 * bugfix: sysex was broken in MIDI files.
 
+* bugfix: didn't handle MIDI files without track headers.
+
 
 1.1.4 - 2014-10-04
 -------------------
