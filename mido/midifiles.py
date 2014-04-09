@@ -512,7 +512,7 @@ class _DebugByteReader(ByteReader):
             print('  {:06x}: {:02x} {}'.format(pos, byte, char))
 
         if len(data) < n:
-            raise EOFError('end of file reached in read_list()')
+            raise EOFError('unexpected end of file')
 
     def read_byte(self):
         self._print_bytes(1)
