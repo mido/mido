@@ -193,9 +193,10 @@ class MidiFile:
         with ByteReader(self.filename) as self._file, \
                 meta_charset(self.charset):
             # Read header (16 bytes)
-            magic = self._file.read_list(4)
+            magic = self._file.peek_list(4)
             if not bytearray(magic) == bytearray(b'MThd'):
                 raise IOError('MThd not found. Probably not a MIDI file')
+            self._file.read_list(4)  # Skip MThd
 
             # This is always 6 for any file created under the MIDI 1.0
             # specification, but this allows for future expansion.
@@ -230,7 +231,7 @@ class MidiFile:
         data_bytes = self._file.read_list(spec.length - 1)
         for byte in data_bytes:
             if byte > 127:
-                raise IOError('data byte has value > 127')
+                raise IOError('data byte must be in range 0..127')
         return build_message(spec, [status_byte] + data_bytes)
 
     def _read_meta_message(self):
