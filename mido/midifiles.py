@@ -440,7 +440,7 @@ class MidiFile:
                     bytes += encode_variable_int(message.time)
                     if message.type == 'sysex':
                         bytes += [0xf0]
-                        # + 1 for end byte (0xf7)
+                        # length (+ 1 for end byte (0xf7))
                         bytes += encode_variable_int(len(message.data) + 1)
                         bytes += message.data
                         bytes += [0xf7]
