@@ -169,7 +169,8 @@ class MetaSpec_channel_prefix(MetaSpec):
         return [message.channel]
 
     def check(self, name, value):
-        check_int(value, 0, 15)
+        check_int(value, 0, 0xff)
+            
 
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
