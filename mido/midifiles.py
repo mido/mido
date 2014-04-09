@@ -493,12 +493,12 @@ class _DebugByteReader(ByteReader):
         This is used for debugging.
         """
         data = self._buffer[self.pos:self.pos + n]
+        print()
         for pos, byte in enumerate(data, start=self.pos):
             char = chr(byte)
             if not char in string.printable or char in string.whitespace:
                 char = ''
             print('  {:06x}: {:02x} {}'.format(pos, byte, char))
-        print()
 
         if len(data) < n:
             raise EOFError('end of file reached in read_list()')
