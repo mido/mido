@@ -27,15 +27,15 @@ setup(
     long_description=open('README.rst', 'rt').read(),
     author=mido.__author__,
     author_email=mido.__email__,
+    url=mido.__url__,
     package_data={'': ['LICENSE']},
-    package_dir={'requests': 'requests'},
+    package_dir={'mido': 'mido'},
     packages = ['mido', 'mido.backends'],
     scripts = ['bin/mido-play',
                'bin/mido-ports',
                'bin/mido-serve',
                'bin/mido-connect'],
     include_package_data=True,
-    url=mido.__url__,
     # install_requires=required,  # Unknown option in Python 3
     license='MIT',
     classifiers=(
