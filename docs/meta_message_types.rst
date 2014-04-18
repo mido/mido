@@ -202,9 +202,12 @@ key_signature (0x59)
 =========  ==================  ========
 Attribute  Values              Default
 =========  ==================  ========
-key        'C', 'Cb', ...      'C'
-mode       'minor' or 'major'  'major'
+key        'C', 'F#m', ...     'C'
 =========  ==================  ========
+
+Note: the mode attribute was removed in 1.1.5. Instead, an 'm' is
+appended to minor keys.
+
 
 sequencer_specific (0x7f)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

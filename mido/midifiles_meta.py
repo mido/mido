@@ -26,39 +26,38 @@ def reverse_table(table):
     return {value: key for (key, value) in table.items()}
 
 _key_signature_decode = {
-        (-7, 0): ('Cb', 'major'),
-        (-6, 0): ('Gb', 'major'),
-        (-5, 0): ('Db', 'major'),
-        (-4, 0): ('Ab', 'major'),
-        (-3, 0): ('Eb', 'major'),
-        (-2, 0): ('Bb', 'major'),
-        (-1, 0): ('F', 'major'),
-        (0, 0): ('C', 'major'),
-        (1, 0): ('G', 'major'),
-        (2, 0): ('D', 'major'),
-        (3, 0): ('A', 'major'),
-        (4, 0): ('E', 'major'),
-        (5, 0): ('B', 'major'),
-        (6, 0): ('F#', 'major'),
-        (7, 0): ('C#', 'major'),
-        (-7, 1): ('Ab', 'minor'),
-        (-6, 1): ('Eb', 'minor'),
-        (-5, 1): ('Bb', 'minor'),
-        (-4, 1): ('F', 'minor'),
-        (-3, 1): ('C', 'minor'),
-        (-2, 1): ('G', 'minor'),
-        (-1, 1): ('D', 'minor'),
-        (0, 1): ('A', 'minor'),
-        (1, 1): ('E', 'minor'),
-        (2, 1): ('B', 'minor'),
-        (3, 1): ('F#', 'minor'),
-        (4, 1): ('C#', 'minor'),
-        (5, 1): ('G#', 'minor'),
-        (6, 1): ('D#', 'minor'),
-        (7, 1): ('A#', 'minor'),
+        (-7, 0): 'Cb',
+        (-6, 0): 'Gb',
+        (-5, 0): 'Db',
+        (-4, 0): 'Ab',
+        (-3, 0): 'Eb',
+        (-2, 0): 'Bb',
+        (-1, 0): 'F',
+        (0, 0): 'C',
+        (1, 0): 'G',
+        (2, 0): 'D',
+        (3, 0): 'A',
+        (4, 0): 'E',
+        (5, 0): 'B',
+        (6, 0): 'F#',
+        (7, 0): 'C#',
+        (-7, 1): 'Abm',
+        (-6, 1): 'Ebm',
+        (-5, 1): 'Bbm',
+        (-4, 1): 'Fm',
+        (-3, 1): 'Cm',
+        (-2, 1): 'Gm',
+        (-1, 1): 'Dm',
+        (0, 1): 'Am',
+        (1, 1): 'Em',
+        (2, 1): 'Bm',
+        (3, 1): 'F#m',
+        (4, 1): 'C#m',
+        (5, 1): 'G#m',
+        (6, 1): 'D#m',
+        (7, 1): 'A#m',
     }
 _key_signature_encode = reverse_table(_key_signature_decode)
-_valid_keys = set(key for key, mode in _key_signature_encode)
 
 _smpte_framerate_decode = {
         0: 24,
@@ -292,32 +291,21 @@ class MetaSpec_time_signature(MetaSpec):
 
 class MetaSpec_key_signature(MetaSpec):
     type_byte = 0x59
-    attributes = ['key', 'mode']
-    defaults = ['C', 'major']
+    attributes = ['key']
+    defaults = ['C']
 
     def decode(self, message, data):
         key = signed('byte', data[0])
         mode = data[1]
-        message.key, message.mode = _key_signature_decode[(key, mode)]
+        message.key = _key_signature_decode[(key, mode)]
 
     def encode(self, message):
-        key, mode = _key_signature_encode[message.key, message.mode]
+        key, mode = _key_signature_encode[message.key]
         return [unsigned('byte', key), mode]
 
     def check(self, name, value):
-        if name == 'key':
-            check_str(value)
-            # Todo: this is not exactly correct. It will allow invalid
-            # keys like Cb minor which will break when encoding the
-            # message.
-            #
-            # Both key and value should be checked in one operation,
-            # but that can't be done, as they can be set independently.
-            if not value in _valid_keys:
-                raise ValueError('invalid key {!r}'.format(value))
-        elif name == 'mode':
-            if value not in ['minor', 'major']:
-                raise ValueError("mode must be 'minor' or 'major")
+        if not value in _key_signature_encode:
+            raise ValueError('invalid key {!r}'.format(value))
 
 class MetaSpec_sequencer_specific(MetaSpec):
     type_byte = 0x7f

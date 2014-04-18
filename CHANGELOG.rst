@@ -1,5 +1,8 @@
-1.1.5 - 
+1.1.5 - 2014-04-18
 -------------------
+
+* removed the 'mode' attribute from key_signature messages. Minor keys
+  now have an 'm' appended, for example 'Cm'.
 
 * bugfix: sysex was broken in MIDI files.
 

@@ -462,14 +462,14 @@ class TestMidiFiles(TestCase):
         # Todo: this could probably be combined with the test_copy().
         from mido.midifiles import MetaMessage
 
-        orig = MetaMessage('key_signature', key='Bb', mode='major')
+        orig = MetaMessage('key_signature', key='Bb')
         copy = orig.copy()
 
         assert orig == copy
         assert orig.time == copy.time
 
-        copy = orig.copy(key='F#')
-        orig.key = 'F#'
+        copy = orig.copy(key='F#m')
+        orig.key = 'F#m'
 
         assert orig == copy
         assert orig.__dict__ == copy.__dict__
