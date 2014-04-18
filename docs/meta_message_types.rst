@@ -205,6 +205,9 @@ Attribute  Values              Default
 key        'C', 'F#m', ...     'C'
 =========  ==================  ========
 
+Valid values: A A#m Ab Abm Am B Bb Bbm Bm C C# C#m Cb Cm D D#m Db Dm E
+Eb Ebm Em F F# F#m Fm G G#m Gb Gm
+
 Note: the mode attribute was removed in 1.1.5. Instead, an 'm' is
 appended to minor keys.
 
