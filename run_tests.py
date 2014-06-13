@@ -17,8 +17,9 @@ def get_pythons():
     for major_version, requirement in requirements.items():
         for python in ['python', 'python2', 'python3']:
             try:
-                proc = Popen([python, '--version'], stderr=PIPE)
-                line = proc.stderr.read().decode('utf-8')
+                proc = Popen([python, '--version'], stdout=PIPE, stderr=PIPE)
+                line = proc.stdout.read().decode('utf-8')
+                line += proc.stderr.read().decode('utf-8')
                 proc.wait()
             except OSError:
                 # Program was not found.
