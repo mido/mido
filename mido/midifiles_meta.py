@@ -87,11 +87,12 @@ def check_int(value, low, high):
     elif not low <= value <= high:
         raise ValueError('attribute must be in range {}..{}'.format(low, high))
 
-def check_str(value):
-    if PY2:
-        if not isinstance(value, unicode) and not isinstance(value, str):
+if PY2:
+    def check_str(value):
+        if not isinstance(value, basestring):
             raise TypeError('attribute must be unicode or string')
-    else:
+else:
+    def check_str(value):
         if not isinstance(value, str):
             raise TypeError('attribute must a string')
 
