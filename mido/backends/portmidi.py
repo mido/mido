@@ -128,16 +128,14 @@ class PortCommon(object):
         # it to be False now (or it will just return right away.)
         self.closed = False
         
+        if opening_input and self.callback:
+            self._callback_thread = threading.Thread(
+                target=self._thread_main)
+            self._callback_thread.daemon = True
+            self._callback_thread.start()
 
-        if opening_input:
-            if self.callback:
-                self._callback_thread = threading.Thread(
-                    target=self._thread_main)
-                self._callback_thread.daemon = True
-                self._callback_thread.start()
-
-                # Make sure pending() doesn't see messages.
-                self._messages = deque()
+            # Make sure pending() doesn't see messages.
+            self._messages = deque()
 
         self._device_type = 'PortMidi/{}'.format(device['interface'])
 
