@@ -114,6 +114,8 @@ class PortCommon(object):
 
 class Input(PortCommon, BaseInput):
     def _receive(self, block=True):
+        # The block flag is ignored. Since we never block, the
+        # enclosing receive() method will take care of blocking.
         if self.callback:
             raise IOError('a callback is currently set for this port')
 
