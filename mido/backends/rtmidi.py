@@ -114,10 +114,9 @@ class PortCommon(object):
 
 class Input(PortCommon, BaseInput):
     def _receive(self, block=True):
-        # The block flag is ignored. Since we never block, the
-        # enclosing receive() method will take care of blocking.
-        if self.callback:
-            raise IOError('a callback is currently set for this port')
+        # Since there is no blocking read in RtMidi, the block
+        # flag is ignored and the enclosing receive() takes care
+        # of blocking.
 
         while 1:
             message_data = self._rt.get_message()
