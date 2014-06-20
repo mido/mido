@@ -163,6 +163,9 @@ class BaseInput(BasePort):
         If block=False is passed, None will be returned if there are no
         pending messages or if the port is closed.
         """
+        if self.callback:
+            raise IOError('a callback is currently set for this port')
+
         # If there is a message pending, return it right away.
         if self._messages:
             return self._messages.popleft()
