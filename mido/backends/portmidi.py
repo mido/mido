@@ -146,47 +146,41 @@ class Input(PortCommon, BaseInput):
     """
     PortMidi Input port
     """
-    def _read(self):
+    def _receive(self, block=True):
+        # Since there is no blocking read in PortMIDI, the block
+        # flag is ignored and the enclosing receive() takes care
+        # of blocking.
+
+        # Allocate buffer.
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
         # resort to calling Pm_Read() in a loop until there are no
         # more pending events.
         max_events = 1
-
-        # Todo: this should be allocated once
         BufferType = pm.PmEvent * max_events
         read_buffer = BufferType()
 
-        # Read one message. Should return 1.
-        # If num_events < 0, an error occured.
-        length = 1  # Buffer length
-        num_events = pm.lib.Pm_Read(self._stream, read_buffer, length)
-        _check_error(num_events)
-        
-        # Get the event
-        event = read_buffer[0]
-        # print('Received: {:x}'.format(event.message))
+        # Read available data from the stream and feed it to the parser.
+        while pm.lib.Pm_Poll(self._stream):
+            # Todo: this should be allocated once
+            # Read one message. Should return 1.
+            # If num_events < 0, an error occured.
+            length = 1  # Buffer length
+            num_events = pm.lib.Pm_Read(self._stream, read_buffer, length)
+            _check_error(num_events)
 
-        # The bytes of the message are stored like this:
-        #    0x00201090 -> (0x90, 0x10, 0x10)
-        # (Todo: not sure if this is correct.)
-        packed_message = event.message & 0xffffffff
-        
-        for i in range(4):
-            byte = packed_message & 0xff
-            self._parser.feed_byte(byte)
-            packed_message >>= 8
+            # Get the event
+            event = read_buffer[0]
+            # print('Received: {:x}'.format(event.message))
 
-    def _receive(self, block=True):
-        if self.callback:
-            raise IOError('a callback is currently set for this port')
-        
-        if block:
-            while not self._messages:
-                sleep()
-                self._read()
-        else:
-            while pm.lib.Pm_Poll(self._stream):
-                self._read()
+            # The bytes of the message are stored like this:
+            #    0x00201090 -> (0x90, 0x10, 0x10)
+            # (Todo: not sure if this is correct.)
+            packed_message = event.message & 0xffffffff
+
+            for i in range(4):
+                byte = packed_message & 0xff
+                self._parser.feed_byte(byte)
+                packed_message >>= 8
 
     def _thread_main(self):
         # Todo: exceptions do not propagate to the main thread, so if
@@ -195,12 +189,12 @@ class Input(PortCommon, BaseInput):
         # just make the thread stop silently.)
         while not self.closed:
             try:
-                self._read()
+                self._receive()
             except IOError:
                 if self.closed:
                     # If the port is closed (and _check_error() works),
                     # "IOError: PortMidi: `Bad pointer'" is raised
-                    # if the port is closed in self._read().
+                    # if the port is closed in self.receive().
                     # Just exit. (Basically, ignore errors if the port is
                     # closed.)
                     break
