@@ -12,7 +12,7 @@ import threading
 from collections import deque
 from ..parser import Parser
 from ..messages import Message
-from ..ports import BaseInput, BaseOutput
+from ..ports import BaseInput, BaseOutput, sleep
 from . import portmidi_init as pm
 
 def _check_error(return_value):
@@ -182,6 +182,7 @@ class Input(PortCommon, BaseInput):
         
         if block:
             while not self._messages:
+                sleep()
                 self._read()
         else:
             while pm.lib.Pm_Poll(self._stream):
