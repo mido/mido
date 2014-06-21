@@ -1,11 +1,11 @@
-1.1.6 - 
+1.1.6 - 2014-06-21
 -------------------
 
 * bugfix: package didn't work with easy_install.
-  (Issue #14, Reported by netchose.)
+  (Issue #14, reported by netchose.)
 
 * bugfix: 100% memory consumption when calling blocking receive()
-  on a PortMIDI input. (Reported by Francesco Ceruti.)
+  on a PortMIDI input. (Issue #15, reported by Francesco Ceruti.)
 
 
 1.1.5 - 2014-04-18
