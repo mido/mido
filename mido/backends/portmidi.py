@@ -187,23 +187,25 @@ class Input(PortCommon, BaseInput):
         # something goes wrong here there is no way to detect it, and
         # there is no warning. (An unknown variable, for example, will
         # just make the thread stop silently.)
-        while not self.closed:
-            try:
+        try:
+            # Receive messages from port until it's closed
+            # or some exception occurs.
+            while True:
                 self._receive()
-            except IOError:
-                if self.closed:
-                    # If the port is closed (and _check_error() works),
-                    # "IOError: PortMidi: `Bad pointer'" is raised
-                    # if the port is closed in self.receive().
-                    # Just exit. (Basically, ignore errors if the port is
-                    # closed.)
-                    break
-                else:
-                    raise
-
-            for message in self._parser:
-                if self.callback:
-                    self.callback(message)
+                for message in self._parser:
+                    if self.callback:
+                        self.callback(message)
+                sleep()
+        except IOError:
+            if self.closed:
+                # If the port is closed (and _check_error() works),
+                # "IOError: PortMidi: `Bad pointer'" is raised
+                # if the port is closed in self.receive().
+                # Just exit. (Basically, ignore errors if the port is
+                # closed.)
+                return
+            else:
+                raise
 
     def _close(self):
         self.callback = False
