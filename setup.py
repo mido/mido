@@ -34,6 +34,7 @@ setup(
     include_package_data=True,
     install_requires=[],
     license='MIT',
+    zip_safe=False,
     classifiers=(
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
