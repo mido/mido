@@ -8,8 +8,6 @@ try:
 except ImportError:
     from distutils.core import setup
 
-
-
 if sys.argv[-1] == "publish":
     os.system("python setup.py sdist upload")
     sys.exit()
@@ -17,8 +15,6 @@ if sys.argv[-1] == "publish":
 if sys.argv[-1] == "test":
     os.system("python run_tests.py")
     sys.exit()
-
-required = []
 
 setup(
     name='mido',
@@ -36,7 +32,7 @@ setup(
                'bin/mido-serve',
                'bin/mido-connect'],
     include_package_data=True,
-    # install_requires=required,  # Unknown option in Python 3
+    install_requires=[],
     license='MIT',
     classifiers=(
         'Development Status :: 5 - Production/Stable',
