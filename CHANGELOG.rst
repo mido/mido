@@ -7,7 +7,7 @@
 * bugfix: 100% memory consumption when calling blocking receive()
   on a PortMIDI input. (Issue #15, reported by Francesco Ceruti.)
 
-* added wheel support.
+* added wheel support: http://pythonwheels.com/
 
 
 1.1.5 - 2014-04-18
