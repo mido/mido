@@ -33,6 +33,10 @@ def set_sleep_time(seconds=_DEFAULT_SLEEP_TIME):
     global _sleep_time
     _sleep_time = seconds
 
+def get_sleep_time():
+    """Get number of seconds sleep() will sleep."""
+    return _sleep_time
+
 class BasePort(object):
     """
     Abstract base class for Input and Output ports.
