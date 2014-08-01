@@ -110,13 +110,6 @@ Documentation
 Documentation is available at http://mido.readthedocs.org/
 
 
-Source code
-------------
-
-Latest stable release: http://github.com/olemb/mido/
-
-Development version: http://github.com/olemb/mido/tree/develop/
-
 
 Known Bugs
 -----------
