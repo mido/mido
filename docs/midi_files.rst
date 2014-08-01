@@ -41,6 +41,10 @@ You can play back a MIDI file with the play() method::
 
 This will yield each message at the appropriate time for playback.
 
+If you don't want to sleep between each message you can pass
+``sleep=False``. Messages will still be tagged with the number of
+seconds that would have been slept.
+
 If you also want to receive meta messages, you can pass
 ``meta_messages=True``. Meta messages can not be sent to ports, so
 they need to be filtered out::
