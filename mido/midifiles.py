@@ -359,11 +359,11 @@ class MidiFile:
 
         return max(track_lengths)
 
-    def play(self, meta_messages=False):
+    def play(self, meta_messages=False, sleep=True):
         """Play back all tracks.
 
-        The generator will sleep between each message, so that
-        messages are yielded with correct timing. The time attribute
+        The generator will sleep between each message by default.
+        Messages are yielded with correct timing. The time attribute
         is set to the number of seconds slept since the previous
         message.
 
@@ -379,6 +379,7 @@ class MidiFile:
         seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
 
         messages = self._merge_tracks(self.tracks)
+        do_sleep = time.sleep if sleep else lambda s: None
 
         # Play back messages.
         now = 0
@@ -386,7 +387,7 @@ class MidiFile:
             delta = message.time - now
             if delta:
                 sleep_time = delta * seconds_per_tick
-                time.sleep(sleep_time)
+                do_sleep(sleep_time)
             else:
                 sleep_time = 0.0
 
