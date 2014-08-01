@@ -1,6 +1,10 @@
 1.1.7 - 
 -------------------
 
+* ``MidiFile.play()`` can now be called with ``sleep=False`` to
+  generate messages without sleeping. (Suggested and implemented by
+  Vyacheslav Trushkin).
+
 * added get_sleep_time().
 
 
