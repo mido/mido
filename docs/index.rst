@@ -42,6 +42,19 @@ Latest stable release: http://github.com/olemb/mido/
 Latest development version: http://github.com/olemb/mido/tree/develop/
 
 
+About This Document
+-------------------
+
+This document is available at http://mido.readthedocs.org/
+
+To build locally::
+
+    python setup.py docs
+
+This requires Sphinx. The resulting files can be found in
+``docs/_build/``.
+
+
 Contents
 ------------
 

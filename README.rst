@@ -1,5 +1,5 @@
 Mido - MIDI Objects for Python
-===============================
+==============================
 
 Mido is a library for working with MIDI messages and ports. It's
 designed to be as straight forward and Pythonic as possible:
@@ -29,7 +29,7 @@ Full documentation at http://mido.readthedocs.org/
 
 
 Main Features
---------------
+-------------
 
   * works in Python 2 and 3.
 
@@ -59,7 +59,7 @@ Main Features
 
 
 Status
--------
+------
 
 1.1 is the second stable release.
 
@@ -67,7 +67,7 @@ See CHANGELOG.rst for a full list of changes.
 
 
 Requirements
--------------
+------------
 
 Mido targets Python 2.7 and 3.2.
 
@@ -89,7 +89,7 @@ Like PortMidi, these are loaded on demand.
 
 
 Installing
------------
+----------
 
 To install::
 
@@ -105,14 +105,20 @@ Ubuntu package is called ``libportmidi-dev``, while the `MacPorts
 
 
 Documentation
---------------
+-------------
 
 Documentation is available at http://mido.readthedocs.org/
 
+To build it locally::
+
+    python setup.py docs
+
+This requires Sphinx. The resulting files can be found in
+``docs/_build/``.
 
 
 Known Bugs
------------
+----------
 
 * in OS X, PortMidi and RtMidi usually hang for a second or two
   seconds while initializing. This is actually not a Mido bug, but
@@ -133,22 +139,22 @@ Known Bugs
   port that has a callback, and in pygame when you close any port.
 
 
-License
---------
-
-Mido is released under the terms of the `MIT license
-<http://en.wikipedia.org/wiki/MIT_License>`_.
-
-
 Source Code
-------------
+-----------
 
 Latest version of the code: http://github.com/olemb/mido/ .
 
 Latest development version: http://github.com/olemb/mido/tree/develop/
 
 
+License
+-------
+
+Mido is released under the terms of the `MIT license
+<http://en.wikipedia.org/wiki/MIT_License>`_.
+
+
 Contact
---------
+-------
 
 Ole Martin Bjorndalen - ombdalen@gmail.com
