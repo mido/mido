@@ -103,13 +103,7 @@ Ubuntu package is called ``libportmidi-dev``, while the `MacPorts
 <http://www.macports.org/>`_ and `Homebrew
 <http://mxcl.github.io/homebrew/>`_ packages are called ``portmidi``.
 
-
-Documentation
--------------
-
-Documentation is available at http://mido.readthedocs.org/
-
-To build it locally::
+To build documentation locally::
 
     python setup.py docs
 
