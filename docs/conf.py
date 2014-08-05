@@ -230,7 +230,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Mido', u'Mido Documentation',
-   u'Ole Martin Bjørndalen', 'Mido', 'One line description of project.',
+   u'Ole Martin Bjørndalen', 'Mido', 'MIDI Objects for Python',
    'Miscellaneous'),
 ]
 
