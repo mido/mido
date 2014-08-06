@@ -1,5 +1,5 @@
-1.1.7 - 
--------------------
+1.1.7 - 2014-08-06
+------------------
 
 * iterating over a ``MidiFile`` object will generate all MIDI messages
   in the file in playback order. The ``time`` attribute of each
@@ -10,7 +10,7 @@
 
 
 1.1.6 - 2014-06-21
--------------------
+------------------
 
 * bugfix: package didn't work with easy_install.
   (Issue #14, reported by netchose.)
@@ -22,7 +22,7 @@
 
 
 1.1.5 - 2014-04-18
--------------------
+------------------
 
 * removed the 'mode' attribute from key_signature messages. Minor keys
   now have an 'm' appended, for example 'Cm'.
@@ -37,7 +37,7 @@
 
 
 1.1.4 - 2014-10-04
--------------------
+------------------
 
 * bugfix: files with key signatures Cb, Db and Gb failed due to faulty
   error handling.
@@ -55,7 +55,7 @@
 
 
 1.1.3 - 2013-10-14
--------------------
+------------------
 
 * messages are now copied on send. This allows the sender to modify the
   message and send it to another port while the two ports receive their
@@ -63,7 +63,7 @@
 
 
 1.1.2 - 2013-10-05
--------------------
+------------------
 
 * bugfix: non-ASCII character caused trouble with installation when LC_ALL=C.
   (Reported by Gene De Lisa)
@@ -75,13 +75,13 @@
 
 
 1.1.1 - 2013-10-04
--------------------
+------------------
 
 * bugfix: mido.backends package was not included in distribution.
 
 
 1.1 - 2013-10-01
------------------
+----------------
 
 * added support for selectable backends (with MIDO_BACKEND) and
   included python-rtmidi and pygame backends in the official library
@@ -126,13 +126,13 @@
 
 
 1.0.4 - 2013-08-15
--------------------
+------------------
 
 * rewrote parser
 
 
 1.0.3 - 2013-07-12
--------------------
+------------------
 
 * bugfix: __exit__() didn't close port.
 
@@ -145,18 +145,18 @@
 
 
 1.0.2 - 2013-07-31
--------------------
+------------------
 
 * fixed some errors in the documentation.
 
 
 1.0.1 - 2013-07-31 - bugfix
-----------------------------
+---------------------------
 
 * multi_receive() and multi_iter_pending() had wrong implementation.
   They were supposed to yield only messages by default.
 
 1.0 - 2013-07-20 - initial release
--------------------------------------
+----------------------------------
 
 Basic functionality: messages, ports and parser.
