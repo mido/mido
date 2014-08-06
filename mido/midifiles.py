@@ -359,7 +359,30 @@ class MidiFile:
 
         return max(track_lengths)
 
-    def play(self, meta_messages=False, sleep=True):
+    def __iter__(self):
+        # The tracks of type 2 files are not in sync, so they can
+        # not be played back like this.
+        if self.type == 2:
+            raise TypeError('type 2 file can not be played back like this')
+
+        seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
+        messages = self._merge_tracks(self.tracks)
+
+        now = 0
+        for message in messages:
+            delta = (message.time - now) * seconds_per_tick
+            if delta >= 0:
+                message.time = delta
+            else:
+                message.time = 0.0
+
+            yield message
+
+            now += delta
+            if message.type == 'set_tempo':
+                seconds_per_tick = self._compute_tick_time(message.tempo)
+
+    def play(self, meta_messages=False):
         """Play back all tracks.
 
         The generator will sleep between each message by
@@ -377,39 +400,15 @@ class MidiFile:
         You will receive copies of the original messages, so you can
         safely modify them without ruining the tracks.
         """
+        sleep = time.sleep
 
-        # The tracks of type 2 files are not in sync, so they can
-        # not be played back like this.
-        if self.type == 2:
-            raise TypeError('type 2 file can not be played back like this')
+        for message in self:
+            sleep(message.time)
 
-        seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
-
-        if sleep:
-            do_sleep = time.sleep
-        else:
-            # Do nothing.
-            do_sleep = lambda _: None
-
-        messages = self._merge_tracks(self.tracks)
-
-        # Play back messages.
-        now = 0
-        for message in messages:
-            delta = message.time - now
-            if delta:
-                sleep_time = delta * seconds_per_tick
-                do_sleep(sleep_time)
+            if isinstance(message, MetaMessage) and not meta_messages:
+                continue
             else:
-                sleep_time = 0.0
-
-            if meta_messages or isinstance(message, Message):
-                message.time = sleep_time
                 yield message
-
-            now += delta
-            if message.type == 'set_tempo':
-                seconds_per_tick = self._compute_tick_time(message.tempo)
 
     def _has_end_of_track(self, track):
         """Return True if there is an end_of_track at the end of the track."""

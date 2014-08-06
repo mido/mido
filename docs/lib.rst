@@ -77,6 +77,7 @@ Port Classes and Functions
 .. autofunction:: multi_iter_pending
 .. autofunction:: sleep
 .. autofunction:: set_sleep_time
+.. autofunction:: get_sleep_time
 
 
 MIDI Files

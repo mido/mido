@@ -31,31 +31,36 @@ and messages, and save the file back by calling the ``save()``
 method. (More on this below.)
 
 
-Playing Back The File
-----------------------
+Iterating Over Messages
+-----------------------
 
-You can play back a MIDI file with the play() method::
+Iterating over a ``MidiFile`` object will generate all MIDI messages
+in the file in playback order. The ``time`` attribute of each message
+is the number of seconds since the last message or the start of the
+file.
 
-    for message in mid.play():
-        output.send(message)
+Meta messages will also be included. If you want to filter them out,
+you can do::
 
-This will yield each message at the appropriate time for playback.
+    if isinstance(message, MetaMessage):
+        ...
 
-If you don't want to sleep between each message you can pass
-``sleep=False``. Messages will still be tagged with the number of
-seconds that would have been slept.
+This makes it easy to play back a MIDI file on a port::
 
-If you also want to receive meta messages, you can pass
-``meta_messages=True``. Meta messages can not be sent to ports, so
-they need to be filtered out::
+    for message in MidiFile('song.mid'):
+        time.sleep(message.time)
+        if not isinstance(message, MetaMessage):
+            port.send(message)
 
-    from mido.midifiles import MetaMessage
+This is so useful that there's a method for it::
 
-    for message in mid.play(meta_messages=True):
-        if isinstance(message, MetaMessage):
-            print('Got meta message', MetaMessage)
-        else:
-            output.send(message)
+    for message in MidiFile('song.mid').play():
+        port.send(message)
+
+This does the sleeping and filtering for you. If you pass
+``meta_messages=True`` you will also get meta messages. These can not
+be sent on ports, which is why they are off by default.
+
 
 
 Creating a New File

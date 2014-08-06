@@ -1,9 +1,10 @@
 1.1.7 - 
 -------------------
 
-* ``MidiFile.play()`` can now be called with ``sleep=False`` to
-  generate messages without sleeping. (Suggested and implemented by
-  Vyacheslav Trushkin).
+* iterating over a ``MidiFile`` object will generate all MIDI messages
+  in the file in playback order. The ``time`` attribute of each
+  message is the number of seconds since the last message or the start
+  of the file.
 
 * added get_sleep_time().
 
