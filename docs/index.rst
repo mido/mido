@@ -68,8 +68,8 @@ Contents
    backends
    parsing
    string_encoding
-   socket_ports
    midi_files
+   socket_ports
    bin
    implementing_ports
    implementing_backends
