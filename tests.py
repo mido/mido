@@ -443,7 +443,8 @@ class TestSockets(TestCase):
 class TestMidiFiles(TestCase):
     def test_meta_specs(self):
         """Test that meta specs are implemented correctly."""
-        from mido.midifiles_meta import MetaMessage, _specs
+        from mido import MetaMessage
+        from mido.midifiles_meta import _specs
 
         for key in _specs:
             # Specs are indexed by name and type byte.
@@ -460,7 +461,7 @@ class TestMidiFiles(TestCase):
 
     def test_meta_copy(self):
         # Todo: this could probably be combined with the test_copy().
-        from mido.midifiles import MetaMessage
+        from mido import MetaMessage
 
         orig = MetaMessage('key_signature', key='Bb')
         copy = orig.copy()

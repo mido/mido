@@ -10,7 +10,7 @@ Opening a File
 
 You can open a file with::
 
-    from mido.midifiles import MidiFile
+    from mido import MidiFile
 
     mid = MidiFile('song.mid')
 
@@ -136,7 +136,7 @@ Meta Messages
 Meta messages behave like normal messages and can be created in the
 usual way, for example::
 
-    >>> from mido.midifiles import MetaMessage
+    >>> from mido import MetaMessage
     >>> MetaMessage('key_signature', key='C#', mode='major')
     <meta message key_signature key='C#' mode='major' time=0>
 

@@ -18,18 +18,23 @@ designed to be as straight forward and Pythonic as possible.
 .. code-block:: python
 
     >>> with input as mido.open_input('SH-201'):
-    ...     for msg in input:
-    ...         print(msg)
+    ...     for message in input:
+    ...         print(message)
 
 .. code-block:: python
 
-    >>> msg = mido.Message('program_change', program=10)
-    >>> msg.type
+    >>> message = mido.Message('program_change', program=10)
+    >>> message.type
     'program_change'
-    >>> msg.channel = 2
-    >>> msg2 = msg.copy(program=9)
+    >>> message.channel = 2
+    >>> message.copy(program=9)
     <message program_change channel=2 program=9 time=0>
 
+.. code-block:: python
+
+    >>> from mido import MidiFile
+    >>> for message in MidiFile('song.mid').play():
+    ...     output.send(message)
 
 Mido is short for MIDi Objects.
 

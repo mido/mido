@@ -5,7 +5,7 @@ Open a MIDI file and print every message in every track.
 Support for MIDI files is still experimental.
 """
 import sys
-from mido.midifiles import MidiFile
+from mido import MidiFile
 
 if __name__ == '__main__':
     filename = sys.argv[1]

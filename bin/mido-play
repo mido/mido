@@ -14,7 +14,7 @@ from __future__ import print_function, division
 import sys
 import argparse
 import mido
-from mido.midifiles import MidiFile
+from mido import MidiFile, Message
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -48,7 +48,7 @@ def play_file(output, filename):
             print('  {:2d}: {!r}'.format(i, track.name.strip()))
 
         for message in midi_file.play(meta_messages=True):
-            if isinstance(message, mido.Message):
+            if isinstance(message, Message):
                 # print(message)
                 output.send(message)
             elif message.type == 'set_tempo':

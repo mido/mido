@@ -1,6 +1,9 @@
 1.1.7 - 2014-08-06
 ------------------
 
+* ``MidiFile``, ``MidiTrack`` and ``MetaMessage`` are now available in
+  the top level module.
+
 * iterating over a ``MidiFile`` object will generate all MIDI messages
   in the file in playback order. The ``time`` attribute of each
   message is the number of seconds since the last message or the start

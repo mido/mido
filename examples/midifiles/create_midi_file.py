@@ -6,14 +6,13 @@ The file is saved to test.mid.
 """
 
 import random
-from mido import Message
-from mido.midifiles import MidiFile, MidiTrack
+from mido import Message, MidiFile, MidiTrack
 
 notes = [64, 64+7, 64+12]
 
-with MidiFile() as f:
+with MidiFile() as outfile:
     track = MidiTrack()
-    f.tracks.append(track)
+    outfile.tracks.append(track)
 
     track.append(Message('program_change', program=12))
 
@@ -23,4 +22,4 @@ with MidiFile() as f:
         track.append(Message('note_on', note=note, velocity=100, time=delta))
         track.append(Message('note_off', note=note, velocity=100, time=delta))
 
-    f.save('test.mid')
+    outfile.save('test.mid')

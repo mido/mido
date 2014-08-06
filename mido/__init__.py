@@ -8,6 +8,7 @@ designed to be as straight forward and Pythonic as possible.
 Creating messages:
 
     Message(type, **parameters) -- create a new message
+    MetaMessage(type, **parameters) -- create a new meta message
 
 Ports:
 
@@ -19,6 +20,11 @@ Ports:
     get_input_names() -- return a list of names of available input ports
     get_output_names() -- return a list of names of available output ports
     get_ioport_names() -- return a list of names of available I/O ports
+
+MIDI files:
+
+    MidiFile(filename, **kwargs) -- open a MIDI file
+    MidiTrack()  -- a MIDI track
 
 Parsing MIDI streams:
 
@@ -80,6 +86,7 @@ from . import ports, sockets
 from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
 from .parser import Parser, parse, parse_all
+from .midifiles import MidiFile, MidiTrack, MetaMessage
 
 __author__ = 'Ole Martin Bjorndalen'
 __email__ = 'ombdalen@gmail.com'

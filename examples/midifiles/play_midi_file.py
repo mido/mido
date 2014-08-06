@@ -9,7 +9,7 @@ Run with (for example):
 
 import sys
 import mido
-from mido.midifiles import MidiFile
+from mido import MidiFile
 
 if len(sys.argv) == 3:
     port_name = sys.argv[2]

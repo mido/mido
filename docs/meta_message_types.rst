@@ -291,7 +291,7 @@ Then you can add your new message type with::
 
 and create messages in the usual way::
 
-    >>> from mido.midifiles import MetaMessage
+    >>> from mido import MetaMessage
     >>> MetaMessage('light_color', r=120, g=60, b=10)
     <meta message light_color r=120 g=60 b=10 time=0>
 
