@@ -65,10 +65,10 @@ Contents
    intro
    messages
    ports
+   midi_files
    backends
    parsing
    string_encoding
-   midi_files
    socket_ports
    bin
    implementing_ports
