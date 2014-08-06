@@ -253,7 +253,7 @@ If you come across a meta message which is not implemented, or you
 want to use a custom meta message, you can add it by writing a new
 meta message spec::
 
-    from mido.midifiles_meta import MetaSpec, add_meta_spec
+    from mido.midifiles import MetaSpec, add_meta_spec
 
     class MetaSpec_light_color(MetaSpec):
         type_byte = 0xf0

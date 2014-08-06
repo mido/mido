@@ -1,15 +1,17 @@
 1.1.7 - 2014-08-06
 ------------------
 
-* ``MidiFile``, ``MidiTrack`` and ``MetaMessage`` are now available in
-  the top level module.
+* some classes and functions have been moved to more accessible locations::
 
-* iterating over a ``MidiFile`` object will generate all MIDI messages
-  in the file in playback order. The ``time`` attribute of each
-  message is the number of seconds since the last message or the start
-  of the file.
+    from mido import MidiFile, MidiTrack, MetaMessage
+    from mido.midifiles import MetaSpec, add_meta_spec
 
-* added get_sleep_time().
+* you can now iterate over a MIDI file. This will generate all MIDI
+  messages in playback order. The ``time`` attribute of each message
+  is the number of seconds since the last message or the start of the
+  file.
+
+* added get_sleep_time() to complement set_sleep_time().
 
 
 1.1.6 - 2014-06-21
