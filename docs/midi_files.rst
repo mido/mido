@@ -66,10 +66,6 @@ be sent on ports, which is why they are off by default.
 Creating a New File
 --------------------
 
-*Note*: Saving of meta messages other than 'end_of_track' is not yet
- implemented. (They will simply be skipped, which will most likely
- mess up timing.)
-
 You can create a new file by calling MidiFile without the ``filename``
 argument. The file can then be saved by calling the ``save()`` method::
 
