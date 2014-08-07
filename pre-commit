@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# pre-commit hook for Git which cancels the commit if tests fail.
+#
+# Install with:
+#
+#   cp pre-commit .git/hooks/
+#
+echo "Running tests in Python 2"
+python test_*.py || exit 1
+echo
+
+echo "Running tests in Python 3"
+python3 test_*.py || exit 1
+echo
