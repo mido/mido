@@ -1,15 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 #
 # pre-commit hook for Git which cancels the commit if tests fail.
 #
 # Install with:
 #
-#   cp pre-commit .git/hooks/
+#   (cd .git/hooks; ln -s ../../pre-commit .)
 #
-echo "Running tests in Python 2"
-python test_*.py || exit 1
-echo
+function display() {
+  echo -e '\e[0;33m' $* '\e[0m'
+}
 
-echo "Running tests in Python 3"
-python3 test_*.py || exit 1
-echo
+display Python 2
+py.test || exit 1
+
+display Python 3
+py.test-3 || exit 1

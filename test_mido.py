@@ -2,12 +2,10 @@ from __future__ import print_function
 import re
 import sys
 import random
-from unittest import TestCase, main
 from contextlib import contextmanager
 import mido
 from mido import Message
-
-# http://docs.python.org/2/library/unittest.html
+from pytest import raises
 
 PY2 = (sys.version_info.major == 2)
 
@@ -16,35 +14,7 @@ if PY2:
 else:
     from io import StringIO
 
-@contextmanager
-def raises(exception):
-    try:
-        yield
-        raise AssertionError('code should have raised exception')
-    except exception:
-        pass
-
-def test_python_version():
-    """Raises an exception if your Python is too old.
-
-    This looks up the required Python versions in setup.py."""
-    with open('setup.py') as infile:
-        text = infile.read()
-        pattern = r'Programming Language :: Python :: (\d+)\.(\d+)'
-        for major, minor in re.findall(pattern, text, re.MULTILINE):
-            major = int(major)
-            minor = int(minor)
-            if sys.version_info.major == major:
-                if sys.version_info.minor < minor:
-                    raise Exception(
-                        'Requires Python >= {}.{}'.format(major, minor))
-
-
-class TestPythonVersion(TestCase):
-    def test_python_version(self):
-        test_python_version()
-
-class TestMessages(TestCase):
+class TestMessages(object):
     def test_msg_equality(self):
         args = dict(type='note_on', channel=1, note=2, velocity=3)
         assert Message(**args) == Message(**args)
@@ -253,7 +223,7 @@ class TestMessages(TestCase):
         with raises(AttributeError): msg.type = 'continue'
         with raises(AttributeError): msg.invalid = 'banana'
 
-class TestStringFormat(TestCase):
+class TestStringFormat(object):
     def test_parse_string(self):
         from mido import parse_string
 
@@ -334,7 +304,7 @@ class TestStringFormat(TestCase):
         with raises(ValueError): parse_time('-')
         with raises(ValueError): parse_time('938938958398593L')
 
-class TestParser(TestCase):
+class TestParser(object):
     
     def test_parse(self):
         """Parse a note_on msg and compare it to one created with Message()."""
@@ -444,7 +414,7 @@ class TestParser(TestCase):
         assert len(messages) == 1
         assert messages[0].type == 'sysex'
 
-class TestSockets(TestCase):
+class TestSockets(object):
     
     def test_parse_address(self):
         from mido.sockets import parse_address
@@ -461,7 +431,7 @@ class TestSockets(TestCase):
         with raises(ValueError): parse_address(':0')
         with raises(ValueError): parse_address(':65536')  # Out of range.
 
-class TestMidiFiles(TestCase):
+class TestMidiFiles(object):
     def test_meta_specs(self):
         """Test that meta specs are implemented correctly."""
         from mido import MetaMessage
@@ -496,7 +466,7 @@ class TestMidiFiles(TestCase):
         assert orig == copy
         assert orig.__dict__ == copy.__dict__
 
-class TestPorts(TestCase):
+class TestPorts(object):
     def test_base_ioport(self):
         from mido.ports import BaseIOPort
 
@@ -566,6 +536,3 @@ class TestPorts(TestCase):
 
         with Port() as port:
             assert len(list(port)) == 2
-
-if __name__ == '__main__':
-    main()
