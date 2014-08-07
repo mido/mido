@@ -16,6 +16,8 @@ To write a SYX file::
 
     mido.write_syx('patch.syx', messages)
 
+Non-sysex messages will be ignored.
+
 
 Plain Text Format
 -----------------
@@ -31,3 +33,9 @@ first byte.
 To write plain text::
 
     mido.write_syx('patch.txt', messages, plaintext=True)
+
+This will write the messages as hex encoded bytes with one message per
+line::
+
+    F0 00 01 5D 02 00 F7
+    F0 00 01 5D 03 00 F7
