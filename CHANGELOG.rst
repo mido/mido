@@ -1,6 +1,9 @@
 1.1.7 - 
 ------------------
 
+* bugfix: "ImportError: No module named mido.backends.portmidi". Mido should
+  now work with Python eggs and PyInstaller.
+
 * some classes and functions have been moved to more accessible locations::
 
     from mido import MidiFile, MidiTrack, MetaMessage
