@@ -5,7 +5,7 @@
 # If you want tests to run before each commit you can install this as
 # a pre-commit hook:
 #
-#   ln -s ../../run_tests.sh pre-commit
+#   ln -s ../../run_tests.sh .git/hooks/pre-commit
 #
 # The commit will now be canceled if tests fail.
 #
