@@ -1,4 +1,5 @@
 from __future__ import print_function
+import re
 import sys
 import random
 from unittest import TestCase, main
@@ -22,6 +23,26 @@ def raises(exception):
         raise AssertionError('code should have raised exception')
     except exception:
         pass
+
+def test_python_version():
+    """Raises an exception if your Python is too old.
+
+    This looks up the required Python versions in setup.py."""
+    with open('setup.py') as infile:
+        text = infile.read()
+        pattern = r'Programming Language :: Python :: (\d+)\.(\d+)'
+        for major, minor in re.findall(pattern, text, re.MULTILINE):
+            major = int(major)
+            minor = int(minor)
+            if sys.version_info.major == major:
+                if sys.version_info.minor < minor:
+                    raise Exception(
+                        'Requires Python >= {}.{}'.format(major, minor))
+
+
+class TestPythonVersion(TestCase):
+    def test_python_version(self):
+        test_python_version()
 
 class TestMessages(TestCase):
     def test_msg_equality(self):
