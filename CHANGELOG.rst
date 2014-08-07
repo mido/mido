@@ -1,8 +1,9 @@
 1.1.7 - 
 ------------------
 
-* bugfix: "ImportError: No module named mido.backends.portmidi". Mido should
-  now work with Python eggs and PyInstaller.
+* bugfix: "ImportError: No module named mido.backends.portmidi". Mido
+  should now work with Python eggs and PyInstaller. Reported by
+  netchose (issue #14) and edauenhauer (issue #17).
 
 * some classes and functions have been moved to more accessible locations::
 
