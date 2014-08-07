@@ -55,7 +55,7 @@ def main():
         proc = Popen([program, 'unit_tests.py'])
         proc.wait()
         if proc.returncode != 0:
-            sys.exit('Tests failed with {}.'.format(python))
+            sys.exit('Tests failed with {}.'.format(program))
 
             
 sys.exit(main())
