@@ -7,20 +7,6 @@ from .. import ports
 import sys
 import imp
 
-def find_dotted_module(name, path=None):
-    """Recursive version of imp.find_module.
-
-    Handles dotted module names.
-    """
-    try:
-        res = None
-        for part in name.split('.'):
-            res = imp.find_module(part, path)
-            path = [res[1]]
-        return res
-    except ImportError:
-        raise ImportError('No module named {}'.format(name))
-
 DEFAULT_BACKEND = 'mido.backends.portmidi'
 
 class Backend(object):
@@ -47,9 +33,6 @@ class Backend(object):
             
         if load:
             self.load()
-        else:
-            # Raise ImportError if module is not found.
-            find_dotted_module(self.name)
 
     @property
     def module(self):
@@ -60,7 +43,7 @@ class Backend(object):
         the module is loaded.
         """
         self.load()
-        return sys.modules[self.name]
+        return self._module
 
     @property
     def loaded(self):
