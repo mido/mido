@@ -1,6 +1,6 @@
-include README.rst LICENSE CHANGELOG.rst unit_tests.py run_tests.py
-include examples/*.py
-include extras/*.py
+include README.rst LICENSE CHANGELOG.rst test_mido.py pre-commit
+recursive-include examples *.py
+recursive-include extras *.py
 include docs/_static/PLACEHOLDER
 recursive-include docs *.bat
 recursive-include docs *.py
