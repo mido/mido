@@ -45,7 +45,7 @@ def write_syx(filename, messages, plaintext=False):
     Messages other than sysex will be skipped.
 
     By default this will write the binary format.  Pass
-    ``textmode=True`` to write the plain text format (hex encoded
+    ``plaintext=True`` to write the plain text format (hex encoded
     ASCII text).
     """
     messages = [m for m in messages if m.type == 'sysex']

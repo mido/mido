@@ -48,6 +48,16 @@ Parsing
    :undoc-members:
 
 
+SYX Files
+---------
+
+.. 
+
+.. autofunction:: read_syx
+
+.. autofunction:: write_syx
+
+
 Port Classes and Functions
 --------------------------
 
