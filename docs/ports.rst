@@ -1,5 +1,5 @@
 Ports
-======
+=====
 
 A Mido port is an object that can send or receive messages (or both).
 
@@ -39,7 +39,7 @@ can be used interchangingly.
 
 
 Common Things
---------------
+-------------
 
 How to open a port depends on the port type. Device ports (PortMidi,
 RtMidi and others defined in backends) are opened with the open
@@ -88,7 +88,7 @@ If the port is already closed, calling ``close()`` will simply do nothing.
 
 
 Output Ports
--------------
+------------
 
 Output ports basically have only one method::
 
@@ -116,7 +116,7 @@ called when the port closes::
     outport.close()  # or here
 
 Sometimes notes hang because a ``note_off`` has not been sent. To
-(abruptly) stop all sounding notes, you can call:
+(abruptly) stop all sounding notes, you can call::
 
     outport.panic()
 
@@ -126,7 +126,7 @@ to decay time.
 
 
 Input Ports
-------------
+-----------
 
 To receive a message::
 
@@ -185,10 +185,10 @@ The ``receive`` methods can not be used if a callback is set.
 
 
 Port API
----------
+--------
 
 Common Methods and Attributes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``close()``
 
@@ -206,7 +206,7 @@ True if the port is closed.
 
 
 Output Port Methods
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 ``send(message)``
 
@@ -225,7 +225,7 @@ sounding notes.
 
 
 Input Port Methods
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 ``receive(block=True)``
 
@@ -247,5 +247,3 @@ Iterates through pending messages.
 
 Iterates through messages as they arrive on the port until the port
 closes.
-
-

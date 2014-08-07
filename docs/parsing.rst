@@ -1,5 +1,5 @@
 Parsing MIDI Bytes
-===================
+==================
 
 MIDI is a binary protocol. Each each message is encoded as a status byte
 followed by up to three data bytes. (Sysex messages can have any number of

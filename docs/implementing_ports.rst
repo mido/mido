@@ -1,5 +1,5 @@
 Writing a New Port
-===================
+==================
 
 The Mido port API allows you to write new ports to do practically
 anything.
@@ -22,7 +22,7 @@ actually sending the message somewhere (or in this case print it out).
 
 
 Overridable Methods
---------------------
+-------------------
 
 There are four overridable methods (all of them default to doing
 nothing)::
@@ -87,7 +87,7 @@ The base classes are ``BaseInput``, ``BaseOutput`` and ``BaseIOPort``
 
 
 Examples
----------
+--------
 
 An full example of a device port for the imaginary MIDI library
 ``fjopp``::
@@ -157,7 +157,7 @@ methods ```send()`` and ``receive()``, for example::
 
 
 Attributes
------------
+----------
 
 A port has some attributes that can be useful inside your methods.
 

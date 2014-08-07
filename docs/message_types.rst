@@ -1,8 +1,8 @@
 Message Types
-==============
+=============
 
 Supported Messages
--------------------
+------------------
 
 ==============  ==============================
 Name            Keyword Arguments / Attributes
@@ -32,7 +32,7 @@ http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/MTC.htm
 
 
 Parameter Types
-----------------
+---------------
 
 ===========  ======================  ================
 Name         Valid Range             Default Value

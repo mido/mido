@@ -1,11 +1,11 @@
 Introduction (Basic Concepts)
-==============================
+=============================
 
 Mido is all about messages and ports.
 
 
 Messages
----------
+--------
 
 Mido allows you to work with MIDI messages as Python objects. To
 create a new message::
@@ -52,7 +52,7 @@ For more about messages, see :doc:`messages`.
 
 
 Type and Value Checking
-------------------------
+-----------------------
 
 Mido messages come with type and value checking built in. This happens
 when you assign an out of range value to an attribute::
@@ -87,7 +87,7 @@ This means that the message object is always a valid MIDI message.
 
 
 Ports
-------
+-----
 
 To create an output port and send a message::
 
@@ -125,7 +125,7 @@ For more about ports, see :doc:`ports`.
 
 
 All Ports are Ports
---------------------
+-------------------
 
 The input and output ports used above are device ports, which
 communicate with a (physical or virtual) MIDI device.
@@ -145,7 +145,7 @@ It's easy to write new port types. See :doc:`implementing_ports`.
 
 
 Parsing MIDI Bytes
--------------------
+------------------
 
 Mido comes with a parser that allows you to turn bytes into
 messages. You can create a new parser::
@@ -167,7 +167,7 @@ For more on parsers and parsing see :doc:`parsing`.
 
 
 Backends
----------
+--------
 
 Mido comes with backends for PortMidi and RtMidi and pygame. The
 default is PortMidi. You can select another backend or even use

@@ -1,11 +1,11 @@
 Meta Message Types
-===================
+==================
 
 Supported Messages
--------------------
+------------------
 
 sequence_number (0x00)
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 
 ===============  ============  ========
 Attribute        Values        Default
@@ -18,7 +18,7 @@ pattern number in type 2 MIDI files.
 
 
 text (0x01)
-^^^^^^^^^^^^
+^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -30,7 +30,7 @@ General "Text" Meta Message. Can be used for any text based data.
 
 
 copyright (0x02)
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -42,7 +42,7 @@ Provides information about a MIDI file's copyright.
 
 
 track_name (0x03)
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -54,7 +54,7 @@ Stores a MIDI track's name.
 
 
 instrument_name (0x04)
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -66,7 +66,7 @@ Stores an instrument's name.
 
 
 lyrics (0x05)
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -78,7 +78,7 @@ Stores the lyrics of a song. Typically one syllable per Meta Message.
 
 
 marker (0x06)
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -91,7 +91,7 @@ Can be used as the marker for the beginning of a verse, solo, etc.
 
 
 cue_marker (0x07)
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -103,7 +103,7 @@ Marks a cue. IE: 'Cue performer 1', etc
 
 
 device_name (0x09)
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -115,7 +115,7 @@ Gives the name of the device.
 
 
 channel_prefix (0x20)
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -127,7 +127,7 @@ Gives the prefix for the channel on which events are played.
 
 
 midi_port (0x21)
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -139,7 +139,7 @@ Gives the MIDI Port on which events are played.
 
 
 end_of_track (0x2f)
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -151,7 +151,7 @@ An empty Meta Message that marks the end of a track.
 
 
 set_tempo (0x51)
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -163,7 +163,7 @@ Contains the number of microseconds per quarter note.
 
 
 smpte_offset (0x54)
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 ==============  =================  ========
 Attribute       Values             Default
@@ -178,7 +178,7 @@ sub_frames      0..99              0
 
 
 time_signature (0x58)
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
 
 ============================  ===============  ========
 Attribute                        Values          Default
@@ -197,7 +197,7 @@ Time signature of:
 
 
 key_signature (0x59)
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
 
 =========  ==================  ========
 Attribute  Values              Default
@@ -213,7 +213,7 @@ appended to minor keys.
 
 
 sequencer_specific (0x7f)
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ==============  ==============  ========
 Attribute       Values          Default
@@ -225,7 +225,7 @@ An unprocessed sequencer specific message containing raw data.
 
 
 Unknown Meta Messages
-----------------------
+---------------------
 
 Unknown meta messages will be returned as ``UnknownMetaMessage``
 objects, with ``type`` set to ``unknown_meta``. The messages are saved
@@ -247,7 +247,7 @@ These are also visible in the ``repr()`` string::
 
 
 Implementing New Meta Messages
--------------------------------
+------------------------------
 
 If you come across a meta message which is not implemented, or you
 want to use a custom meta message, you can add it by writing a new

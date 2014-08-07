@@ -1,5 +1,5 @@
 String Encoding
-================
+===============
 
 Mido messages can be serialized to a text format, which can be used to
 safely store messages in text files, send them across sockets or embed
@@ -24,7 +24,7 @@ can pass ``include_time=False``::
 
 
 Format
--------
+------
 
 The format is simple::
 
@@ -46,7 +46,7 @@ any form of escaping.
 
 
 Parsing
---------
+-------
 
 To parse a message, you can use ``mido.parse_string()``::
 
@@ -92,7 +92,7 @@ input::
 
 
 Examples
----------
+--------
 
 And example of messages embedded in JSON::
 

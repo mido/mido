@@ -1,8 +1,8 @@
 Socket Ports - MIDI over TCP/IP
-================================
+===============================
 
 About Socket Ports
--------------------
+------------------
 
 Socket ports allow you to send MIDI messages over a computer
 network.
@@ -11,7 +11,7 @@ The protocol is standard MIDI bytes over a TCP stream.
 
 
 Caveats
---------
+-------
 
 The data is sent over an unencrypted channel. Also, the default server
 allows connections from any host and also accepts arbitrary sysex
@@ -26,7 +26,7 @@ networks) may make socket ports unusable.
 
 
 Sending Messages to a Server
------------------------------
+----------------------------
 
 First, let's import some things::
 
@@ -51,7 +51,7 @@ on the computer.
 
 
 Turning Things on their Head
------------------------------
+----------------------------
 
 If you want the server to send messages the client, you can instead
 do::
@@ -72,7 +72,7 @@ clients.
 
 
 Under the Hood
----------------
+--------------
 
 The examples above use the server and client ports as normal I/O
 ports. This makes it easy to write simple servers, but you don't have
@@ -123,7 +123,7 @@ Using this, you can write the server any way you like, for example::
 
 
 Possible Future Additions
---------------------------
+-------------------------
 
 Optional HTTP-style headers could be added. As long as these are 7-bit
 ASCII, they will be counted as data bytes and ignored by clients or

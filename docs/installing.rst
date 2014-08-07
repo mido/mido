@@ -1,8 +1,8 @@
 Installing Mido
-================
+===============
 
 Requirements
--------------
+------------
 
 Mido targets Python 2.7 and 3.2. It is developed and testeqd in Ubuntu
 and Mac OS X, but should also work in Windows.
@@ -20,7 +20,7 @@ Mido comes with backends for `PortMidi
 
 
 Installing
------------
+----------
 
 To install::
 
@@ -28,7 +28,7 @@ To install::
 
 
 Installing PortMidi (Optional)
--------------------------------
+------------------------------
 
 PortMidi is available in Ubuntu as ``libportmidi-dev`` and in
 `MacPorts <http://www.macports.org/>`_ and `Homebrew
@@ -36,7 +36,7 @@ PortMidi is available in Ubuntu as ``libportmidi-dev`` and in
 
 
 Installing python-rtmidi (Optional)
-------------------------------------
+-----------------------------------
 
 python-rtmidi requires ``librtmidi.so``, which is available in Ubuntu
 as ``librtmidi-dev`` (and possible also available as a package in

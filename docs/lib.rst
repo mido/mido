@@ -1,10 +1,10 @@
 .. _api:
 
 Library Reference
-==================
+=================
 
 Messages
----------
+--------
 
 .. module:: mido
 
@@ -15,7 +15,7 @@ Messages
 
 
 Ports
-------
+-----
 
 .. autofunction:: open_input
 .. autofunction:: open_output
@@ -27,7 +27,7 @@ Ports
 
 
 Backends
----------
+--------
 
 .. autofunction:: set_backend
 
@@ -38,7 +38,7 @@ Backends
 
 
 Parsing
---------
+-------
 
 .. autofunction:: parse
 .. autofunction:: parse_all
@@ -49,7 +49,7 @@ Parsing
 
 
 Port Classes and Functions
----------------------------
+--------------------------
 
 .. module:: mido.ports
 
@@ -81,7 +81,7 @@ Port Classes and Functions
 
 
 MIDI Files
------------
+----------
 
 .. module:: mido.midifiles
 
@@ -104,7 +104,7 @@ MIDI Files
 
 
 Socket Ports
--------------
+------------
 
 .. module:: mido.sockets
 

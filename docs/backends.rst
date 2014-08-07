@@ -1,8 +1,8 @@
 Backends
-=========
+========
 
 Choosing Backend
------------------
+----------------
 
 Mido comes with backends for PortMidi, RtMidi and Pygame.
 
@@ -38,7 +38,7 @@ variables ``MIDO_DEFAULT_INPUT`` etc. for default ports.
 
 
 Environment Variables
-----------------------
+---------------------
 
 You can override the backend's choice of default ports with these
 three environment variables::
@@ -59,7 +59,7 @@ or::
 
 
 PortMidi
----------
+--------
 
 Name: ``mido.backends.portmidi``
 
@@ -87,7 +87,7 @@ loaded. (Todo: is this true on other platforms?)
 
 
 RtMidi
--------
+------
 
 Name: ``mido.backends.rtmidi``
 
@@ -143,7 +143,7 @@ implementation.
 
 
 Pygame
--------
+------
 
 Name: ``mido.backends.pygame``
 

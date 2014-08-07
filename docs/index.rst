@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Mido - MIDI Objects for Python
-===============================
+==============================
 
 Mido is a library for working with MIDI messages and ports. It's
 designed to be as straight forward and Pythonic as possible.
@@ -40,7 +40,7 @@ Mido is short for MIDi Objects.
 
 
 Source code
-------------
+-----------
 
 Latest stable release: http://github.com/olemb/mido/
 
@@ -61,7 +61,7 @@ This requires Sphinx. The resulting files can be found in
 
 
 Contents
-------------
+--------
 
 .. toctree::
    :maxdepth: 2

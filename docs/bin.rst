@@ -1,11 +1,11 @@
 Included Programs
-==================
+=================
 
 These are installed with Mido.
 
 
 mido-play
-----------
+---------
 
 Plays back one or more MIDI files::
 
@@ -13,14 +13,14 @@ Plays back one or more MIDI files::
 
 
 mido-ports
------------
+----------
 
 Lists available input and output ports and shows environment variables
 and the current backend module.
 
 
 mido-serve
------------
+----------
 
 Serves one or more ports over the network, for example::
 
@@ -32,7 +32,7 @@ be forwarded to every port you listed (in this case 'Integra-7').
 
 
 mido-connect
--------------
+------------
 
 Forwards all messages that arrive on one or more ports to a server.
 
@@ -52,5 +52,3 @@ harmful sysex messages.)
 ``mido-serve`` and ``mido-connect`` are only included as fun programs
 to play with, but may in the future be expanded into something more
 usable.
-
-

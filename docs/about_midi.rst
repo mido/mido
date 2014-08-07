@@ -1,8 +1,8 @@
 About MIDI
-===========
+==========
 
 A Short Introduction To MIDI
------------------------------
+----------------------------
 
 MIDI is a simple binary protocol for communicating with synthesizers
 and other electronic music equipment.
@@ -59,7 +59,7 @@ Messages can be divided into four groups:
 
 
 Some Examples of Messages
---------------------------
+-------------------------
 
 ::
 
@@ -80,7 +80,7 @@ Some Examples of Messages
 
 
 Further Reading
-----------------
+---------------
 
 * `Wikipedia's page on MIDI <http://en.wikipedia.org/wiki/Midi>`_
 

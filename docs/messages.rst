@@ -1,5 +1,5 @@
 Messages
-=========
+========
 
 A Mido message is a Python object with methods and attributes. The
 attributes will vary depending on message type.
@@ -43,7 +43,7 @@ full list of messages and their attributes, see :doc:`message_types`.
 
 
 Comparison
------------
+----------
 
 To compare two messages::
 
@@ -77,7 +77,7 @@ Sort ordering of messages is not defined.
 
 
 Converting To Bytes
---------------------
+-------------------
 
 You can convert a message to MIDI bytes with one of these methods:
 
@@ -95,7 +95,7 @@ You can turn bytes back into messages with the :doc:`parser <parsing>`.
 
 
 The Time Attribute
--------------------
+------------------
 
 Each message has a ``time`` attribute, which can be set to any value
 of type ``int`` or ``float`` (and in Python 2 also ``long``). What you
@@ -119,7 +119,7 @@ or::
 
 
 System Exclusive Messages
---------------------------
+-------------------------
 
 Sytem Exclusive (SysEx) messages are used to send device specific
 data. The ``data`` attribute is a tuple of data bytes which serves as

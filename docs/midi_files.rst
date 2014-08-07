@@ -1,12 +1,12 @@
 MIDI Files
-===========
+==========
 
 MidiFile objects can be used to read, write and play back MIDI
 files. (Writing is not yet implemented.)
 
 
 Opening a File
----------------
+--------------
 
 You can open a file with::
 
@@ -64,7 +64,7 @@ be sent on ports, which is why they are off by default.
 
 
 Creating a New File
---------------------
+-------------------
 
 You can create a new file by calling MidiFile without the ``filename``
 argument. The file can then be saved by calling the ``save()`` method::
@@ -94,7 +94,7 @@ A complete example can be found in ``examples/midifiles/``.
 
 
 File Types
------------
+----------
 
 There are three types of MIDI files:
 
@@ -114,7 +114,7 @@ track.
 
 
 Playback Length
-----------------
+---------------
 
 You can get the total playback time in seconds by accessing the
 ``length`` property::
@@ -127,7 +127,7 @@ compute the playback time of an asynchronous file.
 
 
 Meta Messages
---------------
+-------------
 
 Meta messages behave like normal messages and can be created in the
 usual way, for example::
@@ -155,7 +155,7 @@ how to implement new meta messages, see :doc:`meta_message_types`.
 
 
 About the Time Attribute
--------------------------
+------------------------
 
 The ``time`` attribute is used in several different ways:
 
@@ -169,7 +169,7 @@ The ``time`` attribute is used in several different ways:
 
 
 Tempo and Beat Resolution
---------------------------
+-------------------------
 
 Timing in MIDI files is all centered around beats. A beat is the same
 as a quarter note.
