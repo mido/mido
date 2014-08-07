@@ -1,6 +1,9 @@
 1.1.7 - 
 ------------------
 
+* added support for reading and writing SYX files (binary and plain
+  text formats).
+
 * bugfix: "ImportError: No module named mido.backends.portmidi". Mido
   should now work with Python eggs and PyInstaller. Reported by
   netchose (issue #14) and edauenhauer (issue #17).

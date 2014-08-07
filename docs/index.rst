@@ -71,6 +71,7 @@ Contents
    messages
    ports
    midi_files
+   syx
    backends
    parsing
    string_encoding

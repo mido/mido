@@ -87,6 +87,7 @@ from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
 from .parser import Parser, parse, parse_all
 from .midifiles import MidiFile, MidiTrack, MetaMessage
+from .syx import read_syx, write_syx
 
 __author__ = 'Ole Martin Bjorndalen'
 __email__ = 'ombdalen@gmail.com'
