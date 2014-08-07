@@ -52,7 +52,7 @@ def main():
         return 1
 
     for program in programs:
-        proc = Popen([program, 'tests.py'])
+        proc = Popen([program, 'unit_tests.py'])
         proc.wait()
         if proc.returncode != 0:
             sys.exit('Tests failed with {}.'.format(python))
