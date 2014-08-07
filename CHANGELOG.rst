@@ -20,6 +20,8 @@
 
 * added get_sleep_time() to complement set_sleep_time().
 
+* switched to pytest for unit tests.
+
 
 1.1.6 - 2014-06-21
 ------------------
