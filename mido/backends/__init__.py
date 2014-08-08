@@ -63,7 +63,7 @@ class Backend(object):
                 module = '.' + module
             else:
                 package, module = None, self.name
-            print(module, package)
+
             try:
                 self._module = importlib.import_module(module, package)
             except ImportError:
