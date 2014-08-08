@@ -60,11 +60,11 @@ def write_syx(filename, messages, plaintext=False):
     messages = [m for m in messages if m.type == 'sysex']
 
     if plaintext:
-        with open(filename, 'wb') as outfile:
-            for message in messages:
-                outfile.write(message.bin())
-    else:
         with open(filename, 'wt') as outfile:
             for message in messages:
                 outfile.write(message.hex())
                 outfile.write('\n')
+    else:
+        with open(filename, 'wb') as outfile:
+            for message in messages:
+                outfile.write(message.bin())
