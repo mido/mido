@@ -552,6 +552,11 @@ class TestSyx(object):
             outfile.write(message.hex())
         assert mido.read_syx(path) == [message]
 
+        with open(path, 'wt') as outfile:
+            outfile.write('NOT HEX')
+        with raises(ValueError):
+            mido.read_syx(path)
+
     def test_write(self, tmpdir):
         # p = tmpdir.mkdir("sub").join("hello.txt")
         path = tmpdir.join("test.syx").strpath
