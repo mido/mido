@@ -58,7 +58,16 @@ class Backend(object):
         This function will be called if you access the 'module'
         property."""
         if not self.loaded:
-            self._module = importlib.import_module(self.name)
+            if '.' in self.name:
+                package, module = self.name.rsplit('.', 1)
+                module = '.' + module
+            else:
+                package, module = None, self.name
+            print(module, package)
+            try:
+                self._module = importlib.import_module(module, package)
+            except ImportError:
+                raise ImportError('No module named {}'.format(self.name))
 
     def _env(self, name):
         if self.use_environ:
