@@ -13,7 +13,7 @@ if sys.argv[-1] == "publish":
     sys.exit()
 
 elif sys.argv[-1] == "test":
-    os.system("python run_tests.py")
+    os.system("./run_tests.sh")
     sys.exit()
 
 elif sys.argv[-1] == "docs":
