@@ -26,6 +26,7 @@ def read_syx(filename):
         return
     
     if data[0] != b'\xf0':
+        # Plain text.
         # Remove any characters that are not hex digits.
         text = b''.join([byte for byte in data if byte in _HEXDIGITS])
 
