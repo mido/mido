@@ -20,6 +20,10 @@ def read_syx(filename):
     with open(filename, 'rb') as infile:
         data = infile.read()
 
+    def raise_io_error():
+        raise IOError('{!r} line {}: invalid hex byte {!r}'.format(
+                            filename, lineno, byte))
+
     if data[0] == b'\xf0':
         # Binary.
         return parse_all(data)
@@ -30,16 +34,12 @@ def read_syx(filename):
         for lineno, line in enumerate(data.split('\n'), start=1):
             for byte in line.split():
                 if len(byte) != 2:
-                    raise IOError(
-                        '{!r}, line {}: hex byte must be 2 characters'.format(
-                            filename, lineno))
+                    raise_io_error()
 
                 try:
                     byte = int(byte, 16)
                 except ValueError:
-                    raise IOError('{!r}, line {}: '
-                                  'Invalid hex byte {!r}'.format(
-                                      filename, lineno, byte[:2]))
+                    raise_io_error()
                 parser.feed_byte(byte)
 
         return [message for message in parser if message.type == 'sysex']
