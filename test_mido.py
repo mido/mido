@@ -565,10 +565,8 @@ class TestSyx(object):
 
         mido.write_syx_file(path, [message])
         with open(path, 'rb') as infile:
-            infile.read() == message.bin()
+            assert infile.read() == message.bin()
 
         mido.write_syx_file(path, [message], plaintext=True)
         with open(path, 'rt') as infile:
-            infile.read() == message.hex()
-
-
+            assert infile.read().strip() == message.hex()
