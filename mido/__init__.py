@@ -28,8 +28,9 @@ MIDI files:
 
 SYX files:
 
-    read_syx(filename)  -- read a SYX file
-    write_syx(filename, messages, plaintext=False)  -- write a SYX file
+    read_syx_file(filename)  -- read a SYX file
+    write_syx_file(filename, messages,
+                   plaintext=False)  -- write a SYX file
 
 Parsing MIDI streams:
 
@@ -92,7 +93,7 @@ from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
 from .parser import Parser, parse, parse_all
 from .midifiles import MidiFile, MidiTrack, MetaMessage
-from .syx import read_syx, write_syx
+from .syx import read_syx_file, write_syx_file
 
 __author__ = 'Ole Martin Bjorndalen'
 __email__ = 'ombdalen@gmail.com'

@@ -546,16 +546,16 @@ class TestSyx(object):
         
         with open(path, 'wb') as outfile:
             outfile.write(message.bin())
-        assert mido.read_syx(path) == [message]
+        assert mido.read_syx_file(path) == [message]
 
         with open(path, 'wt') as outfile:
             outfile.write(message.hex())
-        assert mido.read_syx(path) == [message]
+        assert mido.read_syx_file(path) == [message]
 
         with open(path, 'wt') as outfile:
             outfile.write('NOT HEX')
         with raises(ValueError):
-            mido.read_syx(path)
+            mido.read_syx_file(path)
 
     def test_write(self, tmpdir):
         # p = tmpdir.mkdir("sub").join("hello.txt")
@@ -563,11 +563,11 @@ class TestSyx(object):
 
         message = Message('sysex', data=(1, 2, 3))
 
-        mido.write_syx(path, [message])
+        mido.write_syx_file(path, [message])
         with open(path, 'rb') as infile:
             infile.read() == message.bin()
 
-        mido.write_syx(path, [message], plaintext=True)
+        mido.write_syx_file(path, [message], plaintext=True)
         with open(path, 'rt') as infile:
             infile.read() == message.hex()
 

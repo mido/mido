@@ -56,7 +56,7 @@ Main Features
   complete access to every message in the file, including all common
   meta messages.
 
-* can read and write SYX files.
+* can read and write SYX files (binary and plain text).
 
 * implements (somewhat experimental) MIDI over TCP/IP with socket
   ports. This allows for example wireless MIDI between two

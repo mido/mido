@@ -53,9 +53,9 @@ SYX Files
 
 .. 
 
-.. autofunction:: read_syx
+.. autofunction:: read_syx_file
 
-.. autofunction:: write_syx
+.. autofunction:: write_syx_file
 
 
 Port Classes and Functions

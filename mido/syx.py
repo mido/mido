@@ -10,7 +10,7 @@ from .parser import Parser, parse_all
 
 _HEXDIGITS = set(string.hexdigits.encode('ascii'))
 
-def read_syx(filename):
+def read_syx_file(filename):
     """Read sysex messages from SYX file.
 
     Returns a list of sysex messages.
@@ -50,7 +50,7 @@ def read_syx(filename):
         return [message for message in parser if message.type == 'sysex']
 
 
-def write_syx(filename, messages, plaintext=False):
+def write_syx_file(filename, messages, plaintext=False):
     """Write sysex messages to a SYX file.
 
     Messages other than sysex will be skipped.
