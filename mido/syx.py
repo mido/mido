@@ -15,29 +15,34 @@ def read_syx(filename):
 
     This handles both the text (hexadecimal) and binary formats.
 
-    Messages other than sysex will be ignored.  In text files it will
-    ignore any non-hexadecimal characters, and strip the last
-    character if there are an odd number of hex digits in the file.
+    Messages other than sysex will be ignored.
     """
     with open(filename, 'rb') as infile:
         data = infile.read()
 
-    if not data:
-        return
-    
-    if data[0] != b'\xf0':
+    if data[0] == b'\xf0':
+        # Binary.
+        return parse_all(data)
+    else:
+        parser = Parser()
+
         # Plain text.
-        # Remove any characters that are not hex digits.
-        text = b''.join([byte for byte in data if byte in _HEXDIGITS])
+        for lineno, line in enumerate(data.split('\n'), start=1):
+            for byte in line.split():
+                if len(byte) != 2:
+                    raise IOError(
+                        '{!r}, line {}: hex byte must be 2 characters'.format(
+                            filename, lineno))
 
-        # Remove the last digit in odd-length string to make
-        # binascii happy.
-        if len(text) % 2:
-            text = text[:-1]
-            
-        data = binascii.a2b_hex(text)
+                try:
+                    byte = int(byte, 16)
+                except ValueError:
+                    raise IOError('{!r}, line {}: '
+                                  'Invalid hex byte {!r}'.format(
+                                      filename, lineno, byte[:2]))
+                parser.feed_byte(byte)
 
-    return parse_all(data)
+        return [message for message in parser if message.type == 'sysex']
 
 
 def write_syx(filename, messages, plaintext=False):
