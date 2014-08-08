@@ -536,3 +536,34 @@ class TestPorts(object):
 
         with Port() as port:
             assert len(list(port)) == 2
+
+class TestSyx(object):
+    def test_read(self, tmpdir):
+        # p = tmpdir.mkdir("sub").join("hello.txt")
+        path = tmpdir.join("test.syx").strpath
+
+        message = Message('sysex', data=(1, 2, 3))
+        
+        with open(path, 'wb') as outfile:
+            outfile.write(message.bin())
+        assert mido.read_syx(path) == [message]
+
+        with open(path, 'wt') as outfile:
+            outfile.write(message.hex())
+        assert mido.read_syx(path) == [message]
+
+    def test_write(self, tmpdir):
+        # p = tmpdir.mkdir("sub").join("hello.txt")
+        path = tmpdir.join("test.syx").strpath
+
+        message = Message('sysex', data=(1, 2, 3))
+
+        mido.write_syx(path, [message])
+        with open(path, 'rb') as infile:
+            infile.read() == message.bin()
+
+        mido.write_syx(path, [message], plaintext=True)
+        with open(path, 'rt') as infile:
+            infile.read() == message.hex()
+
+

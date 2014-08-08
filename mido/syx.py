@@ -27,14 +27,16 @@ def read_syx(filename):
         raise ValueError('{!r} line {}: invalid hex byte {!r}'.format(
             filename, lineno, byte))
 
-    if data[0] == b'\xf0':
+    # data[0] will give a byte string in Python 2 and an integer in
+    # Python 3.
+    if data[0] in (b'\xf0', 240):
         # Binary.
         return parse_all(data)
     else:
         parser = Parser()
 
         # Plain text.
-        for lineno, line in enumerate(data.split('\n'), start=1):
+        for lineno, line in enumerate(data.split(b'\n'), start=1):
             for byte in line.split():
                 if len(byte) != 2:
                     raise_value_error()
