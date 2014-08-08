@@ -86,7 +86,7 @@ Getting started:
 """
 from __future__ import absolute_import
 import os
-from .backends import Backend
+from .backends.backend import Backend
 from . import ports, sockets
 from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
