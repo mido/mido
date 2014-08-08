@@ -13,16 +13,19 @@ _HEXDIGITS = set(string.hexdigits.encode('ascii'))
 def read_syx(filename):
     """Read sysex messages from SYX file.
 
-    This handles both the text (hexadecimal) and binary formats.
-
-    Messages other than sysex will be ignored.
+    Returns a list of sysex messages.
+    
+    This handles both the text (hexadecimal) and binary
+    formats. Messages other than sysex will be ignored. Raises
+    ValueError if file is plain text and byte is not a 2-digit hex
+    number.
     """
     with open(filename, 'rb') as infile:
         data = infile.read()
 
-    def raise_io_error():
-        raise IOError('{!r} line {}: invalid hex byte {!r}'.format(
-                            filename, lineno, byte))
+    def raise_value_error():
+        raise ValueError('{!r} line {}: invalid hex byte {!r}'.format(
+            filename, lineno, byte))
 
     if data[0] == b'\xf0':
         # Binary.
@@ -34,12 +37,12 @@ def read_syx(filename):
         for lineno, line in enumerate(data.split('\n'), start=1):
             for byte in line.split():
                 if len(byte) != 2:
-                    raise_io_error()
+                    raise_value_error()
 
                 try:
                     byte = int(byte, 16)
                 except ValueError:
-                    raise_io_error()
+                    raise_value_error()
                 parser.feed_byte(byte)
 
         return [message for message in parser if message.type == 'sysex']
