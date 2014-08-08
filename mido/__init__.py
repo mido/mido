@@ -26,6 +26,11 @@ MIDI files:
     MidiFile(filename, **kwargs) -- open a MIDI file
     MidiTrack()  -- a MIDI track
 
+SYX files:
+
+    read_syx(filename)  -- read a SYX file
+    write_syx(filename, messages, plaintext=False)  -- write a SYX file
+
 Parsing MIDI streams:
 
     parse(bytes) -- parse a single message bytes
