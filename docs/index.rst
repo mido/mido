@@ -79,6 +79,7 @@ Contents
    bin
    implementing_ports
    implementing_backends
+   executable
    about_midi
    message_types
    meta_message_types
