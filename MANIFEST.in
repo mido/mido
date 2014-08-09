@@ -1,4 +1,4 @@
-include README.rst LICENSE CHANGELOG.rst test_mido.py run_tests.sh
+include README.rst LICENSE CHANGELOG.rst test_mido.py run_tests.py
 recursive-include examples *.py
 recursive-include extras *.py
 include docs/_static/PLACEHOLDER
