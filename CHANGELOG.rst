@@ -1,13 +1,6 @@
 1.1.7 - 
 ------------------
 
-* added support for reading and writing SYX files (binary and plain
-  text formats).
-
-* bugfix: "ImportError: No module named mido.backends.portmidi". Mido
-  should now work with Python eggs and PyInstaller. Reported by
-  netchose (issue #14) and edauenhauer (issue #17).
-
 * some classes and functions have been moved to more accessible locations::
 
     from mido import MidiFile, MidiTrack, MetaMessage
@@ -21,6 +14,15 @@
 * added get_sleep_time() to complement set_sleep_time().
 
 * switched to pytest for unit tests.
+
+* fixed issue #17: "ImportError: No module named
+  mido.backends.portmidi" when packaging with PyInstaller.  (Reported
+  by edauenhauer.)
+
+  Also added a guide for using Mido with PyInstaller.
+
+* Mido can now be installed as a zipped Python egg or
+  wheel.
 
 
 1.1.6 - 2014-06-21
