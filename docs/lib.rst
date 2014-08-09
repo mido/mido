@@ -48,10 +48,27 @@ Parsing
    :undoc-members:
 
 
+MIDI Files
+-----------
+
+.. autoclass:: MidiFile
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+.. autoclass:: MidiTrack
+   :members: 
+   :inherited-members:
+   :undoc-members:
+
+.. autoclass:: MetaMessage
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+
 SYX Files
 ---------
-
-.. 
 
 .. autofunction:: read_syx_file
 
@@ -88,29 +105,6 @@ Port Classes and Functions
 .. autofunction:: sleep
 .. autofunction:: set_sleep_time
 .. autofunction:: get_sleep_time
-
-
-MIDI Files
-----------
-
-.. module:: mido.midifiles
-
-.. autoclass:: MidiFile
-   :members:
-   :inherited-members:
-   :undoc-members:
-
-.. autoclass:: MidiTrack
-   :members: 
-   :inherited-members:
-   :undoc-members:
-
-.. autoclass:: MetaMessage
-   :members:
-   :inherited-members:
-   :undoc-members:
-
-.. autofunction:: debug
 
 
 Socket Ports
