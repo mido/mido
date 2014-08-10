@@ -84,6 +84,7 @@ Contents
    message_types
    meta_message_types
    lib
+   resources
    license
    authors
    acknowledgements
