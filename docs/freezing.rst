@@ -1,5 +1,8 @@
-Using Mido with PyInstaller
-===========================
+Freezing Mido Programs
+======================
+
+PyInstaller
+-----------
 
 When you build an executable with PyInstaller and run it you may get
 import errors like this one::
@@ -24,3 +27,13 @@ and then run ``pyinstaller`` like usual::
 If you don't want to change the program, you can instead declare the
 backend module as a `hidden import
 <http://www.pyinstaller.org/export/develop/project/doc/Manual.html#listing-hidden-imports>`_.
+
+
+bbFreeze, py2exe, cx_Freeze, py2app, etc.
+-----------------------------------------
+
+I suspect the same is true for these, but I have not had a chance to
+try it out yet.
+
+Adding the explicit ``import`` statement should always work, though,
+since Mido backends are just normal Python modules.

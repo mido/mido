@@ -16,8 +16,8 @@
 * switched to pytest for unit tests.
 
 * fixed issue #17: "ImportError: No module named
-  mido.backends.portmidi" when packaging with PyInstaller.  (Reported
-  by edauenhauer.)
+  mido.backends.portmidi" (reported by edauenhauer.) Mido backends now
+  work with PyInstaller. See "Freezing Mido Programs".
 
   Also added a guide for using Mido with PyInstaller.
 
