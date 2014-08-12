@@ -1,3 +1,9 @@
+1.1.8 - 
+------------------
+
+
+
+
 1.1.7 - 2014-08-12
 ------------------
 
@@ -9,7 +15,7 @@
 * you can now iterate over a MIDI file. This will generate all MIDI
   messages in playback order. The ``time`` attribute of each message
   is the number of seconds since the last message or the start of the
-  file.
+  file. (Based on suggestion by trushkin in issue #16.)
 
 * added get_sleep_time() to complement set_sleep_time().
 
@@ -21,6 +27,9 @@
   This means that Mido can now be installed as Python egg and frozen
   with tools like PyInstaller and py2exe. See "Freezing Mido Programs"
   for more on this.
+
+  (Issue #17 reported by edauenhauer and issue #14 reported by
+  netchose.)
 
 * switched to pytest for unit tests.
 
