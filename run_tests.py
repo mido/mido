@@ -11,6 +11,7 @@ The commit will now be canceled if tests fail.
 """
 import os
 import sys
+sys.path.insert(0, '.')
 
 def print_yellow(message):
     print('\033[0;33m{}\033[0m'.format(message))
