@@ -13,16 +13,16 @@
 
 * added get_sleep_time() to complement set_sleep_time().
 
+* the Backend object no longer looks for the backend module exists on
+  startup, but will instead just import the module when you call one
+  of the ``open_*()`` or ``get_*()`` functions. This test didn't work
+  when the library was packaged in a zip file or executable.
+
+  This means that Mido can now be installed as Python egg and frozen
+  with tools like PyInstaller and py2exe. See "Freezing Mido Programs"
+  for more on this.
+
 * switched to pytest for unit tests.
-
-* fixed issue #17: "ImportError: No module named
-  mido.backends.portmidi" (reported by edauenhauer.) Mido now works
-  with PyInstaller. See "Freezing Mido Programs".
-
-  Also added a guide for using Mido with PyInstaller.
-
-* Mido can now be installed as a zipped Python egg or
-  wheel.
 
 
 1.1.6 - 2014-06-21
