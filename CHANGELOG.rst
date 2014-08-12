@@ -1,4 +1,4 @@
-1.1.7 - 
+1.1.7 - 2014-08-12
 ------------------
 
 * some classes and functions have been moved to more accessible locations::
