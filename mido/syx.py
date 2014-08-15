@@ -20,12 +20,12 @@ def read_syx_file(filename):
     ValueError if file is plain text and byte is not a 2-digit hex
     number.
     """
-    with open(filename, 'rb') as infile:
-        data = infile.read()
-
     def raise_value_error():
         raise ValueError('{!r} line {}: invalid hex byte {!r}'.format(
             filename, lineno, byte))
+
+    with open(filename, 'rb') as infile:
+        data = infile.read()
 
     if len(data) == 0:
         # Empty file.
