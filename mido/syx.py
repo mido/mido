@@ -27,6 +27,10 @@ def read_syx_file(filename):
         raise ValueError('{!r} line {}: invalid hex byte {!r}'.format(
             filename, lineno, byte))
 
+    if len(data) == 0:
+        # Empty file.
+        return []
+
     # data[0] will give a byte string in Python 2 and an integer in
     # Python 3.
     if data[0] in (b'\xf0', 240):

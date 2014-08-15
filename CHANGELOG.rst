@@ -1,6 +1,7 @@
 1.1.8 - 
 ------------------
 
+* bugfix: ``read_syx_file()`` didn't handle empty file.
 
 
 
