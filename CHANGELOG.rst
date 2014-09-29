@@ -1,4 +1,4 @@
-1.1.8 - 
+1.1.8 - 2014-09-29
 ------------------
 
 * bugfix: timing in MIDI playback was broken from 1.1.7 on.  Current
