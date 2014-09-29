@@ -1,6 +1,11 @@
 1.1.8 - 
 ------------------
 
+* bugfix: timing in MIDI playback was broken from 1.1.7 on.  Current
+  time was subtracted before time stamps were converted from ticks to
+  seconds, leading to absurdly large delta times. (Reported by Michelle
+  Thompson.)
+
 * bugfix: ``read_syx_file()`` didn't handle empty file.
 
 

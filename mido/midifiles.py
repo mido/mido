@@ -367,15 +367,13 @@ class MidiFile:
             raise TypeError('type 2 file can not be played back like this')
 
         seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
-        messages = self._merge_tracks(self.tracks)
 
         now = 0
-        for message in messages:
-            delta = (message.time - now) * seconds_per_tick
-            if delta >= 0:
-                message.time = delta
-            else:
-                message.time = 0.0
+        for message in self._merge_tracks(self.tracks):
+            # message.time is absolute time in ticks.
+            # This converts it to relative time in seconds.
+            delta = (message.time * seconds_per_tick) - now
+            message.time = delta
 
             yield message
 
