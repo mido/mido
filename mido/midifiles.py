@@ -38,6 +38,7 @@ from . import midifiles_meta
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
 DEFAULT_TEMPO = 500000
+DEFAULT_TICKS_PER_BEAT = 480
 
 class ByteReader(object):
     """
@@ -163,7 +164,8 @@ class MidiTrack(list):
 
 
 class MidiFile:
-    def __init__(self, filename=None, type=1, ticks_per_beat=480,
+    def __init__(self, filename=None, type=1,
+                 ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
                  charset='latin1'):
         self.filename = filename
         self.tracks = []
@@ -325,10 +327,6 @@ class MidiFile:
 
         return messages
 
-    def _compute_tick_time(self, tempo):
-        """Compute seconds per tick."""
-        return (tempo / 1000000.0) / self.ticks_per_beat
-
     @property
     def length(self):
         """
@@ -360,6 +358,17 @@ class MidiFile:
 
         return max(track_lengths)
 
+    def _compute_tick_time(self, tempo):
+        """Compute seconds per tick."""
+        # Tempo is given in microseconds per beat (default 500000).
+        # At this tempo there are (500000 / 1000000) == 0.5 seconds
+        # per beat. At the default resolution of 480 ticks per beat
+        # this is:
+        #
+        #    (500000 / 1000000) / 480 == 0.5 / 480 == 0.0010417
+        #
+        return (tempo / 1000000.0) / self.ticks_per_beat
+
     def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
         # not be played back like this.
@@ -368,16 +377,18 @@ class MidiFile:
 
         seconds_per_tick = self._compute_tick_time(DEFAULT_TEMPO)
 
-        now = 0
+        time_of_last_message = 0.0  # seconds
+
         for message in self._merge_tracks(self.tracks):
-            # message.time is absolute time in ticks.
-            # This converts it to relative time in seconds.
-            delta = (message.time * seconds_per_tick) - now
-            message.time = delta
+            # Message time is converted from absolute time
+            # in ticks to relative time in seconds.
+            now = message.time * seconds_per_tick
+            message.time = now - time_of_last_message
 
-            yield message
+            yield message            
 
-            now += delta
+            time_of_last_message = now
+
             if message.type == 'set_tempo':
                 seconds_per_tick = self._compute_tick_time(message.tempo)
 
