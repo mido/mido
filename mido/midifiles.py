@@ -382,7 +382,7 @@ class MidiFile:
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             now = message.time * seconds_per_tick
-            message.time = now - time_of_last_message
+            message.time = max(0.0, now - time_of_last_message)
 
             yield message       
 

@@ -3,6 +3,8 @@
 * bugfix: _compute_tick_time() was not renamed to
   _compute_seconds_per_tick() everywhere.
 
+* bugfix: sleep time in play() was sometimes negative.
+
 
 1.1.8 - 2014-09-29
 ------------------
