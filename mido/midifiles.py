@@ -348,12 +348,13 @@ class MidiFile:
         track_lengths = []
     
         for track in self.tracks:
-            seconds_per_tick = self._compute_tick_time(500000)
+            seconds_per_tick = self._compute_seconds_per_tick(500000)
             length = 0.0
             for message in track:
                 length += (message.time * seconds_per_tick)
                 if message.type == 'set_tempo':
-                    seconds_per_tick = self._compute_tick_time(message.tempo)
+                    seconds_per_tick = self._compute_seconds_per_tick(
+                        message.tempo)
             track_lengths.append(length)
 
         return max(track_lengths)
