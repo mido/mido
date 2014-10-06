@@ -1,4 +1,5 @@
-1.1.9 - 
+1.1.9 - 2014-10-06
+------------------
 
 * bugfix: _compute_tick_time() was not renamed to
   _compute_seconds_per_tick() everywhere.
