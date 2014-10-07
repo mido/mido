@@ -1,6 +1,9 @@
 1.1.10 - 
 ------------------
 
+* bugfix: tempo changes caused timing problems in MIDI file playback.
+  (Reported by Michelle Thompson.)
+
 * mido-ports now prints port names in single ticks.
 
 

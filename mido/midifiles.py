@@ -376,17 +376,20 @@ class MidiFile:
             raise TypeError('type 2 file can not be played back like this')
 
         seconds_per_tick = self._compute_seconds_per_tick(DEFAULT_TEMPO)
-        time_of_last_message = 0.0  # seconds
+        last_message_time = 0  # ticks
 
         for message in self._merge_tracks(self.tracks):
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
-            now = message.time * seconds_per_tick
-            message.time = max(0.0, now - time_of_last_message)
+            delta = message.time - last_message_time
+            if delta > 0:
+                message.time = delta * seconds_per_tick
+            else:
+                message.time = 0
 
             yield message       
 
-            time_of_last_message = now
+            last_message_time += delta
 
             if message.type == 'set_tempo':
                 seconds_per_tick = self._compute_seconds_per_tick(message.tempo)
