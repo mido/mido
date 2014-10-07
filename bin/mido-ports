@@ -24,7 +24,7 @@ for name in ['MIDO_DEAFULT_INPUT',
              'MIDO_BACKEND']:
     try:
         value = os.environ[name]
-        print('{}={}'.format(name, value))
+        print('{}={!r}'.format(name, value))
     except LookupError:
         print('{} not set.'.format(name))
 print()

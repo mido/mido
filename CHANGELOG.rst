@@ -1,3 +1,9 @@
+1.1.10 - 
+------------------
+
+* mido-ports now prints port names in single ticks.
+
+
 1.1.9 - 2014-10-06
 ------------------
 
