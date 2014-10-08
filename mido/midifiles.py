@@ -163,6 +163,26 @@ class MidiTrack(list):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
 
 
+def _merge_tracks(tracks):
+    """Merge all messates from tracks.
+
+    Delta times are converted to absolute time (in ticks), and
+    messages from all tracks are sorted on absolute time.
+    """
+    messages = []
+    for i, track in enumerate(tracks):
+        now = 0
+        for message in track:
+            now += message.time
+            messages.append(message.copy(time=now))
+            if message.type == 'end_of_track':
+                break
+
+    messages.sort(key=lambda x: x.time)
+
+    return messages
+
+
 class MidiFile:
     def __init__(self, filename=None, type=1,
                  ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
@@ -309,24 +329,6 @@ class MidiFile:
 
         return track
 
-    def _merge_tracks(self, tracks):
-        """Merge all messates from tracks.
-
-        Delta times are converted to absolute time (in ticks), and
-        messages from all tracks are sorted on absolute time."""
-        messages = []
-        for i, track in enumerate(self.tracks):
-            now = 0
-            for message in track:
-                now += message.time
-                messages.append(message.copy(time=now))
-                if message.type == 'end_of_track':
-                    break
-
-        messages.sort(key=lambda x: x.time)
-
-        return messages
-
     @property
     def length(self):
         """Playback time in seconds.
@@ -359,7 +361,7 @@ class MidiFile:
         seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
         last_message_time = 0  # ticks
 
-        for message in self._merge_tracks(self.tracks):
+        for message in _merge_tracks(self.tracks):
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             delta = message.time - last_message_time
