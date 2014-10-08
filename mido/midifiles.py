@@ -348,18 +348,18 @@ class MidiFile:
         track_lengths = []
     
         for track in self.tracks:
-            seconds_per_tick = self._compute_seconds_per_tick(500000)
+            seconds_per_tick = self._get_seconds_per_tick(500000)
             length = 0.0
             for message in track:
                 length += (message.time * seconds_per_tick)
                 if message.type == 'set_tempo':
-                    seconds_per_tick = self._compute_seconds_per_tick(
+                    seconds_per_tick = self._get_seconds_per_tick(
                         message.tempo)
             track_lengths.append(length)
 
         return max(track_lengths)
 
-    def _compute_seconds_per_tick(self, tempo):
+    def _get_seconds_per_tick(self, tempo):
         # Tempo is given in microseconds per beat (default 500000).
         # At this tempo there are (500000 / 1000000) == 0.5 seconds
         # per beat. At the default resolution of 480 ticks per beat
@@ -375,7 +375,7 @@ class MidiFile:
         if self.type == 2:
             raise TypeError('type 2 file can not be played back like this')
 
-        seconds_per_tick = self._compute_seconds_per_tick(DEFAULT_TEMPO)
+        seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
         last_message_time = 0  # ticks
 
         for message in self._merge_tracks(self.tracks):
@@ -392,7 +392,7 @@ class MidiFile:
             last_message_time += delta
 
             if message.type == 'set_tempo':
-                seconds_per_tick = self._compute_seconds_per_tick(message.tempo)
+                seconds_per_tick = self._get_seconds_per_tick(message.tempo)
 
     def play(self, meta_messages=False):
         """Play back all tracks.
