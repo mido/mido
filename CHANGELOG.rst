@@ -8,6 +8,9 @@
 
 * mido-ports now prints port names in single ticks.
 
+* MidiFile.__iter__() now yields end_of_track. This means playback
+  will end there instead of at the preceeding message.
+
 
 1.1.9 - 2014-10-06
 ------------------

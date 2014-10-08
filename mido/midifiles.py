@@ -318,10 +318,10 @@ class MidiFile:
         for i, track in enumerate(self.tracks):
             now = 0
             for message in track:
-                if message.type == 'end_of_track':
-                    break
                 now += message.time
                 messages.append(message.copy(time=now))
+                if message.type == 'end_of_track':
+                    break
 
         messages.sort(key=lambda x: x.time)
 
