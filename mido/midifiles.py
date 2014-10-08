@@ -329,35 +329,16 @@ class MidiFile:
 
     @property
     def length(self):
-        """
-        Playback time in seconds.
+        """Playback time in seconds.
 
         This will be computed by going through every message in every
         track and adding up delta times.
         """
-        # Todo: should fail if type == 2.
-        #       (There's no way to know where each track starts.)
-
         if self.type == 2:
             raise ValueError('impossible to compute length'
                              ' for type 2 (asynchronous) file')
 
-        if not self.tracks:
-            return 0.0
-
-        track_lengths = []
-    
-        for track in self.tracks:
-            seconds_per_tick = self._get_seconds_per_tick(500000)
-            length = 0.0
-            for message in track:
-                length += (message.time * seconds_per_tick)
-                if message.type == 'set_tempo':
-                    seconds_per_tick = self._get_seconds_per_tick(
-                        message.tempo)
-            track_lengths.append(length)
-
-        return max(track_lengths)
+        return sum(message.time for message in self)
 
     def _get_seconds_per_tick(self, tempo):
         # Tempo is given in microseconds per beat (default 500000).

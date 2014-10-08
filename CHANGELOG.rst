@@ -1,6 +1,8 @@
 1.1.10 - 
 ------------------
 
+* bugfix: MidiFile.length was computer incorrectly.
+
 * bugfix: tempo changes caused timing problems in MIDI file playback.
   (Reported by Michelle Thompson.)
 
