@@ -35,6 +35,12 @@ All attributes are also settable::
 
 However, you can not change the type of a message.
 
+.. note::
+
+    Mido numbers channels 0 to 15 instead of 1 to 16. This makes them
+    easier to work with in Python but you may want to add and subtract
+    1 when communicating with the user.
+
 When you pass a keyword argument or set an attribute, the name, type
 and value is checked. This ensures that 
 

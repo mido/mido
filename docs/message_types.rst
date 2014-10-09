@@ -52,6 +52,12 @@ pos          0..16383                0
 time         any integer or float    0
 ===========  ======================  ================
 
+.. note::
+
+    Mido numbers channels 0 to 15 instead of 1 to 16. This makes them
+    easier to work with in Python but you may want to add and subtract
+    1 when communicating with the user.
+
 ``velocity`` is how fast the note was struck or released. It defaults
 to 64 so that if you don't set it, you will still get a reasonable
 value. (64 is the recommended default for devices that don't support
