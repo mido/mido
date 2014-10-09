@@ -73,6 +73,18 @@ def encode_string(string):
 def decode_string(data):
     return bytearray(data).decode(_charset)
 
+def bpm2tempo(bpm):
+    """Convert beats per minute to MIDI file tempo."""
+    # 120 => 500000
+    # 60 => 1000000
+    return bpm * (250000.0 / 60)
+
+def tempo2bpm(tempo):
+    """Convert MIDI file tempo to BPM."""
+    # 500000 => 120
+    # 1000000 => 60
+    return tempo / (250000.0 / 60)
+
 @contextmanager
 def meta_charset(tmp_charset):
     global _charset
