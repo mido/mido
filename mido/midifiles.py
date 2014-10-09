@@ -163,26 +163,6 @@ class MidiTrack(list):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
 
 
-def _merge_tracks(tracks):
-    """Merge all messates from tracks.
-
-    Delta times are converted to absolute time (in ticks), and
-    messages from all tracks are sorted on absolute time.
-    """
-    messages = []
-    for i, track in enumerate(tracks):
-        now = 0
-        for message in track:
-            now += message.time
-            messages.append(message.copy(time=now))
-            if message.type == 'end_of_track':
-                break
-
-    messages.sort(key=lambda x: x.time)
-
-    return messages
-
-
 class MidiFile:
     def __init__(self, filename=None, type=1,
                  ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
@@ -352,6 +332,28 @@ class MidiFile:
         #
         return (tempo / 1000000.0) / self.ticks_per_beat
 
+    @property
+    def _messages(self):
+        """Merge all messates from tracks."""
+        messages = []
+        for track in self.tracks:
+            now = 0
+            for message in track:
+                now += message.time
+                messages.append(message.copy(time=now))
+                if message.type == 'end_of_track':
+                    break
+
+        messages.sort(key=lambda x: x.time)
+
+        # Convert absolute time back to delta time.
+        last_time = 0
+        for message in messages:
+            message.time -= last_time
+            last_time += message.time
+
+        return messages
+
     def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
         # not be played back like this.
@@ -359,20 +361,16 @@ class MidiFile:
             raise TypeError('type 2 file can not be played back like this')
 
         seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
-        last_message_time = 0  # ticks
 
-        for message in _merge_tracks(self.tracks):
+        for message in self._messages:
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
-            delta = message.time - last_message_time
-            if delta > 0:
-                message.time = delta * seconds_per_tick
+            if message.time > 0:
+                message.time *= seconds_per_tick
             else:
                 message.time = 0
 
             yield message       
-
-            last_message_time += delta
 
             if message.type == 'set_tempo':
                 seconds_per_tick = self._get_seconds_per_tick(message.tempo)
