@@ -125,13 +125,17 @@ def decode_string(data):
     return bytearray(data).decode(_charset)
 
 def bpm2tempo(bpm):
-    """Convert beats per minute to MIDI file tempo."""
+    """Convert beats per minute to MIDI file tempo.
+
+    Returns microseconds per beat as an integer."""
     # 120 => 500000
     # 60 => 1000000
-    return bpm * (250000.0 / 60)
+    return int(bpm * (250000.0 / 60))
 
 def tempo2bpm(tempo):
-    """Convert MIDI file tempo to BPM."""
+    """Convert MIDI file tempo to BPM.
+
+    Returns BPM as an integer or float."""
     # 500000 => 120
     # 1000000 => 60
     return tempo / (250000.0 / 60)
