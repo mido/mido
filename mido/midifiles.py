@@ -334,7 +334,13 @@ class MidiFile:
 
     @property
     def _messages(self):
-        """Merge all messates from tracks."""
+        """Merge all messages from tracks."""
+
+        # The tracks of type 2 files are not in sync, so they can
+        # not be played back like this.
+        if self.type == 2:
+            raise TypeError("can't merge tracks in type 2 (asynchronous) file")
+
         messages = []
         for track in self.tracks:
             now = 0
@@ -355,11 +361,6 @@ class MidiFile:
         return messages
 
     def __iter__(self):
-        # The tracks of type 2 files are not in sync, so they can
-        # not be played back like this.
-        if self.type == 2:
-            raise TypeError('type 2 file can not be played back like this')
-
         seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
 
         for message in self._messages:
