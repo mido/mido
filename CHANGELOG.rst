@@ -1,5 +1,5 @@
-1.1.10 - 
-------------------
+1.1.10 - 2014-10-09
+-------------------
 
 * bugfix: MidiFile.length was computer incorrectly.
 
