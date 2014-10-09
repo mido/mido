@@ -29,10 +29,9 @@ import timeit
 import string
 from contextlib import contextmanager
 from .ports import BaseOutput
-from .types import encode_variable_int
 from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage, _build_meta_message, meta_charset
-from .midifiles_meta import MetaSpec, add_meta_spec
+from .midifiles_meta import MetaSpec, add_meta_spec, encode_variable_int
 from . import midifiles_meta
 
 # The default tempo is 120 BPM.
