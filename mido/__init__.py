@@ -25,6 +25,8 @@ MIDI files:
 
     MidiFile(filename, **kwargs) -- open a MIDI file
     MidiTrack()  -- a MIDI track
+    bpm2tempo()  -- convert beats per minute to MIDI file tempo
+    tempo2bpm()  -- convert MIDI file tempo to beats per minute
 
 SYX files:
 

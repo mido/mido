@@ -159,7 +159,10 @@ Attribute       Values          Default
 tempo           0..16777215     500000
 ==============  ==============  ========
 
-Contains the number of microseconds per quarter note.
+Tempo is in microseconds per beat (quarter note). You can use
+:py:func:`bpm2tempo` and :py:func:`tempo2bpm` to convert to and from
+beats per minute. Note that :py:func:`tempo2bpm` may return a floating
+point number.
 
 
 smpte_offset (0x54)

@@ -177,9 +177,13 @@ as a quarter note.
 Tempo is given in microseconds per beat, and beats are divided into
 ticks.
 
-The default tempo is 500000 microseconds per beat, which is half a
-second per beat or 120 beats per minute. The meta message 'set_tempo'
-can be used to change tempo during a song.
+The default tempo is 500000 microseconds per beat (quarter note),
+which is half a second per beat or 120 beats per minute. The meta
+message 'set_tempo' can be used to change tempo during a song.
+
+You can use :py:func:`bpm2tempo` and :py:func:`tempo2bpm` to convert
+to and from beats per minute. Note that :py:func:`tempo2bpm` may
+return a floating point number.
 
 Computations::
 
