@@ -86,6 +86,7 @@ Contents
    message_types
    meta_message_types
    lib
+   changes
    resources
    license
    authors
