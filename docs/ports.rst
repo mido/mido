@@ -55,7 +55,7 @@ specific) default port. You can override this by setting the
 
 To get a list of available ports, you can do::
 
-    >>> mido.output_port_names()
+    >>> mido.get_output_names()
     ['SH-201', 'Integra-7']
 
 and then::
