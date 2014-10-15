@@ -10,6 +10,7 @@ Release History
 * added ``merge_tracks()``.
 
 * removed  undocumented method ``MidiFile.get_messages()``.
+  (Replaced by ``merge_tracks(mid.tracks)``.)
 
 
 1.1.11 (2014-10-15)
