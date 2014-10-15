@@ -70,6 +70,8 @@ MIDI Files
 
 .. autofunction:: tempo2bpm
 
+.. autofunction:: merge_tracks
+
 
 SYX Files
 ---------

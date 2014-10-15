@@ -162,6 +162,34 @@ class MidiTrack(list):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
 
 
+def merge_tracks(tracks):
+    """Returns a MidiTrack object with all messages from all tracks.
+
+    The messages are returned in playback order with delta times
+    as if they were all in one track.
+    """
+    messages = MidiTrack()
+    for track in tracks:
+        now = 0
+        for message in track:
+            now += message.time
+            if message.type not in ('track_name', 'end_of_track'):
+                messages.append(message.copy(time=now))
+            if message.type == 'end_of_track':
+                break
+    
+    messages.sort(key=lambda x: x.time)
+    messages.append(MetaMessage('end_of_track', time=now))
+
+    # Convert absolute time back to delta time.
+    last_time = 0
+    for message in messages:
+        message.time -= last_time
+        last_time += message.time
+    
+    return messages
+
+
 class MidiFile:
     def __init__(self, filename=None, type=1,
                  ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
@@ -331,42 +359,15 @@ class MidiFile:
         #
         return (tempo / 1000000.0) / self.ticks_per_beat
 
-    def _merge_tracks(self):
-        """Returns a list of all messages in all tracks.
-
-        The messages are returned in playback order with delta times
-        as if they were all in one track.
-
-        Will raise ValueError if the file is type 2 (asyncronous).
-        """
+    def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
         # not be played back like this.
         if self.type == 2:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
-        messages = []
-        for track in self.tracks:
-            now = 0
-            for message in track:
-                now += message.time
-                messages.append(message.copy(time=now))
-                if message.type == 'end_of_track':
-                    break
-
-        messages.sort(key=lambda x: x.time)
-
-        # Convert absolute time back to delta time.
-        last_time = 0
-        for message in messages:
-            message.time -= last_time
-            last_time += message.time
-
-        return messages
-
-    def __iter__(self):
         seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
 
-        for message in self._merge_tracks():
+        for message in merge_tracks(self.tracks):
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             if message.time > 0:

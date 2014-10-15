@@ -27,6 +27,7 @@ MIDI files:
     MidiTrack()  -- a MIDI track
     bpm2tempo()  -- convert beats per minute to MIDI file tempo
     tempo2bpm()  -- convert MIDI file tempo to beats per minute
+    merge_tracks(tracks)  -- merge tracks into one track
 
 SYX files:
 
@@ -94,7 +95,7 @@ from . import ports, sockets
 from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
 from .parser import Parser, parse, parse_all
-from .midifiles import MidiFile, MidiTrack, MetaMessage
+from .midifiles import MidiFile, MidiTrack, MetaMessage, merge_tracks
 from .midifiles_meta import bpm2tempo, tempo2bpm
 from .syx import read_syx_file, write_syx_file
 
