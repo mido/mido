@@ -66,6 +66,10 @@ MIDI Files
    :inherited-members:
    :undoc-members:
 
+.. autofunction:: bpm2tempo
+
+.. autofunction:: tempo2bpm
+
 
 SYX Files
 ---------
