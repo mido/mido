@@ -1,3 +1,9 @@
+1.1.12 - 
+-------------------
+
+* removed undocumented method ``MidiFile.get_messages()``.
+
+
 1.1.11 - 2014-10-15
 -------------------
 

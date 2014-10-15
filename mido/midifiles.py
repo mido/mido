@@ -331,7 +331,7 @@ class MidiFile:
         #
         return (tempo / 1000000.0) / self.ticks_per_beat
 
-    def get_messages(self):
+    def _merge_tracks(self):
         """Returns a list of all messages in all tracks.
 
         The messages are returned in playback order with delta times
@@ -366,7 +366,7 @@ class MidiFile:
     def __iter__(self):
         seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
 
-        for message in self.get_messages():
+        for message in self._merge_tracks():
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             if message.time > 0:
