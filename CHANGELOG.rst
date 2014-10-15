@@ -1,3 +1,14 @@
+1.1.11 - 2014-10-15
+-------------------
+
+* added ``bpm2tempo()`` and ``tempo2bpm()``.
+
+* fixed error in documentation (patch by Michael Silver).
+
+* added notes about channel numbers to documentation (reported by
+  ludwig404 / leonh, issue #18).
+
+
 1.1.10 - 2014-10-09
 -------------------
 
