@@ -388,15 +388,12 @@ class MidiFile:
         attribute is set to the number of seconds slept since the
         previous message.
 
-        If you pass sleep=False, the generator will not sleep between
-        messages. The messages will still be tagged with the number of
-        seconds it would have slept.
-
         By default you will only get normal MIDI messages. Pass
         meta_messages=True if you also want meta messages.
 
         You will receive copies of the original messages, so you can
         safely modify them without ruining the tracks.
+
         """
         sleep = time.sleep
 
