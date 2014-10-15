@@ -14,7 +14,7 @@ from __future__ import print_function, division
 import sys
 import argparse
 import mido
-from mido import MidiFile, Message
+from mido import MidiFile, Message, tempo2bpm
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -52,10 +52,8 @@ def play_file(output, filename):
                 # print(message)
                 output.send(message)
             elif message.type == 'set_tempo':
-                bpm = 60 / (message.tempo / 1000000)
-                if int(bpm) == bpm:
-                    bpm = int(bpm)
-                print('Tempo changed to {} BPM.'.format(bpm))
+                print('Tempo changed to {:.1f} BPM.'.format(
+                    tempo2bpm(message.tempo)))
     print()
 
 def main():
