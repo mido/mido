@@ -308,7 +308,7 @@ class BaseMessage(object):
 
         Each number is separated by the string sep.
         """
-        return sep.join(['{:02X}'.format(byte) for byte in self.bytes()])
+        return sep.join('{:02X}'.format(byte) for byte in self.bytes())
 
     def __eq__(self, other):
         """Compare message to another for equality.
@@ -616,7 +616,7 @@ def format_as_string(message, include_time=True):
     for name in names:
         value = getattr(message, name)
         if name == 'data':
-            value = '({})'.format(','.join([str(byte) for byte in value]))
+            value = '({})'.format(','.join(str(byte) for byte in value))
         elif name == 'time':
             # Python 2 formats longs as '983989385L'. This is not allowed.
             value = str(value)
