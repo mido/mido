@@ -12,6 +12,9 @@ Release History
 * removed  undocumented method ``MidiFile.get_messages()``.
   (Replaced by ``merge_tracks(mid.tracks)``.)
 
+* bugfix: ``receive()`` checked ``self.callback`` which didn't exist
+  for all ports, causing an ``AttributeError``.
+
 
 1.1.11 (2014-10-15)
 ^^^^^^^^^^^^^^^^^^^
