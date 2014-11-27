@@ -68,6 +68,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   changes
    installing
    intro
    messages
@@ -86,7 +87,6 @@ Contents
    message_types
    meta_message_types
    lib
-   changes
    resources
    license
    authors
