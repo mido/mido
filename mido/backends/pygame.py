@@ -61,6 +61,9 @@ class PortCommon(object):
     Mixin with common things for input and output ports.
     """
     def _open(self, **kwargs):
+        if 'virtual' in kwargs:
+            raise IOError("PortMIDI doesn't support virtual ports")
+
         midi.init()
 
         opening_input = hasattr(self, 'receive')
