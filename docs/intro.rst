@@ -150,6 +150,22 @@ interchangingly.
 It's easy to write new port types. See :doc:`implementing_ports`.
 
 
+Virtual Ports
+-------------
+
+Virtual ports allow you to create new ports that other applications
+can connect to::
+
+    with mido.open_input('New Port', virtual=True) as inport:
+        for message in port:
+            print(message)
+
+The port should now appear to other applications as "New Port".
+
+Unfortunately virtual ports are not supported by PortMIDI and Pygame
+so this only works with RtMidi.
+
+
 Parsing MIDI Bytes
 ------------------
 
