@@ -62,7 +62,8 @@ class PortCommon(object):
     """
     def _open(self, **kwargs):
         if 'virtual' in kwargs:
-            raise IOError("PortMIDI doesn't support virtual ports")
+            raise IOError(
+                "virtual ports are not supported by the Pygame backend")
 
         midi.init()
 
