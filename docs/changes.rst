@@ -7,6 +7,9 @@ Release History
 1.1.12 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* raises IOError if you try to open a virtual port with PortMIDI. (They
+  are not supported by this backend.)
+
 * added ``merge_tracks()``.
 
 * removed  undocumented method ``MidiFile.get_messages()``.
