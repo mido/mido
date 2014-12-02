@@ -62,11 +62,12 @@ nothing)::
     (Input ports only.)
 
     Should poll the device for available data and feed it to the
-    parser. *Note*: do not actually return anything! The caller will
-    take care of this, and anything you return here will be ignored
-    (which means messages will be dropped).
+    parser.
 
-    Called by various input port methods, like ``receive()`` and
+    Should not return anything. The caller will take care of this, and
+    anything you return here will be ignored.
+
+    Is called by various input port methods, like ``receive()`` and
     ``pending()``. The caller takes care of blocking and various error
     situations, so all you need to do is to feed data into the parser.
 
