@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.12 ()
+1.1.12 (2014-12-02)
 ^^^^^^^^^^^^^^^^^^^
 
 * raises IOError if you try to open a virtual port with PortMIDI or
