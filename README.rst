@@ -71,7 +71,7 @@ Status
 
 1.1 is the second stable release.
 
-See CHANGELOG.rst for a full list of changes.
+See docs/changes.rst for a full list of changes.
 
 
 Requirements
