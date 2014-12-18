@@ -7,7 +7,7 @@ Release History
 1.1.13 ()
 ^^^^^^^^^^^^^^^^^^^
 
-* bugfix: ``merge_tracks()`` didn't work with empty track.
+* bugfix: ``merge_tracks()`` didn't with empty list of tracks.
 
 
 1.1.12 (2014-12-02)
