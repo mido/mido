@@ -168,9 +168,9 @@ def merge_tracks(tracks):
     The messages are returned in playback order with delta times
     as if they were all in one track.
     """
+    now = 0
     messages = MidiTrack()
     for track in tracks:
-        now = 0
         for message in track:
             now += message.time
             if message.type not in ('track_name', 'end_of_track'):
