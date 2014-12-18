@@ -127,18 +127,24 @@ def decode_string(data):
 def bpm2tempo(bpm):
     """Convert beats per minute to MIDI file tempo.
 
-    Returns microseconds per beat as an integer."""
-    # 120 => 500000
-    # 60 => 1000000
-    return int(bpm * (250000.0 / 60))
+    Returns microseconds per beat as an integer::
+    
+        240 => 250000
+        120 => 500000
+        60 => 1000000
+    """
+    return int(1000000 * 60 / bpm)
 
 def tempo2bpm(tempo):
     """Convert MIDI file tempo to BPM.
 
-    Returns BPM as an integer or float."""
-    # 500000 => 120
-    # 1000000 => 60
-    return tempo / (250000.0 / 60)
+    Returns BPM as an integer or float::
+
+        250000 => 240
+        500000 => 120
+        1000000 => 60
+    """
+    return 1000000 * 60 / tempo
 
 @contextmanager
 def meta_charset(tmp_charset):

@@ -7,6 +7,10 @@ Release History
 1.1.13 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* bugfix: ``tempo2bpm()`` was broken and returned the wrong value for
+  anything but 500000 microseconds per beat (120 BPM). (Reported and
+  fixed by Jorge Herrera, issue #21)
+
 * bugfix: ``merge_tracks()`` didn't with empty list of tracks.
 
 
