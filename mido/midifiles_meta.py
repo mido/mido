@@ -133,7 +133,8 @@ def bpm2tempo(bpm):
         120 => 500000
         60 => 1000000
     """
-    return int(1000000 * 60 / bpm)
+    # One minute is 60 million microseconds.
+    return int((60 * 1000000) / bpm)
 
 def tempo2bpm(tempo):
     """Convert MIDI file tempo to BPM.
@@ -144,7 +145,8 @@ def tempo2bpm(tempo):
         500000 => 120
         1000000 => 60
     """
-    return 1000000 * 60 / tempo
+    # One minute is 60 million microseconds.
+    return (60 * 1000000) / tempo
 
 @contextmanager
 def meta_charset(tmp_charset):
