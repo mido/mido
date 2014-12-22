@@ -85,7 +85,7 @@ class Backend(object):
             return None
 
     def _fixkw(self, kwargs):
-        if self.api and 'api' not in kwargs:
+        if self.api:
             kwargs['api'] = self.api
         return kwargs
 
