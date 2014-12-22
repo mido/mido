@@ -105,8 +105,10 @@ class Backend(object):
           Raises IOError if not supported by the backend.
         """
         kwargs.update(dict(virtual=virtual, callback=callback))
+
         if name is None:
             name = self._env('MIDO_DEFAULT_INPUT')
+
         return self.module.Input(name, **self._add_api(kwargs))
 
     def open_output(self, name=None, virtual=False, autoreset=False, **kwargs):
@@ -124,8 +126,10 @@ class Backend(object):
           on all channels. This is the same as calling `port.reset()`.
         """
         kwargs.update(dict(virtual=virtual, autoreset=autoreset))
+
         if name is None:
             name = self._env('MIDO_DEFAULT_OUTPUT')
+
         return self.module.Output(name, **self._add_api(kwargs))
 
     def open_ioport(self, name=None, virtual=False,
@@ -150,24 +154,28 @@ class Backend(object):
         """
         kwargs.update(dict(virtual=virtual, callback=callback,
                            autoreset=autoreset))
+
         if name is None:
-            name = self._env('MIDO_DEFAULT_IOPORT')
+            name = self._env('MIDO_DEFAULT_IOPORT') or None
+
         if hasattr(self.module, 'IOPort'):
-            if name is None:
-                name = self._env('MIDO_DEFAULT_IOPORT')
+            # Backend has a native IOPort. Use it.
             return self.module.IOPort(name, **self._add_api(kwargs))
-            if name is None:
-                # MIDO_DEFAULT_IOPORT overrides the other two variables.
-                name = self._env('MIDO_DEFAULT_IOPORT')
-                if name is not None:
-                    input_name = output_name = name
-                else:
-                    input_name = self._env('MIDO_DEFAULT_INPUT')
-                    output_name = self._env('MIDO_DEFAULT_OUTPUT')
-            else:
+        else:
+            # Backend has no native IOPort. Use the IOPort wrapper
+            # in midi.ports.
+            #
+            # We need an input and an output name.
+
+            # MIDO_DEFAULT_IOPORT overrides the other two variables.
+            if name:
                 input_name = output_name = name
+            else:
+                input_name = self._env('MIDO_DEFAULT_INPUT')
+                output_name = self._env('MIDO_DEFAULT_OUTPUT')
 
             kwargs = self._add_api(kwargs)
+
             return ports.IOPort(self.module.Input(input_name, **kwargs),
                                 self.module.Output(output_name, **kwargs))
 
