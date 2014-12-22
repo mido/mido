@@ -87,7 +87,7 @@ class PortCommon(object):
     Mixin with common things for input and output ports.
     """
     def _open(self, **kwargs):
-        if 'virtual' in kwargs:
+        if 'virtual' in kwargs and kwargs['virtual'] == True:
             raise IOError(
                 "virtual ports are not supported by the PortMIDI backend")
 

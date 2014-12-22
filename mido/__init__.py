@@ -12,10 +12,11 @@ Creating messages:
 
 Ports:
 
-    open_input(name=None) -- open an input port
-    open_output(name=None) -- open an output port
-    open_ioport(name=None) -- open an I/O port (capable of both input
-                                                and output)
+    open_input(name=None, virtual=False, callback=None) -- open an input port
+    open_output(name=None, virtual=False,               -- open an output port
+                autoreset=False)
+    open_ioport(name=None, virtual=False,        -- open an I/O port (capable
+                callback=None, autoreset=False)     of both input and output)
 
     get_input_names() -- return a list of names of available input ports
     get_output_names() -- return a list of names of available output ports
@@ -34,7 +35,6 @@ SYX files:
     read_syx_file(filename)  -- read a SYX file
     write_syx_file(filename, messages,
                    plaintext=False)  -- write a SYX file
-
 Parsing MIDI streams:
 
     parse(bytes) -- parse a single message bytes

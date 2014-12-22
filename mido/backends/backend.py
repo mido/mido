@@ -84,44 +84,78 @@ class Backend(object):
         else:
             return None
 
-    def _fixkw(self, kwargs):
-        if self.api:
+    def _add_api(self, kwargs):
+        if self.api and 'api' not in kwargs:
             kwargs['api'] = self.api
         return kwargs
 
-    def open_input(self, name=None, **kwargs):
+    def open_input(self, name=None, virtual=False, callback=None, **kwargs):
         """Open an input port.
 
         If the environment variable MIDO_DEFAULT_INPUT is set,
         if will override the default port.
+
+        virtual=False
+          Passing True opens a new port that other applications can
+          connect to. Raises IOError if not supported by the backend.
+        
+        callback=None
+          A callback function to be called when a new message arrives.
+          The function should take one argument (the message).
+          Raises IOError if not supported by the backend.
         """
+        kwargs.update(dict(virtual=virtual, callback=callback))
         if name is None:
             name = self._env('MIDO_DEFAULT_INPUT')
-        return self.module.Input(name, **self._fixkw(kwargs))
+        return self.module.Input(name, **self._add_api(kwargs))
 
-    def open_output(self, name=None, **kwargs):
+    def open_output(self, name=None, virtual=False, autoreset=False, **kwargs):
         """Open an output port.
         
         If the environment variable MIDO_DEFAULT_OUTPUT is set,
         if will override the default port.
+
+        virtual=False
+          Passing True opens a new port that other applications can
+          connect to. Raises IOError if not supported by the backend.
+        
+        autoreset=False
+          Automatically send all_notes_off and reset_all_controllers
+          on all channels. This is the same as calling `port.reset()`.
         """
+        kwargs.update(dict(virtual=virtual, autoreset=autoreset))
         if name is None:
             name = self._env('MIDO_DEFAULT_OUTPUT')
-        return self.module.Output(name, **self._fixkw(kwargs))
+        return self.module.Output(name, **self._add_api(kwargs))
 
-    def open_ioport(self, name=None, **kwargs):
+    def open_ioport(self, name=None, virtual=False,
+                    callback=None, autoreset=False, **kwargs):
         """Open a port for input and output.
 
         If the environment variable MIDO_DEFAULT_IOPORT is set,
         if will override the default port.
+
+        virtual=False
+          Passing True opens a new port that other applications can
+          connect to. Raises IOError if not supported by the backend.
+        
+        callback=None
+          A callback function to be called when a new message arrives.
+          The function should take one argument (the message).
+          Raises IOError if not supported by the backend.
+
+        autoreset=False
+          Automatically send all_notes_off and reset_all_controllers
+          on all channels. This is the same as calling `port.reset()`.
         """
+        kwargs.update(dict(virtual=virtual, callback=callback,
+                           autoreset=autoreset))
         if name is None:
             name = self._env('MIDO_DEFAULT_IOPORT')
         if hasattr(self.module, 'IOPort'):
             if name is None:
                 name = self._env('MIDO_DEFAULT_IOPORT')
-            return self.module.IOPort(name, **self._fixkw(kwargs))
-        else:
+            return self.module.IOPort(name, **self._add_api(kwargs))
             if name is None:
                 # MIDO_DEFAULT_IOPORT overrides the other two variables.
                 name = self._env('MIDO_DEFAULT_IOPORT')
@@ -133,31 +167,31 @@ class Backend(object):
             else:
                 input_name = output_name = name
 
-            kwargs = self._fixkw(kwargs)
+            kwargs = self._add_api(kwargs)
             return ports.IOPort(self.module.Input(input_name, **kwargs),
                                 self.module.Output(output_name, **kwargs))
 
     def _get_devices(self, **kwargs):
         if hasattr(self.module, 'get_devices'):
-            return self.module.get_devices(**self._fixkw(kwargs))
+            return self.module.get_devices(**self._add_api(kwargs))
         else:
             return []
 
     def get_input_names(self, **kwargs):
         """Return a sorted list of all input port names."""
-        devices = self._get_devices(**self._fixkw(kwargs))
+        devices = self._get_devices(**self._add_api(kwargs))
         names = [device['name'] for device in devices if device['is_input']]
         return list(sorted(names))
 
     def get_output_names(self, **kwargs):
         """Return a sorted list of all output port names."""
-        devices = self._get_devices(**self._fixkw(kwargs))
+        devices = self._get_devices(**self._add_api(kwargs))
         names = [device['name'] for device in devices if device['is_output']]
         return list(sorted(names))
 
     def get_ioport_names(self, **kwargs):
         """Return a sorted list of all I/O port names."""
-        devices = self._get_devices(**self._fixkw(kwargs))
+        devices = self._get_devices(**self._add_api(kwargs))
         inputs = [device['name'] for device in devices if device['is_input']]
         outputs = [device['name'] for device in devices if device['is_output']]
         return sorted(set(inputs) & set(outputs))
