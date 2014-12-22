@@ -8,7 +8,7 @@ def _import_module(name):
     """Import and return module.
 
     This works like importlib._import_module(), except it handles
-    packages without requiring and extra argument.
+    packages without requiring an extra argument.
 
     Examples::
 
