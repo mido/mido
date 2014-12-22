@@ -13,6 +13,8 @@ Release History
 
 * bugfix: ``merge_tracks()`` didn't with empty list of tracks.
 
+* added proper keyword arguments and doc strings to open functions.
+
 
 1.1.12 (2014-12-02)
 ^^^^^^^^^^^^^^^^^^^
