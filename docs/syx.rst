@@ -1,7 +1,7 @@
 SYX Files
 =========
 
-SYX files are used to store SysEx messages, most often for patch
+SYX files are used to store SysEx messages, usually for patch
 data.
 
 
