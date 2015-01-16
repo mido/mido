@@ -15,6 +15,9 @@ from ..messages import Message
 from ..ports import BaseInput, BaseOutput, sleep
 from . import portmidi_init as pm
 
+_state = {'port_count': 0}
+
+
 def _check_error(return_value):
     """Raise IOError if return_value < 0.
 
@@ -49,6 +52,7 @@ def _get_default_device(get_input):
     else:
         device_id = pm.lib.Pm_GetDefaultOutputDeviceID()
         
+
     if device_id < 0:
         raise IOError('no default port found')
     
@@ -79,6 +83,13 @@ def _get_named_device(name, get_input):
 
 def get_devices(**kwargs):
     """Return a list of devices as dictionaries."""
+    if _state['port_count'] == 0:
+        # If no ports are open we can reboot PortMIDI
+        # to refresh the port list. This is a hack, but it's
+        # the only way to get an up-to-date list.
+        pm.lib.Pm_Terminate()
+        pm.lib.Pm_Initialize()
+
     return [_get_device(i) for i in range(pm.lib.Pm_CountDevices())]
 
 
@@ -131,7 +142,8 @@ class PortCommon(object):
         # This is set when we return, but the callback thread needs
         # it to be False now (or it will just return right away.)
         self.closed = False
-        
+        _state['port_count'] += 1
+ 
         if opening_input and self.callback:
             self._callback_thread = threading.Thread(
                 target=self._thread_main)
@@ -145,6 +157,8 @@ class PortCommon(object):
 
     def _close(self):
         _check_error(pm.lib.Pm_Close(self._stream))
+        _state['port_count'] -= 1
+
 
 class Input(PortCommon, BaseInput):
     """
