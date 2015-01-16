@@ -17,6 +17,14 @@ from . import portmidi_init as pm
 
 _state = {'port_count': 0}
 
+def _refresh_port_list():
+    if _state['port_count'] == 0:
+        # If no ports are open we can reboot PortMIDI
+        # to refresh the port list. This is a hack, but it's
+        # the only way to get an up-to-date list.
+        pm.lib.Pm_Terminate()
+        pm.lib.Pm_Initialize()
+
 
 def _check_error(return_value):
     """Raise IOError if return_value < 0.
@@ -83,13 +91,7 @@ def _get_named_device(name, get_input):
 
 def get_devices(**kwargs):
     """Return a list of devices as dictionaries."""
-    if _state['port_count'] == 0:
-        # If no ports are open we can reboot PortMIDI
-        # to refresh the port list. This is a hack, but it's
-        # the only way to get an up-to-date list.
-        pm.lib.Pm_Terminate()
-        pm.lib.Pm_Initialize()
-
+    _refresh_port_list()
     return [_get_device(i) for i in range(pm.lib.Pm_CountDevices())]
 
 
@@ -98,6 +100,8 @@ class PortCommon(object):
     Mixin with common things for input and output ports.
     """
     def _open(self, **kwargs):
+        _refresh_port_list()
+
         if 'virtual' in kwargs and kwargs['virtual'] == True:
             raise IOError(
                 "virtual ports are not supported by the PortMIDI backend")
