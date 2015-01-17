@@ -7,6 +7,12 @@ Release History
 1.1.13 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* the PortMidi backend will now return refresh the port list when you
+  ask for port names are open a new port, which means you will see
+  devices that you plug in after loading the backend. (Due to
+  limitations in PortMidi the list will only be refreshed if there are
+  no open ports.)
+
 * bugfix: ``tempo2bpm()`` was broken and returned the wrong value for
   anything but 500000 microseconds per beat (120 BPM). (Reported and
   fixed by Jorge Herrera, issue #21)
@@ -19,7 +25,7 @@ Release History
 1.1.12 (2014-12-02)
 ^^^^^^^^^^^^^^^^^^^
 
-* raises IOError if you try to open a virtual port with PortMIDI or
+* raises IOError if you try to open a virtual port with PortMidi or
   Pygame. (They are not supported by these backends.)
 
 * added ``merge_tracks()``.
@@ -113,7 +119,7 @@ Release History
   (Issue #14, reported by netchose.)
 
 * bugfix: 100% memory consumption when calling blocking receive()
-  on a PortMIDI input. (Issue #15, reported by Francesco Ceruti.)
+  on a PortMidi input. (Issue #15, reported by Francesco Ceruti.)
 
 * added wheel support: http://pythonwheels.com/
 
