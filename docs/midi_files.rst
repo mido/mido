@@ -171,19 +171,67 @@ The ``time`` attribute is used in several different ways:
 Tempo and Beat Resolution
 -------------------------
 
-Timing in MIDI files is all centered around beats. A beat is the same
-as a quarter note.
+MIDI Tempo and BPM
+^^^^^^^^^^^^^^^^^^
 
-Tempo is given in microseconds per beat, and beats are divided into
-ticks.
+Tempo in MIDI files is given in microseconds per beat. A beat is the
+same as a quarter note. To convert between MIDI tempo and the more
+commonly used beats per minute (BPM)::
 
-The default tempo is 500000 microseconds per beat (quarter note),
-which is half a second per beat or 120 beats per minute. The meta
-message 'set_tempo' can be used to change tempo during a song.
+    bpm =   (60 * 1000000) / tempo
+    tempo = (60 * 1000000) / bpm
 
-You can use :py:func:`bpm2tempo` and :py:func:`tempo2bpm` to convert
-to and from beats per minute. Note that :py:func:`tempo2bpm` may
-return a floating point number.
+The default tempo is 500000 which is the same as 120 BPM::
+
+    >>> (60 * 1000000) / 500000
+    120.0
+    >>> (60 * 1000000) / 120.0
+    500000.0
+
+Mido comes with functions to do these conversions:
+:py:func:`bpm2tempo` and :py:func:`tempo2bpm`. Note that
+:py:func:`bpm2tempo` will round the number to the nearest integer so
+it can be used directly in a ``set_tempo`` message.
+
+
+Ticks and Delta Times
+^^^^^^^^^^^^^^^^^^^^^
+
+Each message in a MIDI file has a delta time given in ticks::
+
+----- ----------
+Delta Message
+----- ----------
+  0   note_on
+240   pitchwheel
+240   note_off
+---- -----------
+
+Delta time is the time has passed since the last message. In this
+example the note will start playing immediately, then after 240 ticks
+the pitch will change and after 240 more ticks the note will be turned
+off.
+
+You can control how long each tick lasts by setting passing
+``ticks_per_beat`` when you create the MIDI file or setting the
+attribute later. At the default of 480 ticks per beat 
+
+
+
+
+The duration of a tick depends on two values: tempo and ticks per beat.
+
+In this example the note will be turned on immediately. Then 240 ticks
+later the volume will change and finally 240 ticks after that the note
+will be turned off. This means the note_off
+
+
+This is the time that
+has passed since the last message. Mido uses the ``.time`` attribute
+for this.
+
+Let's 
+
 
 Computations::
 
