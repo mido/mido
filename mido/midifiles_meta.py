@@ -134,7 +134,7 @@ def bpm2tempo(bpm):
         60 => 1000000
     """
     # One minute is 60 million microseconds.
-    return int((60 * 1000000) / bpm)
+    return int(round((60 * 1000000) / bpm))
 
 def tempo2bpm(tempo):
     """Convert MIDI file tempo to BPM.
