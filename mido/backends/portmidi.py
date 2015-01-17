@@ -19,7 +19,7 @@ _state = {'port_count': 0}
 
 def _refresh_port_list():
     if _state['port_count'] == 0:
-        # If no ports are open we can reboot PortMIDI
+        # If no ports are open we can reboot PortMidi
         # to refresh the port list. This is a hack, but it's
         # the only way to get an up-to-date list.
         pm.lib.Pm_Terminate()
@@ -104,7 +104,7 @@ class PortCommon(object):
 
         if 'virtual' in kwargs and kwargs['virtual'] == True:
             raise IOError(
-                "virtual ports are not supported by the PortMIDI backend")
+                "virtual ports are not supported by the PortMidi backend")
 
         self._stream = pm.PortMidiStreamPtr()
 
@@ -169,7 +169,7 @@ class Input(PortCommon, BaseInput):
     PortMidi Input port
     """
     def _receive(self, block=True):
-        # Since there is no blocking read in PortMIDI, the block
+        # Since there is no blocking read in PortMidi, the block
         # flag is ignored and the enclosing receive() takes care
         # of blocking.
 

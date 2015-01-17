@@ -162,7 +162,7 @@ can connect to::
 
 The port should now appear to other applications as "New Port".
 
-Unfortunately virtual ports are not supported by PortMIDI and Pygame
+Unfortunately virtual ports are not supported by PortMidi and Pygame
 so this only works with RtMidi.
 
 

@@ -1,5 +1,5 @@
 """
-Low-level wrapper for PortMIDI library
+Low-level wrapper for PortMidi library
 
 Copied straight from Grant Yoshida's portmidizero, with slight
 modifications.
