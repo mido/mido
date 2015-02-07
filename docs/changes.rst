@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.13 ()
+1.1.13 (2015-02-07)
 ^^^^^^^^^^^^^^^^^^^
 
 * the PortMidi backend will now return refresh the port list when you
@@ -17,7 +17,7 @@ Release History
   anything but 500000 microseconds per beat (120 BPM). (Reported and
   fixed by Jorge Herrera, issue #21)
 
-* bugfix: ``merge_tracks()`` didn't with empty list of tracks.
+* bugfix: ``merge_tracks()`` didn't work with empty list of tracks.
 
 * added proper keyword arguments and doc strings to open functions.
 
