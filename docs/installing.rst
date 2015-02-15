@@ -4,7 +4,7 @@ Installing Mido
 Requirements
 ------------
 
-Mido targets Python 2.7 and 3.2. It is developed and testeqd in Ubuntu
+Mido targets Python 2.7 and 3.2. It is developed and tested in Ubuntu
 and Mac OS X, but should also work in Windows.
 
 Everything is implemented in pure Python, so no compilation is
