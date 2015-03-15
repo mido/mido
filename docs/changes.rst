@@ -4,6 +4,12 @@ Changes
 Release History
 ---------------
 
+1.1.14
+^^^^^^^^^^^^^^^^^^^
+
+* fixed some errors in backend documentation. (Patch by velolala.)
+
+
 1.1.13 (2015-02-07)
 ^^^^^^^^^^^^^^^^^^^
 
