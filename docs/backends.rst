@@ -103,17 +103,17 @@ The RtMidi library can be compiled with support for more than one
 API. You can select API by adding it after the module name, either in
 the environment variable::
 
-    $ export MIDO_BACKEND=.rmidi/LINUX_ALSA
-    $ export MIDO_BACKEND=.rmidi/LINUX_JACK
+    $ export MIDO_BACKEND=mido.backends.rtmidi/LINUX_ALSA
+    $ export MIDO_BACKEND=mido.backends.rtmidi/UNIX_JACK
 
 or in one of these::
 
-    >>> mido.set_backend('.rtmidi/LINUX_ALSA')
+    >>> mido.set_backend('mido.backends.rtmidi/LINUX_ALSA')
     >>> mido.backend
     <backend mido.backends.rtmidi/LINUX_ALSA (not loaded)>
 
-    >>> mido.Backend('.rtmidi/LINUX_JACK')
-    <backend mido.backends.rtmidi/LINUX_JACK (not loaded)>
+    >>> mido.Backend('mido.backends.rtmidi/UNIX_JACK')
+    <backend mido.backends.rtmidi/UNIX_JACK (not loaded)>
 
 This allows you to, for example, use both ALSA and JACK ports in the
 same program.
