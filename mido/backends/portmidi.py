@@ -149,6 +149,7 @@ class PortCommon(object):
         _state['port_count'] += 1
  
         if opening_input and self.callback:
+            self._stop_event = None
             self._callback_thread = threading.Thread(
                 target=self._thread_main)
             self._callback_thread.daemon = True
@@ -209,29 +210,30 @@ class Input(PortCommon, BaseInput):
         # something goes wrong here there is no way to detect it, and
         # there is no warning. (An unknown variable, for example, will
         # just make the thread stop silently.)
+
+        # Receive messages from port until it's closed
+        # or some exception occurs.
         try:
-            # Receive messages from port until it's closed
-            # or some exception occurs.
-            while True:
+            while not self._stop_event:
                 self._receive()
                 for message in self._parser:
                     if self.callback:
                         self.callback(message)
                 sleep()
-        except IOError:
-            if self.closed:
-                # If the port is closed (and _check_error() works),
-                # "IOError: PortMidi: `Bad pointer'" is raised
-                # if the port is closed in self.receive().
-                # Just exit. (Basically, ignore errors if the port is
-                # closed.)
-                return
-            else:
-                raise
+        finally:
+            # Inform parent thread that we are done.
+            if self._stop_event:
+                self._stop_event.set()
 
     def _close(self):
-        self.callback = False
+        if self.callback and self._callback_thread:
+            # Ask callback thread to stop.
+            self._stop_event = threading.Event()
+            self._stop_event.wait()
+            self._callback_thread = None
+
         PortCommon._close(self)
+
 
 class Output(PortCommon, BaseOutput):
     """

@@ -7,7 +7,11 @@ Release History
 1.1.14
 ^^^^^^^^^^^^^^^^^^^
 
-* fixed some errors in backend documentation. (Patch by velolala.)
+* bugfix: closing a port would sometimes cause a segfault when using
+  callbacks. (Issue #24, reported by Francesco Ceruti.)
+
+* fixed some errors in backend documentation. (Pull request #23 by
+  velolala.)
 
 
 1.1.13 (2015-02-07)
