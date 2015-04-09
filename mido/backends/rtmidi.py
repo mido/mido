@@ -68,12 +68,7 @@ class PortCommon(object):
         if opening_input:
             self._rt = rtmidi.MidiIn(rtapi=rtapi)
             self._rt.ignore_types(False, False, True)
-            if self.callback:
-                def callback_wrapper(message_data, data):
-                    message = parse(message_data[0])
-                    if message and self.callback:
-                        self.callback(message)
-                self._rt.set_callback(callback_wrapper)
+            self.callback = kwargs.get('callback')
         else:
             self._rt = rtmidi.MidiOut(rtapi=rtapi)
             # Turn of ignore of sysex, time and active_sensing.
@@ -107,6 +102,24 @@ class PortCommon(object):
         self._device_type = 'RtMidi/{}'.format(api)
         if virtual:
             self._device_type = 'virtual {}'.format(self._device_type)
+
+    @property
+    def callback(self):
+        return self._callback
+
+    @callback.setter
+    def callback(self, func):
+        self._callback = func
+        if func is None:
+            self._rt.cancel_callback()
+        else:
+            self._rt.set_callback(self._callback_wrapper)
+
+    def _callback_wrapper(self, message_data, data):
+        self._parser.feed(message_data[0])
+        for message in self._parser:
+            if self._callback:
+                self._callback(message)
 
     def _close(self):
         self._rt.close_port()

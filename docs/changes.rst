@@ -7,6 +7,27 @@ Release History
 1.1.14
 ^^^^^^^^^^^^^^^^^^^
 
+* rewrote the callback system in response to issues #23 and #25.
+
+* there was no way to set a callback function if the port was opened
+  without one. (Issue#25, reported by Nils Werner.)
+
+  Callbacks can now be set and cleared at any time by either passing
+  one to ``open_input()`` or updating the ``callback`` attribute.
+
+  This causes some slight changes to the behaviour of the port when
+  using callbacks. Previously if you opened the port with a callback
+  and then set ``port.callback = None`` the callback thread would keep
+  running but drop any incoming messages. If you do the same now the
+  callback thread will stop and the port will return normal
+  non-callback behaviour. If you want the callback thread to drop
+  messages you can set ``port.callback = lambda message: None``.
+
+  Also, ``receive()`` no longer checks ``self.callback``. This was
+  inconsistent as it was the only method to do so. It also allows
+  ports that don't support callbacks to omit the ``callback``
+  attribute.
+
 * bugfix: closing a port would sometimes cause a segfault when using
   callbacks. (Issue #24, reported by Francesco Ceruti.)
 

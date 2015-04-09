@@ -119,17 +119,19 @@ class BaseInput(BasePort):
     Override _pending() to create a new input port type.
     (See portmidi.py for an example of how to do this.)
     """
-
     def __init__(self, name='', **kwargs):
         """Create an input port.
 
         name is the port name, as returned by input_names(). If
         name is not passed, the default input is used instead.
         """
-        self.callback = kwargs.get('callback')
         self._parser = Parser()
         self._messages = self._parser._parsed_messages  # Shortcut.
         BasePort.__init__(self, name, **kwargs)
+
+    def _check_callback(self):
+        if hasattr(self, 'callback') and self.callback is not None:
+            raise ValueError('a callback is set for this port')
 
     def pending(self):
         """Return how many messages are ready to be received.
@@ -142,12 +144,14 @@ class BaseInput(BasePort):
         except it won't try to read from the device.
         """
         if not self.closed:
+            self._check_callback()
             self._receive(block=False)
 
         return len(self._messages)
 
     def iter_pending(self):
         """Iterate through pending messages."""
+        self._check_callback()
         self._receive(block=False)
         while self._messages:
             yield self._messages.popleft()
@@ -167,9 +171,7 @@ class BaseInput(BasePort):
         If block=False is passed, None will be returned if there are no
         pending messages or if the port is closed.
         """
-        if hasattr(self, 'callback') and self.callback:
-            raise IOError('a callback is currently set for this port')
-
+        self._check_callback()
         # If there is a message pending, return it right away.
         if self._messages:
             return self._messages.popleft()
@@ -196,6 +198,7 @@ class BaseInput(BasePort):
         # This could have simply called receive() in a loop, but that
         # could result in a "port closed during receive()" error which
         # is hard to catch here.
+        self._check_callback()
         while 1:
             try:
                 yield self.receive()

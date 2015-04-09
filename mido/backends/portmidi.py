@@ -9,7 +9,6 @@ http://portmedia.sourceforge.net/portmidi/doxygen/
 """
 import time
 import threading
-from collections import deque
 from ..parser import Parser
 from ..messages import Message
 from ..ports import BaseInput, BaseOutput, sleep
@@ -148,19 +147,14 @@ class PortCommon(object):
         self.closed = False
         _state['port_count'] += 1
  
-        if opening_input and self.callback:
-            self._stop_event = None
-            self._callback_thread = threading.Thread(
-                target=self._thread_main)
-            self._callback_thread.daemon = True
-            self._callback_thread.start()
-
-            # Make sure pending() doesn't see messages.
-            self._messages = deque()
+        if opening_input:
+            self._thread = None
+            self.callback = kwargs.get('callback')
 
         self._device_type = 'PortMidi/{}'.format(device['interface'])
 
     def _close(self):
+        self.callback = None
         _check_error(pm.lib.Pm_Close(self._stream))
         _state['port_count'] -= 1
 
@@ -205,6 +199,35 @@ class Input(PortCommon, BaseInput):
                 self._parser.feed_byte(byte)
                 packed_message >>= 8
 
+    @property
+    def callback(self):
+        return self._callback
+
+    @callback.setter
+    def callback(self, func):
+        self._callback = func
+        if func is None:
+            self._stop_thread()
+        else:
+            self._start_thread()
+
+    def _start_thread(self):
+        """Start callback thread if not already running."""
+        if not self._thread:
+            self._stop_event = None
+            self._thread = threading.Thread(
+                target=self._thread_main)
+            self._thread.daemon = True
+            self._thread.start()
+
+    def _stop_thread(self):
+        """Stop callback thread if running."""
+        if self._thread:
+            # Ask callback thread to stop.
+            self._stop_event = threading.Event()
+            self._stop_event.wait()
+            self._thread = None
+
     def _thread_main(self):
         # Todo: exceptions do not propagate to the main thread, so if
         # something goes wrong here there is no way to detect it, and
@@ -226,12 +249,7 @@ class Input(PortCommon, BaseInput):
                 self._stop_event.set()
 
     def _close(self):
-        if self.callback and self._callback_thread:
-            # Ask callback thread to stop.
-            self._stop_event = threading.Event()
-            self._stop_event.wait()
-            self._callback_thread = None
-
+        self._stop_thread()
         PortCommon._close(self)
 
 

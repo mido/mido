@@ -160,28 +160,42 @@ This will give you all messages as they arrive on the port until the
 port closes. (So far only socket ports actually close by
 themselves. This happens if the other end disconnects.)
 
-Input ports take an optional ``callback`` argument::
+
+Callbacks
+---------
+
+Instead of reading from the port you can install a callback function
+which will be called for every message that arrives.
+
+Here's a simple callback function::
 
     def print_message(message):
         print(message)
 
-    port = mido.open_input('SH-201', callback=print_message)
+To install the callback you can either pass it when you create the
+port or later by setting the ``callback`` attribute::
 
-The function will be called with every message that arrives on the
-port. This is currently only implemented PortMidi and RtMidi ports.
-
-You can change the callback function later by setting the ``callback``
-attribute::
-
+    port = mido.open_input(callback=print_message)
     port.callback = print_message
     ...
+    port.callback = another_function
+
+.. note::
+
+    Since the callback runs in a different thread you may need to use
+    locks or other syncronization mechanisms to keep your main program and
+    the callback from stepping on each other's toes.
+
+Calling ``receive()``, ``__iter__()``, ``pending()`` or
+``iter_pending()`` on a port with a callback will raise an exception::
+
+    ValueError: a callback is set for this port
+
+To clear the callback::
+
     port.callback = None
 
-If ``callback`` is set to ``None``, no function will be called. This
-can be used to temporarily (or permanently) turn off message
-reception.
-
-The ``receive`` methods can not be used if a callback is set.
+This will return the port to normal.
 
 
 Port API
