@@ -54,12 +54,6 @@ class BasePort(object):
     def _close(self):
         pass
 
-    def _send(self, message):
-        pass
-
-    def _receive(self, block=True):
-        pass
-
     def close(self):
         """Close the port.
 
@@ -132,6 +126,9 @@ class BaseInput(BasePort):
     def _check_callback(self):
         if hasattr(self, 'callback') and self.callback is not None:
             raise ValueError('a callback is set for this port')
+
+    def _receive(self, block=True):
+        pass
 
     def pending(self):
         """Return how many messages are ready to be received.
@@ -227,6 +224,9 @@ class BaseOutput(BasePort):
         """
         BasePort.__init__(self, name, **kwargs)
         self.autoreset = autoreset
+
+    def _send(self, message):
+        pass
 
     def send(self, message):
         """Send a message on the port.
