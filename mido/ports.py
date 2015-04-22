@@ -107,10 +107,9 @@ class BasePort(object):
 
 
 class BaseInput(BasePort):
-    """
-    Base class for input port.
+    """Base class for input port.
 
-    Override _pending() to create a new input port type.
+    Subclass and override _receive() to create a new input port type.
     (See portmidi.py for an example of how to do this.)
     """
     def __init__(self, name='', **kwargs):
@@ -132,6 +131,9 @@ class BaseInput(BasePort):
 
     def pending(self):
         """Return how many messages are ready to be received.
+
+        *Note*: This is kept around for backward compatibility.  It's
+        better to use iter_pending() to iterate over pending messages.
 
         This will read data from the device and put it in the
         parser. I will then return the number of messages available to
@@ -156,17 +158,15 @@ class BaseInput(BasePort):
     def receive(self, block=True):
         """Return the next message.
 
-        This will block until a message arrives. For non-blocking
-        behavior, you can use pending() to see how many messages can
-        safely be received without blocking.
+        This will block until a message arrives.
+        
+        If you pass block=False it will not block and instead return
+        None if there is no available message.
 
-        If the port is closed and there are no pending messages, IOError
+        If the port is closed and there are no pending messages IOError
         will be raised. If the port closes while waiting inside receive(),
         IOError will be raised. Todo: this seems a bit inconsistent. Should
         different errors be raised? What's most useful here?
-
-        If block=False is passed, None will be returned if there are no
-        pending messages or if the port is closed.
         """
         self._check_callback()
         # If there is a message pending, return it right away.

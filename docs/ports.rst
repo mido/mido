@@ -11,7 +11,7 @@ You can open a port by calling one of the open methods, for example::
 Now you can receive messages on the input port and send messages on
 the output port::
 
-    >>> msg = inport.receive():
+    >>> msg = inport.receive()
     >>> outport.send(msg)
 
 The message is copied by ``send()``, so you can safely modify your
@@ -128,7 +128,41 @@ to decay time.
 Input Ports
 -----------
 
-To receive a message::
+To iterate over incoming messages:::
+
+    for msg in port:
+        print(msg)
+
+This will iterate over messages as they arrive on the port until the
+port closes. (So far only socket ports actually close by
+themselves. This happens if the other end disconnects.)
+
+You can also do non-blocking iteration::
+
+    for msg in port.iter_pending():
+        print(msg)
+
+This will iterate over all messages that have already arrived. It is
+typically used in main loops where you want to do something else while
+you wait for messages::
+
+    while True:
+        for msg in port.iter_pending():
+            print(msg)
+
+        do_other_stuff()
+
+In an event based system like a GUI where you don'w write the main
+loop you can install a handler that's called periodically. Here's an
+example for GTK::
+
+    def callback(self):
+        for msg in self.inport:
+            print(msg)
+
+    gobject.timeout_add_seconds(timeout, callback)
+
+To get a bit more control you can receive messagas one at a time::
 
     msg = port.receive()
 
@@ -137,28 +171,11 @@ is available, you can use::
 
     msg = port.receive(block=False)
 
-which will return ``None`` if no message is available.
+This will return ``None`` if no message is available.
 
-The ``pending()`` method will return the number of messages that are
-waiting to be received, so you can do::
-
-    while port.pending():
-        msg = port.receive()
-        print(msg)
-
-but it's usually easier to just to::
-
-    for msg in port.iter_pending():
-        print(msg)
-
-You can also loop through messages in a blocking way::
-
-    for msg in port:
-        print(msg)
-
-This will give you all messages as they arrive on the port until the
-port closes. (So far only socket ports actually close by
-themselves. This happens if the other end disconnects.)
+.. note:: For historical reasons there's also a ``pending()`` method.
+          It is no longer useful after ``iter_pending()`` was added
+          but is kept around for backward compatibility.
 
 
 Callbacks
@@ -250,6 +267,10 @@ Receive a message. This will return a message. If ``block=False``,
 ``pending()``
 
 Returns the number of messages waiting to be received.
+
+.. note:: This is kept around for backward compatibility. It’s better
+          to use iter_pending() to iterate over pending messages.
+
 
 
 ``iter_pending()``
