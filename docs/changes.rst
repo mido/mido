@@ -31,6 +31,8 @@ Release History
 * bugfix: closing a port would sometimes cause a segfault when using
   callbacks. (Issue #24, reported by Francesco Ceruti.)
 
+* bugfix: Pygame ports were broken due to a faulty check for ``virtual=True``.
+
 * fixed some errors in backend documentation. (Pull request #23 by
   velolala.)
 

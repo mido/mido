@@ -61,9 +61,9 @@ class PortCommon(object):
     Mixin with common things for input and output ports.
     """
     def _open(self, **kwargs):
-        if 'virtual' in kwargs:
-            raise IOError(
-                "virtual ports are not supported by the Pygame backend")
+        if kwargs.get('virtual'):
+            raise IOError('virtual ports are not supported'
+                          ' by the Pygame backend')
 
         midi.init()
 
