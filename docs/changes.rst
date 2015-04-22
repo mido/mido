@@ -33,6 +33,10 @@ Release History
 
 * bugfix: Pygame ports were broken due to a faulty check for ``virtual=True``.
 
+* now raises ``ValueError`` instead of ``IOError`` if you pass
+  ``virtual`` or ``callback`` while opening a port and the backend
+  doesn't support them. (An unsupported argument is not an IO error.)
+
 * fixed some errors in backend documentation. (Pull request #23 by
   velolala.)
 

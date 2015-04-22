@@ -101,9 +101,9 @@ class PortCommon(object):
     def _open(self, **kwargs):
         _refresh_port_list()
 
-        if 'virtual' in kwargs and kwargs['virtual'] == True:
-            raise IOError(
-                "virtual ports are not supported by the PortMidi backend")
+        if kwargs.get('virtual'):
+            raise ValueError('virtual ports are not supported'
+                             ' by the PortMidi backend')
 
         self._stream = pm.PortMidiStreamPtr()
 
