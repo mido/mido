@@ -446,6 +446,7 @@ class MidiFile:
 
             for track in self.tracks:
                 bytes = []
+                running_status_byte = None
                 for message in track:
                     if not isinstance(message, MetaMessage):
                         if message._spec.status_byte >= 0xf8:
@@ -454,16 +455,23 @@ class MidiFile:
                                  "allowed in a MIDI file".format(
                                         message.type)))
 
-                    # Todo: running status?
                     bytes += encode_variable_int(message.time)
                     if message.type == 'sysex':
+                        running_status_byte = None
                         bytes += [0xf0]
                         # length (+ 1 for end byte (0xf7))
                         bytes += encode_variable_int(len(message.data) + 1)
                         bytes += message.data
                         bytes += [0xf7]
                     else:
-                        bytes += message.bytes()
+                        raw = message.bytes()
+                        if isinstance(message, Message) and \
+                            raw[0] < 0xf0 and \
+                            raw[0] == running_status_byte:
+                            bytes += raw[1:]
+                        else:
+                            bytes += raw
+                        running_status_byte = raw[0]
 
                 if not self._has_end_of_track(track):
                     # Write end_of_track.
