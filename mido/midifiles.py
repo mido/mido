@@ -465,9 +465,9 @@ class MidiFile:
                         bytes += [0xf7]
                     else:
                         raw = message.bytes()
-                        if isinstance(message, Message) and \
-                            raw[0] < 0xf0 and \
-                            raw[0] == running_status_byte:
+                        if (isinstance(message, Message)
+                            and raw[0] < 0xf0
+                            and raw[0] == running_status_byte):
                             bytes += raw[1:]
                         else:
                             bytes += raw
