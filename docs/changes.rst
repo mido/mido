@@ -7,6 +7,9 @@ Release History
 1.1.14
 ^^^^^^^^^^^^^^^^^^^
 
+* added support for running status when writing MIDI files.
+  (Implemented by John Benediktsson.)
+
 * rewrote the callback system in response to issues #23 and #25.
 
 * there was no way to set a callback function if the port was opened
