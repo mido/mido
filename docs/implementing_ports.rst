@@ -5,7 +5,7 @@ The Mido port API allows you to write new ports to do practically
 anything.
 
 A new port type can be defined by subclassing one of the base classes
-and overriding one or more methods. Here is an example:;
+and overriding one or more methods. Here's an example::
 
     from mido.ports import BaseOutput
 
@@ -108,7 +108,7 @@ An full example of a device port for the imaginary MIDI library
             self.device.write(message.bytes())
 
         def _receive(self, block=True):
-            while 1:
+            while True:
 	        data = self.device.read()
 	        if data:
 	            self._parser.feed(data)
@@ -128,7 +128,7 @@ wait for you::
 		self._parser.feed(data)
         else:
 	    # Non-blocking read like above.
-            while 1:
+            while True:
 	        data = self.device.read()
 		if data:
 		     self._parser.feed(data)
