@@ -8,7 +8,6 @@ import os
 import time
 import rtmidi
 from ..ports import BaseInput, BaseOutput
-from ..parser import parse
 
 def _get_api_lookup():
     api_to_name = {}
@@ -38,7 +37,6 @@ def _get_api_id(name=None):
         return api
     else:
         raise ValueError('API {} not compiled in'.format(name))
-    
 
 def get_devices(api=None, **kwargs):
     devices = []
@@ -131,15 +129,13 @@ class Input(PortCommon, BaseInput):
         # flag is ignored and the enclosing receive() takes care
         # of blocking.
 
-        while 1:
+        while True:
             message_data = self._rt.get_message()
             if message_data is None:
                 break
             else:
-                message = parse(message_data[0])
-                if message:
-                    self._messages.append(message)
- 
+                self._parser.feed(message_data[0])
+
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
         self._rt.send_message(message.bytes())
