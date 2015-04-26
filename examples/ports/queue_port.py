@@ -28,14 +28,13 @@ class QueuePort(BaseInput, BaseOutput):
         self._queue.put(message)
 
     def _receive(self, block=True):
-        while 1:
+        while True:
             try:
-                message = self._queue.get(block=block)
-                self._messages.append(message)
+                message = self._queue.get_nowait()
             except Empty:
-                break
-
-        return len(self._messages)
+                return
+            else:
+                self._messages.append(message)
     
     def _get_device_type(self):
         return 'queue'
