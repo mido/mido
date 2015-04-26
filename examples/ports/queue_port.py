@@ -41,7 +41,7 @@ class QueuePort(BaseInput, BaseOutput):
     
 if __name__ == '__main__':
     def program_changer():
-        while 1:
+        while True:
             queue_port.send(
                 Message('program_change', program=random.randrange(128)))
             time.sleep(0.2)

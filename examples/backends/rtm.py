@@ -91,7 +91,7 @@ class Input(PortCommon, BaseInput):
         if self._has_callback:
             raise IOError('a callback is currently set for this port')
 
-        while 1:
+        while True:
             (message, delta_time) = self._rt.get_message()
             if message is None:
                 break

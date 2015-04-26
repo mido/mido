@@ -87,7 +87,7 @@ def read_event(device):
 
 def read_events(device_name):
     with open(device_name, 'rb') as device:
-        while 1:
+        while True:
             yield read_event(device)
 
 def panic(port):
@@ -161,7 +161,7 @@ def play_scale(dev, out):
     program = 74
     out.send(mido.Message('program_change', program=program))
 
-    while 1:
+    while True:
         event = read_event(dev)
 
         if event['init']:
@@ -201,7 +201,7 @@ def play_drums(dev, out):
         10: 55,  # Splash Cymbal
         }
 
-    while 1:
+    while True:
         event = read_event(dev)
         if event['init']:
             continue

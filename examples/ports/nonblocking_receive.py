@@ -16,7 +16,7 @@ else:
 try:
     with mido.open_input(portname) as port:
         print('Using {}'.format(port))        
-        while 1:
+        while True:
             for message in port.iter_pending():
                 print('Received {}'.format(message))
 

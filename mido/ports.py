@@ -179,7 +179,7 @@ class BaseInput(BasePort):
             else:
                 return None
 
-        while 1:
+        while True:
             self._receive(block=block)
             if self._messages:
                 return self._messages.popleft()
@@ -196,7 +196,7 @@ class BaseInput(BasePort):
         # could result in a "port closed during receive()" error which
         # is hard to catch here.
         self._check_callback()
-        while 1:
+        while True:
             try:
                 yield self.receive()
             except IOError:

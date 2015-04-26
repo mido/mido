@@ -57,7 +57,7 @@ If you want the server to send messages the client, you can instead
 do::
 
     server = PortServer('localhost', 8080):
-    while 1:
+    while True:
         server.send(message)
         ...
 
@@ -83,7 +83,7 @@ To get more control, you can ignore all the other methods of the
 server implemented this way::
 
     with PortServer('localhost', 8080) as server:
-        while 1:
+        while True:
             client = server.accept()
             for message in client:
                 print(message)
@@ -101,7 +101,7 @@ Using this, you can write the server any way you like, for example::
 
     with PortServer('localhost', 8080) as server:
         clients = []
-        while 1:
+        while True:
             # Handle connections.
             client = server.accept(block=False)
             if client:

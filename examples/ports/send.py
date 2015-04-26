@@ -22,7 +22,7 @@ notes = [60, 62, 64, 67, 69, 72]
 try:
     with mido.open_output(portname, autoreset=True) as port:
         print('Using {}'.format(port))
-        while 1:
+        while True:
             note = random.choice(notes)
 
             on = Message('note_on', note=note)

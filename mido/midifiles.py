@@ -247,7 +247,7 @@ class MidiFile:
     def _read_variable_int(self):
         delta = 0
 
-        while 1:
+        while True:
             byte = self._file.read_byte()
             delta = (delta << 7) | (byte & 0x7f)
             if byte < 0x80:
@@ -300,7 +300,7 @@ class MidiFile:
         start = self._file.pos
         last_status = None
 
-        while 1:
+        while True:
             # End of track reached.
             if self._file.pos - start == length:
                 break
