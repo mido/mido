@@ -9,7 +9,6 @@ http://www.pygame.org/docs/ref/midi.html
 from __future__ import absolute_import
 from pygame import midi
 from ..ports import BaseInput, BaseOutput
-from ..parser import parse
 
 def _get_device(device_id):
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
@@ -113,11 +112,7 @@ class Input(PortCommon, BaseInput):
                 # It's best to ignore these.
                 continue
 
-            message = parse(bytes)
-            if message:
-                # Time is just 0 or 1, so it's pointless.
-                # message.time = time
-                self._messages.append(message)
+            self._parser.feed(bytes)
 
 class Output(PortCommon, BaseOutput):
     """
