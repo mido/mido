@@ -309,11 +309,11 @@ class EchoPort(BaseIOPort):
     __iter__ = BaseIOPort.iter_pending
 
 
-# Todo: i don't know how to implement yield_ports here, so for now I haven't.
 class MultiPort(BaseIOPort):
-    def __init__(self, ports):
+    def __init__(self, ports, yield_ports=False):
         BaseIOPort.__init__(self, 'multi')
-        self.ports = ports
+        self.ports = list(ports)
+        self.yield_ports = yield_ports
 
     def _send(self, message):
         for port in self.ports:
@@ -322,15 +322,12 @@ class MultiPort(BaseIOPort):
                 port.send(message)
 
     def _receive(self, block=True):
-        ports = list(self.ports)
-        random.shuffle(ports)
-        for port in ports:
-            if not port.closed:
-                for message in port.iter_pending():
-                    self._messages.append(message)
+        self._messages.extend(multi_receive(self.ports,
+                                            yield_ports=self.yield_ports,
+                                            block=False))
+        
 
-
-def multi_receive(ports, yield_ports=False):
+def multi_receive(ports, yield_ports=False, block=True):
     """Receive messages from multiple ports.
 
     Generates messages from ever input port. The ports are polled in
@@ -339,37 +336,31 @@ def multi_receive(ports, yield_ports=False):
     
     If yield_ports=True, (port, message) is yielded instead of just
     the message.
+
+    If block=False only pending messages will be yielded.
     """
-    ports = list(ports)
-    while 1:
+    while True:
+        # Make a shuffled copy of the port list.
+        ports = list(ports)
         random.shuffle(ports)
         
         for port in ports:
-            for message in port.iter_pending():
-                if yield_ports:
-                    yield (port, message)
-                else:
-                    yield message
+            if not port.closed:
+                for message in port.iter_pending():
+                    if yield_ports:
+                        yield port, message
+                    else:
+                        yield message
 
-        sleep()
+        if block:
+            sleep()
+        else:
+            break
 
 
 def multi_iter_pending(ports, yield_ports=False):
     """Iterate through all pending messages in ports.
 
-    ports is an iterable of message ports to check.
-
-    This can be used to receive messages from a set of ports in a
-    non-blocking manner.
-
-    If yield_ports=True, (port, message) is yielded instead of just
-    the message.
+    This is the same as calling multi_receive() with block=False.
     """
-    ports = list(ports)
-    random.shuffle(ports)
-    for port in ports:
-        for message in port.iter_pending():
-            if yield_ports:
-                yield (port, message)
-            else:
-                yield message
+    return multi_receive(ports, yield_ports=yield_ports, block=False)

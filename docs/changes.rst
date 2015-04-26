@@ -43,6 +43,9 @@ Release History
 * fixed some errors in backend documentation. (Pull request #23 by
   velolala.)
 
+* ``MultiPort`` now has a ``yield_port`` argument just like
+  ``multi_receive()``.
+
 
 1.1.13 (2015-02-07)
 ^^^^^^^^^^^^^^^^^^^
