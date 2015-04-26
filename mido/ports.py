@@ -175,7 +175,7 @@ class BaseInput(BasePort):
 
         if self.closed:
             if block:
-                raise IOError('receive() called on closed port')
+                raise ValueError('receive() called on closed port')
             else:
                 return None
 
