@@ -66,7 +66,7 @@ Some Examples of Messages
     # Turn on middle C on channel 2:
     92 3C 64
 
-    # Turn is back off:
+    # Turn it back off:
     82 3C 64
 
     # Change to program (sound) number 4 on channel 2:
