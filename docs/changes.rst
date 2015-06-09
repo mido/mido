@@ -7,6 +7,10 @@ Release History
 1.1.14
 ^^^^^^^^^^^^^^^^^^^
 
+* bugfix: merge_tracks() concatinated the tracks instead of merging
+  them.  This caused tracks to be played back one by one. (Issue #28,
+  reported by Charles Gillingham.)
+
 * added support for running status when writing MIDI files.
   (Implemented by John Benediktsson.)
 

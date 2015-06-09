@@ -168,18 +168,20 @@ def merge_tracks(tracks):
     The messages are returned in playback order with delta times
     as if they were all in one track.
     """
-    now = 0
+    max_time = 0
     messages = MidiTrack()
     for track in tracks:
+        now = 0
         for message in track:
             now += message.time
             if message.type not in ('track_name', 'end_of_track'):
                 messages.append(message.copy(time=now))
             if message.type == 'end_of_track':
                 break
-    
+        max_time = max(max_time, now)
+
     messages.sort(key=lambda x: x.time)
-    messages.append(MetaMessage('end_of_track', time=now))
+    messages.append(MetaMessage('end_of_track', time=max_time))
 
     # Convert absolute time back to delta time.
     last_time = 0
