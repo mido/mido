@@ -14,6 +14,10 @@ You can open a file with::
 
     mid = MidiFile('song.mid')
 
+.. note:: Sysex dumps such as patch data are often stored in SYX files
+   rather than MIDI files. If you get "MThd not found. Probably not a
+   MIDI file" try ``mido.read_syx_file()``. (See :doc:`syx` for more.)
+   
 The ``tracks`` attribute is a list of tracks. Each track is a list of
 messages and meta messages, with the ``time`` attribute of each
 messages set to its delta time (in ticks). (See Tempo and Beat
