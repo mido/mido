@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.14
+1.1.14 (2015-06-09)
 ^^^^^^^^^^^^^^^^^^^
 
 * bugfix: merge_tracks() concatinated the tracks instead of merging
