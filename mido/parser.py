@@ -53,7 +53,7 @@ class Parser(object):
 
         if self._inside_sysex and (0xf8 <= byte <= 0xff):
             # Realtime message inside sysex.
-            # Deliver it straigh away.
+            # Deliver it straight away.
             if valid:
                 message = build_message(spec, [byte])
                 self._deliver(message)
