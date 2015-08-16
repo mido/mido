@@ -8,10 +8,10 @@ Release History
 ^^^^^^^^^^^^^^^^^^^
 * Added the ability to use file objects as well as filenames when reading,
   writing and saving MIDI files. This allows you to create a MIDI file
-  dynamically, save it to an io.BytesIO, and then play that in-memory
-  file, without having to create an intermediate external file. Of course the
-  file (and/or the MidiFile) can still be saved to an external file.
-
+  dynamically, possibly *not* using mido, save it to an io.BytesIO, and
+  then play that in-memory file, without having to create an intermediate
+  external file. Of course the memory file (and/or the MidiFile) can still
+  be saved to an external file.
   (Implemented by Brian O'Neill.)
 
 1.1.14 (2015-06-09)
