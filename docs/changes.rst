@@ -4,10 +4,20 @@ Changes
 Release History
 ---------------
 
+1.1.15 (2015-08-16)
+^^^^^^^^^^^^^^^^^^^
+* Added the ability to read and write use file objects as well as filenames
+  when reading, writing and saving MIDI files. This allows you to create a
+  MIDI file dynamically, save it to an io.BytesIO, and then play that in-memory
+  file, without having to create an intermediate external file. Of course the
+  file (and/or the MidiFile) can still be saved to an external file.
+
+  (Implemented by Brian O'Neill.)
+
 1.1.14 (2015-06-09)
 ^^^^^^^^^^^^^^^^^^^
 
-* bugfix: merge_tracks() concatinated the tracks instead of merging
+* bugfix: merge_tracks() concatenated the tracks instead of merging
   them.  This caused tracks to be played back one by one. (Issue #28,
   reported by Charles Gillingham.)
 
