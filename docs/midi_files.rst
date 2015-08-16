@@ -2,7 +2,7 @@ MIDI Files
 ==========
 
 MidiFile objects can be used to read, write and play back MIDI
-files. (Writing is not yet implemented.)
+files.
 
 
 Opening a File
@@ -74,14 +74,15 @@ You can create a new file by calling MidiFile without the ``filename``
 argument. The file can then be saved by calling the ``save()`` method::
 
     from mido.midifies import MidiTrack
+    from mido.messages import Messages
 
     with MidiFile() as mid:
         track = MidiTrack()
-        tracks.append(track)
+        mid.tracks.append(track)
 
-        tracks.append(midi.Message('program_change', program=12, time=0))
-        tracks.append(midi.Message('note_on', note=64, velocity=64, time=32)
-        tracks.append(midi.Message('note_off', note=64, velocity=127, time=32)
+        track.append(Message('program_change', program=12, time=0))
+        track.append(Message('note_on', note=64, velocity=64, time=32)
+        track.append(Message('note_off', note=64, velocity=127, time=32)
 
         mid.save('new_song.mid')
 
@@ -95,6 +96,12 @@ If there is no 'end_of_track' message at the end of a track, one will
 be written anyway.
 
 A complete example can be found in ``examples/midifiles/``.
+
+The ``save`` method takes either a filename (``str``) or a file object
+such as an in-memory binary file (an ``io.BytesIO``). If you pass a file
+object, ``save`` does not close it. Similarly, if you pass a file object
+to ``MidiFile`` as a context manager, the file is not closed when the
+the context manager exits.
 
 
 File Types
