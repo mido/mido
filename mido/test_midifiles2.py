@@ -37,7 +37,7 @@ class TestMidiFileIO(TestCase):
             track.append(Message('note_off', note=64, velocity=127, time=128))
 
             # midi.save('new_song.mid')
-            midi.save(cls.bio)
+            midi.save(file=cls.bio)
 
     def test_midifile_to_bytesIO(self):
         """Compare bio to expected value.
@@ -49,7 +49,7 @@ class TestMidiFileIO(TestCase):
         """Create MidiFile from `self.bio`; temporarily trap stdout and call `print_tracks()`;
         compare what was printed to expected value.
         """
-        midifile = MidiFile(self.bio)
+        midifile = MidiFile(file=self.bio)
 
         _stdout = sys.stdout
         sio= io.StringIO()
@@ -65,7 +65,7 @@ class TestMidiFileIO(TestCase):
         Also check that writes to, reads from external file close file when
         use of them is finished.
         """
-        midifile = MidiFile(self.bio)
+        midifile = MidiFile(file=self.bio)
 
         # Get a temp file name, don't leave the file open,
         # but don't delete it either, just to reserve the name.
@@ -80,7 +80,7 @@ class TestMidiFileIO(TestCase):
         # read midifile back in to another BytesIO
         bio2 = io.BytesIO()
         with MidiFile(tempfilename) as midi2:   # closes it again
-            midi2.save(bio2)
+            midi2.save(file=bio2)
         self.assertFalse(bio2.closed)
         self.assertTrue(named_tempfile.file.closed)
 

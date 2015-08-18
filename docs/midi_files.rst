@@ -97,11 +97,14 @@ be written anyway.
 
 A complete example can be found in ``examples/midifiles/``.
 
-The ``save`` method takes either a filename (``str``) or a file object
-such as an in-memory binary file (an ``io.BytesIO``). If you pass a file
-object, ``save`` does not close it. Similarly, if you pass a file object
-to ``MidiFile`` as a context manager, the file is not closed when the
-the context manager exits.
+The ``save`` method takes either a filename (``str``) or, using the ``file``
+keyword parameter, a file object such as an in-memory binary file (an
+``io.BytesIO``). If you pass a file object, ``save`` does not close it.
+Similarly, the ``MidiFile`` constructor can take either a filename, or
+a file object by using the ``file`` keyword parameter. if you pass a file
+object to ``MidiFile`` as a context manager, the file is not closed when
+the context manager exits. Examples can be found in ``test_midifiles2.py``.
+
 
 
 File Types

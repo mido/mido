@@ -208,9 +208,14 @@ def merge_tracks(tracks):
 
 
 class MidiFile:
-    def __init__(self, filename_or_file=None, type=1,
-                 ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
+    def __init__(self, filename=None, file=None,
+                 type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
                  charset='latin1'):
+
+        assert filename is None or isinstance(filename, str)
+        assert file is None or isinstance(file, io.BufferedIOBase)
+
+        filename_or_file = filename or file     # filename takes precedence
         self.filename_or_file = filename_or_file
         self.tracks = []
         self.charset = charset
@@ -433,21 +438,27 @@ class MidiFile:
         else:
             return False
 
-    def save(self, filename_or_file=None):
-        """Save to a file.
+    def save(self, filename=None, file=None):
+        """Save to a file, given by filename (str) or file (file object),
+        or by filename or file already passed to constructor.
 
-        If filename_or_file is passed, self.filename_or_file will be set to this
-        value, and the data will be saved to this file. Otherwise
-        self.filename_or_file is used.
+        If filename or file is passed, self.filename_or_file will be set to
+        filename if given, else file if given, and the data will be saved to
+        the specified file. Otherwise the existing self.filename_or_file is
+        used (raising ValueError if that too is None).
 
-        Raises ValueError both filename_or_file and self.filename_or_file are None,
+        Raises ValueError if both filename_or_file and self.filename_or_file are None,
         or if a type 0 file has != one track.
         """
         if self.type == 0 and len(self.tracks) != 1:
-            raise ValueError('type 1 file must have exactly 1 track')
+            raise ValueError('type 0 file must have exactly 1 track')
 
+        assert filename is None or isinstance(filename, str)
+        assert file is None or isinstance(file, io.BufferedIOBase)
+
+        filename_or_file = filename or file     # filename takes precedence
         if filename_or_file is self.filename_or_file is None:
-            raise ValueError('no file name')
+            raise ValueError('no file name or file')
 
         if filename_or_file is not None:
             self.filename_or_file = filename_or_file
