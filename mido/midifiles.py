@@ -33,7 +33,6 @@ from .messages import build_message, Message, get_spec
 from .midifiles_meta import MetaMessage, _build_meta_message, meta_charset
 from .midifiles_meta import MetaSpec, add_meta_spec, encode_variable_int
 from . import midifiles_meta
-import io
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -44,18 +43,8 @@ class ByteReader(object):
     """
     Reads bytes from a file.
     """
-    def __init__(self, filename_or_file):
-        """
-        :param filename_or_file: a str (filename, as previously),
-                             or an opened file handle,
-                             possibly an in-memory file (an io.BytesIO stream)
-        """
-        if isinstance(filename_or_file, str):
-            with open(filename_or_file, 'rb') as f:
-                values = f.read()
-        else:
-            values = filename_or_file.getvalue()
-        self._buffer = list(bytearray(values))
+    def __init__(self, filename):
+        self._buffer = list(bytearray(open(filename, 'rb').read()))
         self.pos = 0
         self._eof = EOFError('unexpected end of file')
 
@@ -109,12 +98,9 @@ class ByteReader(object):
 
 
 class ByteWriter(object):
-    def __init__(self, filename_or_file):
-        self.file_created = isinstance(filename_or_file, str)
-        if self.file_created:
-            filename_or_file = open(filename_or_file, 'wb')
-        self.file = filename_or_file
-
+    def __init__(self, filename):
+        self.file = open(filename, 'wb')
+    
     def write(self, bytes):
         self.file.write(bytearray(bytes))
 
@@ -137,8 +123,7 @@ class ByteWriter(object):
         return self
 
     def __exit__(self, type, value, traceback):
-        if self.file_created:
-            self.file.close()
+        self.file.close()
         return False
 
 class MidiTrack(list):
@@ -208,19 +193,14 @@ def merge_tracks(tracks):
 
 
 class MidiFile:
-    def __init__(self, filename=None, file=None,
-                 type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
+    def __init__(self, filename=None, type=1,
+                 ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
                  charset='latin1'):
-
-        assert filename is None or isinstance(filename, str)
-        assert file is None or isinstance(file, io.BufferedIOBase)
-
-        filename_or_file = filename or file     # filename takes precedence
-        self.filename_or_file = filename_or_file
+        self.filename = filename
         self.tracks = []
         self.charset = charset
 
-        if filename_or_file is None:
+        if filename is None:
             if type not in range(3):
                 raise ValueError(
                     'invalid format {} (must be 0, 1 or 2)'.format(format))
@@ -242,7 +222,7 @@ class MidiFile:
         return track
 
     def _load(self):
-        with ByteReader(self.filename_or_file) as self._file, \
+        with ByteReader(self.filename) as self._file, \
                 meta_charset(self.charset):
             # Read header (16 bytes)
             magic = self._file.peek_list(4)
@@ -438,32 +418,26 @@ class MidiFile:
         else:
             return False
 
-    def save(self, filename=None, file=None):
-        """Save to a file, given by filename (str) or file (file object),
-        or by filename or file already passed to constructor.
+    def save(self, filename=None):
+        """Save to a file.
 
-        If filename or file is passed, self.filename_or_file will be set to
-        filename if given, else file if given, and the data will be saved to
-        the specified file. Otherwise the existing self.filename_or_file is
-        used (raising ValueError if that too is None).
+        If filename is passed, self.filename will be set to this
+        value, and the data will be saved to this file. Otherwise
+        self.filename is used.
 
-        Raises ValueError if both filename_or_file and self.filename_or_file are None,
-        or if a type 0 file has != one track.
+        Raises ValueError both filename and self.filename are None,
+        or if a type 1 file has != one track.
         """
         if self.type == 0 and len(self.tracks) != 1:
-            raise ValueError('type 0 file must have exactly 1 track')
+            raise ValueError('type 1 file must have exactly 1 track')
 
-        assert filename is None or isinstance(filename, str)
-        assert file is None or isinstance(file, io.BufferedIOBase)
+        if filename is self.filename is None:
+            raise ValueError('no file name')
 
-        filename_or_file = filename or file     # filename takes precedence
-        if filename_or_file is self.filename_or_file is None:
-            raise ValueError('no file name or file')
+        if filename is not None:
+            self.filename = filename
 
-        if filename_or_file is not None:
-            self.filename_or_file = filename_or_file
-
-        with ByteWriter(self.filename_or_file) as self._file, \
+        with ByteWriter(self.filename) as self._file, \
               meta_charset(self.charset):
             self._file.write(b'MThd')
 
@@ -529,7 +503,7 @@ class MidiFile:
                 
     def __repr__(self):
         return '<midi file {!r} type {}, {} tracks, {} messages>'.format(
-            self.filename_or_file, self.type, len(self.tracks),
+            self.filename, self.type, len(self.tracks),
             sum([len(track) for track in self.tracks]))
  
     def __enter__(self):
