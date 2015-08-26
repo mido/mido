@@ -148,7 +148,7 @@ def check_channel(channel):
     """Check type and value of channel.
 
     Raises TypeError if the value is not an integer, and ValueError if
-    it is outside range 0..127.
+    it is outside range 0..15.
     """
     if not isinstance(channel, int):
         raise TypeError('channel must be an integer')
@@ -268,7 +268,7 @@ class BaseMessage(object):
     def copy(self, **overrides):
         """Return a copy of the message.
 
-        Attributes will be overriden by the passed keyword arguments.
+        Attributes will be overridden by the passed keyword arguments.
         Only message specific attributes can be overridden. The message
         type can not be changed.
 
@@ -286,7 +286,7 @@ class BaseMessage(object):
         for name, value in overrides.items():
             try:
                 # setattr() is responsible for checking the
-                # name and type of the atrribute.
+                # name and type of the attribute.
                 setattr(message, name, value)
             except AttributeError as err:
                 raise ValueError(*err.args)
@@ -386,7 +386,7 @@ class Message(BaseMessage):
                 '{} message has no attribute {}'.format(self.type, name))
 
     def __delattr__(self, name):
-        raise AttributeError('attribute can not be deleted')
+        raise AttributeError('attribute cannot be deleted')
 
     def bytes(self):
         """Encode message and return as a list of integers."""
