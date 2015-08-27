@@ -35,7 +35,7 @@ def _check_error(return_value):
         if return_value == pm.pmHostError:
             buf = create_string_buffer(80)
             pm.lib.Pm_GetHostErrorText(buf,80)
-            raise IOError(buf.raw.decode().rstrip('\0'))
+            raise IOError("Host Error: " + buf.raw.decode().rstrip('\0'))
         raise IOError(pm.lib.Pm_GetErrorText(return_value))
     
     
