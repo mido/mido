@@ -13,9 +13,9 @@ from ..parser import Parser
 from ..messages import Message
 from ..ports import BaseInput, BaseOutput, sleep
 from . import portmidi_init as pm
-from ctypes import create_string_buffer
 
 _state = {'port_count': 0}
+
 
 def _refresh_port_list():
     if _state['port_count'] == 0:
@@ -31,11 +31,9 @@ def _check_error(return_value):
 
     The exception will be raised with the error message from PortMidi.
     """
-    if return_value < 0:
-        if return_value == pm.pmHostError:
-            buf = create_string_buffer(80)
-            pm.lib.Pm_GetHostErrorText(buf,80)
-            raise IOError("Host Error: " + buf.raw.decode().rstrip('\0'))
+    if return_value == pm.pmHostError:
+        raise IOError('PortMidi Host Error: {}'.format(pm.get_host_error_message()))
+    elif return_value < 0:
         raise IOError(pm.lib.Pm_GetErrorText(return_value))
     
     
