@@ -4,6 +4,14 @@ Changes
 Release History
 ---------------
 
+1.1.15 ()
+^^^^^^^^^^^^^^^^^^^
+
+* PortMidi backend now uses pm.lib.Pm_GetHostErrorText() to get host
+  error messages instead of just the generic "PortMidi: \`Host error\'".
+  (Implemented by Tom Manderson.)
+
+
 1.1.14 (2015-06-09)
 ^^^^^^^^^^^^^^^^^^^
 
