@@ -7,6 +7,14 @@ Release History
 1.1.15 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* Added the ability to use file objects as well as filenames when reading,
+  writing and saving MIDI files. This allows you to create a MIDI file
+  dynamically, possibly *not* using mido, save it to an io.BytesIO, and
+  then play that in-memory file, without having to create an intermediate
+  external file. Of course the memory file (and/or the MidiFile) can still
+  be saved to an external file.
+  (Implemented by Brian O'Neill.)
+
 * PortMidi backend now uses pm.lib.Pm_GetHostErrorText() to get host
   error messages instead of just the generic "PortMidi: \`Host error\'".
   (Implemented by Tom Manderson.)
@@ -15,7 +23,7 @@ Release History
 1.1.14 (2015-06-09)
 ^^^^^^^^^^^^^^^^^^^
 
-* bugfix: merge_tracks() concatinated the tracks instead of merging
+* bugfix: merge_tracks() concatenated the tracks instead of merging
   them.  This caused tracks to be played back one by one. (Issue #28,
   reported by Charles Gillingham.)
 
