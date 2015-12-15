@@ -62,9 +62,9 @@ The ``time`` attribute is not included in comparisons::
     >>> a = Message('note_on', time=1)
     >>> b = Message('note_on', time=2)
     >>> a == b
-    True    
+    True
 
-The reson why time is not compared is that it's not regarded as part
+The reason why time is not compared is that it's not regarded as part
 of the messages, but rather something that is tagged into it. To
 include ``time`` in the comparison you can do::
 

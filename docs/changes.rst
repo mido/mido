@@ -38,12 +38,12 @@ Release History
   Callbacks can now be set and cleared at any time by either passing
   one to ``open_input()`` or updating the ``callback`` attribute.
 
-  This causes some slight changes to the behaviour of the port when
+  This causes some slight changes to the behavior of the port when
   using callbacks. Previously if you opened the port with a callback
   and then set ``port.callback = None`` the callback thread would keep
   running but drop any incoming messages. If you do the same now the
   callback thread will stop and the port will return normal
-  non-callback behaviour. If you want the callback thread to drop
+  non-callback behavior. If you want the callback thread to drop
   messages you can set ``port.callback = lambda message: None``.
 
   Also, ``receive()`` no longer checks ``self.callback``. This was
@@ -122,7 +122,7 @@ Release History
 * mido-ports now prints port names in single ticks.
 
 * MidiFile.__iter__() now yields end_of_track. This means playback
-  will end there instead of at the preceeding message.
+  will end there instead of at the preceding message.
 
 
 1.1.9 (2014-10-06)
@@ -197,7 +197,7 @@ Release History
 
 * bugfix: didn't handle MIDI files without track headers.
 
-* bugfix: MIDI files didn't handle channel prefix > 15 
+* bugfix: MIDI files didn't handle channel prefix > 15
 
 * bugfix: MIDI files didn't handle SMPTE offset with frames > 29
 
@@ -237,7 +237,7 @@ Release History
 * bugfix: used old exception handling syntax in rtmidi backend which
   broke in 3.3
 
-* fixed broken link in 
+* fixed broken link in
 
 
 1.1.1 (2013-10-04)

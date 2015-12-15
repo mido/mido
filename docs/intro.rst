@@ -41,9 +41,6 @@ However, you can not change the type of a message.
     easier to work with in Python but you may want to add and subtract
     1 when communicating with the user.
 
-When you pass a keyword argument or set an attribute, the name, type
-and value is checked. This ensures that 
-
 You can make a copy of a message, optionally overriding one or more
 attributes, for example::
 
@@ -145,7 +142,7 @@ Other port types include:
 * ``IOPort``, which wraps around an input and an output port and allows you to send and receive messages as if the two were the same port.
 
 Ports of all types look and behave the same way, so they can be used
-interchangingly.
+interchangeably.
 
 It's easy to write new port types. See :doc:`implementing_ports`.
 

@@ -158,7 +158,7 @@ class BaseInput(BasePort):
         """Return the next message.
 
         This will block until a message arrives.
-        
+
         If you pass block=False it will not block and instead return
         None if there is no available message.
 
@@ -217,7 +217,7 @@ class BaseOutput(BasePort):
 
     def __init__(self, name='', autoreset=False, **kwargs):
         """Create an output port
-        
+
         name is the port name, as returned by output_names(). If
         name is not passed, the default output is used instead.
         """
@@ -324,7 +324,7 @@ class MultiPort(BaseIOPort):
         self._messages.extend(multi_receive(self.ports,
                                             yield_ports=self.yield_ports,
                                             block=False))
-        
+
 
 def multi_receive(ports, yield_ports=False, block=True):
     """Receive messages from multiple ports.
@@ -332,7 +332,7 @@ def multi_receive(ports, yield_ports=False, block=True):
     Generates messages from ever input port. The ports are polled in
     random order for fairness, and all messages from each port are
     yielded before moving on to the next port.
-    
+
     If yield_ports=True, (port, message) is yielded instead of just
     the message.
 
@@ -342,7 +342,7 @@ def multi_receive(ports, yield_ports=False, block=True):
         # Make a shuffled copy of the port list.
         ports = list(ports)
         random.shuffle(ports)
-        
+
         for port in ports:
             if not port.closed:
                 for message in port.iter_pending():

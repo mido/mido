@@ -35,7 +35,7 @@ example is a socket port, which is a wrapper around a TCP/IP socket.
 
 No matter how the port is implemented internally or what it does, it
 will look and behave like any other Mido port, so all kinds of ports
-can be used interchangingly.
+can be used interchangeably.
 
 
 Common Things
@@ -111,7 +111,7 @@ called when the port closes::
     with mido.open_output('Integra-7') as outport:
         for msg in inport:
             outport.send(msg)
-    # reset() is called here 
+    # reset() is called here
 
     outport.close()  # or here
 
@@ -152,7 +152,7 @@ you wait for messages::
 
         do_other_stuff()
 
-In an event based system like a GUI where you don'w write the main
+In an event based system like a GUI where you don't write the main
 loop you can install a handler that's called periodically. Here's an
 example for GTK::
 
@@ -200,7 +200,7 @@ port or later by setting the ``callback`` attribute::
 .. note::
 
     Since the callback runs in a different thread you may need to use
-    locks or other syncronization mechanisms to keep your main program and
+    locks or other synchronization mechanisms to keep your main program and
     the callback from stepping on each other's toes.
 
 Calling ``receive()``, ``__iter__()``, ``pending()`` or

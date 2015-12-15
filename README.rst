@@ -47,8 +47,8 @@ Main Features
 * full support for all 18 messages defined by the MIDI standard.
 
 * standard port API allows all kinds of input and output ports to be
-  used interchangingly. New port types can be written by subclassing
-  and overriding a few methods.
+  used interchangeably. New port types can be written by subclassing
+  and overriding a few methods.s
 
 * includes a reusable MIDI parser.
 
@@ -138,7 +138,7 @@ Known Bugs
   exception.
 
   This regularity occurs in two places: in PortMidi when you close a
-  port that has a callback, and in pygame when you close any port.
+  port that has a callback, and in Pygame when you close any port.
 
 
 Source Code

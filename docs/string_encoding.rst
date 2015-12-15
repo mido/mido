@@ -72,7 +72,7 @@ To parse messages from a stream, you can use
 This will return every valid message in the stream. If a message could
 not be parsed, ``message`` will be ``None`` and ``error`` will be an error
 message describing what went wrong, as well as the line number where
-the error occured.
+the error occurred.
 
 The argument to ``parse_string_stream()`` can be any object that
 generates strings when iterated over, such as a file or a list.

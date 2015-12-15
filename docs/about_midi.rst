@@ -46,7 +46,7 @@ Messages can be divided into four groups:
   patches, and change controllers (pitch bend, modulation wheel, pedal
   and many others). There are 16 channels, and the channel number is
   encoded in the lower 4 bits of the status byte. Each synth can
-  choose which channel (or channels) it reponds to. This can typically
+  choose which channel (or channels) it responds to. This can typically
   be configured.
 
 * System common messages.

@@ -86,7 +86,7 @@ Attribute       Values          Default
 text            string          ''
 ==============  ==============  ========
 
-Marks a point of interest in a MIDI file. 
+Marks a point of interest in a MIDI file.
 Can be used as the marker for the beginning of a verse, solo, etc.
 
 
@@ -306,7 +306,7 @@ Some additional functions are available::
     encode_string(unicode_string)
     decode_string(byte_list)
 
-These convert between a unicode string and a list of bytes using the
+These convert between a Unicode string and a list of bytes using the
 current character set in the file.
 
 If your message contains only one string with the attribute name
