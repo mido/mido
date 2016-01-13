@@ -64,7 +64,7 @@ The ``time`` attribute is not included in comparisons::
     >>> a == b
     True    
 
-The reson why time is not compared is that it's not regarded as part
+The reason why time is not compared is that it's not regarded as part
 of the messages, but rather something that is tagged into it. To
 include ``time`` in the comparison you can do::
 
@@ -121,7 +121,7 @@ or::
 System Exclusive Messages
 -------------------------
 
-Sytem Exclusive (SysEx) messages are used to send device specific
+System Exclusive (SysEx) messages are used to send device specific
 data. The ``data`` attribute is a tuple of data bytes which serves as
 the payload of the message::
 
