@@ -121,7 +121,7 @@ or::
 System Exclusive Messages
 -------------------------
 
-Sytem Exclusive (SysEx) messages are used to send device specific
+System Exclusive (SysEx) messages are used to send device specific
 data. The ``data`` attribute is a tuple of data bytes which serves as
 the payload of the message::
 
