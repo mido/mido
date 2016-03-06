@@ -79,9 +79,9 @@ argument. The file can then be saved by calling the ``save()`` method::
         track = MidiTrack()
         tracks.append(track)
 
-        tracks.append(midi.Message('program_change', program=12, time=0))
-        tracks.append(midi.Message('note_on', note=64, velocity=64, time=32)
-        tracks.append(midi.Message('note_off', note=64, velocity=127, time=32)
+        tracks.append(mido.Message('program_change', program=12, time=0))
+        tracks.append(mido.Message('note_on', note=64, velocity=64, time=32)
+        tracks.append(mido.Message('note_off', note=64, velocity=127, time=32)
 
         mid.save('new_song.mid')
 
