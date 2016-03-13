@@ -7,6 +7,11 @@ Release History
 1.1.15 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* Changes to ``MidiTrack``:
+
+  * Slicing a track (``track[1:10]``) will now return a track rather
+    than a ``list`` object.
+
 * Added the ability to use file objects as well as filenames when reading,
   writing and saving MIDI files. This allows you to create a MIDI file
   dynamically, possibly *not* using mido, save it to an io.BytesIO, and
