@@ -7,6 +7,9 @@ Release History
 1.1.15 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* Bugfix: ``PortServer`` called ``__init__`` from the wrong
+  class. (Fix by Nathan Hurst.)
+
 * Changes to ``MidiTrack``:
 
   * ``MidiTrack()`` now takes a as a parameter an iterable of
