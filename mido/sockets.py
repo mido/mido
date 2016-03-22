@@ -24,7 +24,7 @@ class PortServer(MultiPort):
     # Todo: queue size.
 
     def __init__(self, host, portno, backlog=1):
-        BaseIOPort.__init__(self, format_address(host, portno))
+        MultiPort.__init__(self, format_address(host, portno))
         self.ports = []
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
