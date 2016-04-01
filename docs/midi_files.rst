@@ -73,7 +73,7 @@ Creating a New File
 You can create a new file by calling MidiFile without the ``filename``
 argument. The file can then be saved by calling the ``save()`` method::
 
-    from mido.midifies import MidiTrack
+    from mido.midifiles import MidiTrack
 
     with MidiFile() as mid:
         track = MidiTrack()
