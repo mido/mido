@@ -44,15 +44,15 @@ Mido is short for MIDi Objects.
 Source code
 -----------
 
-Latest stable release: http://github.com/olemb/mido/
+Latest stable release: https://github.com/olemb/mido/
 
-Latest development version: http://github.com/olemb/mido/tree/develop/
+Latest development version: https://github.com/olemb/mido/tree/develop/
 
 
 About This Document
 -------------------
 
-This document is available at http://mido.readthedocs.org/
+This document is available at https://mido.readthedocs.io/
 
 To build locally::
 

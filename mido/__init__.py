@@ -101,7 +101,7 @@ from .syx import read_syx_file, write_syx_file
 
 __author__ = 'Ole Martin Bjorndalen'
 __email__ = 'ombdalen@gmail.com'
-__url__ = 'http://mido.readthedocs.org/'
+__url__ = 'https://mido.readthedocs.io/'
 __license__ = 'MIT'
 __version__ = '1.1.14'
 

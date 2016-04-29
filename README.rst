@@ -31,7 +31,7 @@ designed to be as straight forward and Pythonic as possible:
     >>> for message in MidiFile('song.mid').play():
     ...     output.send(message)
 
-Full documentation at http://mido.readthedocs.org/
+Full documentation at https://mido.readthedocs.io/
 
 
 Main Features
@@ -144,9 +144,9 @@ Known Bugs
 Source Code
 -----------
 
-Latest version of the code: http://github.com/olemb/mido/ .
+Latest version of the code: https://github.com/olemb/mido/ .
 
-Latest development version: http://github.com/olemb/mido/tree/develop/
+Latest development version: https://github.com/olemb/mido/tree/develop/
 
 
 License
