@@ -40,6 +40,8 @@ Release History
   error messages instead of just the generic "PortMidi: \`Host error\'".
   (Implemented by Tom Manderson.)
 
+Thanks to Richard Vogl and Tim Cook for reporting errors in the docs.
+
 
 1.1.14 (2015-06-09)
 ^^^^^^^^^^^^^^^^^^^
