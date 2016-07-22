@@ -299,6 +299,7 @@ class IOPort(BaseIOPort):
         self.name = '{} + {}'.format(str(input.name), str(output.name))
         self._messages = self.input._messages
         self.closed = False
+        self._send_lock = threading.Lock()
 
     def _close(self):
         self.input.close()
