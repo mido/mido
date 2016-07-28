@@ -9,6 +9,7 @@ Module content:
 """
 
 from __future__ import unicode_literals
+import threading
 import time
 import random
 from collections import deque
@@ -223,6 +224,7 @@ class BaseOutput(BasePort):
         """
         BasePort.__init__(self, name, **kwargs)
         self.autoreset = autoreset
+        self.send_lock = threading.Lock()
 
     def _send(self, message):
         pass
@@ -238,7 +240,9 @@ class BaseOutput(BasePort):
         elif self.closed:
             raise ValueError('send() called on closed port')
 
+        self.send_lock.acquire()
         self._send(message.copy())
+        self.send_lock.release()
 
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels
@@ -271,7 +275,13 @@ class BaseOutput(BasePort):
                               control=ALL_SOUNDS_OFF))
 
 class BaseIOPort(BaseInput, BaseOutput):
-    pass
+    def __init__(self, name='', **kwargs):
+        """Create an IO port.
+
+        name is the port name, as returned by ioport_names().
+        """
+        BaseInput.__init__(self, name, **kwargs)
+        BaseOutput.__init__(self, name, **kwargs)
 
 class IOPort(BaseIOPort):
     """Input / output port.
@@ -289,6 +299,7 @@ class IOPort(BaseIOPort):
         self.name = '{} + {}'.format(str(input.name), str(output.name))
         self._messages = self.input._messages
         self.closed = False
+        self._send_lock = threading.Lock()
 
     def _close(self):
         self.input.close()
