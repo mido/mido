@@ -224,7 +224,7 @@ class BaseOutput(BasePort):
         """
         BasePort.__init__(self, name, **kwargs)
         self.autoreset = autoreset
-        self.send_lock = threading.Lock()
+        self._send_lock = threading.Lock()
 
     def _send(self, message):
         pass
@@ -240,9 +240,8 @@ class BaseOutput(BasePort):
         elif self.closed:
             raise ValueError('send() called on closed port')
 
-        self.send_lock.acquire()
-        self._send(message.copy())
-        self.send_lock.release()
+        with self._send_lock:
+            self._send(message.copy())
 
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels
