@@ -9,6 +9,7 @@ Module content:
 """
 
 from __future__ import unicode_literals
+import functools
 import threading
 import time
 import random
@@ -19,6 +20,16 @@ from .messages import Message
 # How many seconds to sleep before polling again.
 _DEFAULT_SLEEP_TIME = 0.001
 _sleep_time = _DEFAULT_SLEEP_TIME
+
+
+def serialized(func):
+  """Decorator to provide mutual exclusion for method using _lock attribute."""
+  @functools.wraps(func)
+  def serialized_method(self, *args, **kwargs):
+    lock = getattr(self, '_lock')
+    with lock:
+      return func(self, *args, **kwargs)
+  return serialized_method
 
 # Todo: document this more.
 def sleep():
@@ -47,6 +58,7 @@ class BasePort(object):
         self.closed = True
         self._open(**kwargs)
         self.closed = False
+        self._lock = threading.RLock()
 
     def _open(self, **kwargs):
         pass
@@ -54,6 +66,7 @@ class BasePort(object):
     def _close(self):
         pass
 
+    @serialized
     def close(self):
         """Close the port.
 
@@ -129,6 +142,7 @@ class BaseInput(BasePort):
     def _receive(self, block=True):
         pass
 
+    @serialized
     def pending(self):
         """Return how many messages are ready to be received.
 
@@ -148,6 +162,7 @@ class BaseInput(BasePort):
 
         return len(self._messages)
 
+    @serialized
     def iter_pending(self):
         """Iterate through pending messages."""
         self._check_callback()
@@ -155,6 +170,7 @@ class BaseInput(BasePort):
         while self._messages:
             yield self._messages.popleft()
 
+    @serialized
     def receive(self, block=True):
         """Return the next message.
 
@@ -224,11 +240,11 @@ class BaseOutput(BasePort):
         """
         BasePort.__init__(self, name, **kwargs)
         self.autoreset = autoreset
-        self._send_lock = threading.Lock()
-
+ 
     def _send(self, message):
         pass
 
+    @serialized
     def send(self, message):
         """Send a message on the port.
 
@@ -240,9 +256,9 @@ class BaseOutput(BasePort):
         elif self.closed:
             raise ValueError('send() called on closed port')
 
-        with self._send_lock:
-            self._send(message.copy())
+        self._send(message.copy())
 
+    @serialized
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels
         """
@@ -257,6 +273,7 @@ class BaseOutput(BasePort):
                                   channel=channel,
                                   control=control))
 
+    @serialized
     def panic(self):
         """Send "All Sounds Off" on all channels.
 
@@ -298,7 +315,7 @@ class IOPort(BaseIOPort):
         self.name = '{} + {}'.format(str(input.name), str(output.name))
         self._messages = self.input._messages
         self.closed = False
-        self._send_lock = threading.Lock()
+        self._lock = threading.RLock()
 
     def _close(self):
         self.input.close()
