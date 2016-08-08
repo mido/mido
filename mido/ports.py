@@ -59,7 +59,7 @@ class BasePort(object):
         self._open(**kwargs)
         self.closed = False
         self._lock = threading.RLock()
-
+ 
     def _open(self, **kwargs):
         pass
 
@@ -94,6 +94,7 @@ class BasePort(object):
         self.close()
         return False
 
+    @serialized
     def __repr__(self):
         if self.closed:
             state = 'closed'
@@ -131,9 +132,10 @@ class BaseInput(BasePort):
         name is the port name, as returned by input_names(). If
         name is not passed, the default input is used instead.
         """
+        BasePort.__init__(self, name, **kwargs)
         self._parser = Parser()
         self._messages = self._parser._parsed_messages  # Shortcut.
-        BasePort.__init__(self, name, **kwargs)
+
 
     def _check_callback(self):
         if hasattr(self, 'callback') and self.callback is not None:
@@ -206,6 +208,7 @@ class BaseInput(BasePort):
 
             sleep()
 
+    @serialized
     def __iter__(self):
         """Iterate through messages until the port closes."""
         # This could have simply called receive() in a loop, but that
