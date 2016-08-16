@@ -309,6 +309,7 @@ class BaseOutput(BasePort):
                               channel=channel,
                               control=ALL_SOUNDS_OFF))
 
+
 class BaseIOPort(BaseInput, BaseOutput):
     def __init__(self, name='', **kwargs):
         """Create an IO port.
@@ -317,6 +318,7 @@ class BaseIOPort(BaseInput, BaseOutput):
         """
         BaseInput.__init__(self, name, **kwargs)
         BaseOutput.__init__(self, name, **kwargs)
+
 
 class IOPort(BaseIOPort):
     """Input / output port.
