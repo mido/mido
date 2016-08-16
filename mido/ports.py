@@ -162,6 +162,9 @@ class BaseInput(BasePort):
         parser. I will then return the number of messages available to
         be received.
 
+        The value will not be reliable when receiving messages in
+        multiple threads.
+
         If this is called on a closed port it will work as normal
         except it won't try to read from the device.
         """
