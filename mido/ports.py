@@ -175,9 +175,12 @@ class BaseInput(BasePort):
     def iter_pending(self):
         """Iterate through pending messages."""
         self._check_callback()
-        self._receive(block=False)
-        while self._messages:
-            yield self._messages.popleft()
+        while True:
+            message = self.receive(block=False)
+            if message is None:
+                return
+            else:
+                yield message
 
     @serialized
     def receive(self, block=True):
