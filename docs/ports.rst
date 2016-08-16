@@ -38,6 +38,10 @@ will look and behave like any other Mido port, so all kinds of ports
 can be used interchangeably.
 
 
+.. note:: Sending and receiving messages is thread safe. Opening and
+          closing ports and listing port names are not.
+
+
 Common Things
 -------------
 
