@@ -23,13 +23,17 @@ _sleep_time = _DEFAULT_SLEEP_TIME
 
 
 def serialized(func):
-  """Decorator to provide mutual exclusion for method using _lock attribute."""
-  @functools.wraps(func)
-  def serialized_method(self, *args, **kwargs):
-    lock = getattr(self, '_lock')
-    with lock:
-      return func(self, *args, **kwargs)
-  return serialized_method
+    """Decorator which provides mutual exclusion for method.
+
+    Requires _lock attribute.
+    """
+    @functools.wraps(func)
+    def serialized_method(self, *args, **kwargs):
+        lock = getattr(self, '_lock')
+        with lock:
+            return func(self, *args, **kwargs)
+    return serialized_method
+
 
 # Todo: document this more.
 def sleep():
@@ -39,14 +43,17 @@ def sleep():
     be set with set_sleep_time()."""
     time.sleep(_sleep_time)
 
+
 def set_sleep_time(seconds=_DEFAULT_SLEEP_TIME):
     """Set the number of seconds sleep() will sleep."""
     global _sleep_time
     _sleep_time = seconds
 
+
 def get_sleep_time():
     """Get number of seconds sleep() will sleep."""
     return _sleep_time
+
 
 class BasePort(object):
     """
