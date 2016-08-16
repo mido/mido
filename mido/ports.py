@@ -243,6 +243,7 @@ class BaseInput(BasePort):
                 else:
                     raise
 
+
 class BaseOutput(BasePort):
     """
     Base class for output port.
