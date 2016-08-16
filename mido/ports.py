@@ -212,7 +212,7 @@ class BaseInput(BasePort):
 
         # Poll and sleep until a message arrives.
         # If another thread calls receive() it will wait for the
-        # lock until we return. (Only on thread will poll and wait.)
+        # lock until we return. (Only one thread will poll and wait.)
         while True:
             self._receive(block=block)
             if self._messages:
