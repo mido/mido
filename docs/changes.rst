@@ -7,6 +7,9 @@ Release History
 1.1.15 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* Sending and receiving messages is now thread safe. (Implemented by
+  Adam Roberts.)
+
 * Bugfix: ``PortServer`` called ``__init__`` from the wrong
   class. (Fix by Nathan Hurst.)
 
