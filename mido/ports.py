@@ -9,7 +9,6 @@ Module content:
 """
 
 from __future__ import unicode_literals
-import functools
 import threading
 import time
 import random
@@ -20,19 +19,6 @@ from .messages import Message
 # How many seconds to sleep before polling again.
 _DEFAULT_SLEEP_TIME = 0.001
 _sleep_time = _DEFAULT_SLEEP_TIME
-
-
-def serialized(func):
-    """Decorator which provides mutual exclusion for method.
-
-    Requires _lock attribute.
-    """
-    @functools.wraps(func)
-    def serialized_method(self, *args, **kwargs):
-        lock = getattr(self, '_lock')
-        with lock:
-            return func(self, *args, **kwargs)
-    return serialized_method
 
 
 # Todo: document this more.
@@ -73,7 +59,6 @@ class BasePort(object):
     def _close(self):
         pass
 
-    @serialized
     def close(self):
         """Close the port.
 
@@ -81,15 +66,16 @@ class BasePort(object):
         is automatically closed when the object goes out of scope or
         is garbage collected.
         """
-        if not self.closed:
-            if hasattr(self, 'autoreset') and self.autoreset:
-                try:
-                    self.reset()
-                except IOError:
-                    pass
+        with self._lock:
+            if not self.closed:
+                if hasattr(self, 'autoreset') and self.autoreset:
+                    try:
+                        self.reset()
+                    except IOError:
+                        pass
 
-            self._close()
-            self.closed = True
+                self._close()
+                self.closed = True
 
     def __del__(self):
         self.close()
@@ -101,7 +87,6 @@ class BasePort(object):
         self.close()
         return False
 
-    @serialized
     def __repr__(self):
         if self.closed:
             state = 'closed'
@@ -151,7 +136,6 @@ class BaseInput(BasePort):
     def _receive(self, block=True):
         pass
 
-    @serialized
     def pending(self):
         """Return how many messages are ready to be received.
 
@@ -168,16 +152,15 @@ class BaseInput(BasePort):
         If this is called on a closed port it will work as normal
         except it won't try to read from the device.
         """
-        if not self.closed:
-            self._check_callback()
-            self._receive(block=False)
+        with self._lock:
+            if not self.closed:
+                self._check_callback()
+                self._receive(block=False)
 
-        return len(self._messages)
+            return len(self._messages)
 
-    @serialized
     def iter_pending(self):
         """Iterate through pending messages."""
-        self._check_callback()
         while True:
             message = self.receive(block=False)
             if message is None:
@@ -185,7 +168,6 @@ class BaseInput(BasePort):
             else:
                 yield message
 
-    @serialized
     def receive(self, block=True):
         """Return the next message.
 
@@ -200,9 +182,11 @@ class BaseInput(BasePort):
         different errors be raised? What's most useful here?
         """
         self._check_callback()
+
         # If there is a message pending, return it right away.
-        if self._messages:
-            return self._messages.popleft()
+        with self._lock:
+            if self._messages:
+                return self._messages.popleft()
 
         if self.closed:
             if block:
@@ -210,21 +194,18 @@ class BaseInput(BasePort):
             else:
                 return None
 
-        # Poll and sleep until a message arrives.
-        # If another thread calls receive() it will wait for the
-        # lock until we return. (Only one thread will poll and wait.)
         while True:
-            self._receive(block=block)
-            if self._messages:
-                return self._messages.popleft()
-            elif not block:
-                return None
-            elif self.closed:
-                raise IOError('port closed during receive()')
+            with self._lock:
+                self._receive(block=block)
+                if self._messages:
+                    return self._messages.popleft()
+                elif not block:
+                    return None
+                elif self.closed:
+                    raise IOError('port closed during receive()')
 
             sleep()
 
-    @serialized
     def __iter__(self):
         """Iterate through messages until the port closes."""
         # This could have simply called receive() in a loop, but that
@@ -264,7 +245,6 @@ class BaseOutput(BasePort):
     def _send(self, message):
         pass
 
-    @serialized
     def send(self, message):
         """Send a message on the port.
 
@@ -276,9 +256,9 @@ class BaseOutput(BasePort):
         elif self.closed:
             raise ValueError('send() called on closed port')
 
-        self._send(message.copy())
+        with self._lock:
+            self._send(message.copy())
 
-    @serialized
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels
         """
@@ -293,7 +273,6 @@ class BaseOutput(BasePort):
                                   channel=channel,
                                   control=control))
 
-    @serialized
     def panic(self):
         """Send "All Sounds Off" on all channels.
 
