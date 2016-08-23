@@ -102,6 +102,12 @@ To create an input port and receive a message::
     >>> inport = mido.open_input()
     >>> msg = inport.receive()
 
+
+.. note::
+
+    Multiple threads can safely send and receive notes on the same
+    port.
+
 This will give you the default output and input ports. If you want to
 open a specific port, you will need its name. To get a list of all
 available input ports::
