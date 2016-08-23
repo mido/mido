@@ -153,11 +153,9 @@ class MidiTrack(list):
             self.insert(0, MetaMessage('track_name', name=name, time=0))
 
     def __getitem__(self, index_or_slice):
-        # Call slice on our parent class (a list).
-        lst = super().__getitem__(index_or_slice)
-        # The slice returns a list. Cast the return object to the same
-        # class we are.
+        # Return a MidiTrack instead of a list.
         # Todo: this make a copy of the list. Is there a better way?
+        lst = list.__getitem__(self, index_or_slice)
         return self.__class__(lst)
 
     def __repr__(self):
