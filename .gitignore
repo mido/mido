@@ -2,6 +2,7 @@ __pycache__
 *.pyc
 *.pyo
 *~
+.cache
 /docs/_build/
 /dist/
 /build/
