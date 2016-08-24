@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.15 ()
+1.1.15 (2016-08-24)
 ^^^^^^^^^^^^^^^^^^^
 
 * Sending and receiving messages is now thread safe. (Initial
