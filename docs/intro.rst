@@ -45,7 +45,7 @@ You can make a copy of a message, optionally overriding one or more
 attributes, for example::
 
     >>> msg.copy(note=100, velocity=127)
-    <message note_on channel=2 note=122 velocity=127 time=0)
+    <message note_on channel=2 note=100 velocity=127 time=0)
 
 Type and value checks are done when you pass parameters or assign to
 attributes, and the appropriate exceptions are raised. This ensures
