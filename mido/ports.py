@@ -48,10 +48,10 @@ class BasePort(object):
 
     def __init__(self, name=None, **kwargs):
         self.name = name
+        self._lock = threading.RLock()
         self.closed = True
         self._open(**kwargs)
         self.closed = False
-        self._lock = threading.RLock()
  
     def _open(self, **kwargs):
         pass
