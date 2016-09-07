@@ -4,6 +4,16 @@ Changes
 Release History
 ---------------
 
+1.1.16 ()
+-------------------
+
+* added example `rtmidi_python_backend.py`, a backend for the
+  rtmidi-python package (which is different from the python-rtmidi
+  backend that Mido currently uses.) This may at some point be added
+  to the package but for now it's in the examples folder. (Requested
+  by netchose, issue #55.)
+
+
 1.1.15 (2016-08-24)
 ^^^^^^^^^^^^^^^^^^^
 
