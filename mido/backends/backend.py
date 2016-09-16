@@ -4,28 +4,6 @@ from .. import ports
 
 DEFAULT_BACKEND = 'mido.backends.portmidi'
 
-def _import_module(name):
-    """Import and return module.
-
-    This works like importlib._import_module(), except it handles
-    packages without requiring an extra argument.
-
-    Examples::
-
-        _import_module('mido')
-        _import_module('mido.backends.portmidi')
-    """
-    last_dot = name.rfind('.')
-    if last_dot == -1:
-        package, module = None, name
-    else:
-        package, module = name[:last_dot], name[last_dot:]
-
-    try:
-        return importlib.import_module(module, package)
-    except ImportError:
-        raise ImportError('No module named {}'.format(name))
-
 class Backend(object):
     """
     Wrapper for backend module.
@@ -76,7 +54,7 @@ class Backend(object):
         This function will be called if you access the 'module'
         property."""
         if not self.loaded:
-            self._module = _import_module(self.name)
+            self._module = importlib.import_module(self.name)
 
     def _env(self, name):
         if self.use_environ:

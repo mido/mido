@@ -13,6 +13,16 @@ Release History
   to the package but for now it's in the examples folder. (Requested
   by netchose, issue #55.)
 
+* removed custom `_import_module()`. Its only function was to make
+  import errors more informative by showing the full module path, such
+  as `ImportError: mido.backends.rtmidi` instead of just `ImportError:
+  rtmidi`. Unfortunately it ended up masking import errors in the
+  backend module, causing confusion.
+
+  It turns `importlib.import_module()` can be called with the full
+  path, and on Python 3 it will also display the full path in the
+  `ImportError` message.
+
 
 1.1.15 (2016-08-24)
 ^^^^^^^^^^^^^^^^^^^
