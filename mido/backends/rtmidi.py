@@ -150,10 +150,20 @@ class Input(PortCommon, BaseInput):
             self._callback(message)
 
     def receive(self, block=True):
-        try:
-            return self._queue.get(block=block)
-        except queue.Empty:
-            return None
+        if PY2 and block:
+            # In Python 2 the get() method will not respond to
+            # KeyboardInterrupt (CTRL-C) unless you set a timeout.
+            while True:
+                try:
+                    # Timeout is in seconds.
+                    return self._queue.get(timeout=100)
+                except queue.Empty:
+                    continue
+        else:
+            try:
+                return self._queue.get(block=block)
+            except queue.Empty:
+                return None
 
     def pending(self):
         return self._queue.qsize()
