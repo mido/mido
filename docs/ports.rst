@@ -171,15 +171,16 @@ To get a bit more control you can receive messagas one at a time::
     msg = port.receive()
 
 This will block until a message arrives. To get a message only if one
-is available, you can use::
+is available, you can use `poll()`::
 
-    msg = port.receive(block=False)
+    msg = port.poll()
 
 This will return ``None`` if no message is available.
 
 .. note:: For historical reasons there's also a ``pending()`` method.
-          It is no longer useful after ``iter_pending()`` was added
-          but is kept around for backward compatibility.
+          It is no longer useful after ``iter_pending()`` and
+          ``poll()`` were added but is kept around for backward
+          compatibility.
 
 
 Callbacks
@@ -264,8 +265,14 @@ Input Port Methods
 
 ``receive(block=True)``
 
-Receive a message. This will return a message. If ``block=False``,
-``None`` is returned if no message is available.
+Receive a message. This will block until it returns a message. If
+``block=True`` is passed it will instead return ``None`` if there is
+no message.
+
+
+``poll()``
+
+Returns a message, or ``None`` if there are no pending messages.
 
 
 ``pending()``
@@ -274,7 +281,6 @@ Returns the number of messages waiting to be received.
 
 .. note:: This is kept around for backward compatibility. It’s better
           to use iter_pending() to iterate over pending messages.
-
 
 
 ``iter_pending()``

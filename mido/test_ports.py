@@ -31,8 +31,8 @@ def test_ioport():
 
         # Receive a message. (Non-blocking.)
         port.send(message)
-        message2 = port.receive(block=False)
-        assert port.receive(block=False) is None
+        message2 = port.poll()
+        assert port.poll() is None
 
     with Port('Name') as port:
         message = Message('note_on')

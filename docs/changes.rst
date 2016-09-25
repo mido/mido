@@ -7,6 +7,9 @@ Release History
 1.1.16 ()
 -------------------
 
+* added ``poll()`` method to input ports as a shortcut for
+  ``receive(block=False)``.
+
 * added example `rtmidi_python_backend.py`, a backend for the
   rtmidi-python package (which is different from the python-rtmidi
   backend that Mido currently uses.) This may at some point be added

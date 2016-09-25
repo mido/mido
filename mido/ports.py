@@ -162,7 +162,7 @@ class BaseInput(BasePort):
     def iter_pending(self):
         """Iterate through pending messages."""
         while True:
-            message = self.receive(block=False)
+            message = self.poll()
             if message is None:
                 return
             else:
@@ -205,6 +205,12 @@ class BaseInput(BasePort):
                     raise IOError('port closed during receive()')
 
             sleep()
+
+    def poll(self):
+        """Receive the next pending message or None
+
+        This is the same as calling `receive(block=False)`."""
+        return self.receive(block=False)
 
     def __iter__(self):
         """Iterate through messages until the port closes."""
