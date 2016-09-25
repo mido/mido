@@ -517,11 +517,15 @@ class MidiFile:
             self.filename, self.type, len(self.tracks),
             sum([len(track) for track in self.tracks]))
 
+
+    # The context manager has no purpose but is kept around since it was
+    # used in examples in the past.
     def __enter__(self):
         return self
 
     def __exit__(self, type, value, traceback):
         return False
+
 
 class _DebugByteReader(ByteReader):
     parent = ByteReader

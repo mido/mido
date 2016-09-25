@@ -36,25 +36,29 @@ def parse_args():
 
     return parser.parse_args()
 
-def play_file(output, filename):
-    with MidiFile(filename) as midi_file:
-        print('Playing {}.'.format(midi_file.filename))
-        length = midi_file.length
-        print('Song length: {} minutes, {} seconds.'.format(
-                int(length / 60),
-                int(length % 60)))
-        print('Tracks:')
-        for i, track in enumerate(midi_file.tracks):
-            print('  {:2d}: {!r}'.format(i, track.name.strip()))
 
-        for message in midi_file.play(meta_messages=True):
-            if isinstance(message, Message):
-                # print(message)
-                output.send(message)
-            elif message.type == 'set_tempo':
-                print('Tempo changed to {:.1f} BPM.'.format(
-                    tempo2bpm(message.tempo)))
+def play_file(output, filename):
+    midi_file = MidiFile(filename) 
+
+    print('Playing {}.'.format(midi_file.filename))
+    length = midi_file.length
+    print('Song length: {} minutes, {} seconds.'.format(
+            int(length / 60),
+            int(length % 60)))
+    print('Tracks:')
+    for i, track in enumerate(midi_file.tracks):
+        print('  {:2d}: {!r}'.format(i, track.name.strip()))
+
+    for message in midi_file.play(meta_messages=True):
+        if isinstance(message, Message):
+            # print(message)
+            output.send(message)
+        elif message.type == 'set_tempo':
+            print('Tempo changed to {:.1f} BPM.'.format(
+                tempo2bpm(message.tempo)))
+
     print()
+
 
 def main():
     try:
