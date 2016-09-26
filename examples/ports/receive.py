@@ -2,7 +2,6 @@
 """
 Receive messages from the input port and print them out.
 """
-
 from __future__ import print_function
 import sys
 import mido
@@ -18,5 +17,6 @@ try:
         print('Waiting for messages...')
         for message in port:
             print('Received {}'.format(message))
+            sys.stdout.flush()
 except KeyboardInterrupt:
     pass
