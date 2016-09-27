@@ -10,6 +10,9 @@ Release History
 * bugfix: ``MidiTrack`` crashed instead of returning a message on
   ``track[index]``. Fix by Colin Raffel (pull request #61).
 
+* added ``__add__()`` and ``__mul__()`` to ``MidiTrack`` so ``+`` and
+  ``*`` will return tracks instead of lists.
+
 * added ``poll()`` method to input ports as a shortcut for
   ``receive(block=False)``.
 

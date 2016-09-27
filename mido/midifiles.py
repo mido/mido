@@ -163,6 +163,12 @@ class MidiTrack(list):
             # Todo: this make a copy of the list. Is there a better way?
             return self.__class__(lst)
 
+    def __add__(self, other):
+        return self.__class__(list.__add__(self, other))
+
+    def __mul__(self, other):
+        return self.__class__(list.__mul__(self, other))
+
     def __repr__(self):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
 
