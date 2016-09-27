@@ -155,12 +155,12 @@ class MidiTrack(list):
     def __getitem__(self, index_or_slice):
         # Retrieve item from the MidiTrack
         lst = list.__getitem__(self, index_or_slice)
-        # If an index was provided, return the list element
         if isinstance(index_or_slice, int):
+            # If an index was provided, return the list element
             return lst
-        # Otherwise, construct a MidiTrack to return.
-        # Todo: this make a copy of the list. Is there a better way?
         else:
+            # Otherwise, construct a MidiTrack to return.
+            # Todo: this make a copy of the list. Is there a better way?
             return self.__class__(lst)
 
     def __repr__(self):
