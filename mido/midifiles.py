@@ -153,10 +153,15 @@ class MidiTrack(list):
             self.insert(0, MetaMessage('track_name', name=name, time=0))
 
     def __getitem__(self, index_or_slice):
-        # Return a MidiTrack instead of a list.
-        # Todo: this make a copy of the list. Is there a better way?
+        # Retrieve item from the MidiTrack
         lst = list.__getitem__(self, index_or_slice)
-        return self.__class__(lst)
+        # If an index was provided, return the list element
+        if isinstance(index_or_slice, int):
+            return lst
+        # Otherwise, construct a MidiTrack to return.
+        # Todo: this make a copy of the list. Is there a better way?
+        else:
+            return self.__class__(lst)
 
     def __repr__(self):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
