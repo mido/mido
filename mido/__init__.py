@@ -103,7 +103,7 @@ __author__ = 'Ole Martin Bjorndalen'
 __email__ = 'ombdalen@gmail.com'
 __url__ = 'https://mido.readthedocs.io/'
 __license__ = 'MIT'
-__version__ = '1.1.15'
+__version__ = '1.1.16'
 
 # Prevent splat import.
 __all__ = []

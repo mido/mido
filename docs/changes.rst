@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.16 ()
+1.1.16 (2016-09-27)
 -------------------
 
 * bugfix: ``MidiTrack`` crashed instead of returning a message on
