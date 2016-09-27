@@ -7,6 +7,9 @@ Release History
 1.1.16 ()
 -------------------
 
+* bugfix: ``MidiTrack`` crashed instead of returning a message on
+  ``track[index]``. Fix by Colin Raffel (pull request #61).
+
 * added ``poll()`` method to input ports as a shortcut for
   ``receive(block=False)``.
 
