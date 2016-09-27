@@ -4,6 +4,12 @@ Changes
 Release History
 ---------------
 
+1.1.17 ()
+-------------------
+
+* bugfix: ``MidiTrack.copy()`` (Python 3 only) returned ``list``.
+
+
 1.1.16 (2016-09-27)
 -------------------
 

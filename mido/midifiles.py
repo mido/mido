@@ -35,6 +35,8 @@ from .midifiles_meta import MetaSpec, add_meta_spec, encode_variable_int
 from . import midifiles_meta
 import io
 
+PY2 = (sys.version_info.major == 2)
+
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
 DEFAULT_TEMPO = 500000
@@ -151,6 +153,9 @@ class MidiTrack(list):
         else:
             # No track name found, add one.
             self.insert(0, MetaMessage('track_name', name=name, time=0))
+
+    def copy(self):
+        return self.__class__(self)
 
     def __getitem__(self, index_or_slice):
         # Retrieve item from the MidiTrack
