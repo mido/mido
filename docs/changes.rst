@@ -7,6 +7,11 @@ Release History
 1.1.17 ()
 -------------------
 
+* RtMidi now supports true blocking `receive()` in Python 3. This
+  should result in better performance and lower latency. (Thanks to
+  Adam Roberts for helping research queue behavior. See issue #49 for
+  more.)
+
 * bugfix: ``MidiTrack.copy()`` (Python 3 only) returned ``list``.
 
 * fixed example `queue_port.py` which broke when locks where added.
