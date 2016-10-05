@@ -6,8 +6,11 @@ Choosing Backend
 
 Mido comes with backends for PortMidi, RtMidi and Pygame.
 
-By default, Mido uses PortMidi. You can override this with the
-``MIDO_BACKEND`` environment variable, for example::
+RtMidi is the recommended backends. It has all the features of the
+other ones and more and is usually easier to install.
+
+For historical reasons PortMidi is still the default. You can override
+this with the ``MIDO_BACKEND`` environment variable, for example::
 
     $ MIDO_BACKEND=mido.backends.rtmidi ./program.py
 
@@ -58,32 +61,16 @@ or::
     $ python program2.py
 
 
-PortMidi
---------
-
-Name: ``mido.backends.portmidi``
-
-The PortMidi backend is written with ``ctypes`` and requires only the
-shared library file ``portmidi.so`` or ``portmidi.dll``.
-
-Can send but doesn't receive ``active_sensing`` messages.
-
-PortMidi has no callback mechanism, so callbacks are implemented in
-Python with threads. Each port with a callback has a dedicated thread
-doing blocking reads from the device.
-
-Due to limitations in PortMidi the port list will not be up-to-date if
-there are any ports open. (The refresh is implemented by
-re-initalizing PortMidi which would break any open ports.)
-
-
-RtMidi
-------
+RtMidi (Recommended)
+--------------------
 
 Name: ``mido.backends.rtmidi``
 
 The RtMidi backend is a thin wrapper around `python-rtmidi
 <https://pypi.python.org/pypi/python-rtmidi/>`_
+
+Supports true blocking `receive()` in Python 3 which should be more
+efficient and result in lower latency.
 
 Sends but doesn't receive active sensing.
 
@@ -131,6 +118,25 @@ Second, ports are named inconsistently. For example, the input port
 'Midi Through 14:0' has a corresponding output named 'Midi
 Through:0'. Unless this was intended, it is a bug in RtMidi's ALSA
 implementation.
+
+
+PortMidi
+--------
+
+Name: ``mido.backends.portmidi``
+
+The PortMidi backend is written with ``ctypes`` and requires only the
+shared library file ``portmidi.so`` or ``portmidi.dll``.
+
+Can send but doesn't receive ``active_sensing`` messages.
+
+PortMidi has no callback mechanism, so callbacks are implemented in
+Python with threads. Each port with a callback has a dedicated thread
+doing blocking reads from the device.
+
+Due to limitations in PortMidi the port list will not be up-to-date if
+there are any ports open. (The refresh is implemented by
+re-initalizing PortMidi which would break any open ports.)
 
 
 Pygame

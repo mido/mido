@@ -4,6 +4,17 @@ Changes
 Release History
 ---------------
 
+
+1.1.17 ()
+^^^^^^^^^^^^^^^^^^^
+
+
+* RtMidi now supports true blocking `receive()` in Python 3. This
+  should result in better performance and lower latency. (Thanks to
+  Adam Roberts for helping research queue behavior. See issue #49 for
+  more.)
+
+
 1.1.15 (2016-08-24)
 ^^^^^^^^^^^^^^^^^^^
 
