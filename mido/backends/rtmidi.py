@@ -7,6 +7,7 @@ from __future__ import absolute_import
 import os
 import sys
 import time
+from ..ports import get_sleep_time
 
 PY2 = (sys.version_info.major == 2)
 if PY2:
@@ -149,17 +150,38 @@ class Input(PortCommon, BaseInput):
         for message in self._parser:
             self._callback(message)
 
-    def receive(self, block=True):
-        if PY2 and block:
-            # In Python 2 the get() method will not respond to
-            # KeyboardInterrupt (CTRL-C) unless you set a timeout.
+    # receive() implementation:
+    #
+    # We need to override receive() here because _receive() doesn't allow
+    # us to return a messages directly and putting it in self._messages is
+    # not an option.
+    #
+    # Todo: add doc strings.
+
+    if PY2:
+        # In Python 2 queue.get() doesn't respond to CTRL-C. A workaroud is
+        # to call queue.get(timeout=100) (very high timeout) in a loop, but all
+        # that does is poll with a timeout of 50 milliseconds. This results in
+        # much too high latency.
+        #
+        # It's better to do our own polling with a shorter sleep time.
+        #
+        # See Issue #49 and https://bugs.python.org/issue8844
+
+        def receive(self, block=True):
+            sleep_time = get_sleep_time()
             while True:
                 try:
-                    # Timeout is in seconds.
-                    return self._queue.get(timeout=100)
+                    return self._queue.get_nowait()
                 except queue.Empty:
-                    continue
-        else:
+                    if block:
+                        time.sleep(sleep_time)
+                        continue
+                    else:
+                        return None
+    else:
+
+        def receive(self, block=True):
             try:
                 return self._queue.get(block=block)
             except queue.Empty:
