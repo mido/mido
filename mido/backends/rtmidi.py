@@ -7,7 +7,6 @@ from __future__ import absolute_import
 import os
 import sys
 import time
-from ..ports import get_sleep_time
 
 PY2 = (sys.version_info.major == 2)
 if PY2:
@@ -16,7 +15,7 @@ else:
     import queue
 
 import rtmidi
-from ..ports import BaseInput, BaseOutput
+from ..ports import get_sleep_time, BaseInput, BaseOutput
 
 
 def _get_api_lookup():
@@ -186,6 +185,8 @@ class Input(PortCommon, BaseInput):
                 return self._queue.get(block=block)
             except queue.Empty:
                 return None
+
+    receive.__doc__ = BaseInput.receive.__doc__
 
     def pending(self):
         return self._queue.qsize()
