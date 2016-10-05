@@ -9,6 +9,8 @@ Release History
 
 * bugfix: ``MidiTrack.copy()`` (Python 3 only) returned ``list``.
 
+* fixed example `queue_port.py` which broke when locks where added.
+
 
 1.1.16 (2016-09-27)
 -------------------

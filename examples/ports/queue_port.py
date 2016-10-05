@@ -27,14 +27,13 @@ class QueuePort(BaseInput, BaseOutput):
     def _send(self, message):
         self._queue.put(message)
 
-    def _receive(self, block=True):
-        while True:
-            try:
-                message = self._queue.get_nowait()
-            except Empty:
-                return
-            else:
-                self._messages.append(message)
+    # We need to override receive() since _receive() is not
+    # allowed to return a message directly.
+    def receive(self, block=True):
+        try:
+            return self._queue.get(block=block)
+        except Empty:
+            return None
     
     def _get_device_type(self):
         return 'queue'
