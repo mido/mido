@@ -5,7 +5,7 @@ Release History
 ---------------
 
 1.1.17 (2016-10-06)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * RtMidi now supports true blocking `receive()` in Python 3. This
   should result in better performance and lower latency. (Thanks to
@@ -18,7 +18,7 @@ Release History
 
 
 1.1.16 (2016-09-27)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * bugfix: ``MidiTrack`` crashed instead of returning a message on
   ``track[index]``. Fix by Colin Raffel (pull request #61).
