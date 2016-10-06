@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.17 ()
+1.1.17 (2016-10-06)
 -------------------
 
 * RtMidi now supports true blocking `receive()` in Python 3. This
