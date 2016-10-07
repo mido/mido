@@ -2,7 +2,7 @@ Branch: New Message Implementation
 ==================================
 
 This is a complete reimplementation the messages and parser. See
-`new-messages.rst <new-messages.rst>`_.
+`new-messages.rst <new-messages.rst>`_ for more.
 
 
 Mido - MIDI Objects for Python
