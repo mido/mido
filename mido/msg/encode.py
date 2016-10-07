@@ -9,7 +9,7 @@ def _encode_pitchwheel_data(msg):
 
 
 def _encode_sysex_data(msg):
-    return bytes(msg['bytes']) + SYSEX_END
+    return bytes(msg['data']) + b'\xf7'
 
 
 def _encode_quarter_frame_data(msg):
@@ -23,7 +23,7 @@ def _encode_songpos_data(data):
 
 _SPECIAL_CASES = {
     0xe0: _encode_pitchwheel_data,
-    0x70: _encode_sysex_data,
+    0xf0: _encode_sysex_data,
     0xf1: _encode_quarter_frame_data,
     0xf2: _encode_songpos_data,
 }
