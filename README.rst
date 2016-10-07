@@ -20,15 +20,28 @@ designed to be as straight forward and Pythonic as possible:
 .. code-block:: python
 
     >>> with input as mido.open_input('SH-201'):
-    ...     for message in input:
-    ...         print(message)
+    ...     for msg in input:
+    ...         print(msg)
 
 .. code-block:: python
 
-    >>> message = mido.Message('program_change', program=10)
-    >>> message.type
+    >>> msg = mido.Message('program_change', program=10)
+    >>> msg.type
     'program_change'
-    >>> message.copy(program=9)
+    >>> msg.copy(program=9)
+    <message program_change channel=0 program=9 time=0>
+
+    >>> str(msg)
+    program_change channel=0 program=10 time=0
+    >>> bytes(msg)
+    b'\xc0\n'
+    >>> list(msg)
+    [192, 10]
+    
+    >>> from mido import Message
+    >>> Message.from_bytes([0x90, 10, 20])
+    <message note_on channel=0 note=10 velocity=20 time=0>
+    >>> Message.from_str('program_change channel=0 program=9 time=0')
     <message program_change channel=0 program=9 time=0>
 
 .. code-block:: python
