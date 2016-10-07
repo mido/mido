@@ -43,8 +43,11 @@ class Message(BaseMessage):
     def __repr__(self):
         return '<message {}>'.format(str(self))
 
-    def __len__(self):
-        return len(encode_msg(vars(self)))
+    # If we implement both __iter__() and __len__() the message will
+    # be encoded twice when we do bytes(msg) (first in __len__() then
+    # in __iter__())..
+    # def __len__(self): return
+    #     encode_msg(vars(self))
 
     def __eq__(self, other):
         # This includes time in comparison.
