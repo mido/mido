@@ -1,3 +1,10 @@
+Branch: New Message Implementation
+==================================
+
+This is a complete reimplementation the messages and parser. See
+`new-messages.rst <new-messages.rst>`_.
+
+
 Mido - MIDI Objects for Python
 ==============================
 
@@ -21,9 +28,8 @@ designed to be as straight forward and Pythonic as possible:
     >>> message = mido.Message('program_change', program=10)
     >>> message.type
     'program_change'
-    >>> message.channel = 2
     >>> message.copy(program=9)
-    <message program_change channel=2 program=9 time=0>
+    <message program_change channel=0 program=9 time=0>
 
 .. code-block:: python
 
