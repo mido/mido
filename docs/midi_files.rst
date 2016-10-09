@@ -184,6 +184,8 @@ The ``time`` attribute is used in several different ways:
 Tempo and Beat Resolution
 -------------------------
 
+.. image:: images/midi_time.svg
+
 Timing in MIDI files is all centered around beats. A beat is the same
 as a quarter note.
 
