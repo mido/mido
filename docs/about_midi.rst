@@ -82,6 +82,10 @@ Some Examples of Messages
 Further Reading
 ---------------
 
+* `An Introduction to MIDI <https://www.midi.org/articles/an-intro-to-midi>`_
+
+* `MIDI Basics <http://download.yamaha.com/api/asset/file/?language=pt&site=br.yamaha.com&asset_id=13088>`_ (by Yamaha)
+
 * `Wikipedia's page on MIDI <http://en.wikipedia.org/wiki/Midi>`_
 
 * `MIDI Manufacturers Association <http://www.midi.org/>`_
