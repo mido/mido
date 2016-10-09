@@ -80,7 +80,7 @@ class SocketPort(BaseIOPort):
         self.name = format_address(host, portno)
         self.closed = False
         self._parser = Parser()
-        self._messages = self._parser._parsed_messages
+        self._messages = self._parser.messages
 
         if conn is None:
             self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

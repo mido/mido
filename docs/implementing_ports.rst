@@ -179,7 +179,7 @@ A port has some attributes that can be useful inside your methods.
 
     This is a ``collections.deque`` of messages that have been read
     and are ready to be received. This is a shortcut to
-    ``_parser.parsed_messages``.
+    ``_parser.messages``.
 
 ``_device_type`` (Optional.)
 

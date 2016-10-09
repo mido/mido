@@ -17,7 +17,7 @@ def test_ioport():
         assert port.name == 'Name'
         assert not port.closed
 
-        assert port._messages is port._parser._parsed_messages
+        assert port._messages is port._parser.messages
 
         with raises(TypeError): port.send('not a message')
 
