@@ -31,7 +31,7 @@ class Parser(object):
 
     def __init__(self):
         """Create a new parser."""
-        self._parsed_messages = deque()
+        self.messages = deque()
         self._reset()
 
     def _reset(self):
@@ -42,7 +42,7 @@ class Parser(object):
     def _deliver(self, message=None):
         if not message:
             message = build_message(self._spec, self._bytes)
-        self._parsed_messages.append(message)
+        self.messages.append(message)
 
     def _handle_status_byte(self, byte):
         try:
@@ -118,7 +118,7 @@ class Parser(object):
 
     def pending(self):
         """Return the number of pending messages."""
-        return len(self._parsed_messages)
+        return len(self.messages)
 
     def get_message(self):
         """Get the first parsed message.
@@ -127,15 +127,15 @@ class Parser(object):
         deal with None, you can use pending() to see how many messages
         you can get before you get None.
         """
-        if self._parsed_messages:
-            return self._parsed_messages.popleft()
+        if self.messages:
+            return self.messages.popleft()
         else:
             return None
 
     def __iter__(self):
         """Yield messages that have been parsed so far."""
-        while len(self._parsed_messages):
-            yield self._parsed_messages.popleft()
+        while len(self.messages):
+            yield self.messages.popleft()
 
 
 def parse_all(data):

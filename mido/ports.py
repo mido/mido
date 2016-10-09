@@ -126,7 +126,7 @@ class BaseInput(BasePort):
         """
         BasePort.__init__(self, name, **kwargs)
         self._parser = Parser()
-        self._messages = self._parser._parsed_messages  # Shortcut.
+        self._messages = self._parser.messages  # Shortcut.
 
 
     def _check_callback(self):

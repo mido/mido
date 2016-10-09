@@ -4,6 +4,13 @@ Changes
 Release History
 ---------------
 
+1.1.18 ()
+^^^^^^^^^^^^^^^^^^^
+
+* renamed `parser._parsed_messages` to `parser.messages`. `BaseInput`
+  and `SocketPort` use it so it should be public.
+
+
 1.1.17 (2016-10-06)
 ^^^^^^^^^^^^^^^^^^^
 

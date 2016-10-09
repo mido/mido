@@ -47,5 +47,7 @@ it::
     note_on channel=2 note=16 velocity=32 time=0
     note_off channel=2 note=16 velocity=32 time=0
 
+The messages are available in `p.messages` (a `collections.deque`).
+
 For the full table of MIDI binary encoding, see:
 `<http://www.midi.org/techspecs/midimessages.php>`_
