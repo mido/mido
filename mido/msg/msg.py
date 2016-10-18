@@ -33,7 +33,17 @@ class Message(BaseMessage):
     @classmethod
     def from_str(self, text):
         return Message(**str2msg(text))
-    
+
+    def __len__(self):
+        # This implementation will cause encode_msg() to be called twice
+        # then you iterate over the message. It should instead look up the
+        # length in the message definition.
+        # 
+        # There is no way to get the length of a meta message without
+        # encoding it, so we need to either accept double encoding
+        # (not good) or leave out __len__() (as Mido 1.1 does).
+        return encode_msg(vars(self))
+
     def __iter__(self):
         yield from encode_msg(vars(self))
 
@@ -42,12 +52,6 @@ class Message(BaseMessage):
 
     def __repr__(self):
         return '<message {}>'.format(str(self))
-
-    # If we implement both __iter__() and __len__() the message will
-    # be encoded twice when we do bytes(msg) (first in __len__() then
-    # in __iter__())..
-    # def __len__(self): return
-    #     encode_msg(vars(self))
 
     def __eq__(self, other):
         # This includes time in comparison.
