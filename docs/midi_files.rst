@@ -172,7 +172,7 @@ About the Time Attribute
 
 The ``time`` attribute is used in several different ways:
 
-* inside a track, it is delta time in ticks
+* inside a track, it is delta time in ticks. This must be an integer.
 
 * in messages yielded from ``play()``, it is delta time in seconds
   (time elapsed since the last yielded message)
