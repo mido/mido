@@ -196,7 +196,22 @@ class BaseInput(BasePort):
 
         while True:
             with self._lock:
+                # In the future we should allow self._receive() to
+                # return a message.  This would make the API more
+                # consistent and also make it easier to implement
+                # thread safe ports since self._messages is no longer
+                # required.
+                #
+                # This can only be done if pending() is removed, since
+                # it calls self._receive().
+                #
+                # A commented out implementation is provided below.
                 self._receive(block=block)
+                # msg = self._receive(block=block)
+                # if msg:
+                #     return msg
+                # # (else check self._messages as before.)
+
                 if self._messages:
                     return self._messages.popleft()
                 elif not block:
