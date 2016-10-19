@@ -208,15 +208,21 @@ def merge_tracks(tracks):
     return messages
 
 
+def _dbg(text=''):
+    print(text)
+
+
 class MidiFile:
     def __init__(self, filename=None, file=None,
                  type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
-                 charset='latin1'):
+                 charset='latin1',
+                 debug=False):
 
         self.filename = filename
         self.type = type
         self.ticks_per_beat = ticks_per_beat
         self.charset = charset
+        self.debug = debug
 
         self.tracks = []
 
@@ -243,9 +249,15 @@ class MidiFile:
         return track
 
     def _load(self, file):
-        self._file = ByteReader(file)
+        if self.debug:
+            self._file = _DebugByteReader(file)
+        else:
+            self._file = ByteReader(file)
 
         with meta_charset(self.charset):
+            if self.debug:
+                _dbg('Header:')
+
             # Read header (16 bytes)
             magic = self._file.peek_list(4)
             if not bytearray(magic) == bytearray(b'MThd'):
@@ -259,6 +271,11 @@ class MidiFile:
             self.type = self._file.read_short()
             number_of_tracks = self._file.read_short()
             self.ticks_per_beat = self._file.read_short()
+
+            if self.debug:
+                _dbg('-> type={}, tracks={}, ticks_per_beat={}'.format(
+                    self.type, number_of_tracks, self.ticks_per_beat))
+                _dbg()
 
             # Skip the rest of the header.
             for _ in range(header_size - 6):
@@ -310,6 +327,9 @@ class MidiFile:
     def _read_track(self):
         track = MidiTrack()
 
+        if self.debug:
+            _dbg('Track {}:'.format(len(self.tracks)))
+
         magic = self._file.peek_list(4)
         if bytearray(magic) == bytearray(b'MTrk'):
             self._file.read_list(4)  # Skip 'MTrk'
@@ -324,12 +344,22 @@ class MidiFile:
         start = self._file.pos
         last_status = None
 
+        if self.debug:
+            _dbg('-> length={}'.format(length))
+            _dbg()
+
         while True:
             # End of track reached.
             if self._file.pos - start == length:
                 break
 
+            if self.debug:
+                _dbg('Message:')
+
             delta = self._read_variable_int()
+            
+            if self.debug:
+                _dbg('-> delta={}'.format(delta))
 
             # Todo: not all messages have running status
             peek_status = self._file.peek_byte()
@@ -354,6 +384,10 @@ class MidiFile:
 
             message.time = delta
             track.append(message)
+
+            if self.debug:
+                _dbg('-> {!r}'.format(message))
+                _dbg()
 
             if message.type == 'end_of_track':
                 break
@@ -552,7 +586,7 @@ class _DebugByteReader(ByteReader):
         This is used for debugging.
         """
         data = self._buffer[self.pos:self.pos + n]
-        print()
+        # print()
         for pos, byte in enumerate(data, start=self.pos):
             char = chr(byte)
             if not char in string.printable or char in string.whitespace:
@@ -577,32 +611,3 @@ class _DebugByteReader(ByteReader):
     def read_list(self, n):
         self._print_bytes(n)
         return self.parent.read_list(self, n)
-
-class _DebugMidiFile(MidiFile):
-    parent = MidiFile
-
-    def _read_track(self):
-        print('\n# -- Track {}:'.format(len(self.tracks)))
-        return self.parent._read_track(self)
-
-    def _read_message(self, status_byte):
-        message = self.parent._read_message(self, status_byte)
-        print('# got {!r}'.format(message))
-        return message
-
-    def _read_meta_message(self):
-        message = self.parent._read_meta_message(self)
-        print('# got {!r}'.format(message))
-        return message
-
-    def _read_sysex(self):
-        message = self.parent._read_sysex(self)
-        print('# got {!r}'.format(message))
-        return message
-
-def debug():
-    """Turn on debugging prints."""
-    global ByteReader, MidiFile
-
-    ByteReader = _DebugByteReader
-    MidiFile = _DebugMidiFile
