@@ -556,8 +556,8 @@ class _DebugByteReader(ByteReader):
         for pos, byte in enumerate(data, start=self.pos):
             char = chr(byte)
             if not char in string.printable or char in string.whitespace:
-                char = ''
-            print('  {:06x}: {:02x} {}'.format(pos, byte, char))
+                char = '.'
+            print('  {:06x}: {:02x}  {}'.format(pos, byte, char))
 
         if len(data) < n:
             raise EOFError('unexpected end of file')
@@ -582,25 +582,22 @@ class _DebugMidiFile(MidiFile):
     parent = MidiFile
 
     def _read_track(self):
-        print('-- Track', len(self.tracks))
+        print('\n# -- Track {}:'.format(len(self.tracks)))
         return self.parent._read_track(self)
 
     def _read_message(self, status_byte):
-        print('( new message:')
         message = self.parent._read_message(self, status_byte)
-        print(')', message)
+        print('# got {!r}'.format(message))
         return message
 
     def _read_meta_message(self):
-        print('( new meta message')
         message = self.parent._read_meta_message(self)
-        print(')', message)
+        print('# got {!r}'.format(message))
         return message
 
     def _read_sysex(self):
-        print('( new sysex message')
         message = self.parent._read_sysex(self)
-        print(')', message)
+        print('# got {!r}'.format(message))
         return message
 
 def debug():
