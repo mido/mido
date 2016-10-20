@@ -600,14 +600,6 @@ class _DebugByteReader(ByteReader):
         self._print_bytes(1)
         return self.parent.read_byte(self)
 
-    def read_short(self):
-        self._print_bytes(2)
-        return self.parent.read_short(self)
-
-    def read_long(self):
-        self._print_bytes(4)
-        return self.parent.read_long(self)
-
     def read_list(self, n):
         self._print_bytes(n)
         return self.parent.read_list(self, n)
