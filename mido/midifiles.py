@@ -335,11 +335,7 @@ class MidiFile:
             self._file.read_list(4)  # Skip 'MTrk'
             length = self._file.read_long()
         else:
-            # Todo: some files don't have track headers?
-            # These end with end_of_track or end of file,
-            # so we set length to infinite.
-            # raise IOError("track doesn't start with 'MTrk'")
-            length = float('inf')
+            raise IOError('no MTrk header at start of track')
 
         start = self._file.pos
         last_status = None
@@ -388,9 +384,6 @@ class MidiFile:
             if self.debug:
                 _dbg('-> {!r}'.format(message))
                 _dbg()
-
-            if message.type == 'end_of_track':
-                break
 
         return track
 

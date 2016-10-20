@@ -7,6 +7,9 @@ Release History
 1.1.18 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* bugfix: `end_of_track` messages in MIDI files were not handled correctly.
+  (Reported by Colin Raffel, issue #62).
+
 * renamed `parser._parsed_messages` to `parser.messages`. `BaseInput`
   and `SocketPort` use it so it should be public.
 
