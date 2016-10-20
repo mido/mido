@@ -5,7 +5,6 @@ Todo:
     - make it more fault tolerant (handle errors in MIDI files?)
     - 'reset' message should not be allowed in MIDI file.
       (Does this apply to all real time messages?)
-    - handle different character encodings (in strings inside meta messages).
 
 References:
 
