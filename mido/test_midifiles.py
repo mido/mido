@@ -1,7 +1,7 @@
 import io
 
 from .messages import Message
-from .midifiles_meta import tempo2bpm, bpm2tempo
+from .midifiles import tempo2bpm, bpm2tempo
 from .midifiles import MidiTrack, MetaMessage, MidiFile
 
 MESSAGES = [
