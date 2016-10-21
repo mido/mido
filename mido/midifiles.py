@@ -93,6 +93,34 @@ class ByteReader(object):
         return ret
 
 
+class _DebugByteReader(ByteReader):
+    parent = ByteReader
+
+    def _print_bytes(self, n):
+        """Print the next n bytes as hex and characters.
+
+        This is used for debugging.
+        """
+        data = self._buffer[self.pos:self.pos + n]
+        # print()
+        for pos, byte in enumerate(data, start=self.pos):
+            char = chr(byte)
+            if not char in string.printable or char in string.whitespace:
+                char = '.'
+            print('  {:06x}: {:02x}  {}'.format(pos, byte, char))
+
+        if len(data) < n:
+            raise EOFError('unexpected end of file')
+
+    def read_byte(self):
+        self._print_bytes(1)
+        return self.parent.read_byte(self)
+
+    def read_list(self, n):
+        self._print_bytes(n)
+        return self.parent.read_list(self, n)
+
+
 class MidiTrack(list):
     @property
     def name(self):
@@ -541,31 +569,3 @@ class MidiFile:
 
     def __exit__(self, type, value, traceback):
         return False
-
-
-class _DebugByteReader(ByteReader):
-    parent = ByteReader
-
-    def _print_bytes(self, n):
-        """Print the next n bytes as hex and characters.
-
-        This is used for debugging.
-        """
-        data = self._buffer[self.pos:self.pos + n]
-        # print()
-        for pos, byte in enumerate(data, start=self.pos):
-            char = chr(byte)
-            if not char in string.printable or char in string.whitespace:
-                char = '.'
-            print('  {:06x}: {:02x}  {}'.format(pos, byte, char))
-
-        if len(data) < n:
-            raise EOFError('unexpected end of file')
-
-    def read_byte(self):
-        self._print_bytes(1)
-        return self.parent.read_byte(self)
-
-    def read_list(self, n):
-        self._print_bytes(n)
-        return self.parent.read_list(self, n)
