@@ -195,18 +195,18 @@ def read_track(infile, debug=False):
             peek_data = []
 
         if status_byte == 0xff:
-            message = read_meta_message(infile, delta)
+            msg = read_meta_message(infile, delta)
         elif status_byte in [0xf0, 0xf7]:
             # Todo: I'm not quite clear on the difference between
             # f0 and f7 events.
-            message = read_sysex(infile, delta)
+            msg = read_sysex(infile, delta)
         else:
-            message = read_message(infile, status_byte, peek_data, delta)
+            msg = read_message(infile, status_byte, peek_data, delta)
 
-        track.append(message)
+        track.append(msg)
 
         if debug:
-            _dbg('-> {!r}'.format(message))
+            _dbg('-> {!r}'.format(msg))
             _dbg()
 
     return track
@@ -225,25 +225,25 @@ def write_track(outfile, track):
     data = bytearray()
 
     running_status_byte = None
-    for message in fix_end_of_track(track):
-        if not isinstance(message, MetaMessage):
-            if message._spec.status_byte >= 0xf8:
+    for msg in fix_end_of_track(track):
+        if not isinstance(msg, MetaMessage):
+            if msg._spec.status_byte >= 0xf8:
                 raise ValueError(
                     ("realtime message '{}' is not "
                      "allowed in a MIDI file".format(
                             message.type)))
 
-        data.extend(encode_variable_int(message.time))
-        if message.type == 'sysex':
+        data.extend(encode_variable_int(msg.time))
+        if msg.type == 'sysex':
             running_status_byte = None
             data.append(0xf0)
             # length (+ 1 for end byte (0xf7))
-            data.extend(encode_variable_int(len(message.data) + 1))
-            data.extend(message.data)
+            data.extend(encode_variable_int(len(msg.data) + 1))
+            data.extend(msg.data)
             data.append(0xf7)
         else:
-            raw = message.bytes()
-            if (isinstance(message, Message)
+            raw = msg.bytes()
+            if (isinstance(msg, Message)
                 and raw[0] < 0xf0
                 and raw[0] == running_status_byte):
                 data.extend(raw[1:])
@@ -326,7 +326,7 @@ class MidiFile:
             raise ValueError('impossible to compute length'
                              ' for type 2 (asynchronous) file')
 
-        return sum(message.time for message in self)
+        return sum(msg.time for msg in self)
 
     def _get_seconds_per_tick(self, tempo):
         # Tempo is given in microseconds per beat (default 500000).
@@ -428,11 +428,11 @@ class MidiFile:
         """
         for i, track in enumerate(self.tracks):
             print('=== Track {}'.format(i))
-            for message in track:
-                if not isinstance(message, MetaMessage) and meta_only:
+            for msg in track:
+                if not isinstance(msg, MetaMessage) and meta_only:
                     pass
                 else:
-                    print('{!r}'.format(message))
+                    print('{!r}'.format(msg))
 
     def __repr__(self):
         return '<midi file {!r} type {}, {} tracks, {} messages>'.format(
