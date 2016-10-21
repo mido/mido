@@ -414,14 +414,14 @@ def _add_builtin_meta_specs():
 _add_builtin_meta_specs()
 
 
-def build_meta_message(type_, data):
+def build_meta_message(type_, data, delta=0):
     # Todo: handle unknown type.
     try:
         spec = _specs[type_]
     except KeyError:
         return UnknownMetaMessage(type_, data)
 
-    message = MetaMessage(spec)
+    message = MetaMessage(spec, time=delta)
     spec.decode(message, data)
     return message
 

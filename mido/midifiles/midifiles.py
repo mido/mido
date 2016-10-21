@@ -117,7 +117,7 @@ def read_file_header(infile):
         return struct.unpack('>hhh', data[:6])
 
 
-def read_message(infile, status_byte, peek_data):
+def read_message(infile, status_byte, peek_data, delta):
     try:
         spec = get_spec(status_byte)
     except LookupError:
@@ -130,10 +130,10 @@ def read_message(infile, status_byte, peek_data):
     for byte in data_bytes:
         if byte > 127:
             raise IOError('data byte must be in range 0..127')
-    return build_message(spec, [status_byte] + data_bytes)
+    return build_message(spec, [status_byte] + data_bytes, time=delta)
 
 
-def read_sysex(infile):
+def read_sysex(infile, delta):
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
 
@@ -144,8 +144,7 @@ def read_sysex(infile):
     if data and data[-1] == 0xf7:
         data = data[:-1]
 
-    message = Message('sysex', data=data)
-    return message
+    return Message('sysex', data=data, time=delta)
 
 
 def read_variable_int(infile):
@@ -158,11 +157,11 @@ def read_variable_int(infile):
             return delta
 
 
-def read_meta_message(infile):
+def read_meta_message(infile, delta):
     type = read_byte(infile)
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
-    return build_meta_message(type, data)
+    return build_meta_message(type, data, delta)
 
 
 def read_track(infile, debug=False):
@@ -208,15 +207,14 @@ def read_track(infile, debug=False):
             peek_data = []
 
         if status_byte == 0xff:
-            message = read_meta_message(infile)
+            message = read_meta_message(infile, delta)
         elif status_byte in [0xf0, 0xf7]:
             # Todo: I'm not quite clear on the difference between
             # f0 and f7 events.
-            message = read_sysex(infile)
+            message = read_sysex(infile, delta)
         else:
-            message = read_message(infile, status_byte, peek_data)
+            message = read_message(infile, status_byte, peek_data, delta)
 
-        message.time = delta
         track.append(message)
 
         if debug:
