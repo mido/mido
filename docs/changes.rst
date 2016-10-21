@@ -10,6 +10,11 @@ Release History
 * bugfix: `end_of_track` messages in MIDI files were not handled correctly.
   (Reported by Colin Raffel, issue #62).
 
+* bugfix: `merge_tracks()` dropped messages after the first
+  `end_of_track` message. The new implementation removes all
+  `end_of_track` messages and adds one at the end, making sure to
+  adjust the delta times of the remaining messages.
+
 * renamed `parser._parsed_messages` to `parser.messages`. `BaseInput`
   and `SocketPort` use it so it should be public.
 

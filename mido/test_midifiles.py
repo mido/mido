@@ -2,7 +2,7 @@ import io
 
 from .messages import Message
 from .midifiles import tempo2bpm, bpm2tempo
-from .midifiles import MidiTrack, MetaMessage, MidiFile
+from .midifiles import MidiTrack, MetaMessage, MidiFile, merge_tracks
 
 MESSAGES = [
     Message('program_change', channel=0, program=12, time=0),

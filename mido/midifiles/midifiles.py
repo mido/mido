@@ -24,6 +24,7 @@ import struct
 from ..messages import build_message, Message, get_spec
 from .meta import MetaMessage, _build_meta_message, meta_charset
 from .meta import MetaSpec, add_meta_spec, encode_variable_int
+from .tracks import merge_tracks
 
 PY2 = (sys.version_info.major == 2)
 

@@ -1,3 +1,5 @@
+from .meta import MetaMessage
+
 class MidiTrack(list):
     @property
     def name(self):
@@ -51,31 +53,53 @@ class MidiTrack(list):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
 
 
+def _to_abstime(messages):
+    """Convert messages to absolute time."""
+    now = 0
+    for msg in messages:
+        now += msg.time
+        yield msg.copy(time=now)
+
+
+def _to_reltime(messages):
+    """Convert messages to relative time."""
+    now = 0
+    for msg in messages:
+        delta = msg.time - now
+        yield msg.copy(time=delta)
+        now = msg.time
+
+
+def _fix_end_of_track(messages):
+    """Remove all end_of_track messages and add one at the end."""
+    # Accumulated delta time from removed end of track messages.
+    # This is added to the next message.
+    accum = 0
+
+    for msg in messages:
+        if msg.type == 'end_of_track':
+            accum += msg.time
+        else:
+            if accum:
+                delta = accum + msg.time
+                yield msg.copy(time=delta)
+                accum = 0
+            else:
+                yield msg
+
+    yield MetaMessage('end_of_track', time=accum)
+
+
 def merge_tracks(tracks):
     """Returns a MidiTrack object with all messages from all tracks.
 
     The messages are returned in playback order with delta times
     as if they were all in one track.
     """
-    max_time = 0
-    messages = MidiTrack()
+    messages = []
     for track in tracks:
-        now = 0
-        for message in track:
-            now += message.time
-            if message.type not in ('track_name', 'end_of_track'):
-                messages.append(message.copy(time=now))
-            if message.type == 'end_of_track':
-                break
-        max_time = max(max_time, now)
+        messages.extend(_to_abstime(track))
 
-    messages.sort(key=lambda x: x.time)
-    messages.append(MetaMessage('end_of_track', time=max_time))
+    messages.sort(key=lambda msg: msg.time)
 
-    # Convert absolute time back to delta time.
-    last_time = 0
-    for message in messages:
-        message.time -= last_time
-        last_time += message.time
-
-    return messages
+    return MidiTrack(_fix_end_of_track(_to_reltime(messages)))
