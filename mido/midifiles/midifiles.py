@@ -235,6 +235,40 @@ def write_chunk(outfile, name, data):
     outfile.write(data)
 
 
+def write_track(outfile, track):
+    data = bytearray()
+
+    running_status_byte = None
+    for message in fix_end_of_track(track):
+        if not isinstance(message, MetaMessage):
+            if message._spec.status_byte >= 0xf8:
+                raise ValueError(
+                    ("realtime message '{}' is not "
+                     "allowed in a MIDI file".format(
+                            message.type)))
+
+        data.extend(encode_variable_int(message.time))
+        if message.type == 'sysex':
+            running_status_byte = None
+            data.append(0xf0)
+            # length (+ 1 for end byte (0xf7))
+            data.extend(encode_variable_int(len(message.data) + 1))
+            data.extend(message.data)
+            data.append(0xf7)
+        else:
+            raw = message.bytes()
+            if (isinstance(message, Message)
+                and raw[0] < 0xf0
+                and raw[0] == running_status_byte):
+                data.extend(raw[1:])
+            else:
+                data.extend(raw)
+            running_status_byte = raw[0]
+
+    write_chunk(outfile, b'MTrk', data)
+
+
+
 class MidiFile:
     def __init__(self, filename=None, file=None,
                  type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
@@ -397,36 +431,7 @@ class MidiFile:
             write_chunk(outfile, b'MThd', header)
 
             for track in self.tracks:
-                data = bytearray()
-
-                running_status_byte = None
-                for message in fix_end_of_track(track):
-                    if not isinstance(message, MetaMessage):
-                        if message._spec.status_byte >= 0xf8:
-                            raise ValueError(
-                                ("realtime message '{}' is not "
-                                 "allowed in a MIDI file".format(
-                                        message.type)))
-
-                    data.extend(encode_variable_int(message.time))
-                    if message.type == 'sysex':
-                        running_status_byte = None
-                        data.append(0xf0)
-                        # length (+ 1 for end byte (0xf7))
-                        data.extend(encode_variable_int(len(message.data) + 1))
-                        data.extend(message.data)
-                        data.append(0xf7)
-                    else:
-                        raw = message.bytes()
-                        if (isinstance(message, Message)
-                            and raw[0] < 0xf0
-                            and raw[0] == running_status_byte):
-                            data.extend(raw[1:])
-                        else:
-                            data.extend(raw)
-                        running_status_byte = raw[0]
-
-                write_chunk(outfile, b'MTrk', data)
+                write_track(outfile, track)
 
     def print_tracks(self, meta_only=False):
         """Prints out all messages in a .midi file.
