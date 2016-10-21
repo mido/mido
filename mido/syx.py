@@ -37,21 +37,11 @@ def read_syx_file(filename):
         # Binary.
         return parse_all(data)
     else:
-        parser = Parser()
+        # Hex.
+        # We're decoding as latin1 to avoid decoding errors.
+        data = bytearray.fromhex(data.decode('latin1'))
 
-        # Plain text.
-        for lineno, line in enumerate(data.split(b'\n'), start=1):
-            for byte in line.split():
-                if len(byte) != 2:
-                    raise_value_error()
-
-                try:
-                    byte = int(byte, 16)
-                except ValueError:
-                    raise_value_error()
-                parser.feed_byte(byte)
-
-        return [message for message in parser if message.type == 'sysex']
+        return [msg for msg in Parser(data) if msg.type == 'sysex']
 
 
 def write_syx_file(filename, messages, plaintext=False):
