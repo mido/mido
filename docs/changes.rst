@@ -23,6 +23,8 @@ Release History
 * renamed `parser._parsed_messages` to `parser.messages`. `BaseInput`
   and `SocketPort` use it so it should be public.
 
+* `Parser()` now takes an option arugment `data` which is passed to `feed()`.
+
 
 1.1.17 (2016-10-06)
 ^^^^^^^^^^^^^^^^^^^

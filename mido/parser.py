@@ -29,10 +29,12 @@ class Parser(object):
     integers, byte arrays or byte strings.
     """
 
-    def __init__(self):
+    def __init__(self, data=None):
         """Create a new parser."""
         self.messages = deque()
         self._reset()
+        if data is not None:
+            self.feed(data)
 
     def _reset(self):
         self._spec = None
@@ -146,9 +148,7 @@ def parse_all(data):
     amounts of data. Also, tt's often easier to use parse() if you
     know there is only one message in the data.
     """
-    parser = Parser()
-    parser.feed(data)
-    return list(parser)
+    return list(Parser(data))
 
 
 def parse(data):
@@ -157,6 +157,4 @@ def parse(data):
     Data after the first message is ignored. Use parse_all()
     to parse more than one message.
     """
-    parser = Parser()
-    parser.feed(data)
-    return parser.get_message()
+    return Parser(data).get_message()
