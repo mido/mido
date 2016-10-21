@@ -22,9 +22,9 @@ import time
 import string
 import struct
 from ..messages import build_message, Message, get_spec
-from .meta import MetaMessage, _build_meta_message, meta_charset
+from .meta import MetaMessage, build_meta_message, meta_charset
 from .meta import MetaSpec, add_meta_spec, encode_variable_int
-from .tracks import merge_tracks, fix_end_of_track
+from .tracks import MidiTrack, merge_tracks, fix_end_of_track
 
 PY2 = (sys.version_info.major == 2)
 
@@ -33,148 +33,200 @@ PY2 = (sys.version_info.major == 2)
 DEFAULT_TEMPO = 500000
 DEFAULT_TICKS_PER_BEAT = 480
 
-class ByteReader(object):
-    """
-    Reads bytes from a file.
-    """
+def print_byte(byte, pos=0):
+    char = chr(byte)
+    if char.isspace() or not char in string.printable:
+        char = '.'
+
+    print('  {:06x}: {:02x}  {}'.format(pos, byte, char))
+
+
+class PosFileWrapper(object):
     def __init__(self, file):
-        """
-        :param file:  a file object which is opened in read mode,
-                      typically a file or an in-memory file.
-        """
-        self._buffer = list(bytearray(file.read()))
         self.pos = 0
-        self._eof = EOFError('unexpected end of file')
+        self.file = file
 
-    def read_byte(self):
-        """Read one byte."""
-        try:
-            byte = self._buffer[self.pos]
+    def read(self, size):
+        data = self.file.read(size)
+
+        self.pos += len(data)
+
+        return data
+
+
+class DebugFileWrapper(object):
+    def __init__(self, file):
+        self.pos = 0
+        self.file = file
+
+    def read(self, size):
+        data = self.file.read(size)
+
+        for byte in data:
+            print_byte(byte, self.pos)
             self.pos += 1
-            return byte
-        except IndexError:
-            raise self._eof
 
-    def peek_byte(self):
-        """Return the next byte in the file.
-
-        This can be used for look-ahead."""
-        try:
-            return self._buffer[self.pos]
-        except IndexError:
-            raise self._eof
-
-    def peek_list(self, n):
-        """Return a list of the next n bytes."""
-        return self._buffer[self.pos:self.pos+n]
-
-    def read_short(self):
-        """Read short (2 bytes little endian)."""
-        a, b = self.read_list(2)
-        return a << 8 | b
-
-    def read_long(self):
-        """Read long (4 bytes little endian)."""
-        a, b, c, d = self.read_list(4)
-        return a << 24 | b << 16 | c << 8 | d
-
-    def read_list(self, n):
-        """Read n bytes and return as a list."""
-        i = self.pos
-        ret = self._buffer[i:i + n]
-        if len(ret) < n:
-            raise self._eof
-
-        self.pos += n
-        return ret
+        return data
 
 
-class _DebugByteReader(ByteReader):
-    parent = ByteReader
-
-    def _print_bytes(self, n):
-        """Print the next n bytes as hex and characters.
-
-        This is used for debugging.
-        """
-        data = self._buffer[self.pos:self.pos + n]
-        # print()
-        for pos, byte in enumerate(data, start=self.pos):
-            char = chr(byte)
-            if not char in string.printable or char in string.whitespace:
-                char = '.'
-            print('  {:06x}: {:02x}  {}'.format(pos, byte, char))
-
-        if len(data) < n:
-            raise EOFError('unexpected end of file')
-
-    def read_byte(self):
-        self._print_bytes(1)
-        return self.parent.read_byte(self)
-
-    def read_list(self, n):
-        self._print_bytes(n)
-        return self.parent.read_list(self, n)
+def read_byte(self):
+    byte = self.read(1)
+    if byte == b'':
+        raise EOFError
+    else:
+        return ord(byte)
 
 
-class MidiTrack(list):
-    @property
-    def name(self):
-        """Name of the track.
-
-        This will return the name from the first track_name meta
-        message in the track, or '' if there is no such message.
-
-        Setting this property will update the name field of the first
-        track_name message in the track. If no such message is found,
-        one will be added to the beginning of the track with a delta
-        time of 0."""
-        for message in self:
-            if message.type == 'track_name':
-                return message.name
-        else:
-            return u''
-
-    @name.setter
-    def name(self, name):
-        # Find the first track_name message and modify it.
-        for message in self:
-            if message.type == 'track_name':
-                message.name = name
-                return
-        else:
-            # No track name found, add one.
-            self.insert(0, MetaMessage('track_name', name=name, time=0))
-
-    def copy(self):
-        return self.__class__(self)
-
-    def __getitem__(self, index_or_slice):
-        # Retrieve item from the MidiTrack
-        lst = list.__getitem__(self, index_or_slice)
-        if isinstance(index_or_slice, int):
-            # If an index was provided, return the list element
-            return lst
-        else:
-            # Otherwise, construct a MidiTrack to return.
-            # Todo: this make a copy of the list. Is there a better way?
-            return self.__class__(lst)
-
-    def __add__(self, other):
-        return self.__class__(list.__add__(self, other))
-
-    def __mul__(self, other):
-        return self.__class__(list.__mul__(self, other))
-
-    def __repr__(self):
-        return '<midi track {!r} {} messages>'.format(self.name, len(self))
+def read_bytes(infile, size):
+    return [read_byte(infile) for _ in range(size)]
 
 
 def _dbg(text=''):
     print(text)
 
 
-def _write_chunk(outfile, name, data):
+# We can't use the chunk module for two reasons:
+#
+# 1. we may have mixed big and little endian chunk sizes. (RIFF is
+# little endian while MTrk is big endian.)
+#
+# 2. the chunk module assumes that chunks are padded to the neares
+# multiple of 2. This is not true of MIDI files.
+
+def read_chunk_header(infile):
+    header = infile.read(8)
+    if len(header) < 8:
+        raise EOFError
+
+    # Todo: check for b'RIFF' and switch endian?
+
+    return struct.unpack('>4sL', header)
+
+
+def read_file_header(infile):
+    name, size = read_chunk_header(infile)
+
+    if name != b'MThd':
+        raise IOError('MThd not found. Probably not a MIDI file')
+    else:
+        data = infile.read(size)
+
+        if len(data) < 6:
+            raise EOFError
+
+        return struct.unpack('>hhh', data[:6])
+
+
+def read_message(infile, status_byte, peek_data):
+    try:
+        spec = get_spec(status_byte)
+    except LookupError:
+        raise IOError('undefined status byte 0x{:02x}'.format(status_byte))
+
+    # Subtrac 1 for status byte.
+    size = spec.length - 1 - len(peek_data)
+    data_bytes = peek_data + read_bytes(infile, size)
+
+    for byte in data_bytes:
+        if byte > 127:
+            raise IOError('data byte must be in range 0..127')
+    return build_message(spec, [status_byte] + data_bytes)
+
+
+def read_sysex(infile):
+    length = read_variable_int(infile)
+    data = read_bytes(infile, length)
+
+    # Strip start and end bytes.
+    # Todo: is this necessary?
+    if data and data[0] == 0xf0:
+        data = data[1:]
+    if data and data[-1] == 0xf7:
+        data = data[:-1]
+
+    message = Message('sysex', data=data)
+    return message
+
+
+def read_variable_int(infile):
+    delta = 0
+
+    while True:
+        byte = read_byte(infile)
+        delta = (delta << 7) | (byte & 0x7f)
+        if byte < 0x80:
+            return delta
+
+
+def read_meta_message(infile):
+    type = read_byte(infile)
+    length = read_variable_int(infile)
+    data = read_bytes(infile, length)
+    return build_meta_message(type, data)
+
+
+def read_track(infile, debug=False):
+    track = MidiTrack()
+
+    name, size = read_chunk_header(infile)
+
+    if name != b'MTrk':
+        raise IOError('no MTrk header at start of track')
+
+    if debug:
+        _dbg('-> size={}'.format(size))
+        _dbg()
+
+    start = infile.pos
+    last_status = None
+
+    while True:
+        # End of track reached.
+        if infile.pos - start == size:
+            break
+
+        if debug:
+            _dbg('Message:')
+
+        delta = read_variable_int(infile)
+
+        if debug:
+            _dbg('-> delta={}'.format(delta))
+
+        # Todo: not all messages have running status
+        status_byte = read_byte(infile)
+
+        if status_byte < 0x80:
+            if last_status is None:
+                raise IOError('running status without last_status')
+            peek_data = [status_byte]
+            status_byte = last_status
+        else:
+            if status_byte != 0xff:
+                # Meta messages don't set running status.
+                last_status = status_byte
+            peek_data = []
+
+        if status_byte == 0xff:
+            message = read_meta_message(infile)
+        elif status_byte in [0xf0, 0xf7]:
+            # Todo: I'm not quite clear on the difference between
+            # f0 and f7 events.
+            message = read_sysex(infile)
+        else:
+            message = read_message(infile, status_byte, peek_data)
+
+        message.time = delta
+        track.append(message)
+
+        if debug:
+            _dbg('-> {!r}'.format(message))
+            _dbg()
+
+    return track
+
+
+def write_chunk(outfile, name, data):
     """Write an IFF chunk to the file.
 
     `name` must be a bytestring."""
@@ -219,144 +271,31 @@ class MidiFile:
         self.tracks.append(track)
         return track
 
-    def _load(self, file):
+    def _load(self, infile):
         if self.debug:
-            self._file = _DebugByteReader(file)
+            infile = DebugFileWrapper(infile)
         else:
-            self._file = ByteReader(file)
+            infile = PosFileWrapper(infile)
 
         with meta_charset(self.charset):
             if self.debug:
                 _dbg('Header:')
 
-            # Read header (16 bytes)
-            magic = self._file.peek_list(4)
-            if not bytearray(magic) == bytearray(b'MThd'):
-                raise IOError('MThd not found. Probably not a MIDI file')
-            self._file.read_list(4)  # Skip MThd
-
-            # This is always 6 for any file created under the MIDI 1.0
-            # specification, but this allows for future expansion.
-            header_size = self._file.read_long()
-
-            self.type = self._file.read_short()
-            number_of_tracks = self._file.read_short()
-            self.ticks_per_beat = self._file.read_short()
+            (self.type,
+             num_tracks,
+             self.ticks_per_beat) = read_file_header(infile)
 
             if self.debug:
                 _dbg('-> type={}, tracks={}, ticks_per_beat={}'.format(
-                    self.type, number_of_tracks, self.ticks_per_beat))
+                    self.type, num_tracks, self.ticks_per_beat))
                 _dbg()
 
-            # Skip the rest of the header.
-            for _ in range(header_size - 6):
-                self._file.read_byte()
+            for i in range(num_tracks):
+                if self.debug:
+                    _dbg('Track {}:'.format(i))
 
-            for i in range(number_of_tracks):
-                self.tracks.append(self._read_track())
+                self.tracks.append(read_track(infile, debug=self.debug))
                 # Todo: used to ignore EOFError. I hope things still work.
-
-    def _read_variable_int(self):
-        delta = 0
-
-        while True:
-            byte = self._file.read_byte()
-            delta = (delta << 7) | (byte & 0x7f)
-            if byte < 0x80:
-                return delta
-
-    def _read_message(self, status_byte):
-        try:
-            spec = get_spec(status_byte)
-        except LookupError:
-            raise IOError('undefined status byte 0x{:02x}'.format(status_byte))
-        data_bytes = self._file.read_list(spec.length - 1)
-        for byte in data_bytes:
-            if byte > 127:
-                raise IOError('data byte must be in range 0..127')
-        return build_message(spec, [status_byte] + data_bytes)
-
-    def _read_meta_message(self):
-        type = self._file.read_byte()
-        length = self._read_variable_int()
-        data = self._file.read_list(length)
-        return _build_meta_message(type, data)
-
-    def _read_sysex(self):
-        length = self._read_variable_int()
-        data = self._file.read_list(length)
-
-        # Strip start and end bytes.
-        if data and data[0] == 0xf0:
-            data = data[1:]
-        if data and data[-1] == 0xf7:
-            data = data[:-1]
-
-        message = Message('sysex', data=data)
-        return message
-
-    def _read_track(self):
-        track = MidiTrack()
-
-        if self.debug:
-            _dbg('Track {}:'.format(len(self.tracks)))
-
-        magic = self._file.peek_list(4)
-        if bytearray(magic) == bytearray(b'MTrk'):
-            self._file.read_list(4)  # Skip 'MTrk'
-            length = self._file.read_long()
-        else:
-            raise IOError('no MTrk header at start of track')
-
-        start = self._file.pos
-        last_status = None
-
-        if self.debug:
-            _dbg('-> length={}'.format(length))
-            _dbg()
-
-        while True:
-            # End of track reached.
-            if self._file.pos - start == length:
-                break
-
-            if self.debug:
-                _dbg('Message:')
-
-            delta = self._read_variable_int()
-            
-            if self.debug:
-                _dbg('-> delta={}'.format(delta))
-
-            # Todo: not all messages have running status
-            peek_status = self._file.peek_byte()
-            if peek_status < 0x80:
-                if last_status is None:
-                    raise IOError('running status without last_status')
-                status_byte = last_status
-            else:
-                status_byte = self._file.read_byte()
-                if status_byte != 0xff:
-                    # Meta messages don't set running status.
-                    last_status = status_byte
-
-            if status_byte == 0xff:
-                message = self._read_meta_message()
-            elif status_byte in [0xf0, 0xf7]:
-                # Todo: I'm not quite clear on the difference between
-                # f0 and f7 events.
-                message = self._read_sysex()
-            else:
-                message = self._read_message(status_byte)
-
-            message.time = delta
-            track.append(message)
-
-            if self.debug:
-                _dbg('-> {!r}'.format(message))
-                _dbg()
-
-        return track
 
     @property
     def length(self):
@@ -455,7 +394,7 @@ class MidiFile:
                                  len(self.tracks),
                                  self.ticks_per_beat)
 
-            _write_chunk(outfile, b'MThd', header)
+            write_chunk(outfile, b'MThd', header)
 
             for track in self.tracks:
                 data = bytearray()
@@ -487,7 +426,7 @@ class MidiFile:
                             data.extend(raw)
                         running_status_byte = raw[0]
 
-                _write_chunk(outfile, b'MTrk', data)
+                write_chunk(outfile, b'MTrk', data)
 
     def print_tracks(self, meta_only=False):
         """Prints out all messages in a .midi file.

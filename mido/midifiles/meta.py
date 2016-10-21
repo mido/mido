@@ -414,7 +414,7 @@ def _add_builtin_meta_specs():
 _add_builtin_meta_specs()
 
 
-def _build_meta_message(type_, data):
+def build_meta_message(type_, data):
     # Todo: handle unknown type.
     try:
         spec = _specs[type_]
