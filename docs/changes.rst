@@ -10,6 +10,11 @@ Release History
 * bugfix: `end_of_track` messages in MIDI files were not handled correctly.
   (Reported by Colin Raffel, issue #62).
 
+* bufxi: `MidiFile.save()` no longer adds `end_of_track` or complains
+  of `end_of_track` inside a track. There was no reason to add this as
+  its delta time would always be 0. This has the benefit of saving and
+  reloading a file always giving the exact same messages.
+
 * renamed `parser._parsed_messages` to `parser.messages`. `BaseInput`
   and `SocketPort` use it so it should be public.
 
