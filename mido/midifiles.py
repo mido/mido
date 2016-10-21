@@ -461,6 +461,17 @@ class MidiFile:
             else:
                 yield message
 
+    def _has_end_of_track(self, track):
+        """Return True if there is an end_of_track at the end of the track."""
+        last_i = len(track) - 1
+        for i, message in enumerate(track):
+            if message.type == 'end_of_track':
+                if i != last_i:
+                    raise ValueError('end_of_track not at end of the track')
+                return True
+        else:
+            return False
+
     def save(self, filename=None, file=None):
         """Save to a file.
 
@@ -520,6 +531,11 @@ class MidiFile:
                         else:
                             data.extend(raw)
                         running_status_byte = raw[0]
+
+                if not self._has_end_of_track(track):
+                    # Write end_of_track.
+                    data.append(0)  # Delta time.
+                    data.extend(MetaMessage('end_of_track').bytes())
 
                 _write_chunk(outfile, b'MTrk', data)
 
