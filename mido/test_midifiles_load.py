@@ -41,6 +41,16 @@ def test_single_message():
     """).tracks[0] == [Message('note_on', note=64, velocity=64)]
 
 
+def test_two_tracks():
+    mid = read_file("""
+    4d54 6864 0000 0006 0001 0002 0040        # Header
+    4d54 726b 0000 0008 00 90 40 10  40 80 40 10   # Track 0
+    4d54 726b 0000 0008 00 90 47 10  40 80 47 10   # Track 1
+    """)
+    assert len(mid.tracks) == 2
+    # Todo: add some more tests here.
+
+
 def test_empty_file():
     with raises(EOFError):
         read_file("")
@@ -52,4 +62,14 @@ def test_eof_in_track():
         4d 54 72 6b  # MTrk
         00 00 00 01  # Chunk size
         # Oops, no data here.
+        """)
+
+
+def test_invalid_data_byte():
+    # Todo: should this raise IOError?
+    with raises(IOError):
+        read_file(HEADER_ONE_TRACK + """
+        4d 54 72 6b  # MTrk
+        00 00 00 04  # Chunk size
+        00 90 ff 40  # note_on note=255 velocity=64
         """)
