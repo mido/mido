@@ -15,6 +15,8 @@ Release History
   `end_of_track` messages and adds one at the end, making sure to
   adjust the delta times of the remaining messages.
 
+* refactored MIDI file code.
+
 * renamed `parser._parsed_messages` to `parser.messages`. `BaseInput`
   and `SocketPort` use it so it should be public.
 
