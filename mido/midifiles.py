@@ -21,6 +21,7 @@ import sys
 import time
 import timeit
 import string
+import struct
 from contextlib import contextmanager
 from .ports import BaseOutput
 from .messages import build_message, Message, get_spec
@@ -90,33 +91,6 @@ class ByteReader(object):
 
         self.pos += n
         return ret
-
-
-class ByteWriter(object):
-    def __init__(self, file):
-        """
-        :param file:  a file object which is opened in write mode,
-                      typically a file or an in-memory file.
-        """
-        self.file = file
-
-    def write(self, bytes):
-        self.file.write(bytearray(bytes))
-
-    def write_byte(self, byte):
-        self.file.write(chr(byte))
-
-    def write_short(self, n):
-        a = n >> 8
-        b = n & 0xff
-        self.write([a, b])
-
-    def write_long(self, n):
-        a = n >> 24 & 0xff
-        b = n >> 16 & 0xff
-        c = n >> 8 & 0xff
-        d = n & 0xff
-        self.write([a, b, c, d])
 
 
 class MidiTrack(list):
@@ -204,6 +178,15 @@ def merge_tracks(tracks):
 
 def _dbg(text=''):
     print(text)
+
+
+def _write_chunk(outfile, name, data):
+    """Write an IFF chunk to the file.
+
+    `name` must be a bytestring."""
+    outfile.write(name)
+    outfile.write(struct.pack('>L', len(data)))
+    outfile.write(data)
 
 
 class MidiFile:
@@ -483,19 +466,17 @@ class MidiFile:
         else:
             raise ValueError('requires filename or file')
 
-    def _save(self, file):
-        self._file = ByteWriter(file)
-
+    def _save(self, outfile):
         with meta_charset(self.charset):
-            self._file.write(b'MThd')
+            header = struct.pack('>hhh', self.type,
+                                 len(self.tracks),
+                                 self.ticks_per_beat)
 
-            self._file.write_long(6)  # Header size. (Next three shorts.)
-            self._file.write_short(self.type)
-            self._file.write_short(len(self.tracks))
-            self._file.write_short(self.ticks_per_beat)
+            _write_chunk(outfile, b'MThd', header)
 
             for track in self.tracks:
-                bytes = []
+                data = bytearray()
+
                 running_status_byte = None
                 for message in track:
                     if not isinstance(message, MetaMessage):
@@ -505,32 +486,30 @@ class MidiFile:
                                  "allowed in a MIDI file".format(
                                         message.type)))
 
-                    bytes += encode_variable_int(message.time)
+                    data.extend(encode_variable_int(message.time))
                     if message.type == 'sysex':
                         running_status_byte = None
-                        bytes += [0xf0]
+                        data.append(0xf0)
                         # length (+ 1 for end byte (0xf7))
-                        bytes += encode_variable_int(len(message.data) + 1)
-                        bytes += message.data
-                        bytes += [0xf7]
+                        data.extend(encode_variable_int(len(message.data) + 1))
+                        data.extend(message.data)
+                        data.append(0xf7)
                     else:
                         raw = message.bytes()
                         if (isinstance(message, Message)
                             and raw[0] < 0xf0
                             and raw[0] == running_status_byte):
-                            bytes += raw[1:]
+                            data.extend(raw[1:])
                         else:
-                            bytes += raw
+                            data.extend(raw)
                         running_status_byte = raw[0]
 
                 if not self._has_end_of_track(track):
                     # Write end_of_track.
-                    bytes += [0]  # Delta time.
-                    bytes += MetaMessage('end_of_track').bytes()
+                    data.append(0)  # Delta time.
+                    data.extend(MetaMessage('end_of_track').bytes())
 
-                self._file.write(b'MTrk')
-                self._file.write_long(len(bytes))
-                self._file.write(bytes)
+                _write_chunk(outfile, b'MTrk', data)
 
     def print_tracks(self, meta_only=False):
         """Prints out all messages in a .midi file.
