@@ -104,4 +104,4 @@ def merge_tracks(tracks):
 
     messages.sort(key=lambda msg: msg.time)
 
-    return MidiTrack(_fix_end_of_track(_to_reltime(messages)))
+    return MidiTrack(fix_end_of_track(_to_reltime(messages)))
