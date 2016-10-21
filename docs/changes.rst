@@ -17,6 +17,9 @@ Release History
 
 * refactored MIDI file code.
 
+* `mido-play` now has a new option `-m / --print-messages` which prints
+  messages as they are played back.
+
 * renamed `parser._parsed_messages` to `parser.messages`. `BaseInput`
   and `SocketPort` use it so it should be public.
 

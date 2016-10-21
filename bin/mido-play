@@ -23,6 +23,12 @@ def parse_args():
     arg('-o', '--output-port',
         help='Mido port to send output to')
 
+    arg('-m', '--print-messages',
+        dest='print_messages',
+        action='store_true',
+        default=False,
+        help='Print messages as they are played back')
+
     arg('-q', '--quiet',
         dest='quiet',
         action='store_true',
@@ -37,7 +43,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def play_file(output, filename):
+def play_file(output, filename, print_messages):
     midi_file = MidiFile(filename) 
 
     print('Playing {}.'.format(midi_file.filename))
@@ -50,8 +56,11 @@ def play_file(output, filename):
         print('  {:2d}: {!r}'.format(i, track.name.strip()))
 
     for message in midi_file.play(meta_messages=True):
+        if print_messages:
+            sys.stdout.write(repr(message) + '\n')
+            sys.stdout.flush()
+
         if isinstance(message, Message):
-            # print(message)
             output.send(message)
         elif message.type == 'set_tempo':
             print('Tempo changed to {:.1f} BPM.'.format(
@@ -67,7 +76,7 @@ def main():
             output.reset()
             try:
                 for filename in args.files:
-                    play_file(output, filename)
+                    play_file(output, filename, args.print_messages)
             finally:
                 print()
                 output.reset()
