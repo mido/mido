@@ -70,8 +70,10 @@ def _to_reltime(messages):
         now = msg.time
 
 
-def _fix_end_of_track(messages):
-    """Remove all end_of_track messages and add one at the end."""
+def fix_end_of_track(messages):
+    """Remove all end_of_track messages and add one at the end.
+
+    This is used by merge_tracks() and MidiFile.save()."""
     # Accumulated delta time from removed end of track messages.
     # This is added to the next message.
     accum = 0
