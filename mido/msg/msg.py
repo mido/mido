@@ -34,6 +34,10 @@ class Message(BaseMessage):
     def from_str(self, text):
         return Message(**str2msg(text))
 
+    @classmethod
+    def from_hex(self, text):
+        return Message(**decode_msg(bytearray.fromhex(text)))
+
     def __len__(self):
         # This implementation will cause encode_msg() to be called twice
         # then you iterate over the message. It should instead look up the
