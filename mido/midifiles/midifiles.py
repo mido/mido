@@ -41,32 +41,20 @@ def print_byte(byte, pos=0):
     print('  {:06x}: {:02x}  {}'.format(pos, byte, char))
 
 
-class PosFileWrapper(object):
-    def __init__(self, file):
-        self.pos = 0
-        self.file = file
-
-    def read(self, size):
-        data = self.file.read(size)
-
-        self.pos += len(data)
-
-        return data
-
-
 class DebugFileWrapper(object):
     def __init__(self, file):
-        self.pos = 0
         self.file = file
 
     def read(self, size):
         data = self.file.read(size)
 
         for byte in data:
-            print_byte(byte, self.pos)
-            self.pos += 1
+            print_byte(byte, self.file.tell())
 
         return data
+
+    def tell(self):
+        return self.file.tell()
 
 
 def read_byte(self):
@@ -176,12 +164,12 @@ def read_track(infile, debug=False):
         _dbg('-> size={}'.format(size))
         _dbg()
 
-    start = infile.pos
+    start = infile.tell()
     last_status = None
 
     while True:
         # End of track reached.
-        if infile.pos - start == size:
+        if infile.tell() - start == size:
             break
 
         if debug:
@@ -306,8 +294,6 @@ class MidiFile:
     def _load(self, infile):
         if self.debug:
             infile = DebugFileWrapper(infile)
-        else:
-            infile = PosFileWrapper(infile)
 
         with meta_charset(self.charset):
             if self.debug:
@@ -367,7 +353,7 @@ class MidiFile:
                 delta = msg.time * seconds_per_tick
             else:
                 delta = 0
-                
+
             yield msg.copy(time=delta)
 
             if msg.type == 'set_tempo':
