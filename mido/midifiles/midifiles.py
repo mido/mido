@@ -362,18 +362,18 @@ class MidiFile:
 
         seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
 
-        for message in merge_tracks(self.tracks):
+        for msg in merge_tracks(self.tracks):
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
-            if message.time > 0:
-                message.time *= seconds_per_tick
+            if msg.time > 0:
+                delta = msg.time * seconds_per_tick
             else:
-                message.time = 0
+                delta = 0
+                
+            yield msg.copy(time=delta)
 
-            yield message
-
-            if message.type == 'set_tempo':
-                seconds_per_tick = self._get_seconds_per_tick(message.tempo)
+            if msg.type == 'set_tempo':
+                seconds_per_tick = self._get_seconds_per_tick(msg.tempo)
 
     def play(self, meta_messages=False):
         """Play back all tracks.
@@ -392,13 +392,13 @@ class MidiFile:
         """
         sleep = time.sleep
 
-        for message in self:
-            sleep(message.time)
+        for msg in self:
+            sleep(msg.time)
 
-            if isinstance(message, MetaMessage) and not meta_messages:
+            if isinstance(msg, MetaMessage) and not meta_messages:
                 continue
             else:
-                yield message
+                yield msg
 
     def save(self, filename=None, file=None):
         """Save to a file.
