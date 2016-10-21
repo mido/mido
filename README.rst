@@ -13,23 +13,27 @@ designed to be as straight forward and Pythonic as possible:
 .. code-block:: python
 
     >>> with input as mido.open_input('SH-201'):
-    ...     for message in input:
-    ...         print(message)
+    ...     for msg in input:
+    ...         print(msg)
 
 .. code-block:: python
 
-    >>> message = mido.Message('program_change', program=10)
-    >>> message.type
-    'program_change'
-    >>> message.channel = 2
-    >>> message.copy(program=9)
-    <message program_change channel=2 program=9 time=0>
+    >>> from mido import Message
+    >>> msg = Message('program_change', program=1)
+    >>> msg
+    <message program_change channel=0 program=1 time=0>
+    >>> msg.copy(program=2, time=100)
+    <message program_change channel=0 program=2 time=100>
+    >>> msg.time
+    100
+    >>> msg.bytes()
+    [192, 1]
 
 .. code-block:: python
 
     >>> from mido import MidiFile
-    >>> for message in MidiFile('song.mid').play():
-    ...     output.send(message)
+    >>> for msg in MidiFile('song.mid').play():
+    ...     output.send(msg)
 
 Full documentation at https://mido.readthedocs.io/
 
