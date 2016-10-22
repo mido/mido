@@ -42,40 +42,6 @@ Mido supports all message types defined by the MIDI standard. For a
 full list of messages and their attributes, see :doc:`message_types`.
 
 
-Comparison
-----------
-
-To compare two messages::
-
-    >>> Message('note_on', note=60) == Message('note_on', note=60)
-    True
-    >>> Message('note_on', note=60) == Message('note_on', note=120)
-    False
-
-Messages of different types are never equal::
-
-    >>> Message('note_on') == Message('program_change')
-    False
-
-The ``time`` attribute is not included in comparisons::
-
-    >>> a = Message('note_on', time=1)
-    >>> b = Message('note_on', time=2)
-    >>> a == b
-    True
-
-The reason why time is not compared is that it's not regarded as part
-of the messages, but rather something that is tagged into it. To
-include ``time`` in the comparison you can do::
-
-    >>> a = Message('note_on', time=1)
-    >>> b = Message('note_on', time=2)
-    >>> (a, a.time) == (b, b.time)
-    False
-
-Sort ordering of messages is not defined.
-
-
 Converting To Bytes
 -------------------
 
@@ -104,8 +70,9 @@ do with this value is entirely up to you.
 Some parts of Mido uses the attribute for special purposes. In MIDI
 file tracks, it is used as delta time (in ticks).
 
-The ``time`` attribute is not included in comparisons. (See
-"Comparison" above.)
+.. note:: Before 1.1.18 the ``time`` attribute was not included in
+          comparisons. If you want the old behavior the easies way is
+          ``msg1.bytes()`` == ``msg2.bytes()``.
 
 To sort messages on time you can do::
 

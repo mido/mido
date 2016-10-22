@@ -10,6 +10,7 @@ PY2 = (sys.version_info.major == 2)
 def test_msg_equality():
     args = dict(type='note_on', channel=1, note=2, velocity=3)
     assert Message(**args) == Message(**args)
+    assert Message(time=1, **args) != Message(time=2, **args)
 
 def test_set_type():
     with raises(AttributeError):

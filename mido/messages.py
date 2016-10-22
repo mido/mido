@@ -311,19 +311,18 @@ class BaseMessage(object):
         return sep.join('{:02X}'.format(byte) for byte in self.bytes())
 
     def __eq__(self, other):
-        """Compare message to another for equality.
-        
-        Key for comparison: (msg.type, msg.channel, msg.note, msg.velocity).
-        """
+        """Compare message to another for equality."""
         if not isinstance(other, BaseMessage):
             raise TypeError('comparison between message and another type')
 
-        return self.bytes() == other.bytes()
+        return vars(self) == vars(other)
+
 
 class SysexData(tuple):
     """Special kind of tuple accepts and converts any sequence in +=."""
     def __iadd__(self, other):
         return SysexData(self + check_data(other))
+
 
 class Message(BaseMessage):
     """
