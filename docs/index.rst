@@ -75,6 +75,7 @@ Contents
 
    changes
    installing
+   contributing
    intro
    messages
    ports
