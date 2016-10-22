@@ -28,7 +28,7 @@ class Parser:
 
     def _wrap_messages(self):
         for msgdict in self._decoder:
-            self.messages.append(Message.from_dict(msgdict))
+            self.messages.append(Message(**msgdict))
 
     def feed(self, data):
         self._decoder.feed(data)

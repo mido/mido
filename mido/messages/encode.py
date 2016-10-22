@@ -8,7 +8,7 @@ def _encode_pitchwheel_data(msg):
 
 
 def _encode_sysex_data(msg):
-    return msg['data'] + [0xf7]
+    return list(msg['data']) + [0xf7]
 
 
 def _encode_quarter_frame_data(msg):
