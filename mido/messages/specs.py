@@ -88,16 +88,10 @@ def _make_spec_lookups(specs):
 SPEC_LOOKUP, SPEC_BY_STATUS, SPEC_BY_TYPE = _make_spec_lookups(SPECS)
 
 
-class SysexData(tuple):
-    """Special kind of tuple accepts and converts any sequence in +=."""
-    def __iadd__(self, other):
-        return SysexData(self + check_data(other))
-
-
 DEFAULT_VALUES = {
     'channel': 0,
     'control': 0,
-    'data': SysexData(),
+    'data': (),
     'frame_type': 0,
     'frame_value': 0,
     'note': 0,

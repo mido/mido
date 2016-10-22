@@ -1,6 +1,6 @@
 from .specs import VALID_DATA_BYTES, MIN_SONGPOS, MAX_SONGPOS
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
-from .specs import SPEC_BY_TYPE, SysexData
+from .specs import SPEC_BY_TYPE
 
 
 def check_type(type_):

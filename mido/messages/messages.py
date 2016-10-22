@@ -1,5 +1,5 @@
-from .specs import make_msgdict, SysexData
-from .check import check_msgdict
+from .specs import make_msgdict
+from .check import check_msgdict, check_value, check_data
 from .decode import decode_msg, Decoder
 from .encode import encode_msg
 from .strings import msg2str, str2msg
@@ -33,6 +33,13 @@ class BaseMessage(object):
 
         # This includes time in comparison.
         return vars(self) == vars(other)
+
+
+class SysexData(tuple):
+    """Special kind of tuple accepts and converts any sequence in +=."""
+    def __iadd__(self, other):
+        check_data(other)
+        return self + SysexData(other)
 
 
 class Message(BaseMessage):
