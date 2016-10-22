@@ -280,18 +280,18 @@ class BaseMessage(object):
 
         # Make an exact copy of this object.
         klass = self.__class__
-        message = klass.__new__(klass)
-        message.__dict__.update(self.__dict__)
+        msg = klass.__new__(klass)
+        vars(msg).update(vars(self))
 
         for name, value in overrides.items():
             try:
                 # setattr() is responsible for checking the
                 # name and type of the attribute.
-                setattr(message, name, value)
+                setattr(msg, name, value)
             except AttributeError as err:
                 raise ValueError(*err.args)
 
-        return message
+        return msg
 
     def bytes(self):
         raise ValueError('bytes() is not implemented in this class')
@@ -347,18 +347,18 @@ class Message(BaseMessage):
         except KeyError:
             raise ValueError('invalid message type {!r}'.format(type))
 
-        self.__dict__['type'] = type
-        self.__dict__['_spec'] = spec
+        vars(self)['type'] = type
+        vars(self)['_spec'] = spec
 
         # Set default values.
         for name in spec.arguments:
             if name == 'velocity':
-                self.__dict__['velocity'] = 0x40
+                vars(self)['velocity'] = 0x40
             elif name == 'data':
-                self.__dict__['data'] = SysexData()
+                vars(self)['data'] = SysexData()
             else:
-                self.__dict__[name] = 0
-        self.__dict__['time'] = 0
+                vars(self)[name] = 0
+        vars(self)['time'] = 0
 
         # Override defaults.
         for name, value in arguments.items():
@@ -377,8 +377,8 @@ class Message(BaseMessage):
             except KeyError:
                 check_databyte(value)
 
-            self.__dict__[name] = value
-        elif name in self.__dict__:
+            vars(self)[name] = value
+        elif name in vars(self):
             raise AttributeError('{} attribute is read only'.format(name))
         else:
             raise AttributeError(
@@ -486,14 +486,14 @@ def build_message(spec, bytes, time=0):
     # Message.__new__() is used as an optimization to
     # get around argument checking. We already know that
     # the values are valid.
-    message = Message.__new__(Message)
-    message.__dict__.update(attributes)
-    message.__dict__.update({
-            'type': spec.type,
-            '_spec': spec,
-            'time': time,
-            })
-    return message
+    msg = Message.__new__(Message)
+    vars(msg).update(attributes)
+    vars(msg).update({
+        'type': spec.type,
+        '_spec': spec,
+        'time': time,
+    })
+    return msg
 
 def parse_time(text):
     if text.endswith('L'):

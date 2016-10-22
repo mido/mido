@@ -186,7 +186,7 @@ def test_copy():
 
     assert orig == copy
     assert orig.time == copy.time
-    assert orig.__dict__ == copy.__dict__
+    assert vars(orig) == vars(copy)
 
     copy = orig.copy(velocity=1)
     orig.velocity = 1
