@@ -22,7 +22,7 @@ are found in `mido/test_*.py`.
 If you can please run tests in both Python 2 and Python 3 before you
 commit code. I've renamed the executables so I can just run `pytest2
 && pytest3` instead of remembering what the programs are called. (I
-think they were `py.test` and `pytest3`.)
+think they were `py.test` and `py.test-3`.)
 
 You can also set up a commit hook::
 
