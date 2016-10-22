@@ -6,8 +6,8 @@ available in the top level module.
 """
 import sys
 from collections import deque
-from .msg.msg import Message
-from .msg.decode import Decoder
+from .messages import Message
+from .messages.decode import Decoder
 
 # Todo: make sure the method signatures are as before.
 # Todo: add doc strings.
