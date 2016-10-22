@@ -16,7 +16,8 @@ This will make it easier to merge your changes.
 Testing
 -------
 
-`pytest <doc.pytest.org>`_ is used for unit testing.
+`pytest <http://doc.pytest.org/>`_ is used for unit testing. The tests
+are found in `mido/test_*.py`.
 
 If you can please run tests in both Python 2 and Python 3 before you
 commit code. I've renamed the executables so I can just run `pytest2
