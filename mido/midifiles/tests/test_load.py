@@ -1,6 +1,6 @@
 import io
 from pytest import raises
-from ..messages import Message
+from ...messages import Message
 from ..midifiles import MidiFile
 
 HEADER_ONE_TRACK = """
