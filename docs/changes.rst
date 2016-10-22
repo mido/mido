@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.18 ()
+1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^
 
 * ``time`` is included in message comparison. ``msg1 == msg2`` will
