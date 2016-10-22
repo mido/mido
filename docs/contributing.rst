@@ -64,11 +64,11 @@ Test
 
 ::
 
+    rm -rf docs/_build && ./setup.py docs
     pytest2 && pytest3
+    check-manifest -v
 
-    check-manifest -v   # pip3 install check-manifest
-
-    rm -rf docs/_build && ./setup.py docs  # Check that docs build.
+(`pip3 install check-manifest`)
 
 You can also test that the package installs by installing it in a
 virtualenv with `pip` and `easy_install` (Python 2 and 3) and
