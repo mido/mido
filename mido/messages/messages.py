@@ -1,4 +1,4 @@
-from .specs import make_msgdict
+from .specs import make_msgdict, SysexData
 from .check import check_msgdict
 from .decode import decode_msg, Decoder
 from .encode import encode_msg
@@ -14,6 +14,8 @@ class Message(BaseMessage):
     def __init__(self, type, **args):
         msgdict = make_msgdict(type, **args)
         check_msgdict(msgdict)
+        if type == 'sysex':
+            msgdict['data'] = SysexData(msgdict['data'])
         vars(self).update(msgdict)
 
     def copy(self, **overrides):
@@ -69,6 +71,7 @@ class Message(BaseMessage):
     # us to compute a hash.
 
     def __setattr__(self, name, value):
+        check_value(name, value)
         raise AttributeError('object is immutable')
 
     __delattr__ = __setattr__

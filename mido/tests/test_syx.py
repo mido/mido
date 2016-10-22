@@ -10,6 +10,7 @@ def test_read(tmpdir):
 
     with open(path, 'wb') as outfile:
         outfile.write(message.bin())
+
     assert read_syx_file(path) == [message]
 
     with open(path, 'wt') as outfile:
