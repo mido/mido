@@ -7,14 +7,14 @@ Release History
 1.1.18 ()
 ^^^^^^^^^^^^^^^^^^^
 
-* ``time`` is now included in message comparison. ``msg1 == msg2``
-  will now give the same result as ``str(msg1) == str(msg2)`` and
-  ``repr(msg1)`` == ``repr(msg2)``,
+* ``time`` is included in message comparison. ``msg1 == msg2`` will
+  now give the same result as ``str(msg1) == str(msg2)`` and
+  ``repr(msg1)`` == ``repr(msg2)``.
 
   This means you can now compare tracks wihout any trickery, for
   example: ``mid1.tracks == mid2.tracks``.
 
-  If you need to leave you time the easiest was is ``msg1.bytes() ==
+  If you need to leave out time the easiest was is ``msg1.bytes() ==
   msg2.bytes()``.
 
   This may in rare cases break code.
