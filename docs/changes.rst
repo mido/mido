@@ -7,48 +7,50 @@ Release History
 1.1.18 ()
 ^^^^^^^^^^^^^^^^^^^
 
-* `time` is now included in message comparison. `msg1 == msg2` will
-  now give the same result as `str(msg1) == str(msg2)` and
-  `repr(msg1)` == `repr(msg2)`,
+* ``time`` is now included in message comparison. ``msg1 == msg2``
+  will now give the same result as ``str(msg1) == str(msg2)`` and
+  ``repr(msg1)`` == ``repr(msg2)``,
 
   This means you can now compare tracks wihout any trickery, for
-  example: `mid1.tracks == mid2.tracks`.
+  example: ``mid1.tracks == mid2.tracks``.
 
-  If you need to leave you time the easiest was is `msg1.bytes() ==
-  msg2.bytes()`.
+  If you need to leave you time the easiest was is ``msg1.bytes() ==
+  msg2.bytes()``.
 
   This may in rare cases break code.
 
-* bugfix: `end_of_track` messages in MIDI files were not handled correctly.
+* bugfix: ``end_of_track`` messages in MIDI files were not handled correctly.
   (Reported by Colin Raffel, issue #62).
 
-* bugfix: `merge_tracks()` dropped messages after the first
-  `end_of_track` message. The new implementation removes all
-  `end_of_track` messages and adds one at the end, making sure to
+* bugfix: ``merge_tracks()`` dropped messages after the first
+  ``end_of_track`` message. The new implementation removes all
+  ``end_of_track`` messages and adds one at the end, making sure to
   adjust the delta times of the remaining messages.
 
 * refactored MIDI file code.
 
-* `mido-play` now has a new option `-m / --print-messages` which prints
-  messages as they are played back.
+* ``mido-play`` now has a new option ``-m / --print-messages`` which
+  prints messages as they are played back.
 
-* renamed `parser._parsed_messages` to `parser.messages`. `BaseInput`
-  and `SocketPort` use it so it should be public.
+* renamed ``parser._parsed_messages`` to
+  ``parser.messages``. ``BaseInput`` and ``SocketPort`` use it so it
+  should be public.
 
-* `Parser()` now takes an option arugment `data` which is passed to `feed()`.
+* ``Parser()`` now takes an option arugment ``data`` which is passed
+  to ``feed()``.
 
 
 1.1.17 (2016-10-06)
 ^^^^^^^^^^^^^^^^^^^
 
-* RtMidi now supports true blocking `receive()` in Python 3. This
+* RtMidi now supports true blocking ``receive()`` in Python 3. This
   should result in better performance and lower latency. (Thanks to
   Adam Roberts for helping research queue behavior. See issue #49 for
   more.)
 
 * bugfix: ``MidiTrack.copy()`` (Python 3 only) returned ``list``.
 
-* fixed example `queue_port.py` which broke when locks where added.
+* fixed example ``queue_port.py`` which broke when locks where added.
 
 
 1.1.16 (2016-09-27)
@@ -63,21 +65,21 @@ Release History
 * added ``poll()`` method to input ports as a shortcut for
   ``receive(block=False)``.
 
-* added example `rtmidi_python_backend.py`, a backend for the
+* added example ``rtmidi_python_backend.py``, a backend for the
   rtmidi-python package (which is different from the python-rtmidi
   backend that Mido currently uses.) This may at some point be added
   to the package but for now it's in the examples folder. (Requested
   by netchose, issue #55.)
 
-* removed custom `_import_module()`. Its only function was to make
+* removed custom ``_import_module()``. Its only function was to make
   import errors more informative by showing the full module path, such
-  as `ImportError: mido.backends.rtmidi` instead of just `ImportError:
-  rtmidi`. Unfortunately it ended up masking import errors in the
+  as ``ImportError: mido.backends.rtmidi`` instead of just ``ImportError:
+  rtmidi``. Unfortunately it ended up masking import errors in the
   backend module, causing confusion.
 
-  It turns `importlib.import_module()` can be called with the full
+  It turns ``importlib.import_module()`` can be called with the full
   path, and on Python 3 it will also display the full path in the
-  `ImportError` message.
+  ``ImportError`` message.
 
 
 1.1.15 (2016-08-24)
