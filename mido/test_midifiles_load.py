@@ -37,8 +37,8 @@ def test_single_message():
     assert read_file(HEADER_ONE_TRACK + """
     4d 54 72 6b  # MTrk
     00 00 00 04
-    00 90 40 40  # note_on
-    """).tracks[0] == [Message('note_on', note=64, velocity=64)]
+    20 90 40 40  # note_on
+    """).tracks[0] == [Message('note_on', note=64, velocity=64, time=32)]
 
 
 def test_two_tracks():
