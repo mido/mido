@@ -25,25 +25,6 @@ VALID_BYTES = set(range(0, 256))
 VALID_DATA_BYTES = set(range(0, 128))
 
 
-def _make_msgdef_lookups(msgdefs):
-    by_status_byte = {}
-    by_type = {}
-
-    for msgdef in msgdefs:
-        type_ = msgdef['type']
-        status_byte = msgdef['status_byte']
-
-        by_type[type_] = msgdef
-
-        if status_byte in CHANNEL_MESSAGES:
-            for channel in range(16):
-                by_status_byte[status_byte | channel] = msgdef
-        else:
-            by_status_byte[status_byte] = msgdef
-                
-    return by_status_byte, by_type
-
-
 def _defmsg(status_byte, type_, value_names, length):
     return {
         'status_byte': status_byte,
@@ -53,7 +34,7 @@ def _defmsg(status_byte, type_, value_names, length):
     }
 
 
-_MSG_DEFS = [
+SPECS = [
     _defmsg(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
     _defmsg(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
     _defmsg(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
@@ -80,8 +61,31 @@ _MSG_DEFS = [
     _defmsg(0xff, 'reset', (), 1),
 ]
 
-# These must be separate tables to prevent Message(0x90) from being legal.
-_MSG_DEFS_BY_STATUS_BYTE, _MSG_DEFS_BY_TYPE = _make_msgdef_lookups(_MSG_DEFS)
+
+def _make_spec_lookups(specs):
+    lookup = {}
+    by_status = {}
+    by_type = {}
+
+    for spec in specs:
+        type_ = spec['type']
+        status_byte = spec['status_byte']
+
+        by_type[type_] = spec
+
+        if status_byte in CHANNEL_MESSAGES:
+            for channel in range(16):
+                by_status[status_byte | channel] = spec
+        else:
+            by_status[status_byte] = spec
+                
+    lookup.update(by_status)
+    lookup.update(by_type)
+
+    return lookup, by_status, by_type
+
+
+SPEC_LOOKUP, SPEC_BY_STATUS, SPEC_BY_TYPE = _make_spec_lookups(SPECS)
 
 
 DEFAULT_VALUES = {
@@ -114,20 +118,20 @@ def make_msgdict(type_, **args):
     Todo: add 'strict' option that will check types and values
     of arguments.
     """
-    if type_ in _MSG_DEFS_BY_TYPE:
-        msgdef = _MSG_DEFS_BY_TYPE[type_]
+    if type_ in SPEC_BY_TYPE:
+        spec = SPEC_BY_TYPE[type_]
     else:
         raise LookupError('Unknown message type {!r}'.format(type_))
 
     msg = {'type': type_}
 
     # Add default values.
-    for name in msgdef['value_names']:
+    for name in spec['value_names']:
         msg[name] = DEFAULT_VALUES[name]
     msg['time'] = DEFAULT_VALUES['time']
 
     # for name in args:
-    #     if name not in msgdef['value_names']:
+    #     if name not in spec['value_names']:
     #         raise ValueError('
 
     msg.update(args)

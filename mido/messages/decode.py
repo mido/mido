@@ -1,9 +1,9 @@
 from collections import deque
-from .defs import SYSEX_START, SYSEX_END
-from .defs import _MSG_DEFS_BY_STATUS_BYTE
-from .defs import CHANNEL_MESSAGES, REALTIME_MESSAGES
-from .defs import VALID_BYTES, VALID_DATA_BYTES
-from .defs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
+from .specs import SYSEX_START, SYSEX_END
+from .specs import SPEC_BY_STATUS
+from .specs import CHANNEL_MESSAGES, REALTIME_MESSAGES
+from .specs import VALID_BYTES, VALID_DATA_BYTES
+from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
 
 
 def check_data_byte(byte):
@@ -43,14 +43,14 @@ _SPECIAL_CASES = {
 }
 
 
-def _decode_data_bytes(status_byte, data, msgdef):
+def _decode_data_bytes(status_byte, data, spec):
     # Subtract 1 for status byte.
-    if len(data) != (msgdef['length'] - 1):
+    if len(data) != (spec['length'] - 1):
         raise ValueError(
-            'wrong number of bytes for {} message'.format(msgdef['type']))
+            'wrong number of bytes for {} message'.format(spec['type']))
 
     # Todo: better name than args?
-    names = [name for name in msgdef['value_names'] if name != 'channel']
+    names = [name for name in spec['value_names'] if name != 'channel']
     args = {name: value for name, value in zip(names, data)}
 
     if status_byte in CHANNEL_MESSAGES:
@@ -74,12 +74,12 @@ def decode_msg(midi_bytes, *, time=0, data_bytes_checked=False):
     status_byte, *data = midi_bytes
 
     try:
-        msgdef = _MSG_DEFS_BY_STATUS_BYTE[status_byte]
+        spec = SPEC_BY_STATUS[status_byte]
     except KeyError:
         raise ValueError('invalid status byte {!r}'.format(status_byte))
 
     msg = {
-        'type': msgdef['type'],
+        'type': spec['type'],
         'time': time,
     }
 
@@ -95,7 +95,7 @@ def decode_msg(midi_bytes, *, time=0, data_bytes_checked=False):
     if status_byte in _SPECIAL_CASES:
         msg.update(_SPECIAL_CASES[status_byte](data))
     else:
-        msg.update(_decode_data_bytes(status_byte, data, msgdef))
+        msg.update(_decode_data_bytes(status_byte, data, spec))
 
     return msg
 
@@ -124,10 +124,10 @@ class Decoder:
 
 
     def _handle_status_byte(self, byte):
-        msgdef = _MSG_DEFS_BY_STATUS_BYTE.get(byte)
+        spec = SPEC_BY_STATUS.get(byte)
 
         if self._in_sysex and byte in REALTIME_MESSAGES:
-            if msgdef:
+            if spec:
                 self._deliver(decode_msg([byte]))
         elif byte == SYSEX_END:
             if self._in_sysex:
@@ -136,11 +136,11 @@ class Decoder:
                 self._reset()
             else:
                 self._reset()
-        elif msgdef:
+        elif spec:
             # Start new message.
             self._in_msg = True
             self._in_sysex = (byte == SYSEX_START)
-            self._len = msgdef['length']
+            self._len = spec['length']
             self._bytes = [byte]
         else:
             # Ignore message.

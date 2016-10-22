@@ -1,8 +1,8 @@
-from .defs import make_msgdict
+from .specs import make_msgdict
+from .check import check_msgdict
 from .decode import decode_msg, Decoder
 from .encode import encode_msg
 from .strings import msg2str, str2msg
-from .check import check_msgdict
 
 
 class BaseMessage:
@@ -27,8 +27,8 @@ class Message(BaseMessage):
         return Message(**msgdict)
 
     @classmethod
-    def from_bytes(self, data):
-        return Message(**decode_msg(data))
+    def from_bytes(self, data, time=0):
+        return Message(**decode_msg(data, time=time))
 
     @classmethod
     def from_str(self, text):

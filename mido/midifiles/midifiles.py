@@ -21,7 +21,7 @@ import sys
 import time
 import string
 import struct
-from ..messages import build_message, Message, get_spec
+from ..messages import Message, SPEC_BY_STATUS
 from .meta import MetaMessage, build_meta_message, meta_charset
 from .meta import MetaSpec, add_meta_spec, encode_variable_int
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
@@ -107,18 +107,19 @@ def read_file_header(infile):
 
 def read_message(infile, status_byte, peek_data, delta):
     try:
-        spec = get_spec(status_byte)
+        spec = SPEC_BY_STATUS[status_byte]
     except LookupError:
         raise IOError('undefined status byte 0x{:02x}'.format(status_byte))
 
     # Subtrac 1 for status byte.
-    size = spec.length - 1 - len(peek_data)
+    size = spec['length'] - 1 - len(peek_data)
     data_bytes = peek_data + read_bytes(infile, size)
 
     for byte in data_bytes:
         if byte > 127:
             raise IOError('data byte must be in range 0..127')
-    return build_message(spec, [status_byte] + data_bytes, time=delta)
+
+    return Message.from_bytes([status_byte] + data_bytes, time=delta)
 
 
 def read_sysex(infile, delta):
@@ -227,7 +228,7 @@ def write_track(outfile, track):
     running_status_byte = None
     for msg in fix_end_of_track(track):
         if not isinstance(msg, MetaMessage):
-            if msg._spec.status_byte >= 0xf8:
+            if msg.is_realtime():
                 raise ValueError(
                     ("realtime message '{}' is not "
                      "allowed in a MIDI file".format(

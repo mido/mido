@@ -1,5 +1,5 @@
-from .defs import VALID_DATA_BYTES, MIN_SONGPOS, MAX_SONGPOS
-from .defs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
+from .specs import VALID_DATA_BYTES, MIN_SONGPOS, MAX_SONGPOS
+from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
 
 def check_channel(channel):
     """Check type and value of channel.

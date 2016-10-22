@@ -1,17 +1,17 @@
-from .defs import _MSG_DEFS_BY_TYPE, make_msgdict
+from .specs import SPEC_BY_TYPE, make_msgdict
 
 
-def msg2str(msgdict, include_time=True):
-    type_ = msgdict['type']
-    msgdef = _MSG_DEFS_BY_TYPE[type_]
+def msg2str(msg, include_time=True):
+    type_ = msg['type']
+    spec = SPEC_BY_TYPE[type_]
 
     words = [type_]
 
-    for name in msgdef['value_names']:
-        words.append('{}={}'.format(name, msgdict[name]))
+    for name in spec['value_names']:
+        words.append('{}={}'.format(name, msg[name]))
 
     if include_time:
-        words.append('time={}'.format(msgdict['time']))
+        words.append('time={}'.format(msg['time']))
     
     return str.join(' ', words)
 
@@ -34,7 +34,7 @@ def _parse_time(value):
 def str2msg(text):
     type_, *args = text.split()
 
-    msgdict = {}
+    msg = {}
 
     for arg in args:
         name, value = arg.split('=', 1)
@@ -43,8 +43,8 @@ def str2msg(text):
         else:
             value = int(value)
 
-        msgdict[name] = value
+        msg[name] = value
 
     # Todo: hmm, this needs to be rethought.
     # Where should the type and value checking happen?
-    return make_msgdict(type_, **msgdict)
+    return make_msgdict(type_, **msg)
