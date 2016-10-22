@@ -254,6 +254,16 @@ def write_track(outfile, track):
     write_chunk(outfile, b'MTrk', data)
 
 
+def get_seconds_per_tick(tempo, ticks_per_beat):
+    # Tempo is given in microseconds per beat (default 500000).
+    # At this tempo there are (500000 / 1000000) == 0.5 seconds
+    # per beat. At the default resolution of 480 ticks per beat
+    # this is:
+    #
+    #    (500000 / 1000000) / 480 == 0.5 / 480 == 0.0010417
+    #
+    return (tempo / 1000000.0) / ticks_per_beat
+
 
 class MidiFile:
     def __init__(self, filename=None, file=None,
@@ -328,23 +338,14 @@ class MidiFile:
 
         return sum(msg.time for msg in self)
 
-    def _get_seconds_per_tick(self, tempo):
-        # Tempo is given in microseconds per beat (default 500000).
-        # At this tempo there are (500000 / 1000000) == 0.5 seconds
-        # per beat. At the default resolution of 480 ticks per beat
-        # this is:
-        #
-        #    (500000 / 1000000) / 480 == 0.5 / 480 == 0.0010417
-        #
-        return (tempo / 1000000.0) / self.ticks_per_beat
-
     def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
         # not be played back like this.
         if self.type == 2:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
-        seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
+        seconds_per_tick = get_seconds_per_tick(DEFAULT_TEMPO,
+                                                self.ticks_per_beat)
 
         for msg in merge_tracks(self.tracks):
             # Convert message time from absolute time
@@ -357,7 +358,8 @@ class MidiFile:
             yield msg.copy(time=delta)
 
             if msg.type == 'set_tempo':
-                seconds_per_tick = self._get_seconds_per_tick(msg.tempo)
+                seconds_per_tick = get_seconds_per_tick(msg.tempo,
+                                                        self.ticks_per_beat)
 
     def play(self, meta_messages=False):
         """Play back all tracks.
