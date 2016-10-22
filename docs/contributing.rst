@@ -1,0 +1,119 @@
+Contributing
+============
+
+
+Branches and Pull Requests
+--------------------------
+
+There master branch is for the latest stable relese. Please use the
+develop branch as a starting point and send your pull requests there:
+
+     https://github.com/olemb/mido/tree/develop/
+
+This will make it easier to merge your changes.
+
+
+Testing
+-------
+
+`pytest <doc.pytest.org>`_ is used for unit testing.
+
+If you can please run tests in both Python 2 and Python 3 before you
+commit code. I've renamed the executables so I can just run `pytest2
+&& pytest3` instead of remembering what the programs are called. (I
+think they were `py.test` and `pytest3`.)
+
+You can also set up a commit hook::
+
+    echo "pytest2 && pytest3" >.git/hooks/pre-commit
+    chmod +x .git/hooks/pre-commit
+
+This will run tests when you commit and cancel the commit if any tests
+fail.
+
+
+
+Testing MIDI file support
+-------------------------
+
+Test Files
+^^^^^^^^^^
+
+The `Lakh MIDI Dataset <http://www.colinraffel.com/projects/lmd/>`_ is
+a great resouce for testing the MIDI file parser.
+
+
+Publishing (Release Checklist)
+------------------------------
+
+I am currently the only one with access to publishing on PyPI and
+readthedocs. This will hopefully change in the future.
+
+
+First Time: Register With PyPI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    ./setup.py register
+
+
+Test
+^^^^
+
+::
+
+    pytest2 && pytest3
+
+    check-manifest -v   # pip3 install check-manifest
+
+    rm -rf docs/_build && ./setup.py docs  # Check that docs build.
+
+You can also test that the package installs by installing it in a
+virtualenv with `pip` and `easy_install` (Python 2 and 3) and
+importing it. This is a bit tedious. Perhaps there is a good way to
+automate it.
+
+
+
+Bump Version
+^^^^^^^^^^^^
+
+X.Y.Z is the version, for example 1.1.18 or 1.2.0.
+
+* update version and date in `docs/changes.rst`
+
+* update version in `mido/__init__.py`
+
+* `git commit -a -c "Bumped version to X.Y.Z."`
+
+Then:
+
+::
+
+    git tag X.Y.Z
+    git push
+    git push --tags
+
+
+Publish
+^^^^^^^
+
+Publish to GitHub master branch::
+
+    git checkout master
+    git pull . develop
+    git push
+
+Make sure we're back on `develop`::
+
+    git checkout develop
+
+Publish in PyPI::
+
+    python setup.py publish
+    python setup.py bdist_wheel upload
+
+Last thing:
+
+* update readthedocs
