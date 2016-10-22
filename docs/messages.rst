@@ -23,17 +23,14 @@ You can set and get attributes as you would expect::
     >>> msg = mido.Message('note_on')
     >>> msg.note
     0
-    >>> msg.note = 100
-    >>> msg.note
-    100
 
 The ``type`` attribute can be used to determine message type::
 
     >>> msg.type
     'note_on'
 
-To make a copy of a message, optionally overriding one or more
-attributes::
+Attributes are also settable but it's always better to use
+``msg.copy()``::
 
     >>> msg.copy(note=99, time=100.0)
     <message note_on channel=0 note=99 velocity=64 time=100.0>
