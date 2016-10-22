@@ -5,9 +5,34 @@ from .encode import encode_msg
 from .strings import msg2str, str2msg
 
 
-class BaseMessage:
+class BaseMessage(object):
     """Abstrace base class for messages."""
-    pass
+    def copy(self):
+        raise NotImplemented
+
+    def bytes(self):
+        raise NotImplemented
+
+    def bin(self):
+        """Encode message and return as a bytearray.
+
+        This can be used to write the message to a file.
+        """
+        return bytes(self)
+
+    def hex(self, sep=' '):
+        """Encode message and return as a string of hex numbers,
+
+        Each number is separated by the string sep.
+        """
+        return sep.join('{:02X}'.format(byte) for byte in self)
+
+    def __eq__(self, other):
+        if not isinstance(other, BaseMessage):
+            raise TypeError('comparison between message and another type')
+
+        # This includes time in comparison.
+        return vars(self) == vars(other)
 
 
 class Message(BaseMessage):
@@ -19,10 +44,16 @@ class Message(BaseMessage):
         vars(self).update(msgdict)
 
     def copy(self, **overrides):
+        """Return a copy of the message.
+
+        Attributes will be overridden by the passed keyword arguments.
+        Only message specific attributes can be overridden. The message
+        type can not be changed.
+        """
         # Todo: should 'note_on' => 'note_off' be allowed?
         if 'type' in overrides and overrides['type'] != self.type:
             raise ValueError('copy must be same message type')
-        
+
         msgdict = vars(self).copy()
         msgdict.update(overrides)
         check_msgdict(msgdict)
@@ -41,17 +72,10 @@ class Message(BaseMessage):
         return Message(**decode_msg(bytearray.fromhex(text)))
 
     def __len__(self):
-        # This implementation will cause encode_msg() to be called twice
-        # then you iterate over the message. It should instead look up the
-        # length in the message definition.
-        # 
-        # There is no way to get the length of a meta message without
-        # encoding it, so we need to either accept double encoding
-        # (not good) or leave out __len__() (as Mido 1.1 does).
-        return encode_msg(vars(self))
-
-    def __iter__(self):
-        yield from encode_msg(vars(self))
+        if self.type == 'sysex':
+            return 2 + len(self.data)
+        else:
+            return SPEC_BY_TYPE[self.type]['length']
 
     def __str__(self):
         return msg2str(vars(self))
@@ -59,39 +83,28 @@ class Message(BaseMessage):
     def __repr__(self):
         return '<message {}>'.format(str(self))
 
-    def __eq__(self, other):
-        # This includes time in comparison.
-        return vars(self) == vars(other)
-
-    def hex(self, sep=' '):
-        return sep.join('{:02X}'.format(byte) for byte in self)
-
-
-    # This makes the message immutable and allows
-    # us to compute a hash.
-
     def __setattr__(self, name, value):
-        check_value(name, value)
-        raise AttributeError('object is immutable')
+        if name == 'type':
+            raise AttributeError('type attribute is read only')
+        elif name not in vars(self):
+            raise AttributeError(
+                        '{} message has no attribute {}'.format(self.type, name))
+        else:
+            check_value(name, value)
+            if name == 'data':
+                vars(self)['data'] = SysexData(value)
+            else:
+                vars(self)[name] = value
 
-    __delattr__ = __setattr__
-
-    def __hash__(self):
-        return hash(str(self))
-
-
-    # These are kept around.
-
-    def bin(self):
-        return bytes(self)
+    def __delattr__(self, name):
+        raise AttributeError('attribute cannot be deleted')
 
     def bytes(self):
-        return list(self)
+        return encode_msg(vars(self))
 
-    def bytearray(self):
-        return bytearray(self)
-
-
+    def __iter__(self):
+        for byte in self.bytes():
+            yield byte
 
 
 def parse_string(text):

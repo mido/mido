@@ -128,7 +128,7 @@ def bpm2tempo(bpm):
     """Convert beats per minute to MIDI file tempo.
 
     Returns microseconds per beat as an integer::
-    
+
         240 => 250000
         120 => 500000
         60 => 1000000
@@ -188,7 +188,7 @@ class MetaSpec_sequence_number(MetaSpec):
 
     def check(self, name, value):
         check_int(value, 0, 255)
-            
+
 class MetaSpec_text(MetaSpec):
     type_byte = 0x01
     attributes = ['text']
@@ -210,7 +210,7 @@ class MetaSpec_track_name(MetaSpec_text):
     type_byte = 0x03
     attributes = ['name']
     defaults = ['']
-    
+
     def decode(self, message, data):
         message.name = decode_string(data)
 
@@ -245,7 +245,7 @@ class MetaSpec_channel_prefix(MetaSpec):
 
     def check(self, name, value):
         check_int(value, 0, 0xff)
-            
+
 
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
@@ -405,7 +405,7 @@ def add_meta_spec(klass):
     spec.settable_attributes = set(spec.attributes) | {'time'}
     _specs[spec.type_byte] = spec
     _specs[spec.type] = spec
-    
+
 def _add_builtin_meta_specs():
     for name in globals():
         if name.startswith('MetaSpec_'):
@@ -452,6 +452,28 @@ class MetaMessage(BaseMessage):
         for name, value in kwargs.items():
             setattr(self, name, value)
 
+    def copy(self, **overrides):
+        """Return a copy of the message
+
+        Attributes will be overridden by the passed keyword arguments.
+        Only message specific attributes can be overridden. The message
+        type can not be changed.
+        """
+        # Make an exact copy of this object.
+        klass = self.__class__
+        msg = klass.__new__(klass)
+        vars(msg).update(vars(self))
+
+        for name, value in overrides.items():
+            try:
+                # setattr() is responsible for checking the
+                # name and type of the attribute.
+                setattr(msg, name, value)
+            except AttributeError as err:
+                raise ValueError(*err.args)
+
+            return msg
+
     def __setattr__(self, name, value):
         if name in self._spec.settable_attributes:
             if name == 'time':
@@ -470,7 +492,7 @@ class MetaMessage(BaseMessage):
         return ([0xff, self._spec.type_byte]
                 + encode_variable_int(len(data))
                 + data)
-    
+
     def __repr__(self):
         attributes = []
         for name in self._spec.attributes:
