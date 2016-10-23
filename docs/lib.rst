@@ -14,6 +14,14 @@ Messages
    :undoc-members:
 
 
+Frozen Messages
+---------------
+
+.. autoclass:: FrozenMessage
+.. autoclass:: FrozenMetaMessage
+.. autofunction:: freeze
+
+
 Ports
 -----
 
