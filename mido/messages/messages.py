@@ -77,12 +77,12 @@ class Message(BaseMessage):
         return Message(**decode_msg(data, time=time))
 
     @classmethod
-    def from_str(self, text):
-        return Message(**str2msg(text))
+    def from_hex(self, text, time=0):
+        return Message(**decode_msg(bytearray.fromhex(text), time=time))
 
     @classmethod
-    def from_hex(self, text):
-        return Message(**decode_msg(bytearray.fromhex(text)))
+    def from_str(self, text):
+        return Message(**str2msg(text))
 
     def __len__(self):
         if self.type == 'sysex':
