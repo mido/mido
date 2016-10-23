@@ -1,5 +1,5 @@
 import sys
-from .specs import make_msgdict, SPEC_BY_TYPE
+from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
 from .check import check_msgdict, check_value, check_data
 from .decode import decode_msg, Decoder
 from .encode import encode_msg
@@ -32,6 +32,10 @@ class BaseMessage(object):
         Each number is separated by the string sep.
         """
         return sep.join('{:02X}'.format(byte) for byte in self.bytes())
+
+    @property
+    def is_realtime(self):
+        return self.type in REALTIME_TYPES
 
     def __eq__(self, other):
         if not isinstance(other, BaseMessage):

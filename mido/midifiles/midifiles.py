@@ -21,7 +21,7 @@ import sys
 import time
 import string
 import struct
-from ..messages import Message, SPEC_BY_STATUS, SPEC_BY_TYPE
+from ..messages import Message, SPEC_BY_STATUS
 from .meta import MetaMessage, build_meta_message, meta_charset
 from .meta import MetaSpec, add_meta_spec, encode_variable_int
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
@@ -227,7 +227,7 @@ def write_track(outfile, track):
 
     running_status_byte = None
     for msg in fix_end_of_track(track):
-        if not msg.is_meta and SPEC_BY_TYPE[msg.type]['status_byte'] >= 0xf8:
+        if msg.is_realtime:
             raise ValueError('realtime messages are not allowed in MIDI files')
 
         data.extend(encode_variable_int(msg.time))
