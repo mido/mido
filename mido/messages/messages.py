@@ -1,5 +1,5 @@
 import sys
-from .specs import make_msgdict
+from .specs import make_msgdict, SPEC_BY_TYPE
 from .check import check_msgdict, check_value, check_data
 from .decode import decode_msg, Decoder
 from .encode import encode_msg
