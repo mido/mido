@@ -5,12 +5,6 @@ from .midifiles import MetaMessage
 class Frozen(object):
     is_frozen = True
 
-    def __init__(self, type, **attrs):
-        if isinstance(type, BaseMessage):
-            vars(self).update(vars(type))
-        else:
-            super(Frozen, self).__init__(type, **attrs)
-
     def __repr__(self):
         text = super(Frozen, self).__repr__()
         return '<frozen {}'.format(text[1:])
@@ -31,3 +25,24 @@ class FrozenMessage(Frozen, Message):
 
 class FrozenMetaMessage(Frozen, MetaMessage):
     pass
+
+
+def freeze(msg):
+    """Freeze message.
+
+    Returns a frozen version of the message. Frozen messages are
+    immutable, hashable and can be used as dictionary keys.
+    """
+    if isinstance(msg, Frozen):
+        # Already frozen.
+        return msg
+    elif isinstance(msg, Message):
+        class_ = FrozenMessage
+    elif isinstance(msg, MetaMessage):
+        class_ = FrozenMetaMessage
+    else:
+        raise ValueError('first argument must be a message')
+
+    frozen = class_.__new__(class_)
+    vars(frozen).update(vars(msg))
+    return frozen
