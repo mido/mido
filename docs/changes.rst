@@ -4,6 +4,19 @@ Changes
 Release History
 ---------------
 
+
+1.2.0 ()
+^^^^^^^^^^^^^^^^^^^
+
+* reimplemented messages.
+
+* new class methods for creating messages: ``Message.from_bytes()``,
+  ``Message.from_hex()``, ``Message.from_str()``.
+
+* messages are now iterable. You can do ``for byte in msg:`` or
+  ``list(msg)``. (Not implemented for meta messages.)
+
+
 1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^
 
