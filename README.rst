@@ -57,7 +57,7 @@ Main Features
 
 * standard port API allows all kinds of input and output ports to be
   used interchangeably. New port types can be written by subclassing
-  and overriding a few methods.s
+  and overriding a few methods.
 
 * includes a reusable MIDI parser.
 
