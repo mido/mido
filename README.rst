@@ -18,7 +18,7 @@ designed to be as straight forward and Pythonic as possible:
    >>> msg.bytes()
    [144, 60, 64]
 
-   >>> Message.from_bytes([0x90, 60, 64], time=10)
+   >>> Message.from_bytes([144, 60, 64], time=10)
    <message note_on channel=0 note=60 velocity=64 time=10>
 
 .. code-block:: python
