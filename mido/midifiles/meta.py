@@ -426,6 +426,8 @@ def build_meta_message(type_, data, delta=0):
     return message
 
 class MetaMessage(BaseMessage):
+    is_meta = True
+
     def __init__(self, type_, **kwargs):
         # Todo: allow type_ to be a type byte?
         # Todo: handle unknown type.

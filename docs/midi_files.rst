@@ -27,8 +27,8 @@ To print out all messages in the file, you can do::
 
     for i, track in enumerate(mid.tracks):
         print('Track {}: {}'.format(i, track.name))
-        for message in track:
-            print(message)
+        for msg in track:
+            print(msg)
 
 The entire file is read into memory. Thus you can freely modify tracks
 and messages, and save the file back by calling the ``save()``
@@ -46,20 +46,20 @@ file.
 Meta messages will also be included. If you want to filter them out,
 you can do::
 
-    if isinstance(message, MetaMessage):
+    if msg.is_meta:
         ...
 
 This makes it easy to play back a MIDI file on a port::
 
-    for message in MidiFile('song.mid'):
-        time.sleep(message.time)
-        if not isinstance(message, MetaMessage):
-            port.send(message)
+    for msg in MidiFile('song.mid'):
+        time.sleep(msg.time)
+        if not msg.is_meta:
+            port.send(msg)
 
 This is so useful that there's a method for it::
 
-    for message in MidiFile('song.mid').play():
-        port.send(message)
+    for msg in MidiFile('song.mid').play():
+        port.send(msg)
 
 This does the sleeping and filtering for you. If you pass
 ``meta_messages=True`` you will also get meta messages. These can not
@@ -151,14 +151,14 @@ usual way, for example::
 
 You can tell meta messages apart from normal messages with::
 
-    if isinstance(message, MetaMessage):
+    if msg.is_meta:
         ...
 
 or if you know the message type you can use the ``type`` attribute::
 
-    if message.type == 'key_signature':
+    if msgtype == 'key_signature':
         ...
-    elif message.type == 'note_on':
+    elif msgtype == 'note_on':
         ...
 
 Meta messages can not be sent on ports.
@@ -237,5 +237,5 @@ Examples::
 (Todo: update with default value.)
 
 MidiFile objects have a ``ticks_per_beat`` attribute, while
-``message.time`` is used for delta time. Tempo is updated by
+``msg.time`` is used for delta time. Tempo is updated by
 ``set_tempo`` meta messages.

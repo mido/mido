@@ -227,13 +227,8 @@ def write_track(outfile, track):
 
     running_status_byte = None
     for msg in fix_end_of_track(track):
-        if isinstance(msg, Message):
-            # Complain if realtime message.
-            if SPEC_BY_TYPE[msg.type]['status_byte'] >= 0xf8:
-                raise ValueError(
-                    ("realtime message '{}' is not "
-                     "allowed in a MIDI file".format(
-                            message.type)))
+        if not msg.is_meta and SPEC_BY_TYPE[msg.type]['status_byte'] >= 0xf8:
+            raise ValueError('realtime messages are not allowed in MIDI files')
 
         data.extend(encode_variable_int(msg.time))
         if msg.type == 'sysex':
@@ -245,7 +240,7 @@ def write_track(outfile, track):
             data.append(0xf7)
         else:
             raw = msg.bytes()
-            if (isinstance(msg, Message)
+            if (not msg.is_meta
                 and raw[0] < 0xf0
                 and raw[0] == running_status_byte):
                 data.extend(raw[1:])
