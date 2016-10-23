@@ -88,44 +88,13 @@ Requirements
 
 Mido targets Python 2.7 and 3.2.
 
-If you want to use message ports, you will need `PortMidi
-<http://portmedia.sourceforge.net/portmidi/>`_ installed on your
-system. The PortMidi library is loaded on demand, so you can use the
-parser and messages without it.
-
-The PortMidi wrapper is tested on on Ubuntu and Mac OS X, but may also
-run on other systems where the ``portmidi.so/dll`` file is available.
-
-Alternative backends are included for `python-rtmidi
-<http://pypi.python.org/pypi/python-rtmidi/>`_ and `Pygame
-<http://www.pygame.org/docs/ref/midi.html>`_. These can be selected
-with the environment variable ``MIDO_BACKEND`` or by calling
-``mido.set_backend()``.
-
-Like PortMidi, these are loaded on demand.
+See docs/installing.rst for more on requirements for port backends.
 
 
 Installing
 ----------
 
-To install::
-
-    $ pip install mido
-
-The PortMidi wrapper is written with `ctypes`, so no compilation is
-required.
-
-If you want to use ports, you need the PortMidi shared library. The
-Ubuntu package is called ``libportmidi-dev``, while the `MacPorts
-<http://www.macports.org/>`_ and `Homebrew
-<http://mxcl.github.io/homebrew/>`_ packages are called ``portmidi``.
-
-To build documentation locally::
-
-    python setup.py docs
-
-This requires Sphinx. The resulting files can be found in
-``docs/_build/``.
+See docs/installing.rst.
 
 
 Known Bugs
