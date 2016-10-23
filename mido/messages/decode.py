@@ -61,7 +61,7 @@ def _decode_data_bytes(status_byte, data, spec):
     return args
 
 
-def decode_msg(midi_bytes, time=0, check_data_bytes=True):
+def decode_msg(midi_bytes, time=0, check=True):
     """Decode message bytes and return messages as a dictionary.
 
     Raises ValueError if the bytes are out of range or the message is
@@ -95,7 +95,7 @@ def decode_msg(midi_bytes, time=0, check_data_bytes=True):
         if end != SYSEX_END:
             raise ValueError('invalid sysex end byte {!r}'.format(end))
 
-    if check_data_bytes:
+    if check:
         check_data(data)
 
     if status_byte in _SPECIAL_CASES:
@@ -125,7 +125,7 @@ class Decoder(object):
 
     def _deliver(self, msg=None):
         if msg is None:
-            msg = decode_msg(self._bytes, check_data_bytes=False)
+            msg = decode_msg(self._bytes, check=False)
         self.messages.append(msg)
 
 

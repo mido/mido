@@ -119,7 +119,7 @@ class Message(BaseMessage):
         Use this only when you know the bytes contain a valid message.
         """
         msg = cl.__new__(cl)
-        vars(msg).update(decode_msg(data, time=time, check_data_bytes=False))
+        vars(msg).update(decode_msg(data, time=time, check=False))
         return msg
 
     @classmethod
