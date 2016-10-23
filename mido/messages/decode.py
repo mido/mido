@@ -33,7 +33,6 @@ def _decode_songpos_data(data):
 
 
 def _decode_pitchwheel_data(data):
-    # Todo: implement.
     return {'pitch': data[0] | ((data[1] << 7) + MIN_PITCHWHEEL)}
 
 
@@ -42,7 +41,6 @@ _SPECIAL_CASES = {
     0xf0: _decode_sysex_data,
     0xf1: _decode_quarter_frame_data,
     0xf2: _decode_songpos_data,
-    # + pitchwheel
 }
 
 
