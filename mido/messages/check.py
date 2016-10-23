@@ -13,14 +13,14 @@ def check_type(type_):
 
 def check_channel(channel):
     if not isinstance(channel, int):
-        raise TypeError('channel must be an integer')
+        raise TypeError('channel must be int')
     elif not 0 <= channel <= 15:
         raise ValueError('channel must be in range 0..15')
 
 
 def check_pos(pos):
     if not isinstance(pos, int):
-        raise TypeError('song pos must be and integer')
+        raise TypeError('song pos must be int')
     elif not MIN_SONGPOS <= pos <= MAX_SONGPOS:
         raise ValueError('song pos must be in range {}..{}'.format(
                          MIN_SONGPOS, MAX_SONGPOS))
@@ -28,7 +28,7 @@ def check_pos(pos):
 
 def check_pitch(pitch):
     if not isinstance(pitch, int):
-        raise TypeError('pichwheel value must be an integer')
+        raise TypeError('pichwheel value must be int')
     elif not MIN_PITCHWHEEL <= pitch <= MAX_PITCHWHEEL:
         raise ValueError('pitchwheel value must be in range {}..{}'.format(
                          MIN_PITCHWHEEL, MAX_PITCHWHEEL))
@@ -44,28 +44,28 @@ def check_data(data_bytes):
 
 def check_frame_type(value):
     if not isinstance(value, int):
-        raise TypeError('frame_type must be an integer')
+        raise TypeError('frame_type must be int')
     elif not 0 <= value <= 7:
         raise ValueError('frame_type must be in range 0..7')
 
 
 def check_frame_value(value):
     if not isinstance(value, int):
-        raise TypeError('frame_value must be an integer')
+        raise TypeError('frame_value must be int')
     elif not 0 <= value <= 15:
         raise ValueError('frame_value must be in range 0..15')
 
 
 def check_data_byte(value):
     if not isinstance(value, int):
-        raise TypeError('data byte must be an integer')
+        raise TypeError('data byte must be int')
     elif not value in VALID_DATA_BYTES:
         raise ValueError('data byte must be in range 0..127')
 
 
 def check_time(time):
     if not (isinstance(time, int) or isinstance(time, float)):
-        raise TypeError('time must be an integer or float')
+        raise TypeError('time must be int or float')
 
 
 _CHECKS = {
