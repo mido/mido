@@ -227,6 +227,9 @@ def write_track(outfile, track):
 
     running_status_byte = None
     for msg in fix_end_of_track(track):
+        if not isinstance(msg.time, int):
+            raise ValueError('message time must be int in MIDI file')
+
         if msg.is_realtime:
             raise ValueError('realtime messages are not allowed in MIDI files')
 
