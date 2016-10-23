@@ -2,17 +2,17 @@ from .messages import Message
 from .messages.messages import BaseMessage
 from .midifiles import MetaMessage
 
-class FrozenMixin(object):
+class Frozen(object):
     is_frozen = True
 
     def __init__(self, type, **attrs):
         if isinstance(type, BaseMessage):
             vars(self).update(vars(type))
         else:
-            super(FrozenMixin, self).__init__(type, **attrs)
+            super(Frozen, self).__init__(type, **attrs)
 
     def __repr__(self):
-        text = super(FrozenMixin, self).__repr__()
+        text = super(Frozen, self).__repr__()
         return '<frozen {}'.format(text[1:])
 
     def __setattr__(self, *_):
@@ -25,9 +25,9 @@ class FrozenMixin(object):
         return hash(repr(vars(self)))
 
 
-class FrozenMessage(FrozenMixin, Message):
+class FrozenMessage(Frozen, Message):
     pass
 
 
-class FrozenMetaMessage(FrozenMixin, MetaMessage):
+class FrozenMetaMessage(Frozen, MetaMessage):
     pass
