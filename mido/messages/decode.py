@@ -5,18 +5,9 @@ from .specs import SPEC_BY_STATUS
 from .specs import CHANNEL_MESSAGES, REALTIME_MESSAGES
 from .specs import VALID_BYTES, VALID_DATA_BYTES
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
+from .check import check_data_byte, check_data
 
 PY2 = (sys.version_info.major == 2)
-
-
-def check_data_byte(byte):
-    if byte not in VALID_DATA_BYTES:
-        raise ValueError('invalid data byte')
-
-
-def check_data(data):
-    for byte in data:
-        check_data_byte(byte)
 
 
 def _decode_sysex_data(data):

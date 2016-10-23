@@ -1,7 +1,7 @@
 import sys
 from .specs import VALID_DATA_BYTES, MIN_SONGPOS, MAX_SONGPOS
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
-from .specs import SPEC_BY_TYPE
+from .specs import SPEC_BY_TYPE, VALID_DATA_BYTES
 
 PY2 = (sys.version_info.major == 2)
 
@@ -59,7 +59,7 @@ def check_frame_value(value):
 def check_data_byte(value):
     if not isinstance(value, int):
         raise TypeError('data byte must be an integer')
-    elif not 0 <= value <= 127:
+    elif not value in VALID_DATA_BYTES:
         raise ValueError('data byte must be in range 0..127')
 
 
