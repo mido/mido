@@ -167,7 +167,7 @@ class Input(PortCommon, BaseInput):
         #
         # See Issue #49 and https://bugs.python.org/issue8844
 
-        def receive(self, block=True):
+        def _receive(self, block=True):
             sleep_time = get_sleep_time()
             while True:
                 try:
@@ -180,13 +180,11 @@ class Input(PortCommon, BaseInput):
                         return None
     else:
 
-        def receive(self, block=True):
+        def _receive(self, block=True):
             try:
                 return self._queue.get(block=block)
             except queue.Empty:
                 return None
-
-    receive.__doc__ = BaseInput.receive.__doc__
 
 
 class Output(PortCommon, BaseOutput):
