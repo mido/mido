@@ -73,7 +73,7 @@ class Message(BaseMessage):
         if not overrides:
             # Bypass all checks.
             # This will save some time in port.send().
-            return self.from_safe_dict(overrides)
+            return self.from_safe_dict(vars(self))
 
         # Todo: should 'note_on' => 'note_off' be allowed?
         if 'type' in overrides and overrides['type'] != self.type:
