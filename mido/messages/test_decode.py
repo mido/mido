@@ -1,5 +1,5 @@
 from pytest import raises
-from ..decode import decode_msg
+from .decode import decode_msg
 
 
 def sysex(data):

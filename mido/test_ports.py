@@ -1,6 +1,6 @@
 from pytest import raises
-from ..messages import Message
-from ..ports import BaseIOPort
+from .messages import Message
+from .ports import BaseIOPort
 
 def test_ioport():
     class Port(BaseIOPort):

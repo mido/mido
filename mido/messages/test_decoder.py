@@ -1,4 +1,4 @@
-from ..decode import Decoder
+from .decode import Decoder
 
 
 def decode(data):

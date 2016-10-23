@@ -1,5 +1,5 @@
 from pytest import raises
-from ..sockets import parse_address
+from .sockets import parse_address
 
 def test_parse_address():
     assert parse_address(':8080') == ('', 8080)

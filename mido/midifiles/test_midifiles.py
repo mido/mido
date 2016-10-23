@@ -1,8 +1,8 @@
 import io
 
-from ...messages import Message
-from ..meta import MetaMessage, tempo2bpm, bpm2tempo
-from ..tracks import MidiTrack
+from ..messages import Message
+from .meta import MetaMessage, tempo2bpm, bpm2tempo
+from .tracks import MidiTrack
 
 def test_tempo2bpm_bpm2tempo():
     for bpm, tempo in [
