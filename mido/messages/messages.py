@@ -70,19 +70,19 @@ class Message(BaseMessage):
         msgdict = vars(self).copy()
         msgdict.update(overrides)
         check_msgdict(msgdict)
-        return Message(**msgdict)
+        return self.__class__(**msgdict)
 
     @classmethod
     def from_bytes(self, data, time=0):
-        return Message(**decode_msg(data, time=time))
+        return self.__class__(**decode_msg(data, time=time))
 
     @classmethod
     def from_hex(self, text, time=0):
-        return Message(**decode_msg(bytearray.fromhex(text), time=time))
+        return self.__class__(**decode_msg(bytearray.fromhex(text), time=time))
 
     @classmethod
     def from_str(self, text):
-        return Message(**str2msg(text))
+        return self.__class__(**str2msg(text))
 
     def __len__(self):
         if self.type == 'sysex':

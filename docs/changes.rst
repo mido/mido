@@ -16,6 +16,11 @@ Release History
 * messages are now iterable. You can do ``for byte in msg:`` or
   ``list(msg)``. (Not implemented for meta messages.)
 
+* added `FrozenMessage` and `FrozenMetaMessage`. These are immutable
+  versions of `Message` and `MetaMessage` that are hashable and thus
+  can be used as dictionary keys. (Requested by Jasper Lyons, issue
+  #36.)
+
 
 1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^
