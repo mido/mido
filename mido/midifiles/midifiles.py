@@ -22,6 +22,7 @@ import time
 import string
 import struct
 from ..messages import Message, SPEC_BY_STATUS, SPEC_BY_TYPE
+from ..messages.messages import build_message
 from .meta import MetaMessage, build_meta_message, meta_charset
 from .meta import MetaSpec, add_meta_spec, encode_variable_int
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
@@ -119,7 +120,7 @@ def read_message(infile, status_byte, peek_data, delta):
         if byte > 127:
             raise IOError('data byte must be in range 0..127')
 
-    return Message.from_bytes([status_byte] + data_bytes, time=delta)
+    return build_message([status_byte] + data_bytes, time=delta)
 
 
 def read_sysex(infile, delta):

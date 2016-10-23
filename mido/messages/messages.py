@@ -120,6 +120,16 @@ class Message(BaseMessage):
             yield byte
 
 
+def build_message(msg_bytes, time=0):
+    """Only for use by MidiFile.
+
+    Speeds up message creation by bypassing all checks.
+    """
+    msg = Message.__new__(Message)
+    vars(msg).update(decode_msg(msg_bytes, time=time))
+    return msg
+    
+
 def parse_string(text):
     """Parse a string of text and return a message.
 
