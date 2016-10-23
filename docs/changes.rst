@@ -8,7 +8,8 @@ Release History
 1.2.0 ()
 ^^^^^^^^^^^^^^^^^^^
 
-* reimplemented messages.
+* reimplemented messages. The code is now much simpler, clearer and
+  easier to work with.
 
 * new class methods for creating messages: ``Message.from_bytes()``,
   ``Message.from_hex()``, ``Message.from_str()``.
