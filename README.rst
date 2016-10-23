@@ -73,7 +73,7 @@ Main Features
 Status
 ------
 
-1.1 is the second stable release.
+1.2 is the third stable release.
 
 See docs/changes.rst for a full list of changes.
 
