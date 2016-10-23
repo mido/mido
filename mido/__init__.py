@@ -79,7 +79,7 @@ __version__ = '1.1.18'
 # Prevent splat import.
 __all__ = []
 
-def set_backend(name=None):
+def set_backend(name=None, load=False):
     """Set current backend.
 
     name can be a module name like 'mido.backends.rtmidi' or
@@ -96,7 +96,7 @@ def set_backend(name=None):
     if isinstance(name, Backend):
         backend = name
     else:
-        backend = Backend(name, load=False, use_environ=True)
+        backend = Backend(name, load=load, use_environ=True)
     glob['backend'] = backend
 
     for name in dir(backend):

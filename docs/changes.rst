@@ -34,6 +34,8 @@ Release History
 * ``pending()`` is gone. This had to be done to allow for the new
   ``_receive()`` behavior.
 
+* ``mido.set_backend()`` can now be called with ``load=True``.
+
 
 1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^
