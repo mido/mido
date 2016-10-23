@@ -144,11 +144,11 @@ class BaseInput(BasePort):
     def iter_pending(self):
         """Iterate through pending messages."""
         while True:
-            message = self.poll()
-            if message is None:
+            msg = self.poll()
+            if msg is None:
                 return
             else:
-                yield message
+                yield msg
 
     def receive(self, block=True):
         """Return the next message.
@@ -234,24 +234,24 @@ class BaseOutput(BasePort):
         BasePort.__init__(self, name, **kwargs)
         self.autoreset = autoreset
  
-    def _send(self, message):
+    def _send(self, msg):
         pass
 
-    def send(self, message):
+    def send(self, msg):
         """Send a message on the port.
 
         A copy of the message will be sent, so you can safely modify
         the original message without any unexpected consequences.
         """
-        if not isinstance(message, Message):
+        if not isinstance(msg, Message):
             raise TypeError('argument to send() must be a Message')
         elif self.closed:
             raise ValueError('send() called on closed port')
 
         with self._lock:
-            if not message.is_frozen:
-                message = message.copy()
-            self._send(message)
+            if not msg.is_frozen:
+                msg = msg.copy()
+            self._send(msg)
 
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels
