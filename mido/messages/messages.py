@@ -10,6 +10,8 @@ PY2 = (sys.version_info.major == 2)
 
 class BaseMessage(object):
     """Abstract base class for messages."""
+    is_frozen = False
+
     def copy(self):
         raise NotImplemented
 

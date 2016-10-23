@@ -3,6 +3,8 @@ from .messages.messages import BaseMessage
 from .midifiles import MetaMessage
 
 class FrozenMixin(object):
+    is_frozen = True
+
     def __init__(self, type, **attrs):
         if isinstance(type, BaseMessage):
             vars(self).update(vars(type))
