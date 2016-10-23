@@ -249,7 +249,9 @@ class BaseOutput(BasePort):
             raise ValueError('send() called on closed port')
 
         with self._lock:
-            self._send(message.copy())
+            if not message.is_frozen:
+                message = message.copy()
+            self._send(message)
 
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels
