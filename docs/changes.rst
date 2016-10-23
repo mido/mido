@@ -11,8 +11,12 @@ Release History
 * switched default backend from PortMidi to RtMidi. RtMidi is easier
   to install on most systems and better in every way.
 
-* reimplemented messages. The code is now much simpler, clearer and
-  easier to work with.
+  If you want to stick to PortMidi you can either set the environment
+  variable ``$MIDO_BACKEND=mido.backends.portmidi`` or call
+  ``mido.set_backend('mido.backends.portmidi`) in your program.
+
+* completely reimplemented messages. The code is now much simpler,
+  clearer and easier to work with.
 
 * new message attributes ``is_meta`` and ``is_realtime``.
 
