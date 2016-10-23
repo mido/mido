@@ -186,7 +186,6 @@ For more on parsers and parsing see :doc:`parsing`.
 Backends
 --------
 
-Mido comes with backends for PortMidi and RtMidi and pygame. The
-default is PortMidi. You can select another backend or even use
-multiple backends at the same time. For more on this, see
-:doc:`backends`.
+Mido comes with backends for RtMidi and PortMidi and Pygame. The
+default is RtMidi. You can select another backend or even use multiple
+backends at the same time. For more on this, see :doc:`backends`.

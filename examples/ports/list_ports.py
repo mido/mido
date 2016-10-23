@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
-List available PortMidi ports.
+List available ports.
+
+This is a simple version of mido-ports.
 """
 
 from __future__ import print_function

@@ -8,6 +8,9 @@ Release History
 1.2.0 ()
 ^^^^^^^^^^^^^^^^^^^
 
+* switched default backend from PortMidi to RtMidi. RtMidi is easier
+  to install on most systems and better in every way.
+
 * reimplemented messages. The code is now much simpler, clearer and
   easier to work with.
 

@@ -52,7 +52,7 @@ Main Features
 
 * convenient message objects.
 
-* supports PortMidi, RtMidi and Pygame. New backends are easy to
+* supports RtMidi, PortMidi and Pygame. New backends are easy to
   write.
 
 * full support for all 18 messages defined by the MIDI standard.
@@ -99,32 +99,10 @@ Installing
 See docs/installing.rst.
 
 
-Known Bugs
-----------
-
-* in OS X, PortMidi and RtMidi usually hang for a second or two
-  seconds while initializing. This is actually not a Mido bug, but
-  something that happens at a lower level.
-
-* PortMidi in Ubuntu is mistakenly compiled in debug mode, which causes it
-  to print out error message instead of returning an error code::
-
-    PortMidi: `Bad pointer'
-    type ENTER...PortMidi call failed...
-
-  See https://bugs.launchpad.net/ubuntu/+source/portmidi/+bug/890600
-
-  This means here is no way for Mido to catch the error and raise an
-  exception.
-
-  This regularity occurs in two places: in PortMidi when you close a
-  port that has a callback, and in Pygame when you close any port.
-
-
 Source Code
 -----------
 
-Latest version of the code: https://github.com/olemb/mido/ .
+Latest version of the code: https://github.com/olemb/mido/
 
 Latest development version: https://github.com/olemb/mido/tree/develop/
 

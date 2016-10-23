@@ -4,21 +4,21 @@ Backends
 Choosing Backend
 ----------------
 
-Mido comes with backends for PortMidi, RtMidi and Pygame.
+Mido comes with backends for RtMidi, PortMidi and Pygame.
 
 RtMidi is the recommended backends. It has all the features of the
 other ones and more and is usually easier to install.
 
-For historical reasons PortMidi is still the default. You can override
-this with the ``MIDO_BACKEND`` environment variable, for example::
+If you want to use another backend you can override this with the
+``MIDO_BACKEND`` environment variable, for example::
 
-    $ MIDO_BACKEND=mido.backends.rtmidi ./program.py
+    $ MIDO_BACKEND=mido.backends.portmidi ./program.py
 
 Alternatively, you can set the backend from within your program::
 
-    >>> mido.set_backend('mido.backends.rtmidi')
+    >>> mido.set_backend('mido.backends.portmidi')
     >>> mido.backend
-    <backend mido.backends.rtmidi (not loaded)>
+    <backend mido.backends.portmidi (not loaded)>
 
 This will override the environment variable.
 
@@ -61,20 +61,29 @@ or::
     $ python program2.py
 
 
-RtMidi (Recommended)
---------------------
+RtMidi (Default, Recommended)
+-----------------------------
 
 Name: ``mido.backends.rtmidi``
 
 The RtMidi backend is a thin wrapper around `python-rtmidi
 <https://pypi.python.org/pypi/python-rtmidi/>`_
 
-Supports true blocking `receive()` in Python 3 which should be more
-efficient and result in lower latency.
 
-Sends but doesn't receive active sensing.
+Features:
 
-Callbacks use RtMidi's own mechanism.
+* callbacks
+
+* true blocking ``receive()`` in Python 3 (using a callback and a
+  queue)
+
+* virtual ports
+
+* ports can be opened multiple times, each will receive a copy of each message
+
+* sends but doesn't receive active sensing
+
+* port list is always up to date
 
 RtMidi is the only backend that can create virtual ports::
 
@@ -114,16 +123,19 @@ There are a couple of problems with port names in Linux. First, RtMidi
 can't see some software ports such as ``amSynth MIDI IN``. PortMidi
 uses the same ALSA sequencer API, so this is problem in RtMidi.
 
-Second, ports are named inconsistently. For example, the input port
-'Midi Through 14:0' has a corresponding output named 'Midi
-Through:0'. Unless this was intended, it is a bug in RtMidi's ALSA
-implementation.
+Second, in some versions of RtMidi ports are named inconsistently. For
+example, the input port 'Midi Through 14:0' has a corresponding output
+named 'Midi Through:0'. Unless this was intended, it is a bug in
+RtMidi's ALSA implementation.
 
 
 PortMidi
 --------
 
 Name: ``mido.backends.portmidi``
+
+Features
+^^^^^^^^
 
 The PortMidi backend is written with ``ctypes`` and requires only the
 shared library file ``portmidi.so`` or ``portmidi.dll``.
@@ -151,3 +163,25 @@ Can send but not receive ``sysex`` and ``active_sensing``.
 Callbacks are currently not implemented.
 
 Pygame.midi is implemented on top of PortMidi.
+
+
+Backend Bugs
+------------
+
+* in OS X, RtMidi and PortMidi usually hang for a second or two
+  seconds while initializing. This is actually not a Mido bug, but
+  something that happens at a lower level.
+
+* PortMidi in Ubuntu is mistakenly compiled in debug mode, which causes it
+  to print out error message instead of returning an error code::
+
+    PortMidi: `Bad pointer'
+    type ENTER...PortMidi call failed...
+
+  See https://bugs.launchpad.net/ubuntu/+source/portmidi/+bug/890600
+
+  This means here is no way for Mido to catch the error and raise an
+  exception.
+
+  This regularity occurs in two places: in PortMidi when you close a
+  port that has a callback, and in Pygame when you close any port.

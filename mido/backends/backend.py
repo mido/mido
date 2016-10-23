@@ -2,7 +2,7 @@ import os
 import importlib
 from .. import ports
 
-DEFAULT_BACKEND = 'mido.backends.portmidi'
+DEFAULT_BACKEND = 'mido.backends.rtmidi'
 
 class Backend(object):
     """
