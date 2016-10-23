@@ -162,4 +162,4 @@ def format_as_string(msg, include_time=True):
 
     To leave out the time attribute, pass include_time=False.
     """
-    return msg.to_str(include_time=include_time)
+    return msg2str(vars(msg), include_time=include_time)
