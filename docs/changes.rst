@@ -21,8 +21,11 @@ Release History
   can be used as dictionary keys. (Requested by Jasper Lyons, issue
   #36.)
 
-* ``_receive()`` is now allowed to return a messages. This makes it
-  easier to 
+* ports now have ``is_input`` and ``is_output`` attributes.
+
+* ``_receive()`` is now allowed to return a messages. This makes the
+  API more consistent and makes it easier to implement thread safe
+  ports.
 
 * ``pending()`` is gone. This had to be done to allow for the new
   ``_receive()`` behavior.

@@ -46,6 +46,9 @@ class BasePort(object):
     Abstract base class for Input and Output ports.
     """
 
+    is_input = False
+    is_output = False
+
     def __init__(self, name=None, **kwargs):
         self.name = name
         self._lock = threading.RLock()
@@ -93,12 +96,12 @@ class BasePort(object):
         else:
             state = 'open'
 
-        capabilities = (hasattr(self, 'receive'), hasattr(self, 'send'))
+        capabilities = self.is_input, self.is_output
         port_type = {
             (True, False): 'input',
             (False, True): 'output',
-            (True, True): 'I/O',
-            (False, False): 'mute',
+            (True, True): 'I/O port',
+            (False, False): 'mute port',
             }[capabilities]
 
         name = self.name or ''
@@ -118,6 +121,8 @@ class BaseInput(BasePort):
     Subclass and override _receive() to create a new input port type.
     (See portmidi.py for an example of how to do this.)
     """
+    is_input = True
+
     def __init__(self, name='', **kwargs):
         """Create an input port.
 
@@ -218,6 +223,7 @@ class BaseOutput(BasePort):
     Subclass and override _send() to create a new port type.  (See
     portmidi.py for how to do this.)
     """
+    is_output = True
 
     def __init__(self, name='', autoreset=False, **kwargs):
         """Create an output port
