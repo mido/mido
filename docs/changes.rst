@@ -14,13 +14,13 @@ Release History
 * reimplemented messages. The code is now much simpler, clearer and
   easier to work with.
 
+* new message attributes ``is_meta`` and ``is_realtime``.
+
 * new class methods for creating messages: ``Message.from_bytes()``,
   ``Message.from_hex()``, ``Message.from_str()``.
 
 * messages are now iterable. You can do ``for byte in msg:`` or
   ``list(msg)``. (Not implemented for meta messages.)
-
-* new message attributes ``is_meta`` and ``is_realtime``.
 
 * added `FrozenMessage` and `FrozenMetaMessage`. These are immutable
   versions of `Message` and `MetaMessage` that are hashable and thus
