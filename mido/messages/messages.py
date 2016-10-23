@@ -68,8 +68,7 @@ class Message(BaseMessage):
         if not overrides:
             # Bypass all checks.
             # This will save some time in port.send().
-            msg = self.__class__.__new__(self.__class__)
-            vars(msg).update(vars(self))
+            return self.from_safe_dict(overrides)
 
         # Todo: should 'note_on' => 'note_off' be allowed?
         if 'type' in overrides and overrides['type'] != self.type:
@@ -81,16 +80,53 @@ class Message(BaseMessage):
         return self.__class__(**msgdict)
 
     @classmethod
-    def from_bytes(self, data, time=0):
-        return self.__class__(**decode_msg(data, time=time))
+    def from_bytes(cl, data, time=0):
+        """Parse a byte encoded message.
+
+        It accepts a byte string or any iterable of integers.
+
+        This is the reverse of msg.bytes() or msg.bin().
+        """
+        return cl(**decode_msg(data, time=time))
 
     @classmethod
-    def from_hex(self, text, time=0):
-        return self.__class__(**decode_msg(bytearray.fromhex(text), time=time))
+    def from_hex(cl, text, time=0):
+        """Parse a hex encoded message.
+
+        This is the reverse of msg.hex().
+        """
+        return cl(**decode_msg(bytearray.fromhex(text), time=time))
 
     @classmethod
-    def from_str(self, text):
-        return self.__class__(**str2msg(text))
+    def from_str(cl, text):
+        """Parse a string encoded message.
+
+        This is the reverse of str(msg).
+        """
+        return cl(**str2msg(text))
+
+    @classmethod
+    def from_safe_bytes(cl, data, time=0):
+        """Create a message from bytes without any checks.
+
+        It accepts a byte string or any iterable of integers.
+
+        Use this only when you know the bytes contain a valid message.
+        """
+        msg = cl.__new__(cl)
+        vars(msg).update(decode_msg(data, time=time))
+        return msg
+
+    @classmethod
+    def from_safe_dict(cl, msgdict, time=0):
+        """Create a message from bytes without name/type/value checks.
+
+        The dictionary should contain the attributes of the new object.
+        Use this only when you know the dictionary contains a valid message.
+        """
+        msg = cl.__new__(cl)
+        vars(msg).update(msgdict)
+        return msg
 
     def __len__(self):
         if self.type == 'sysex':
@@ -126,16 +162,6 @@ class Message(BaseMessage):
     def __iter__(self):
         for byte in self.bytes():
             yield byte
-
-
-def build_message(msg_bytes, time=0):
-    """Only for use by MidiFile.
-
-    Speeds up message creation by bypassing all checks.
-    """
-    msg = Message.__new__(Message)
-    vars(msg).update(decode_msg(msg_bytes, time=time))
-    return msg
     
 
 def parse_string(text):
