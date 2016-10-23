@@ -136,29 +136,6 @@ class BaseInput(BasePort):
     def _receive(self, block=True):
         pass
 
-    def pending(self):
-        """Return how many messages are ready to be received.
-
-        *Note*: This is kept around for backward compatibility.  It's
-        better to use iter_pending() to iterate over pending messages.
-
-        This will read data from the device and put it in the
-        parser. I will then return the number of messages available to
-        be received.
-
-        The value will not be reliable when receiving messages in
-        multiple threads.
-
-        If this is called on a closed port it will work as normal
-        except it won't try to read from the device.
-        """
-        with self._lock:
-            if not self.closed:
-                self._check_callback()
-                self._receive(block=False)
-
-            return len(self._messages)
-
     def iter_pending(self):
         """Iterate through pending messages."""
         while True:
@@ -196,21 +173,9 @@ class BaseInput(BasePort):
 
         while True:
             with self._lock:
-                # In the future we should allow self._receive() to
-                # return a message.  This would make the API more
-                # consistent and also make it easier to implement
-                # thread safe ports since self._messages is no longer
-                # required.
-                #
-                # This can only be done if pending() is removed, since
-                # it calls self._receive().
-                #
-                # A commented out implementation is provided below.
-                self._receive(block=block)
-                # msg = self._receive(block=block)
-                # if msg:
-                #     return msg
-                # # (else check self._messages as before.)
+                msg = self._receive(block=block)
+                if msg:
+                    return msg
 
                 if self._messages:
                     return self._messages.popleft()

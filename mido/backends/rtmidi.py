@@ -188,8 +188,6 @@ class Input(PortCommon, BaseInput):
 
     receive.__doc__ = BaseInput.receive.__doc__
 
-    def pending(self):
-        return self._queue.qsize()
 
 class Output(PortCommon, BaseOutput):
     def _send(self, message):

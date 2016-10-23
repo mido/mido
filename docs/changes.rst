@@ -21,6 +21,12 @@ Release History
   can be used as dictionary keys. (Requested by Jasper Lyons, issue
   #36.)
 
+* ``_receive()`` is now allowed to return a messages. This makes it
+  easier to 
+
+* ``pending()`` is gone. This had to be done to allow for the new
+  ``_receive()`` behavior.
+
 
 1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^

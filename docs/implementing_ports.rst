@@ -61,19 +61,24 @@ nothing)::
 
     (Input ports only.)
 
-    Should poll the device for available data and feed it to the
-    parser.
+    Should return a message if there is one available.
 
-    Should not return anything. The caller will take care of this, and
-    anything you return here will be ignored.
+    If ``block=True`` it should block until a message is available and
+    then return it.
 
-    Is called by various input port methods, like ``receive()`` and
-    ``pending()``. The caller takes care of blocking and various error
-    situations, so all you need to do is to feed data into the parser.
+    If ``block=False`` it should return a message or ``None`` if there
+    is no message yet. If you return ``None`` the enclosing
+    ``pending()`` method will check ``self._messages`` and return one
+    from there.
 
-    If ``block == True`` and the device supports blocking reads, you
-    can loop and read until there is a message in ``_messages``. See
-    the seconds example below.
+    .. note:: ``Prior to 1.2.0 ``_receive()`` would put messages in
+              ``self._messages`` (usually via the parser) and rely on
+              ``receive()`` to return them to the user.
+
+              Since this was not thread safe the API was changed in
+              1.2.0 to allow the ``_receive()`` to return a
+              message. The old behavior is still supported, so old
+              code will work as before.
 
     Raise IOError if something goes wrong.
 

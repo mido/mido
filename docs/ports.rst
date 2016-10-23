@@ -177,10 +177,18 @@ is available, you can use `poll()`::
 
 This will return ``None`` if no message is available.
 
-.. note:: For historical reasons there's also a ``pending()`` method.
-          It is no longer useful after ``iter_pending()`` and
-          ``poll()`` were added but is kept around for backward
-          compatibility.
+.. note:: There used to be a ``pending()`` method which returned the
+          number of pending messages. It was removed in 1.2.0 for
+          three reasons:
+          
+          * with ``poll()`` and ``iter_pending()`` it is no longer
+            necessary
+
+          * it was unreliable when multithreading and for some ports
+            it doesn't even make sense
+
+          * it made the internal method API confusing. `_send()` sends
+            a message so `_receive()` should receive a message.
 
 
 Callbacks
@@ -208,8 +216,8 @@ port or later by setting the ``callback`` attribute::
     locks or other synchronization mechanisms to keep your main program and
     the callback from stepping on each other's toes.
 
-Calling ``receive()``, ``__iter__()``, ``pending()`` or
-``iter_pending()`` on a port with a callback will raise an exception::
+Calling ``receive()``, ``__iter__()``, or ``iter_pending()`` on a port
+with a callback will raise an exception::
 
     ValueError: a callback is set for this port
 
@@ -273,14 +281,6 @@ no message.
 ``poll()``
 
 Returns a message, or ``None`` if there are no pending messages.
-
-
-``pending()``
-
-Returns the number of messages waiting to be received.
-
-.. note:: This is kept around for backward compatibility. It’s better
-          to use iter_pending() to iterate over pending messages.
 
 
 ``iter_pending()``

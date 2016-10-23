@@ -39,8 +39,6 @@ def test_ioport():
 
         port.send(message)
         port.send(message)
-        assert port.pending() == 2
-        assert list(port.iter_pending()) == [message, message]
 
     with Port('Name') as port:
         port.close()
@@ -50,12 +48,6 @@ def test_ioport():
         assert port.closed
         assert not port.close_called
 
-        # Todo: should this type of port close (and/or stop iteration)
-        # when there are no messages?
-        # port.send(message)
-        # port.send(message)
-        # assert port.pending() == 2
-        # assert list(port) == [message, message]
 
 def test_close_inside_iteration():
     # This type of port can close when it runs out of messages.
