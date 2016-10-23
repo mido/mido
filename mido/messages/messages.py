@@ -65,6 +65,12 @@ class Message(BaseMessage):
         Only message specific attributes can be overridden. The message
         type can not be changed.
         """
+        if not overrides:
+            # Bypass all checks.
+            # This will save some time in port.send().
+            msg = self.__class__.__new__(self.__class__)
+            vars(msg).update(vars(self))
+
         # Todo: should 'note_on' => 'note_off' be allowed?
         if 'type' in overrides and overrides['type'] != self.type:
             raise ValueError('copy must be same message type')
