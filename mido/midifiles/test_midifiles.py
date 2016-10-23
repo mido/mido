@@ -1,31 +1,75 @@
 import io
-
+from pytest import raises
 from ..messages import Message
-from .meta import MetaMessage, tempo2bpm, bpm2tempo
-from .tracks import MidiTrack
+from .midifiles import MidiFile
 
-def test_tempo2bpm_bpm2tempo():
-    for bpm, tempo in [
-            (20, 3000000),
-            (60, 1000000),
-            (120, 500000),
-            (240, 250000),
-    ]:
-        assert bpm == tempo2bpm(tempo)
-        assert tempo == bpm2tempo(bpm)
+HEADER_ONE_TRACK = """
+4d 54 68 64  # MThd
+00 00 00 06  # Chunk size
+      00 01  # Type 1
+      00 01  # 1 track
+      00 78  # 120 ticks per beat
+"""    
 
 
-def test_track_slice():
-    track = MidiTrack()
+def parse_hexdump(hexdump):
+    data = bytearray()
+    for line in hexdump.splitlines():
+        data += bytearray.fromhex(line.split('#')[0])
+    return data
 
-    # Slice should return MidiTrack object.
-    assert isinstance(track[::], MidiTrack)
+
+def read_file(hexdump):
+    return MidiFile(file=io.BytesIO(parse_hexdump(hexdump)))
 
 
-def test_track_name():
-    name1 = MetaMessage('track_name', name='name1')
-    name2 = MetaMessage('track_name', name='name2')
+def test_no_tracks():
+    assert read_file("""
+    4d 54 68 64  # MThd
+    00 00 00 06  # Chunk size
+    00 01  # Type 1
+    00 00  # 0 tracks
+    00 78  # 120 ticks per beat
+    """).tracks == []
 
-    # The track should use the first name it finds.
-    track = MidiTrack([name1, name2])
-    assert track.name == name1.name
+
+def test_single_message():
+    assert read_file(HEADER_ONE_TRACK + """
+    4d 54 72 6b  # MTrk
+    00 00 00 04
+    20 90 40 40  # note_on
+    """).tracks[0] == [Message('note_on', note=64, velocity=64, time=32)]
+
+
+def test_two_tracks():
+    mid = read_file("""
+    4d54 6864 0000 0006 0001 0002 0040        # Header
+    4d54 726b 0000 0008 00 90 40 10  40 80 40 10   # Track 0
+    4d54 726b 0000 0008 00 90 47 10  40 80 47 10   # Track 1
+    """)
+    assert len(mid.tracks) == 2
+    # Todo: add some more tests here.
+
+
+def test_empty_file():
+    with raises(EOFError):
+        read_file("")
+   
+
+def test_eof_in_track():
+    with raises(EOFError):
+        read_file(HEADER_ONE_TRACK + """
+        4d 54 72 6b  # MTrk
+        00 00 00 01  # Chunk size
+        # Oops, no data here.
+        """)
+
+
+def test_invalid_data_byte():
+    # Todo: should this raise IOError?
+    with raises(IOError):
+        read_file(HEADER_ONE_TRACK + """
+        4d 54 72 6b  # MTrk
+        00 00 00 04  # Chunk size
+        00 90 ff 40  # note_on note=255 velocity=64
+        """)
