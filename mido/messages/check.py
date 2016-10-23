@@ -1,6 +1,9 @@
+import sys
 from .specs import VALID_DATA_BYTES, MIN_SONGPOS, MAX_SONGPOS
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
 from .specs import SPEC_BY_TYPE
+
+PY2 = (sys.version_info.major == 2)
 
 
 def check_type(type_):
@@ -31,8 +34,10 @@ def check_pitch(pitch):
                          MIN_PITCHWHEEL, MAX_PITCHWHEEL))
 
 
-# Todo: it's a bit messy for this to return something.
 def check_data(data_bytes):
+    if PY2 and isinstance(data_bytes, bytes):
+        data_bytes = bytearray(data_bytes)
+
     for byte in data_bytes:
         check_data_byte(byte)
 

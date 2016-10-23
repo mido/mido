@@ -1,9 +1,12 @@
+import sys
 from collections import deque
 from .specs import SYSEX_START, SYSEX_END
 from .specs import SPEC_BY_STATUS
 from .specs import CHANNEL_MESSAGES, REALTIME_MESSAGES
 from .specs import VALID_BYTES, VALID_DATA_BYTES
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
+
+PY2 = (sys.version_info.major == 2)
 
 
 def check_data_byte(byte):
@@ -17,7 +20,7 @@ def check_data(data):
 
 
 def _decode_sysex_data(data):
-    return {'data': bytes(data)}
+    return {'data': tuple(data)}
 
 
 def _decode_quarter_frame_data(data):
@@ -60,18 +63,22 @@ def _decode_data_bytes(status_byte, data, spec):
     return args
 
 
-def decode_msg(midi_bytes, *, time=0, data_bytes_checked=False):
+def decode_msg(midi_bytes, time=0, check_data_bytes=True):
     """Decode message bytes and return messages as a dictionary.
 
     Raises ValueError if the bytes are out of range or the message is
     invalid.
     """
+    if PY2 and isinstance(midi_bytes, bytes):
+        midi_bytes = bytearray(midi_bytes)
+
     # Todo: this function is getting long.
 
     if len(midi_bytes) == 0:
         raise ValueError('message is 0 bytes long')
 
-    status_byte, *data = midi_bytes
+    status_byte = midi_bytes[0]
+    data = midi_bytes[1:]
 
     try:
         spec = SPEC_BY_STATUS[status_byte]
@@ -85,11 +92,12 @@ def decode_msg(midi_bytes, *, time=0, data_bytes_checked=False):
 
     # Sysex.
     if status_byte == SYSEX_START:
-        *data, end = data
+        end = data[-1]
+        data = data[:-1]
         if end != SYSEX_END:
             raise ValueError('invalid sysex end byte {!r}'.format(end))
 
-    if not data_bytes_checked:
+    if check_data_bytes:
         check_data(data)
 
     if status_byte in _SPECIAL_CASES:
@@ -119,7 +127,7 @@ class Decoder:
 
     def _deliver(self, msg=None):
         if msg is None:
-            msg = decode_msg(self._bytes, data_bytes_checked=True)
+            msg = decode_msg(self._bytes, check_data_bytes=False)
         self.messages.append(msg)
 
 
@@ -172,6 +180,9 @@ class Decoder:
 
         Takes an iterable of ints in in range [0..255].
         """
+        if PY2 and isinstance(data, bytes):
+            data = bytearray(data)
+            
         for byte in data:
             self.feed_byte(byte)
 

@@ -14,5 +14,5 @@ def test_note_on():
 
 
 def test_sysex():
-    sysex = dict(type='sysex', data=b'\x01\x02\x03', time=0)
+    sysex = dict(type='sysex', data=(1, 2, 3), time=0)
     assert decode(b'\xf0\x01\x02\x03\xf7') == [sysex]

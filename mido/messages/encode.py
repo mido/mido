@@ -1,6 +1,6 @@
-from collections import ChainMap
 from .specs import SYSEX_START, SYSEX_END, CHANNEL_MESSAGES, VALID_DATA_BYTES
 from .specs import SPEC_BY_TYPE, DEFAULT_VALUES
+
 
 def _encode_pitchwheel_data(msg):
     pitch = msg['pitch'] - MIN_PITCHWHEEL
@@ -36,8 +36,6 @@ def encode_msg(msg):
     """
     spec = SPEC_BY_TYPE[msg['type']]
     status_byte = spec['status_byte']
-
-    msg = ChainMap(msg, DEFAULT_VALUES)
 
     if status_byte in CHANNEL_MESSAGES:
         status_byte |= msg['channel']

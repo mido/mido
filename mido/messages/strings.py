@@ -32,7 +32,9 @@ def _parse_time(value):
 
 
 def str2msg(text):
-    type_, *args = text.split()
+    words = text.split()
+    type_ = words[0]
+    args = words[1:]
 
     msg = {}
 

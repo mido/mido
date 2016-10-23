@@ -4,13 +4,13 @@ from ..decode import decode_msg
 
 def sysex(data):
     """Make sysex data."""
-    return b'\xf0' + bytes(data) + b'\xf7'
+    return [0xf0] + list(data) + [0xf7]
 
 
 def test_sysex():
-    encoded = b'\xf0\x00\xf7'
-    decoded = dict(type='sysex', data=b'\x00', time=0)
-    assert decode_msg(encoded) == decoded
+    data = b'\xf0\x01\x02\x03\xf7'
+    msg = {'type': 'sysex', 'data': (1, 2, 3), 'time': 0}
+    assert decode_msg(data) == msg
 
 
 def test_channel():

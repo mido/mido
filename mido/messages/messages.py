@@ -1,8 +1,11 @@
+import sys
 from .specs import make_msgdict
 from .check import check_msgdict, check_value, check_data
 from .decode import decode_msg, Decoder
 from .encode import encode_msg
 from .strings import msg2str, str2msg
+
+PY2 = (sys.version_info.major == 2)
 
 
 class BaseMessage(object):
@@ -18,14 +21,14 @@ class BaseMessage(object):
 
         This can be used to write the message to a file.
         """
-        return bytes(self)
+        return bytearray(self.bytes())
 
     def hex(self, sep=' '):
         """Encode message and return as a string of hex numbers,
 
         Each number is separated by the string sep.
         """
-        return sep.join('{:02X}'.format(byte) for byte in self)
+        return sep.join('{:02X}'.format(byte) for byte in self.bytes())
 
     def __eq__(self, other):
         if not isinstance(other, BaseMessage):
@@ -38,6 +41,9 @@ class BaseMessage(object):
 class SysexData(tuple):
     """Special kind of tuple accepts and converts any sequence in +=."""
     def __iadd__(self, other):
+        if PY2 and isinstance(other, bytes):
+            other = bytearray(other)
+
         check_data(other)
         return self + SysexData(other)
 
