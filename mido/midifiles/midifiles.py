@@ -268,7 +268,7 @@ def get_seconds_per_tick(tempo, ticks_per_beat):
     return (tempo / 1000000.0) / ticks_per_beat
 
 
-class MidiFile:
+class MidiFile(object):
     def __init__(self, filename=None, file=None,
                  type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
                  charset='latin1',

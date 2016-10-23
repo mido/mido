@@ -12,7 +12,7 @@ from .messages.decode import Decoder
 # Todo: make sure the method signatures are as before.
 # Todo: add doc strings.
 
-class Parser:
+class Parser(object):
     """
     MIDI Parser
 

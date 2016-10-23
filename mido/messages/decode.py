@@ -106,7 +106,7 @@ def decode_msg(midi_bytes, time=0, check_data_bytes=True):
     return msg
 
 
-class Decoder:
+class Decoder(object):
     """
     Encodes MIDI message bytes to dictionaries.
     """

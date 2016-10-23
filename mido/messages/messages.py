@@ -9,7 +9,7 @@ PY2 = (sys.version_info.major == 2)
 
 
 class BaseMessage(object):
-    """Abstrace base class for messages."""
+    """Abstract base class for messages."""
     def copy(self):
         raise NotImplemented
 

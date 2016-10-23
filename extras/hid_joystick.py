@@ -103,7 +103,7 @@ def panic(port):
             print(message)
             port.send(message)
 
-class Monophonic:
+class Monophonic(object):
     # Todo: this assumes everything is on channel 0!
 
     def __init__(self, output, channel=0):
