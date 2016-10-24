@@ -100,7 +100,7 @@ def _open_port(client, name, virtual=False):
 class Port(object):
     def __init__(self, name=None, is_input=False, is_output=False,
                  client_name=None, virtual=False, api=None,
-                 callback=None, **kwargs):
+                 callback=None, autoreset=False, **kwargs):
 
         if client_name is not None:
             virtual = True
@@ -116,6 +116,7 @@ class Port(object):
         self.virtual = virtual
         self.is_input = is_input
         self.is_output= is_output
+        self.autoreset = autoreset
         self.closed = False
 
         if client_name:
@@ -155,6 +156,9 @@ class Port(object):
                 del self._midiin
 
             if self.is_output:
+                if self.autoreset:
+                    self.reset()
+
                 self._midiout.close_port()
                 del self._midiout
 
