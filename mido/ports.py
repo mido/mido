@@ -41,6 +41,31 @@ def get_sleep_time():
     return _sleep_time
 
 
+def send_reset(port):
+    """Send "All Notes Off" and "Reset All Controllers" on all channels"""
+    ALL_NOTES_OFF = 123
+    RESET_ALL_CONTROLLERS = 121
+    for channel in range(16):
+        for control in [ALL_NOTES_OFF, RESET_ALL_CONTROLLERS]:
+            port.send(Message('control_change',
+                              channel=channel,
+                              control=control))
+
+
+def send_panic(port):
+    """Send "All Sounds Off" on all channels.
+
+    This will mute all sounding notes regardless of
+    envelopes. Useful when notes are hanging and nothing else
+    helps.
+    """
+    ALL_SOUNDS_OFF = 120
+    for channel in range(16):
+        port.send(Message('control_change',
+                          channel=channel,
+                          control=ALL_SOUNDS_OFF))
+
+
 class BasePort(object):
     """
     Abstract base class for Input and Output ports.
@@ -254,34 +279,19 @@ class BaseOutput(BasePort):
             self._send(msg)
 
     def reset(self):
-        """Send "All Notes Off" and "Reset All Controllers" on all channels
-        """
         if self.closed:
             return
 
-        ALL_NOTES_OFF = 123
-        RESET_ALL_CONTROLLERS = 121
-        for channel in range(16):
-            for control in [ALL_NOTES_OFF, RESET_ALL_CONTROLLERS]:
-                self.send(Message('control_change',
-                                  channel=channel,
-                                  control=control))
+        send_reset(self)
 
     def panic(self):
-        """Send "All Sounds Off" on all channels.
-
-        This will mute all sounding notes regardless of
-        envelopes. Useful when notes are hanging and nothing else
-        helps.
-        """
         if self.closed:
             return
 
-        ALL_SOUNDS_OFF = 120
-        for channel in range(16):
-            self.send(Message('control_change',
-                              channel=channel,
-                              control=ALL_SOUNDS_OFF))
+        send_panic(self)
+
+    reset.__doc__ = send_reset.__doc__
+    panic.__doc__ = send_panic.__doc__
 
 
 class BaseIOPort(BaseInput, BaseOutput):

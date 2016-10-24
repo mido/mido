@@ -8,15 +8,7 @@ Release History
 1.2.0 ()
 ^^^^^^^^^^^^^^^^^^^
 
-* switched default backend from PortMidi to RtMidi. RtMidi is easier
-  to install on most systems and better in every way.
-
-  If you want to stick to PortMidi you can either set the environment
-  variable ``$MIDO_BACKEND=mido.backends.portmidi`` or call
-  ``mido.set_backend('mido.backends.portmidi`) in your program.
-
-* added ``client_name`` to RtMidi backend. (Requested by Stuart Axon,
-  issue #33.)
+New implementation of messages and parser:
 
 * completely reimplemented messages. The code is now much simpler,
   clearer and easier to work with.
@@ -29,10 +21,30 @@ Release History
 * messages are now iterable. You can do ``for byte in msg:`` or
   ``list(msg)``. (Not implemented for meta messages.)
 
+Frozen (immutable) messages:
+
 * added `FrozenMessage` and `FrozenMetaMessage`. These are immutable
   versions of `Message` and `MetaMessage` that are hashable and thus
   can be used as dictionary keys. (Requested by Jasper Lyons, issue
   #36.)
+
+RtMidi is now the default backend:
+
+* switched default backend from PortMidi to RtMidi. RtMidi is easier
+  to install on most systems and better in every way.
+
+  If you want to stick to PortMidi you can either set the environment
+  variable ``$MIDO_BACKEND=mido.backends.portmidi`` or call
+  ``mido.set_backend('mido.backends.portmidi')`` in your program.
+
+* refactored the RtMidi backend to have a single ``Port`` class
+  instead of inheriting from base ports. It was getting hard to keep
+  track of it all. The code is now a lot easier to reason about.
+
+* added ``client_name`` to RtMidi backend. (Requested by Stuart Axon,
+  issue #33.)
+
+Changes to the port API:
 
 * ports now have ``is_input`` and ``is_output`` attributes.
 
@@ -42,6 +54,8 @@ Release History
 
 * ``pending()`` is gone. This had to be done to allow for the new
   ``_receive()`` behavior.
+
+Other changes:
 
 * ``mido.set_backend()`` can now be called with ``load=True``.
 
