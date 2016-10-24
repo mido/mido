@@ -87,6 +87,8 @@ Features:
 
 * port list is always up to date
 
+* all methods but ``close()`` are thread safe
+
 RtMidi is the only backend that can create virtual ports:
 
 .. code-block:: python
