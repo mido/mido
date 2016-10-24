@@ -77,7 +77,7 @@ def get_api_names():
 class PortCommon(object):
     def _open(self, api=None, virtual=False, client_name=None, **kwargs):
 
-        if self.name is None:
+        if virtual and self.name is None:
             raise IOError('virtual port must have a name')
 
         rtapi = _get_api_id(api)
