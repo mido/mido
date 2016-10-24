@@ -94,7 +94,15 @@ See docs/installing.rst for more on requirements for port backends.
 Installing
 ----------
 
-See docs/installing.rst.
+::
+
+    pip install mido
+
+If you want to use ports::
+
+   pip install python-rtmidi
+
+See docs/installing.rst for more.
 
 
 Source Code
