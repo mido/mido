@@ -22,7 +22,17 @@ Installing
 
 To install::
 
-    $ pip install mido
+    pip install mido
+
+If you want to use ports::
+
+    pip install python-rtmidi
+
+If that doesn't work this sometimes helps::
+
+    pip install --pre python-rtmidi
+
+See below for instructions on installing other backends.
 
 
 Installing RtMidi (Default, Recommended)
