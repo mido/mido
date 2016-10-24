@@ -216,11 +216,9 @@ class Port(object):
             self._midiout.send_message(msg.bytes())
 
     def panic(self):
-        self._check_closed()
         ports.send_panic(self)
 
     def reset(self):
-        self._check_closed()
         ports.send_reset(self)
 
     panic.__doc__ = ports.send_panic.__doc__
