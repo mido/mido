@@ -15,16 +15,18 @@ designed to be as straight forward and Pythonic as possible.
 
    >>> from mido import Message
    >>> msg = Message('note_on', note=60)
-   >>> msg
-   <message note_on channel=0 note=60 velocity=64 time=0>
+
    >>> msg.note
    60
+
    >>> msg.bytes()
    [144, 60, 64]
+
    >>> Message.from_bytes([144, 60, 64], time=10)
    <message note_on channel=0 note=60 velocity=64 time=10>
-   >>> msg.copy(note=120, time=10)
-   <message note_on channel=0 note=120 velocity=64 time=10>
+
+   >>> msg.copy(note=120, velocity=20)
+   <message note_on channel=0 note=120 velocity=20 time=10>
 
 .. code-block:: python
 
