@@ -31,7 +31,9 @@ def _get_api_lookup():
 
     return api_to_name, name_to_api
 
+
 _api_to_name, _name_to_api = _get_api_lookup()
+
 
 def _get_api_id(name=None):
     if name is None:
@@ -46,6 +48,7 @@ def _get_api_id(name=None):
         return api
     else:
         raise ValueError('API {} not compiled in'.format(name))
+
 
 def get_devices(api=None, **kwargs):
     devices = []
@@ -63,16 +66,20 @@ def get_devices(api=None, **kwargs):
 
     return devices
 
+
 def get_api_names():
     return [_api_to_name[n] for n in rtmidi.get_compiled_api()]
+
 
 class PortCommon(object):
     def _open(self, api=None, virtual=False, **kwargs):
 
-        rtapi = _get_api_id(api)
-        opening_input = hasattr(self, 'receive')
+        if self.name is None:
+            raise IOError('virtual port must have a name')
 
-        if opening_input:
+        rtapi = _get_api_id(api)
+
+        if self.is_input:
             self._rt = rtmidi.MidiIn(rtapi=rtapi)
             self._rt.ignore_types(False, False, True)
             self._queue = queue.Queue()
@@ -84,8 +91,6 @@ class PortCommon(object):
         ports = self._rt.get_ports()
 
         if virtual:
-            if self.name is None:
-                raise IOError('virtual port must have a name')
             self._rt.open_virtual_port(self.name)
         else:
             if self.name is None:
@@ -114,6 +119,7 @@ class PortCommon(object):
     def _close(self):
         self._rt.close_port()
         del self._rt  # Virtual ports are closed when this is deleted.
+
 
 class Input(PortCommon, BaseInput):
     @property
