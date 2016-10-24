@@ -1,5 +1,4 @@
-"""
-Backend for python-rtmidi:
+"""Backend for python-rtmidi:
 
 http://pypi.python.org/pypi/python-rtmidi/
 """
@@ -98,6 +97,42 @@ def _open_port(client, name, virtual=False):
 
 
 class Port(object):
+    """RtMidi port
+
+    The following methods are thread safe::
+
+        send()
+        reset()
+        panic()
+
+        receive()
+        poll()
+        iter_pending()
+        __iter__()
+
+        @callback  (set and clear callback)
+
+    When self.callback is set it will be called every time a messages
+    comes in::
+
+        RtMidi -> self._feed_callback -> self.callback
+
+    If self.callback is not set the messages will instead be put in a
+    queue where other threads can get them::
+
+    Consumer threads:
+
+                                            /-> receive()
+        RtMidi -> self._feed_queue -> queue --> receive()
+                                            \-> poll()
+
+    The queue ensures that the port is thread safe and that threads
+    actually block rather than poll and wait (Python 3 only, see
+    comment inside receive()`.
+
+    send() uses a lock for thread safety.
+    """
+
     def __init__(self, name=None, is_input=False, is_output=False,
                  client_name=None, virtual=False, api=None,
                  callback=None, autoreset=False, **kwargs):
@@ -149,6 +184,12 @@ class Port(object):
         self.api = _api_to_name[client.get_current_api()]
 
     def close(self):
+        """Close the port
+
+        If the port is already closed, nothing will happen.  The port
+        is automatically closed when the object goes out of scope or
+        is garbage collected.
+        """
         # Note: not thread safe.
         if not self.closed:
             if self.is_input:
@@ -166,6 +207,7 @@ class Port(object):
             self.closed = True
 
     def send(self, msg):
+        """Send a message on the port."""
         self._check_closed()
         if not self.is_output:
             raise IOError('not an output port')
@@ -184,15 +226,19 @@ class Port(object):
     panic.__doc__ = ports.send_panic.__doc__
     reset.__doc__ = ports.send_reset.__doc__
 
-    # In Python 2 queue.get() doesn't respond to CTRL-C. A workaroud is
-    # to call queue.get(timeout=100) (very high timeout) in a loop, but all
-    # that does is poll with a timeout of 50 milliseconds. This results in
-    # much too high latency.
-    #
-    # It's better to do our own polling with a shorter sleep time.
-    #
-    # See Issue #49 and https://bugs.python.org/issue8844
     def receive(self, block=True):
+        """Blocks until a message arrives and returns the message.
+
+        If block=False it will behave like poll().
+        """
+        # In Python 2 queue.get() doesn't respond to CTRL-C. A workaroud is
+        # to call queue.get(timeout=100) (very high timeout) in a loop, but all
+        # that does is poll with a timeout of 50 milliseconds. This results in
+        # much too high latency.
+        #
+        # It's better to do our own polling with a shorter sleep time.
+        #
+        # See Issue #49 and https://bugs.python.org/issue8844
         self._check_closed()
         if not self.is_input:
             raise IOError('not an input port')
@@ -215,9 +261,11 @@ class Port(object):
                 return None
 
     def poll(self):
+        """Return a message if one is available, or None if not."""
         return self.receive(block=False)
 
     def iter_pending(self):
+        """Iterate over pending messages."""
         while True:
             msg = self.poll()
             if msg:
@@ -226,6 +274,7 @@ class Port(object):
                 return
 
     def __iter__(self):
+        """Iterate over messages."""
         while True:
             yield self.receive()
 
