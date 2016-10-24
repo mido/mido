@@ -50,15 +50,13 @@ def _get_api_id(name=None):
         raise ValueError('API {} not compiled in'.format(name))
 
 
-def get_devices(api=None, client_name=None, **kwargs):
+def get_devices(api=None, **kwargs):
     devices = []
 
     rtapi = _get_api_id(api)
-    rtin = rtmidi.MidiIn(name=client_name, rtapi=rtapi)
-    rtout = rtmidi.MidiOut(name=client_name, rtapi=rtapi)
 
-    input_names = set(rtin.get_ports())
-    output_names = set(rtout.get_ports())
+    input_names = set(rtmidi.MidiIn(rtapi=rtapi).get_ports())
+    output_names = set(rtmidi.MidiOut(rtapi=rtapi).get_ports())
 
     for name in sorted(input_names | output_names):
         devices.append({
