@@ -7,40 +7,36 @@ designed to be as straight forward and Pythonic as possible:
 .. code-block:: python
 
    >>> from mido import Message
-
    >>> msg = Message('note_on', note=60)
    >>> msg
    <message note_on channel=0 note=60 velocity=64 time=0>
    >>> msg.note
    60
-
-   >>> msg.copy(note=120, time=10)
-   <message note_on channel=0 note=120 velocity=64 time=10>
-
    >>> msg.bytes()
    [144, 60, 64]
-
    >>> Message.from_bytes([144, 60, 64], time=10)
    <message note_on channel=0 note=60 velocity=64 time=10>
+   >>> msg.copy(note=120, time=10)
+   <message note_on channel=0 note=120 velocity=64 time=10>
 
 .. code-block:: python
 
     >>> import mido
-
     >>> out = mido.open_output()
     >>> out.send(msg)
 
 .. code-block:: python
 
-    >>> for msg in mido.open_input('SH-201'):
-    ...     print(msg)
+    >>> with mido.open_input('SH-201') as inport:
+    ...     for msg in inport:
+    ...         print(msg)
 
 .. code-block:: python
 
     >>> from mido import MidiFile
-
     >>> for msg in MidiFile('song.mid').play():
     ...     output.send(msg)
+
 
 Full documentation at https://mido.readthedocs.io/
 
