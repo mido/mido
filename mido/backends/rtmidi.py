@@ -79,7 +79,7 @@ def _open_port(client, name, virtual=False):
         raise IOError('no ports available')
 
     if virtual:
-        self._rt.open_virtual_port(name)
+        client.open_virtual_port(name)
     else:
         if name is None:
             name = ports[0]
@@ -116,14 +116,11 @@ class Port(object):
         self.virtual = virtual
         self.is_input = is_input
         self.is_output= is_output
+        self.closed = False
 
         if client_name:
             self.virtual = True
 
-        if self.virtual and self.name is None:
-            raise IOError('name is required for virtual port')
-
-        self.closed = False
         self._lock = threading.RLock()
         self._callback = None
 
@@ -288,6 +285,9 @@ class Port(object):
             (False, True): 'output',
             (True, True): 'I/O port',
             }[capabilities]
+
+        if self.virtual:
+            port_type = 'virtual ' + port_type
 
         name = self.name or ''
 
