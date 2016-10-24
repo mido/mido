@@ -311,6 +311,7 @@ def open_ioport(name=None, **kwargs):
     return Port(name=name, is_input=True, is_output=True, **kwargs)
 
 
+# A bit of trickery to keep the Backend object happy.
 Input = open_input
 Output = open_output
 IOPort = open_ioport
