@@ -81,11 +81,15 @@ Features:
 
 * ports can be opened multiple times, each will receive a copy of each message
 
+* client name can be specified when opening a port
+
 * sends but doesn't receive active sensing
 
 * port list is always up to date
 
-RtMidi is the only backend that can create virtual ports::
+RtMidi is the only backend that can create virtual ports:
+
+.. code-block:: python
 
     >>> port = mido.open_input('New Port', virtual=True)
     >>> port
@@ -94,6 +98,15 @@ RtMidi is the only backend that can create virtual ports::
 Other applications can now connect to this port. (One oddity is that,
 at least in Linux, RtMidi can't see its own virtual ports, while
 PortMidi can see them.)
+
+You can specify a client name for the port:  (New in 1.2.0.)
+
+.. code-block:: python
+
+    >>> port = mido.open_input('New Port', client_name='My Client')
+
+This requires python-rtmidi >= 1.0rc1. If ``client_name`` is passed the
+port will be a virtal port.
 
 The RtMidi library can be compiled with support for more than one
 API. You can select API by adding it after the module name, either in
