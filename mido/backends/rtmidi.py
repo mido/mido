@@ -120,7 +120,7 @@ class Port(object):
     If self.callback is not set the messages will instead be put in a
     queue where other threads can get them::
 
-    Consumer threads:
+                                          Consumer threads:
 
                                             /-> receive()
         RtMidi -> self._feed_queue -> queue --> receive()
