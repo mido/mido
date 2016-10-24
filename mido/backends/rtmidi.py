@@ -50,12 +50,15 @@ def _get_api_id(name=None):
         raise ValueError('API {} not compiled in'.format(name))
 
 
-def get_devices(api=None, **kwargs):
+def get_devices(api=None, client_name=None, **kwargs):
     devices = []
 
     rtapi = _get_api_id(api)
-    input_names = set(rtmidi.MidiIn(rtapi=rtapi).get_ports())
-    output_names = set(rtmidi.MidiOut(rtapi=rtapi).get_ports())
+    rtin = rtmidi.MidiIn(name=client_name, rtapi=rtapi)
+    rtout = rtmidi.MidiOut(name=client_name, rtapi=rtapi)
+
+    input_names = set(rtin.get_ports())
+    output_names = set(rtout.get_ports())
 
     for name in sorted(input_names | output_names):
         devices.append({
@@ -72,7 +75,7 @@ def get_api_names():
 
 
 class PortCommon(object):
-    def _open(self, api=None, virtual=False, **kwargs):
+    def _open(self, api=None, virtual=False, client_name=None, **kwargs):
 
         if self.name is None:
             raise IOError('virtual port must have a name')
@@ -80,12 +83,12 @@ class PortCommon(object):
         rtapi = _get_api_id(api)
 
         if self.is_input:
-            self._rt = rtmidi.MidiIn(rtapi=rtapi)
+            self._rt = rtmidi.MidiIn(name=client_name, rtapi=rtapi)
             self._rt.ignore_types(False, False, True)
             self._queue = queue.Queue()
             self.callback = kwargs.get('callback')
         else:
-            self._rt = rtmidi.MidiOut(rtapi=rtapi)
+            self._rt = rtmidi.MidiOut(name=client_name, rtapi=rtapi)
             # Turn of ignore of sysex, time and active_sensing.
 
         ports = self._rt.get_ports()

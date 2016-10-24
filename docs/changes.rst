@@ -15,6 +15,9 @@ Release History
   variable ``$MIDO_BACKEND=mido.backends.portmidi`` or call
   ``mido.set_backend('mido.backends.portmidi`) in your program.
 
+* added ``client_name`` to RtMidi backend. (Requested by Stuart Axon,
+  issue #33.)
+
 * completely reimplemented messages. The code is now much simpler,
   clearer and easier to work with.
 
