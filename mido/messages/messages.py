@@ -38,7 +38,7 @@ class BaseMessage(object):
 
     def __eq__(self, other):
         if not isinstance(other, BaseMessage):
-            raise TypeError('comparison between message and another type')
+            raise TypeError('can\'t compare message to {}'.format(type(other)))
 
         # This includes time in comparison.
         return vars(self) == vars(other)

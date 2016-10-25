@@ -110,17 +110,22 @@ def test_undefined_realtime_inside_sysex():
     assert messages[0].type == 'sysex'
 
 
-def not_test_encode_and_parse_all():
+def test_encode_and_parse_all():
     """Encode and then parse all message types.
 
     This checks mostly for errors in the parser.
     """
-    parser = Parser()
-    for spec in get_message_specs():
-        msg = Message(spec.type)
-        parser.feed(msg.bytes())
-        outmsg = parser.get_message()
-        assert outmsg is not True
-        assert outmsg.type == spec.type
+    from .messages import specs
 
+    parser = Parser()
+    for type_ in sorted(specs.SPEC_BY_TYPE.keys()):
+        msg = Message(type_)
+        parser.feed(msg.bytes())
+        parser.get_message() == msg
+
+    assert parser.get_message() is None
+
+
+def test_parser_ascii_text():
+    assert parse_all(b'7 bit ASCII should not produce any messages') == []
 
