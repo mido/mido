@@ -10,12 +10,14 @@ from __future__ import absolute_import
 from pygame import midi
 from ..ports import BaseInput, BaseOutput
 
+
 def _get_device(device_id):
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
     info = dict(zip(keys, midi.get_device_info(device_id)))
     info['id'] = device_id
     info['name'] = info['name'].decode('utf-8') # Todo: correct encoding?
     return info
+
 
 def _get_default_device(get_input):
     if get_input:
@@ -27,6 +29,7 @@ def _get_default_device(get_input):
         raise IOError('no default port found')
 
     return _get_device(device_id)
+
 
 def _get_named_device(name, get_input):
     # Look for the device by name and type (input / output)
@@ -69,10 +72,8 @@ class PortCommon(object):
 
         midi.init()
 
-        opening_input = hasattr(self, 'receive')
-
         if self.name is None:
-            device = _get_default_device(opening_input)
+            device = _get_default_device(self.is_input)
             self.name = device['name']
         else:
             device = _get_named_device(self.name, opening_input)
@@ -84,7 +85,7 @@ class PortCommon(object):
                 devtype = 'output'
             raise IOError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
-        if opening_input:
+        if is_input:
             self._port = midi.Input(device['id'])
         else:
             self._port = midi.Output(device['id'])
@@ -93,6 +94,7 @@ class PortCommon(object):
         
     def _close(self):
         self._port.close()
+
 
 class Input(PortCommon, BaseInput):
     """
@@ -113,6 +115,7 @@ class Input(PortCommon, BaseInput):
                 continue
 
             self._parser.feed(bytes)
+
 
 class Output(PortCommon, BaseOutput):
     """

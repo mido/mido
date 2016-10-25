@@ -110,23 +110,21 @@ class PortCommon(object):
 
         self._stream = pm.PortMidiStreamPtr()
 
-        opening_input = hasattr(self, 'receive')
-
         if self.name is None:
-            device = _get_default_device(opening_input)
+            device = _get_default_device(self.is_input)
             self.name = device['name']
         else:
-            device = _get_named_device(self.name, opening_input)
+            device = _get_named_device(self.name, self.is_output)
 
         if device['opened']:
-            if opening_input:
+            if self.is_input:
                 devtype = 'input'
             else:
                 devtype = 'output'
             raise IOError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
         
-        if opening_input:
+        if self.is_input:
             _check_error(pm.lib.Pm_OpenInput(
                          pm.byref(self._stream),
                          device['id'],  # Input device
@@ -150,7 +148,7 @@ class PortCommon(object):
         self.closed = False
         _state['port_count'] += 1
  
-        if opening_input:
+        if self.is_input:
             self._thread = None
             self.callback = kwargs.get('callback')
 
