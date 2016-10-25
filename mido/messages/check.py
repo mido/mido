@@ -2,9 +2,7 @@ import sys
 from .specs import VALID_DATA_BYTES, MIN_SONGPOS, MAX_SONGPOS
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
 from .specs import SPEC_BY_TYPE, VALID_DATA_BYTES
-
-PY2 = (sys.version_info.major == 2)
-
+from ..py2 import convert_py2_bytes, PY2
 
 def check_type(type_):
     if type_ not in SPEC_BY_TYPE:
@@ -35,10 +33,7 @@ def check_pitch(pitch):
 
 
 def check_data(data_bytes):
-    if PY2 and isinstance(data_bytes, bytes):
-        data_bytes = bytearray(data_bytes)
-
-    for byte in data_bytes:
+    for byte in convert_py2_bytes(data_bytes):
         check_data_byte(byte)
 
 
@@ -63,9 +58,14 @@ def check_data_byte(value):
         raise ValueError('data byte must be in range 0..127')
 
 
-def check_time(time):
-    if not (isinstance(time, int) or isinstance(time, float)):
-        raise TypeError('time must be int or float')
+if PY2:
+    def check_time(time):
+        if not (isinstance(time, int) or isinstance(time, float) or isinstance(time, long)):
+            raise TypeError('time must be int or float')
+else:
+    def check_time(time):
+        if not (isinstance(time, int) or isinstance(time, float)):
+            raise TypeError('time must be int or float')
 
 
 _CHECKS = {

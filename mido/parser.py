@@ -8,6 +8,7 @@ import sys
 from collections import deque
 from .messages import Message
 from .messages.decode import Decoder
+from .py2 import convert_py2_bytes
 
 # Todo: make sure the method signatures are as before.
 # Todo: add doc strings.

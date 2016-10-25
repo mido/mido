@@ -7,8 +7,8 @@ import os
 import sys
 import time
 import threading
+from ..py2 import PY2
 
-PY2 = (sys.version_info.major == 2)
 if PY2:
     import Queue as queue
 else:

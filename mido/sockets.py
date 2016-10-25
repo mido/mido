@@ -8,8 +8,8 @@ import select
 from collections import deque
 from .parser import Parser
 from .ports import MultiPort, BaseIOPort, multi_iter_pending, sleep
+from .py2 import PY2
 
-PY2 = (sys.version_info.major == 2)
 
 def _is_readable(socket):
     """Return True if there is data to be read on the socket."""

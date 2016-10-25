@@ -4,8 +4,7 @@ from .check import check_msgdict, check_value, check_data
 from .decode import decode_msg, Decoder
 from .encode import encode_msg
 from .strings import msg2str, str2msg
-
-PY2 = (sys.version_info.major == 2)
+from ..py2 import convert_py2_bytes
 
 
 class BaseMessage(object):
@@ -48,11 +47,8 @@ class BaseMessage(object):
 class SysexData(tuple):
     """Special kind of tuple accepts and converts any sequence in +=."""
     def __iadd__(self, other):
-        if PY2 and isinstance(other, bytes):
-            other = bytearray(other)
-
         check_data(other)
-        return self + SysexData(other)
+        return self + SysexData(convert_py2_bytes(other))
 
 
 class Message(BaseMessage):
@@ -60,7 +56,7 @@ class Message(BaseMessage):
         msgdict = make_msgdict(type, **args)
         check_msgdict(msgdict)
         if type == 'sysex':
-            msgdict['data'] = SysexData(msgdict['data'])
+            msgdict['data'] = SysexData(convert_py2_bytes(msgdict['data']))
         vars(self).update(msgdict)
 
     def copy(self, **overrides):

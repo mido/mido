@@ -1,4 +1,3 @@
-import sys
 from collections import deque
 from .specs import SYSEX_START, SYSEX_END
 from .specs import SPEC_BY_STATUS
@@ -6,9 +5,7 @@ from .specs import CHANNEL_MESSAGES, REALTIME_MESSAGES
 from .specs import VALID_BYTES, VALID_DATA_BYTES
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
 from .check import check_data_byte, check_data
-
-PY2 = (sys.version_info.major == 2)
-
+from ..py2 import convert_py2_bytes
 
 def _decode_sysex_data(data):
     return {'data': tuple(data)}
@@ -58,10 +55,8 @@ def decode_msg(midi_bytes, time=0, check=True):
     Raises ValueError if the bytes are out of range or the message is
     invalid.
     """
-    if PY2 and isinstance(midi_bytes, bytes):
-        midi_bytes = bytearray(midi_bytes)
-
     # Todo: this function is getting long.
+    midi_bytes = convert_py2_bytes(midi_bytes)
 
     if len(midi_bytes) == 0:
         raise ValueError('message is 0 bytes long')
@@ -169,10 +164,7 @@ class Decoder(object):
 
         Takes an iterable of ints in in range [0..255].
         """
-        if PY2 and isinstance(data, bytes):
-            data = bytearray(data)
-            
-        for byte in data:
+        for byte in convert_py2_bytes(data):
             self.feed_byte(byte)
 
     def __len__(self):
