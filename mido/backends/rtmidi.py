@@ -210,7 +210,7 @@ class Port(object):
         """Send a message on the port."""
         self._check_closed()
         if not self.is_output:
-            raise IOError('not an output port')
+            raise ValueError('not an output port')
 
         with self._lock:
             self._midiout.send_message(msg.bytes())
@@ -239,7 +239,7 @@ class Port(object):
         # See Issue #49 and https://bugs.python.org/issue8844
         self._check_closed()
         if not self.is_input:
-            raise IOError('not an input port')
+            raise ValueError('not an input port')
 
         if PY2:
             sleep_time = ports.get_sleep_time()
@@ -282,6 +282,9 @@ class Port(object):
 
     @callback.setter
     def callback(self, func):
+        if not self.is_input:
+            raise ValueError('not an input port')
+
         with self._lock:
             self._midiin.cancel_callback()
 
@@ -302,7 +305,7 @@ class Port(object):
 
     def _check_closed(self):
         if self.closed:
-            raise IOError('port is closed')
+            raise ValueError('port is closed')
 
     def _feed_queue(self, msg_data, data):
         self._parser.feed(msg_data[0])
