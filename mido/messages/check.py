@@ -87,19 +87,25 @@ _CHECKS = {
 }
 
 
-def check_value(name, value, ignore_unknown=False):
+def check_value(name, value):
     if name in _CHECKS:
         _CHECKS[name](value)
-    elif ignore_unknown:
-        pass
     else:
-        # Todo: "attribute"?
-        raise ValueError('unknown message attribute {!r}'.format(name))
+        raise ValueError('unknown message argument {!r}'.format(name))
 
 
-def check_msgdict(msgdict, ignore_unknown=False):
+def check_msgdict(msgdict):
     # Todo: also check type
     # Todo: type must be included?
     # Todo: this must not allow 'control' in 'note_on' message for example
+
+    spec = SPEC_BY_TYPE.get(msgdict['type'])
+    if spec is None:
+        raise ValueError('unknown message type {!r}'.format(msgdict['type']))
+
+    ok_names = {'time', 'type'} | set(spec['value_names'])
+
     for name, value in msgdict.items():
+        if name not in ok_names:
+            raise '{} message has no attribute {}'.format(spec['type'], name)
         check_value(name, value)

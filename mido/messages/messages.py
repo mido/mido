@@ -54,9 +54,9 @@ class SysexData(tuple):
 class Message(BaseMessage):
     def __init__(self, type, **args):
         msgdict = make_msgdict(type, **args)
-        check_msgdict(msgdict)
         if type == 'sysex':
             msgdict['data'] = SysexData(convert_py2_bytes(msgdict['data']))
+        check_msgdict(msgdict)
         vars(self).update(msgdict)
 
     def copy(self, **overrides):
@@ -71,8 +71,7 @@ class Message(BaseMessage):
             # This will save some time in port.send().
             return self.from_safe_dict(vars(self))
 
-        # Todo: should 'note_on' => 'note_off' be allowed?
-        if 'type' in overrides and overrides['type'] != self.type:
+        if 'type' in overrides:
             raise ValueError('copy must be same message type')
 
         msgdict = vars(self).copy()

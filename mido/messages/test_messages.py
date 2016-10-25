@@ -52,6 +52,24 @@ def test_copy():
     assert Message('start').copy(time=1) == Message('start', time=1)
 
 
+def test_init_invalid_argument():
+    with raises(TypeError):
+        Message('note_on', zzzzzzzzzzzz=2)
+
+    with raises(TypeError):
+        # note_on doesn't take program.
+        Message('note_on', program=2)
+
+
+def test_copy_invalid_argument():
+    with raises(TypeError):
+        Message('note_on').copy(zzzzzzzzzzzz=2)
+
+    with raises(TypeError):
+        # note_on doesn't take program.
+        Message('note_on').copy(program=2)
+
+
 def test_copy_cant_change_type():
     with raises(ValueError):
         Message('start').copy(type='stop')
