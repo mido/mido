@@ -1,6 +1,6 @@
 import sys
 from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
-from .check import check_msgdict, check_value, check_data
+from .checks import check_msgdict, check_value, check_data
 from .decode import decode_msg, Decoder
 from .encode import encode_msg
 from .strings import msg2str, str2msg
