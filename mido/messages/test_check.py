@@ -9,8 +9,8 @@ def test_check_time():
     check_time(1.5)
 
     if PY2:
-        # long should be allowed. (It doesn't exist in Python3,                 
-        # so there's no need to check for it here.)                             
+        # long should be allowed. (It doesn't exist in Python3,
+        # so there's no need to check for it here.)
         check_time(long('9829389283L'))
 
     with raises(TypeError):
