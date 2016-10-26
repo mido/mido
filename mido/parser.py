@@ -51,6 +51,12 @@ class Parser(object):
         else:
             return None
 
+    def pending(self):
+        return len(self.messages)
+
+    def __len__(self):
+        return len(self.messages)
+
     def __iter__(self):
         """Yield messages that have been parsed so far."""
         while len(self.messages):
