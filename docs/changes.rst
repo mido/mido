@@ -41,8 +41,9 @@ RtMidi is now the default backend:
   instead of inheriting from base ports. It was getting hard to keep
   track of it all. The code is now a lot easier to reason about.
 
-* added ``client_name`` to RtMidi backend. (Requested by Stuart Axon,
-  issue #33.)
+* you can now pass ``client`` when opening RtMidi ports to select
+  client name: ``open_output('Test', client='My Client')``. When
+  ``client`` is passed the port will automatically be a virtual port.
 
 Changes to the port API:
 

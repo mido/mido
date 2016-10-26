@@ -105,9 +105,9 @@ You can specify a client name for the port:  (New in 1.2.0.)
 
 .. code-block:: python
 
-    >>> port = mido.open_input('New Port', client_name='My Client')
+    >>> port = mido.open_input('New Port', client='My Client')
 
-This requires python-rtmidi >= 1.0rc1. If ``client_name`` is passed the
+This requires python-rtmidi >= 1.0rc1. If ``client`` is passed the
 port will be a virtal port.
 
 The RtMidi library can be compiled with support for more than one

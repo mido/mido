@@ -134,10 +134,10 @@ class Port(object):
     """
 
     def __init__(self, name=None, is_input=False, is_output=False,
-                 client_name=None, virtual=False, api=None,
+                 client=None, virtual=False, api=None,
                  callback=None, autoreset=False, **kwargs):
 
-        if client_name is not None:
+        if client is not None:
             virtual = True
 
         if virtual and name is None:
@@ -154,7 +154,7 @@ class Port(object):
         self.autoreset = autoreset
         self.closed = False
 
-        if client_name:
+        if client:
             self.virtual = True
 
         self._lock = threading.RLock()
@@ -164,7 +164,7 @@ class Port(object):
         input_name = output_name = None
 
         if is_input:
-            self._midiin = rtmidi.MidiIn(name=client_name, rtapi=rtapi)
+            self._midiin = rtmidi.MidiIn(name=client, rtapi=rtapi)
             input_name = _open_port(self._midiin, name, self.virtual)
 
             self._midiin.ignore_types(False, False, True)
@@ -173,7 +173,7 @@ class Port(object):
             self.callback = callback
 
         if is_output:
-            self._midiout = rtmidi.MidiOut(name=client_name, rtapi=rtapi)
+            self._midiout = rtmidi.MidiOut(name=client, rtapi=rtapi)
             output_name = _open_port(self._midiout, name, self.virtual)
             # Turn of ignore of sysex, time and active_sensing.
 
