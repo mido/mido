@@ -66,6 +66,7 @@ _smpte_framerate_decode = {
     }
 _smpte_framerate_encode = reverse_table(_smpte_framerate_decode)
 
+
 def signed(to_type, n):
     formats = {
         'byte': 'Bb',
@@ -87,8 +88,10 @@ def signed(to_type, n):
     except struct.error as err:
         raise ValueError(*err.args)
 
+
 def unsigned(to_type, n):
     return signed('u{}'.format(to_type), n)
+
 
 def encode_variable_int(value):
     """Encode variable length integer.
@@ -117,11 +120,14 @@ def encode_variable_int(value):
     else:
         return [0]
 
+
 def encode_string(string):
     return list(bytearray(string.encode(_charset)))
 
+
 def decode_string(data):
     return bytearray(data).decode(_charset)
+
 
 def bpm2tempo(bpm):
     """Convert beats per minute to MIDI file tempo.
@@ -135,6 +141,7 @@ def bpm2tempo(bpm):
     # One minute is 60 million microseconds.
     return int(round((60 * 1000000) / bpm))
 
+
 def tempo2bpm(tempo):
     """Convert MIDI file tempo to BPM.
 
@@ -147,6 +154,7 @@ def tempo2bpm(tempo):
     # One minute is 60 million microseconds.
     return (60 * 1000000) / tempo
 
+
 @contextmanager
 def meta_charset(tmp_charset):
     global _charset
@@ -155,11 +163,13 @@ def meta_charset(tmp_charset):
     yield
     _charset = old
 
+
 def check_int(value, low, high):
     if not isinstance(value, int):
         raise TypeError('attribute must be an integer')
     elif not low <= value <= high:
         raise ValueError('attribute must be in range {}..{}'.format(low, high))
+
 
 if PY2:
     def check_str(value):
@@ -170,9 +180,11 @@ else:
         if not isinstance(value, str):
             raise TypeError('attribute must a string')
 
+
 class MetaSpec(object):
     def check(self, name, value):
         pass
+
 
 class MetaSpec_sequence_number(MetaSpec):
     type_byte = 0x00
@@ -188,6 +200,7 @@ class MetaSpec_sequence_number(MetaSpec):
     def check(self, name, value):
         check_int(value, 0, 255)
 
+
 class MetaSpec_text(MetaSpec):
     type_byte = 0x01
     attributes = ['text']
@@ -202,8 +215,10 @@ class MetaSpec_text(MetaSpec):
     def check(self, name, value):
         check_str(value)
 
+
 class MetaSpec_copyright(MetaSpec_text):
     type_byte = 0x02
+
 
 class MetaSpec_track_name(MetaSpec_text):
     type_byte = 0x03
@@ -216,20 +231,26 @@ class MetaSpec_track_name(MetaSpec_text):
     def encode(self, message):
         return encode_string(message.name)
 
+
 class MetaSpec_instrument_name(MetaSpec_track_name):
     type_byte = 0x04
+
 
 class MetaSpec_lyrics(MetaSpec_text):
     type_byte = 0x05
 
+
 class MetaSpec_marker(MetaSpec_text):
     type_byte = 0x06
+
 
 class MetaSpec_cue_marker(MetaSpec_text):
     type_byte = 0x07
 
+
 class MetaSpec_device_name(MetaSpec_track_name):
     type_byte = 0x09
+
 
 class MetaSpec_channel_prefix(MetaSpec):
     type_byte = 0x20
@@ -260,6 +281,7 @@ class MetaSpec_midi_port(MetaSpec):
     def check(self, name, value):
         check_int(value, 0, 255)
 
+
 class MetaSpec_end_of_track(MetaSpec):
     type_byte = 0x2f
     attributes = []
@@ -270,6 +292,7 @@ class MetaSpec_end_of_track(MetaSpec):
 
     def encode(self, message):
         return []
+
 
 class MetaSpec_set_tempo(MetaSpec):
     type_byte = 0x51
@@ -285,6 +308,7 @@ class MetaSpec_set_tempo(MetaSpec):
 
     def check(self, name, value):
         check_int(value, 0, 0xffffff)
+
 
 class MetaSpec_smpte_offset(MetaSpec):
     type_byte = 0x54
@@ -328,6 +352,7 @@ class MetaSpec_smpte_offset(MetaSpec):
         elif name == 'sub_frames':
             check_int(value, 0, 99)
 
+
 class MetaSpec_time_signature(MetaSpec):
     type_byte = 0x58
     # Todo: these need more sensible names.
@@ -364,6 +389,7 @@ class MetaSpec_time_signature(MetaSpec):
         else:
             check_int(value, 0, 255)
 
+
 class MetaSpec_key_signature(MetaSpec):
     type_byte = 0x59
     attributes = ['key']
@@ -382,6 +408,7 @@ class MetaSpec_key_signature(MetaSpec):
         if not value in _key_signature_encode:
             raise ValueError('invalid key {!r}'.format(value))
 
+
 class MetaSpec_sequencer_specific(MetaSpec):
     type_byte = 0x7f
     attributes = ['data']
@@ -393,64 +420,66 @@ class MetaSpec_sequencer_specific(MetaSpec):
     def encode(self, message):
         return list(message.data)
 
-_specs = {}
 
 def add_meta_spec(klass):
     spec = klass()
     if not hasattr(spec, 'type'):
         name = klass.__name__.replace('MetaSpec_', '')
         spec.type = name
+
     # This is used by copy().
     spec.settable_attributes = set(spec.attributes) | {'time'}
-    _specs[spec.type_byte] = spec
-    _specs[spec.type] = spec
+    _META_SPECS[spec.type_byte] = spec
+    _META_SPECS[spec.type] = spec
+
+
+_META_SPECS = {}
 
 def _add_builtin_meta_specs():
-    for name in globals():
+    for name, spec in globals().items():
         if name.startswith('MetaSpec_'):
-            add_meta_spec(globals()[name])
+            add_meta_spec(spec)
 
 _add_builtin_meta_specs()
 
 
-def build_meta_message(type_, data, delta=0):
+def build_meta_message(type, data, delta=0):
     # Todo: handle unknown type.
     try:
-        spec = _specs[type_]
+        spec = _META_SPECS[type]
     except KeyError:
-        return UnknownMetaMessage(type_, data)
+        return UnknownMetaMessage(type, data)
+    else:
+        msg = MetaMessage(spec, time=delta)
 
-    message = MetaMessage(spec, time=delta)
-    spec.decode(message, data)
-    return message
+        # This adds attributes to msg:
+        spec.decode(msg, data)
+
+        return msg
+
 
 class MetaMessage(BaseMessage):
     is_meta = True
 
-    def __init__(self, type_, **kwargs):
-        # Todo: allow type_ to be a type byte?
-        # Todo: handle unknown type.
-        if isinstance(type_, MetaSpec):
-            vars(self)['_spec'] = type_
-        else:
-            vars(self)['_spec'] = _specs[type_]
+    def __init__(self, type, **kwargs):
+        # Todo: handle unknown type?
 
-        vars(self)['type'] = self._spec.type
+        spec = _META_SPECS[type]
+        self_vars = vars(self)
+        self_vars['type'] = type
 
         for name in kwargs:
-            if name == 'time':
-                continue  # Time is always allowed.
-
-            if name not in self._spec.settable_attributes:
+            if name not in spec.settable_attributes:
                 raise ValueError(
                     '{} is not a valid argument for this message type'.format(
                         name))
 
-        for name, value in zip(self._spec.attributes, self._spec.defaults):
-            vars(self)[name] = value
-        vars(self)['time'] = 0
+        for name, value in zip(spec.attributes, spec.defaults):
+            self_vars[name] = value
+        self_vars['time'] = 0
 
         for name, value in kwargs.items():
+            # Using setattr here because we want type and value checks.
             setattr(self, name, value)
 
     def copy(self, **overrides):
@@ -476,27 +505,34 @@ class MetaMessage(BaseMessage):
             return msg
 
     def __setattr__(self, name, value):
-        if name in self._spec.settable_attributes:
+        spec = _META_SPECS[self.type]
+        self_vars = vars(self)
+
+        if name in spec.settable_attributes:
             if name == 'time':
                 check_time(value)
             else:
-                self._spec.check(name, value)
-            vars(self)[name] = value
-        elif name in vars(self):
+                spec.check(name, value)
+            self_vars[name] = value
+
+        elif name in self_vars:
             raise AttributeError('{} attribute is read only'.format(name))
         else:
             raise AttributeError(
                 '{} message has no attribute {}'.format(self.type, name))
 
     def bytes(self):
-        data = self._spec.encode(self)
-        return ([0xff, self._spec.type_byte]
+        spec = _META_SPECS[self.type]
+        data = spec.encode(self)
+
+        return ([0xff, specspec.type_byte]
                 + encode_variable_int(len(data))
                 + data)
 
     def __repr__(self):
+        spec = _META_SPECS[self.type]
         attributes = []
-        for name in self._spec.attributes:
+        for name in spec.attributes:
             attributes.append('{}={!r}'.format(name, getattr(self, name)))
         attributes = ' '.join(attributes)
         if attributes:
@@ -505,21 +541,22 @@ class MetaMessage(BaseMessage):
         return '<meta message {}{} time={}>'.format(self.type,
                                                     attributes, self.time)
 
+
 class UnknownMetaMessage(MetaMessage):
     def __init__(self, type_byte, data=None, time=0):
         if data is None:
             data = []
 
         self.type = 'unknown_meta'
-        self._type_byte = type_byte
-        self._data = data
+        self.type_byte = type_byte
+        self.data = data
         self.time = time
 
     def __repr__(self):
         return ('<unknown meta message'
-                ' _type_byte=0x{:02x} _data={!r} time={}>').format(
-                self._type_byte,
-                self._data,
+                ' type_byte=0x{:02x} data={!r} time={}>').format(
+                self.type_byte,
+                self.data,
                 self.time)
 
     # Override all checking.
@@ -527,6 +564,6 @@ class UnknownMetaMessage(MetaMessage):
         vars(self)[name] = value
 
     def bytes(self):
-        return ([0xff, self._type_byte]
-                + encode_variable_int(len(self._data))
-                + self._data)
+        return ([0xff, self.type_byte]
+                + encode_variable_int(len(self.data))
+                + self.data)
