@@ -450,7 +450,7 @@ def build_meta_message(type, data, delta=0):
     except KeyError:
         return UnknownMetaMessage(type, data)
     else:
-        msg = MetaMessage(spec, time=delta)
+        msg = MetaMessage(spec.type, time=delta)
 
         # This adds attributes to msg:
         spec.decode(msg, data)
