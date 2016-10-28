@@ -44,7 +44,7 @@ def parse_args():
 
 
 def play_file(output, filename, print_messages):
-    midi_file = MidiFile(filename) 
+    midi_file = MidiFile(filename, errors='warn') 
 
     print('Playing {}.'.format(midi_file.filename))
     length = midi_file.length

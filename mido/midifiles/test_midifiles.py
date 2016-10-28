@@ -1,7 +1,7 @@
 import io
 from pytest import raises
 from ..messages import Message
-from .midifiles import MidiFile
+from .midifiles import MidiFile, MidiFileError
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # MThd
@@ -19,8 +19,8 @@ def parse_hexdump(hexdump):
     return data
 
 
-def read_file(hexdump):
-    return MidiFile(file=io.BytesIO(parse_hexdump(hexdump)))
+def read_file(hexdump, errors='raise'):
+    return MidiFile(file=io.BytesIO(parse_hexdump(hexdump)), errors=errors)
 
 
 def test_no_tracks():
@@ -57,7 +57,7 @@ def test_empty_file():
    
 
 def test_eof_in_track():
-    with raises(EOFError):
+    with raises(MidiFileError):
         read_file(HEADER_ONE_TRACK + """
         4d 54 72 6b  # MTrk
         00 00 00 01  # Chunk size
@@ -67,9 +67,28 @@ def test_eof_in_track():
 
 def test_invalid_data_byte():
     # Todo: should this raise IOError?
-    with raises(IOError):
+    with raises(MidiFileError):
         read_file(HEADER_ONE_TRACK + """
         4d 54 72 6b  # MTrk
         00 00 00 04  # Chunk size
         00 90 ff 40  # note_on note=255 velocity=64
+        """)
+
+
+def test_ignore_track_eof():
+    read_file(HEADER_ONE_TRACK + """
+    4d 54 72 6b  # MTrk
+    00 00 00 01  # Chunk size
+    # Oops, no data here.
+    """, errors='ignore')
+
+
+def test_ignore_invalid_data_byte():
+    # Todo: should this raise IOError?
+    with raises(MidiFileError):
+        read_file(HEADER_ONE_TRACK + """
+        4d 54 72 6b  # MTrk
+        00 00 00 04  # Chunk size
+        00 90 ff 40  # note_on note=255 velocity=64
+        00 f0 01 ff  # note_on note=255 velocity=64
         """)

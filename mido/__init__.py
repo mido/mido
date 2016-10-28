@@ -66,7 +66,7 @@ from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
 from .frozen import FrozenMessage, FrozenMetaMessage, freeze
 from .parser import Parser, parse, parse_all
-from .midifiles import MidiFile, MidiTrack, merge_tracks
+from .midifiles import MidiFile, MidiFileError, MidiTrack, merge_tracks
 from .midifiles import MetaMessage, bpm2tempo, tempo2bpm
 from .syx import read_syx_file, write_syx_file
 
