@@ -93,6 +93,9 @@ def decode_msg(midi_bytes, time=0, check=True):
         check_data(data)
 
     if status_byte in _SPECIAL_CASES:
+        if status_byte in CHANNEL_MESSAGES:
+            msg['channel'] = status_byte & 0x0f
+
         msg.update(_SPECIAL_CASES[status_byte](data))
     else:
         msg.update(_decode_data_bytes(status_byte, data, spec))
