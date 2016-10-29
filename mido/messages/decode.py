@@ -24,12 +24,20 @@ def _decode_pitchwheel_data(data):
     return {'pitch': data[0] | ((data[1] << 7) + MIN_PITCHWHEEL)}
 
 
-_SPECIAL_CASES = {
-    0xe0: _decode_pitchwheel_data,
-    0xf0: _decode_sysex_data,
-    0xf1: _decode_quarter_frame_data,
-    0xf2: _decode_songpos_data,
-}
+def _make_special_cases():
+    cases = {
+        0xe0: _decode_pitchwheel_data,
+        0xf0: _decode_sysex_data,
+        0xf1: _decode_quarter_frame_data,
+        0xf2: _decode_songpos_data,
+    }
+
+    for i in range(16):
+        cases[0xe0 | i] = _decode_pitchwheel_data
+
+    return cases
+
+_SPECIAL_CASES = _make_special_cases()
 
 
 def _decode_data_bytes(status_byte, data, spec):
@@ -112,6 +120,7 @@ class Decoder(object):
     def _deliver(self, msg=None):
         if msg is None:
             msg = decode_msg(self._bytes, check=False)
+            print(msg)
         self.messages.append(msg)
 
 
@@ -147,7 +156,6 @@ class Decoder(object):
 
         Takes an int in range [0..255].
         """
-
         if byte in VALID_DATA_BYTES:
             self._handle_data_byte(byte)
         elif byte in VALID_BYTES:
