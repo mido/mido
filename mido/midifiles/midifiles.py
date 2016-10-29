@@ -20,6 +20,7 @@ import io
 import time
 import string
 import struct
+import warnings
 from ..messages import Message, SPEC_BY_STATUS
 from .meta import MetaMessage, build_meta_message, meta_charset
 from .meta import MetaSpec, add_meta_spec, encode_variable_int
@@ -30,6 +31,11 @@ from .tracks import MidiTrack, merge_tracks, fix_end_of_track
 DEFAULT_TEMPO = 500000
 DEFAULT_TICKS_PER_BEAT = 480
 
+
+class MidiFileError(IOError):
+    pass
+
+
 def print_byte(byte, pos=0):
     char = chr(byte)
     if char.isspace() or not char in string.printable:
@@ -38,7 +44,19 @@ def print_byte(byte, pos=0):
     print('  {:06x}: {:02x}  {}'.format(pos, byte, char))
 
 
-class DebugFileWrapper(object):
+class FileWrapper(object):
+    def __init__(self, file, error_mode='raise'):
+        self.file = file
+
+    def read(self, size):
+        return self.file.read(size)
+
+    def tell(self):
+        return self.file.tell()
+
+
+
+class DebugFileWrapper(FileWrapper):
     def __init__(self, file):
         self.file = file
 
@@ -68,6 +86,37 @@ def read_bytes(infile, size):
 
 def _dbg(text=''):
     print(text)
+
+
+def _handle_error(error_msg, error_mode):
+    if error_mode == 'raise':
+        raise MidiFileError(error_msg)
+    elif error_mode == 'warn':
+        warnings.warn(error_msg)
+    elif error_mode == 'debug':
+        _dbg(error_msg)
+    elif error_mode == 'ignore':
+        pass
+    else:
+        raise ValueError('unknown error mode {!r}'.format(error_mode))
+
+
+def _clip_data_bytes(data_bytes, error_mode):
+    """Clip data byte to 0..127.
+
+    Raises MidiFileError if error_mode =='raise'.
+    """
+
+    clipped_bytes = []
+    for byte in data_bytes:
+        if byte > 127:
+            _handle_error('out of range data byte in MIDI file', error_mode)
+            if error_mode != 'raise':
+                byte = 127
+
+        clipped_bytes.append(byte)
+
+    return clipped_bytes
 
 
 # We can't use the chunk module for two reasons:
@@ -102,7 +151,7 @@ def read_file_header(infile):
         return struct.unpack('>hhh', data[:6])
 
 
-def read_message(infile, status_byte, peek_data, delta):
+def read_message(infile, status_byte, peek_data, delta, error_mode):
     try:
         spec = SPEC_BY_STATUS[status_byte]
     except LookupError:
@@ -112,14 +161,12 @@ def read_message(infile, status_byte, peek_data, delta):
     size = spec['length'] - 1 - len(peek_data)
     data_bytes = peek_data + read_bytes(infile, size)
 
-    for byte in data_bytes:
-        if byte > 127:
-            raise IOError('data byte must be in range 0..127')
+    data_bytes = _clip_data_bytes(data_bytes, error_mode)
 
     return Message.from_safe_bytes([status_byte] + data_bytes, time=delta)
 
 
-def read_sysex(infile, delta):
+def read_sysex(infile, delta, error_mode):
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
 
@@ -129,6 +176,8 @@ def read_sysex(infile, delta):
         data = data[1:]
     if data and data[-1] == 0xf7:
         data = data[:-1]
+
+    data_bytes = _clip_data_bytes(data_bytes, error_mode)
 
     return Message('sysex', data=data, time=delta)
 
@@ -143,14 +192,16 @@ def read_variable_int(infile):
             return delta
 
 
-def read_meta_message(infile, delta):
+def read_meta_message(infile, delta, error_mode):
     type = read_byte(infile)
     length = read_variable_int(infile)
+    # Meta message data bytes are allowed to be > 127, so they don't
+    # need to be clipped.
     data = read_bytes(infile, length)
     return build_meta_message(type, data, delta)
 
 
-def read_track(infile, debug=False):
+def read_track(infile, debug, error_mode):
     track = MidiTrack()
 
     name, size = read_chunk_header(infile)
@@ -165,47 +216,51 @@ def read_track(infile, debug=False):
     start = infile.tell()
     last_status = None
 
-    while True:
-        # End of track reached.
-        if infile.tell() - start == size:
-            break
+    try:
+        while True:
+            # End of track reached.
+            if infile.tell() - start == size:
+                break
 
-        if debug:
-            _dbg('Message:')
+            if debug:
+                _dbg('Message:')
 
-        delta = read_variable_int(infile)
+            delta = read_variable_int(infile)
 
-        if debug:
-            _dbg('-> delta={}'.format(delta))
+            if debug:
+                _dbg('-> delta={}'.format(delta))
 
-        # Todo: not all messages have running status
-        status_byte = read_byte(infile)
+            # Todo: not all messages have running status
+            status_byte = read_byte(infile)
 
-        if status_byte < 0x80:
-            if last_status is None:
-                raise IOError('running status without last_status')
-            peek_data = [status_byte]
-            status_byte = last_status
-        else:
-            if status_byte != 0xff:
-                # Meta messages don't set running status.
-                last_status = status_byte
-            peek_data = []
+            if status_byte < 0x80:
+                if last_status is None:
+                    raise IOError('running status without last_status')
+                peek_data = [status_byte]
+                status_byte = last_status
+            else:
+                if status_byte != 0xff:
+                    # Meta messages don't set running status.
+                    last_status = status_byte
+                peek_data = []
 
-        if status_byte == 0xff:
-            msg = read_meta_message(infile, delta)
-        elif status_byte in [0xf0, 0xf7]:
-            # Todo: I'm not quite clear on the difference between
-            # f0 and f7 events.
-            msg = read_sysex(infile, delta)
-        else:
-            msg = read_message(infile, status_byte, peek_data, delta)
+            if status_byte == 0xff:
+                msg = read_meta_message(infile, delta, error_mode)
+            elif status_byte in [0xf0, 0xf7]:
+                # Todo: I'm not quite clear on the difference between
+                # f0 and f7 events.
+                msg = read_sysex(infile, delta, error_mode)
+            else:
+                msg = read_message(infile, status_byte, peek_data, delta,
+                                   error_mode)
 
-        track.append(msg)
+            track.append(msg)
 
-        if debug:
-            _dbg('-> {!r}'.format(msg))
-            _dbg()
+            if debug:
+                _dbg('-> {!r}'.format(msg))
+                _dbg()
+    except EOFError:
+        _handle_error('unexpected end of file while reading track', error_mode)
 
     return track
 
@@ -265,14 +320,21 @@ def get_seconds_per_tick(tempo, ticks_per_beat):
 class MidiFile(object):
     def __init__(self, filename=None, file=None,
                  type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
-                 charset='latin1',
-                 debug=False):
+                 charset='latin1', debug=False, errors='raise'):
 
         self.filename = filename
         self.type = type
         self.ticks_per_beat = ticks_per_beat
         self.charset = charset
         self.debug = debug
+
+        if errors not in ['raise', 'warn', 'ignore']:
+            raise ValueError('unknown error mode {!r}'.format(errors))
+
+        if debug:
+            error_mode = 'debug'
+        else:
+            error_mode = errors
 
         self.tracks = []
 
@@ -281,10 +343,10 @@ class MidiFile(object):
                 'invalid format {} (must be 0, 1 or 2)'.format(format))
 
         if file is not None:
-            self._load(file)
+            self._load(file, error_mode)
         elif self.filename is not None:
             with io.open(filename, 'rb') as file:
-                self._load(file)
+                self._load(file, error_mode)
 
     def add_track(self, name=None):
         """Add a new track to the file.
@@ -298,7 +360,7 @@ class MidiFile(object):
         self.tracks.append(track)
         return track
 
-    def _load(self, infile):
+    def _load(self, infile, error_mode):
         if self.debug:
             infile = DebugFileWrapper(infile)
 
@@ -319,8 +381,9 @@ class MidiFile(object):
                 if self.debug:
                     _dbg('Track {}:'.format(i))
 
-                self.tracks.append(read_track(infile, debug=self.debug))
-                # Todo: used to ignore EOFError. I hope things still work.
+                self.tracks.append(read_track(infile,
+                                              debug=self.debug,
+                                              error_mode=error_mode))
 
     @property
     def length(self):
