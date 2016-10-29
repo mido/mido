@@ -120,7 +120,6 @@ class Decoder(object):
     def _deliver(self, msg=None):
         if msg is None:
             msg = decode_msg(self._bytes, check=False)
-            print(msg)
         self.messages.append(msg)
 
 
