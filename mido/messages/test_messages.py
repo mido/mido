@@ -78,16 +78,3 @@ def test_copy_cant_change_type():
 def test_compare_with_nonmessage():
     with raises(TypeError):
         Message('clock') == 'not a message'
-
-#
-# Not sure if this should be included:
-#
-
-
-def test_from_safe_bytes():
-    """from_safe_bytes() should accept any value as data bytes."""
-    assert Message.from_safe_bytes([0xc0, '!']).program == '!'
-
-
-# def test_from_safe_dict():
-    

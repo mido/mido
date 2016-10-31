@@ -68,8 +68,9 @@ class Message(BaseMessage):
         """
         if not overrides:
             # Bypass all checks.
-            # This will save some time in port.send().
-            return self.from_safe_dict(vars(self))
+            msg = self.__class__.__new__(self.__class__)
+            vars(msg).update(vars(self))
+            return msg
 
         if 'type' in overrides:
             raise ValueError('copy must be same message type')
@@ -87,7 +88,9 @@ class Message(BaseMessage):
 
         This is the reverse of msg.bytes() or msg.bin().
         """
-        return cl(**decode_msg(data, time=time))
+        msg = cl.__new__(cl)
+        vars(msg).update(decode_msg(data, time=time))
+        return msg
 
     @classmethod
     def from_hex(cl, text, time=0):
@@ -104,29 +107,6 @@ class Message(BaseMessage):
         This is the reverse of str(msg).
         """
         return cl(**str2msg(text))
-
-    @classmethod
-    def from_safe_bytes(cl, data, time=0):
-        """Create a message from bytes without any checks.
-
-        It accepts a byte string or any iterable of integers.
-
-        Use this only when you know the bytes contain a valid message.
-        """
-        msg = cl.__new__(cl)
-        vars(msg).update(decode_msg(data, time=time, check=False))
-        return msg
-
-    @classmethod
-    def from_safe_dict(cl, msgdict, time=0):
-        """Create a message from bytes without name/type/value checks.
-
-        The dictionary should contain the attributes of the new object.
-        Use this only when you know the dictionary contains a valid message.
-        """
-        msg = cl.__new__(cl)
-        vars(msg).update(msgdict)
-        return msg
 
     def __len__(self):
         if self.type == 'sysex':

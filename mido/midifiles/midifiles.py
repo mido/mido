@@ -116,7 +116,7 @@ def read_message(infile, status_byte, peek_data, delta):
         if byte > 127:
             raise IOError('data byte must be in range 0..127')
 
-    return Message.from_safe_bytes([status_byte] + data_bytes, time=delta)
+    return Message.from_bytes([status_byte] + data_bytes, time=delta)
 
 
 def read_sysex(infile, delta):
