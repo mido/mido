@@ -53,19 +53,19 @@ def test_copy():
 
 
 def test_init_invalid_argument():
-    with raises(TypeError):
+    with raises(ValueError):
         Message('note_on', zzzzzzzzzzzz=2)
 
-    with raises(TypeError):
+    with raises(ValueError):
         # note_on doesn't take program.
         Message('note_on', program=2)
 
 
 def test_copy_invalid_argument():
-    with raises(TypeError):
+    with raises(ValueError):
         Message('note_on').copy(zzzzzzzzzzzz=2)
 
-    with raises(TypeError):
+    with raises(ValueError):
         # note_on doesn't take program.
         Message('note_on').copy(program=2)
 

@@ -107,5 +107,7 @@ def check_msgdict(msgdict):
 
     for name, value in msgdict.items():
         if name not in ok_names:
-            raise '{} message has no attribute {}'.format(spec['type'], name)
+            raise ValueError(
+                '{} message has no attribute {}'.format(spec['type'], name))
+
         check_value(name, value)
