@@ -116,6 +116,7 @@ Port Classes and Functions
 
 .. autofunction:: multi_receive
 .. autofunction:: multi_iter_pending
+.. autofunction:: multi_send
 .. autofunction:: sleep
 .. autofunction:: set_sleep_time
 .. autofunction:: get_sleep_time

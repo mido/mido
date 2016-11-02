@@ -396,3 +396,9 @@ def multi_iter_pending(ports, yield_ports=False):
     The function is kept around for backwards compatability.
     """
     return multi_receive(ports, yield_ports=yield_ports, block=False)
+
+
+def multi_send(ports, msg):
+    """Send message on all ports."""
+    for port in ports:
+        port.send(msg)

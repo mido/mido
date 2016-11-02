@@ -60,6 +60,8 @@ Other changes:
 
 * ``mido.set_backend()`` can now be called with ``load=True``.
 
+* added ``multi_send()``.
+
 
 1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^
