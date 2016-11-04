@@ -88,10 +88,7 @@ _CHECKS = {
 
 
 def check_value(name, value):
-    if name in _CHECKS:
-        _CHECKS[name](value)
-    else:
-        raise ValueError('unknown message argument {!r}'.format(name))
+    _CHECKS[name](value)
 
 
 def check_msgdict(msgdict):
