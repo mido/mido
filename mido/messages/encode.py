@@ -41,6 +41,8 @@ def encode_msg(msg):
 
     Todo: Add type and value checking.
           (Can be turned off with keyword argument.)
+
+    This is not a part of the public API.
     """
     spec = SPEC_BY_TYPE[msg['type']]
     status_byte = spec['status_byte']

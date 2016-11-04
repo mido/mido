@@ -62,6 +62,8 @@ def decode_msg(midi_bytes, time=0, check=True):
 
     Raises ValueError if the bytes are out of range or the message is
     invalid.
+
+    This is not a part of the public API.
     """
     # Todo: this function is getting long.
     midi_bytes = convert_py2_bytes(midi_bytes)
@@ -106,6 +108,8 @@ def decode_msg(midi_bytes, time=0, check=True):
 class Decoder(object):
     """
     Encodes MIDI message bytes to dictionaries.
+
+    This is not a part of the public API.
     """
     def __init__(self, data=None):
         """Create a new decoder."""

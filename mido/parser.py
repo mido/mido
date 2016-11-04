@@ -32,10 +32,26 @@ class Parser(object):
             self.messages.append(Message(**msgdict))
 
     def feed(self, data):
+        """Feed MIDI data to the parser.
+
+        Accepts any object that produces a sequence of integers in
+        range 0..255, such as:
+
+            [0, 1, 2]
+            (0, 1, 2)
+            [for i in range(256)]
+            (for i in range(256)]
+            bytearray()
+            b''  # Will be converted to integers in Python 2.
+        """
         self._decoder.feed(data)
         self._wrap_messages()
 
     def feed_byte(self, byte):
+        """Feed one MIDI byte into the parser.
+
+        The byte must be an integer in range 0..255.
+        """
         self._decoder.feed_byte(byte)
         self._wrap_messages()
 
@@ -44,7 +60,8 @@ class Parser(object):
 
         Returns None if there is no message yet. If you don't want to
         deal with None, you can use pending() to see how many messages
-        you can get before you get None.
+        you can get before you get None, or just iterate over the
+        parser.
         """
         if self.messages:
             return self.messages.popleft()
@@ -52,6 +69,7 @@ class Parser(object):
             return None
 
     def pending(self):
+        """Return the number of pending messages."""
         return len(self.messages)
 
     def __len__(self):

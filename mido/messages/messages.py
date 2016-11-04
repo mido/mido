@@ -34,6 +34,7 @@ class BaseMessage(object):
 
     @property
     def is_realtime(self):
+        """True if the message is a system realtime message."""
         return self.type in REALTIME_TYPES
 
     def __eq__(self, other):
@@ -84,7 +85,7 @@ class Message(BaseMessage):
     def from_bytes(cl, data, time=0):
         """Parse a byte encoded message.
 
-        It accepts a byte string or any iterable of integers.
+        Accepts a byte string or any iterable of integers.
 
         This is the reverse of msg.bytes() or msg.bin().
         """
