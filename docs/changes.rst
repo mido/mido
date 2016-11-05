@@ -62,6 +62,18 @@ Other changes:
 
 * added ``multi_send()``.
 
+* added experimental new backend ``mido.backends.amidi``. This uses
+  the ALSA ``amidi`` command to send and receive messages, which makes
+  it very inefficient but possibly useful for sysex transfer. For now
+  it only supports blocking receive and has no callbacks.
+
+* added new backend ``mido.backends.rtmidi_python`` (previously
+  available in the examples folder.) This uses the ``rtmidi-python``
+  package instead of ``python-rtmidi``. For now it lacks some of
+  features of the ``rtmidi`` backend, but can still be useful on
+  systems where ``python-rtmidi`` is not available. (Requested by
+  netchose, issue #55.)
+
 
 1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^

@@ -5,9 +5,9 @@ https://pypi.python.org/pypi/rtmidi-python
 To use this backend copy (or link) it to somewhere in your Python path
 and call:
 
-    mido.set_backend('rtmidi_python_backend')
+    mido.set_backend('mido.backends.rtmidi_python')
 
-or set shell variable $MIDO_BACKEND to rtmidi_python_backend:
+or set shell variable $MIDO_BACKEND to mido.backends.rtmidi_python
 
 Todo:
 
@@ -20,11 +20,16 @@ Todo:
 from __future__ import absolute_import
 import os
 import time
-from Queue import Queue
 import rtmidi_python as rtmidi
 # Todo: change this to a relative import if the backend is included in
 # the package.
-from mido.ports import BaseInput, BaseOutput
+from ..ports import BaseInput, BaseOutput
+from ..py2 import PY2
+
+if PY2:
+    import Queue as queue
+else:
+    import queue
 
 def get_devices(api=None, **kwargs):
     devices = []
@@ -42,15 +47,15 @@ def get_devices(api=None, **kwargs):
     return devices
 
 class PortCommon(object):
-    def _open(self, api=None, virtual=False, **kwargs):
+    def _open(self, virtual=False, **kwargs):
 
-        self._queue = Queue()
+        self._queue = queue.Queue()
 
         # rtapi = _get_api_id(api)
         opening_input = hasattr(self, 'receive')
         
         if opening_input:
-            self._rt = rtmidi.MidiIn(api)
+            self._rt = rtmidi.MidiIn()
             self._rt.ignore_types(False, False, True)
             self.callback = kwargs.get('callback')
         else:
@@ -97,8 +102,6 @@ class PortCommon(object):
         self._rt.callback = func
 
     def _callback_wrapper(self, *args, **kw):
-        asodosaid
-
         self._parser.feed(message_data[0])
         for message in self._parser:
             if self.callback:
