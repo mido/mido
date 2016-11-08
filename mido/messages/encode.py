@@ -2,38 +2,47 @@ from .specs import SYSEX_START, SYSEX_END, CHANNEL_MESSAGES, VALID_DATA_BYTES
 from .specs import SPEC_BY_TYPE, DEFAULT_VALUES
 from .specs import MIN_PITCHWHEEL
 
-def _encode_pitchwheel_data(msg):
+def _encode_pitchwheel(msg):
     pitch = msg['pitch'] - MIN_PITCHWHEEL
-    return [pitch & 0x7f, pitch >> 7]
+    return [0xe0 | msg['channel'], pitch & 0x7f, pitch >> 7]
 
 
-def _encode_sysex_data(msg):
-    return list(msg['data']) + [0xf7]
+def _encode_sysex(msg):
+    return [0xf0] + list(msg['data']) + [0xf7]
 
 
-def _encode_quarter_frame_data(msg):
-    return [msg['frame_type'] << 4 | msg['frame_value']]
+def _encode_quarter_frame(msg):
+    return [0xf1, msg['frame_type'] << 4 | msg['frame_value']]
 
 
-def _encode_songpos_data(data):
+def _encode_songpos(data):
     pos = data['pos']
-    return [pos & 0x7f, pos >> 7]
+    return [0xf2, pos & 0x7f, pos >> 7]
 
 
-def _make_special_cases():
-    cases = {
-        0xe0: _encode_pitchwheel_data,
-        0xf0: _encode_sysex_data,
-        0xf1: _encode_quarter_frame_data,
-        0xf2: _encode_songpos_data,
-    }
+def _encode_note_off(msg):
+    return [0x80 | msg['channel'], msg['note'], msg['velocity']]
 
-    for i in range(16):
-        cases[0xe0 | i] = _encode_pitchwheel_data
 
-    return cases
+def _encode_note_on(msg):
+    return [0x90 | msg['channel'], msg['note'], msg['velocity']]
 
-_SPECIAL_CASES = _make_special_cases()
+
+def _encode_control_change(msg):
+    return [0xb0 | msg['channel'], msg['control'], msg['value']]
+
+
+_SPECIAL_CASES = {
+    'pitchwheel': _encode_pitchwheel,
+    'sysex': _encode_sysex,
+    'quarter_frame': _encode_quarter_frame,
+    'songpos': _encode_songpos,
+
+    # These are so common that they get special cases to speed things up.
+    'note_off': _encode_note_off,
+    'note_on': _encode_note_on,
+    'control_change': _encode_control_change,
+}
 
 
 def encode_msg(msg):
@@ -44,15 +53,17 @@ def encode_msg(msg):
 
     This is not a part of the public API.
     """
-    spec = SPEC_BY_TYPE[msg['type']]
-    status_byte = spec['status_byte']
 
-    if status_byte in CHANNEL_MESSAGES:
-        status_byte |= msg['channel']
-
-    if status_byte in _SPECIAL_CASES:
-        data = _SPECIAL_CASES[status_byte](msg)
+    encode = _SPECIAL_CASES.get(msg['type'])
+    if encode:
+        return encode(msg)
     else:
+        spec = SPEC_BY_TYPE[msg['type']]
+        status_byte = spec['status_byte']
+
+        if status_byte in CHANNEL_MESSAGES:
+            status_byte |= msg['channel']
+
         data = [msg[name] for name in spec['value_names'] if name != 'channel']
- 
-    return [status_byte] + data
+
+        return [status_byte] + data
