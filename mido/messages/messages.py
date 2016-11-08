@@ -140,10 +140,6 @@ class Message(BaseMessage):
     def bytes(self):
         return encode_msg(vars(self))
 
-    def __iter__(self):
-        for byte in self.bytes():
-            yield byte
-    
 
 def parse_string(text):
     """Parse a string of text and return a message.

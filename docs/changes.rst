@@ -18,9 +18,6 @@ New implementation of messages and parser:
 * new class methods for creating messages: ``Message.from_bytes()``,
   ``Message.from_hex()``, ``Message.from_str()``.
 
-* messages are now iterable. You can do ``for byte in msg:`` or
-  ``list(msg)``. (Not implemented for meta messages.)
-
 Frozen (immutable) messages:
 
 * added `FrozenMessage` and `FrozenMetaMessage`. These are immutable
