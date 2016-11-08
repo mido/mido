@@ -69,12 +69,12 @@ from .parser import Parser, parse, parse_all
 from .midifiles import MidiFile, MidiTrack, merge_tracks
 from .midifiles import MetaMessage, bpm2tempo, tempo2bpm
 from .syx import read_syx_file, write_syx_file
+from .version import version_info, version as __version__
 
 __author__ = 'Ole Martin Bjorndalen'
 __email__ = 'ombdalen@gmail.com'
 __url__ = 'https://mido.readthedocs.io/'
 __license__ = 'MIT'
-__version__ = '1.1.18'
 
 # Prevent splat import.
 __all__ = []

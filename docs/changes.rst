@@ -58,6 +58,8 @@ Changes to the port API:
 
 Other changes:
 
+* added ``mido.version_info``.
+
 * ``mido.set_backend()`` can now be called with ``load=True``.
 
 * added ``multi_send()``.
