@@ -73,7 +73,7 @@ class Message(BaseMessage):
             vars(msg).update(vars(self))
             return msg
 
-        if 'type' in overrides:
+        if 'type' in overrides and overrides['type'] != self.type:
             raise ValueError('copy must be same message type')
 
         msgdict = vars(self).copy()

@@ -75,6 +75,10 @@ def test_copy_cant_change_type():
         Message('start').copy(type='stop')
 
 
+def test_copy_can_have_same_type():
+    Message('start').copy(type='start')
+
+
 def test_compare_with_nonmessage():
     with raises(TypeError):
         Message('clock') == 'not a message'
