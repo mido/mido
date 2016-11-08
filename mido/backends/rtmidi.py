@@ -349,19 +349,15 @@ class Port(object):
             state, port_type, name, self.api)
 
 
-def open_input(name=None, **kwargs):
+# A bit of trickery to keep the Backend object happy.
+
+def Input(name=None, **kwargs):
     return Port(name=name, is_input=True, **kwargs)
 
 
-def open_output(name=None, **kwargs):
+def Output(name=None, **kwargs):
     return Port(name=name, is_output=True, **kwargs)
 
 
-def open_ioport(name=None, **kwargs):
+def IOPort(name=None, **kwargs):
     return Port(name=name, is_input=True, is_output=True, **kwargs)
-
-
-# A bit of trickery to keep the Backend object happy.
-Input = open_input
-Output = open_output
-IOPort = open_ioport
