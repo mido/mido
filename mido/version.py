@@ -4,7 +4,11 @@ VersionInfo = namedtuple('VersionInfo',
                          ['major', 'minor', 'micro', 'releaselevel', 'serial'])
 
 def _make_version_info(version):
-    version, releaselevel = version.split('-')
+    if '-' in version:
+        version, releaselevel = version.split('-')
+    else:
+        releaselevel = ''
+
     major, minor, micro = map(int, version.split('.'))
 
     return VersionInfo(major, minor, micro, releaselevel, 0)
