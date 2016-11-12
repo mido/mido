@@ -32,6 +32,11 @@ def _parse_time(value):
 
 
 def str2msg(text):
+    """Parse str format and return message dict.
+
+    No type or value checking is done. The caller is responsible for
+    calling check_msgdict().
+    """
     words = text.split()
     type_ = words[0]
     args = words[1:]
@@ -47,6 +52,4 @@ def str2msg(text):
 
         msg[name] = value
 
-    # Todo: hmm, this needs to be rethought.
-    # Where should the type and value checking happen?
-    return make_msgdict(type_, **msg)
+    return make_msgdict(type_, msg)

@@ -54,7 +54,7 @@ class SysexData(tuple):
 
 class Message(BaseMessage):
     def __init__(self, type, **args):
-        msgdict = make_msgdict(type, **args)
+        msgdict = make_msgdict(type, args)
         if type == 'sysex':
             msgdict['data'] = SysexData(convert_py2_bytes(msgdict['data']))
         check_msgdict(msgdict)

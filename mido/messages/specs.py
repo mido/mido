@@ -30,6 +30,7 @@ def _defmsg(status_byte, type_, value_names, length):
         'status_byte': status_byte,
         'type': type_,
         'value_names': value_names,
+        'attribute_names': set(value_names) | {'type', 'time'},
         'length': length,
     }
 
@@ -107,38 +108,28 @@ DEFAULT_VALUES = {
 }
 
 
-# Todo: why is this not in decode.py?
+# Todo: should this be in decode.py?
 
-def make_msgdict(type_, **args):
+def make_msgdict(type_, overrides):
     """Return a new message.
 
     Returns a dictionary representing a message.
 
     Message values can be overriden.
 
-    Todo: add 'strict' option that will check types and values
-    of arguments.
+    No type or value checking is done.  The caller is responsible for
+    calling check_msgdict().
     """
     if type_ in SPEC_BY_TYPE:
         spec = SPEC_BY_TYPE[type_]
     else:
         raise LookupError('Unknown message type {!r}'.format(type_))
 
-    msg = {'type': type_}
+    msg = {'type': type_, 'time': DEFAULT_VALUES['time']}
 
-    # Add default values.
     for name in spec['value_names']:
         msg[name] = DEFAULT_VALUES[name]
-    msg['time'] = DEFAULT_VALUES['time']
 
-    # for name in args:
-    #     if name not in spec['value_names']:
-    #         raise ValueError('
-
-    msg.update(args)
+    msg.update(overrides)
 
     return msg
-
-
-def test_make_msgdict():
-    assert make_msgdict('clock') == dict(type=clock, time=0)

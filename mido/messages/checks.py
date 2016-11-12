@@ -92,18 +92,12 @@ def check_value(name, value):
 
 
 def check_msgdict(msgdict):
-    # Todo: also check type
-    # Todo: type must be included?
-    # Todo: this must not allow 'control' in 'note_on' message for example
-
     spec = SPEC_BY_TYPE.get(msgdict['type'])
     if spec is None:
         raise ValueError('unknown message type {!r}'.format(msgdict['type']))
 
-    ok_names = {'time', 'type'} | set(spec['value_names'])
-
     for name, value in msgdict.items():
-        if name not in ok_names:
+        if name not in spec['attribute_names']:
             raise ValueError(
                 '{} message has no attribute {}'.format(spec['type'], name))
 
