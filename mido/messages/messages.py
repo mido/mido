@@ -90,7 +90,10 @@ class Message(BaseMessage):
         This is the reverse of msg.bytes() or msg.bin().
         """
         msg = cl.__new__(cl)
-        vars(msg).update(decode_msg(data, time=time))
+        msgdict = decode_msg(data, time=time)
+        if 'data' in msgdict:
+            msgdict['data'] = SysexData(msgdict['data'])
+        vars(msg).update(msgdict)
         return msg
 
     @classmethod
