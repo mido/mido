@@ -141,6 +141,7 @@ class Message(BaseMessage):
         raise AttributeError('attribute cannot be deleted')
 
     def bytes(self):
+        """Encode message and return as a list of integers."""
         return encode_msg(vars(self))
 
 
