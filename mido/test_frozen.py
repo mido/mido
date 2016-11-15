@@ -1,4 +1,5 @@
-from .frozen import FrozenMetaMessage, freeze
+from .midifiles import UnknownMetaMessage
+from .frozen import FrozenMetaMessage, FrozenUnknownMetaMessage, freeze
 
 def test_meta_init_frozen_args():
     """__init__() can't uses __setattr__() to set attributes."""
@@ -8,3 +9,7 @@ def test_meta_init_frozen_args():
 def test_freeze_none():
     freeze(None) is None
 
+
+def test_unknown_meta():
+    assert isinstance(freeze(UnknownMetaMessage(0x00)),
+                      FrozenUnknownMetaMessage)

@@ -9,11 +9,13 @@ Creating messages:
 
     Message(type, **parameters) -- create a new message
     MetaMessage(type, **parameters) -- create a new meta message
+    UnknownMetaMessage(type_byte, data=None, time=0)
 
 Frozen messages (immutable and hashable):
 
     FrozenMessage(type, **parameters)
     FrozenMetaMessage(type, **parameters)
+    FrozenUnknownMetaMessage(type_byte, data=None, time=0)
     freeze(msg)
 
 Ports:
@@ -65,9 +67,10 @@ from . import ports, sockets
 from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
 from .frozen import FrozenMessage, FrozenMetaMessage, freeze
+from .frozen import FrozenUnknownMetaMessage
 from .parser import Parser, parse, parse_all
 from .midifiles import MidiFile, MidiTrack, merge_tracks
-from .midifiles import MetaMessage, bpm2tempo, tempo2bpm
+from .midifiles import MetaMessage, UnknownMetaMessage, bpm2tempo, tempo2bpm
 from .syx import read_syx_file, write_syx_file
 from .version import version_info, version as __version__
 

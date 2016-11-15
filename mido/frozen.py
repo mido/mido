@@ -1,6 +1,6 @@
 from .messages import Message
 from .messages.messages import BaseMessage
-from .midifiles import MetaMessage
+from .midifiles import MetaMessage, UnknownMetaMessage
 
 class Frozen(object):
     is_frozen = True
@@ -27,6 +27,10 @@ class FrozenMetaMessage(Frozen, MetaMessage):
     pass
 
 
+class FrozenUnknownMetaMessage(Frozen, UnknownMetaMessage):
+    pass
+
+
 def freeze(msg):
     """Freeze message.
 
@@ -43,6 +47,8 @@ def freeze(msg):
         return msg
     elif isinstance(msg, Message):
         class_ = FrozenMessage
+    elif isinstance(msg, UnknownMetaMessage):
+        class_ = FrozenUnknownMetaMessage
     elif isinstance(msg, MetaMessage):
         class_ = FrozenMetaMessage
     elif msg is None:
