@@ -32,6 +32,11 @@ def freeze(msg):
 
     Returns a frozen version of the message. Frozen messages are
     immutable, hashable and can be used as dictionary keys.
+   
+    Will return None if called with None. This allows you to do things
+    like::
+
+        msg = freeze(port.poll())
     """
     if isinstance(msg, Frozen):
         # Already frozen.
@@ -40,8 +45,10 @@ def freeze(msg):
         class_ = FrozenMessage
     elif isinstance(msg, MetaMessage):
         class_ = FrozenMetaMessage
+    elif msg is None:
+        return None
     else:
-        raise ValueError('first argument must be a message')
+        raise ValueError('first argument must be a message or None')
 
     frozen = class_.__new__(class_)
     vars(frozen).update(vars(msg))
