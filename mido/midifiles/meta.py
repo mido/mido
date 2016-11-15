@@ -480,7 +480,7 @@ class MetaMessage(BaseMessage):
 
         for name, value in kwargs.items():
             # Using setattr here because we want type and value checks.
-            setattr(self, name, value)
+            self._setattr(name, value)
 
     def copy(self, **overrides):
         """Return a copy of the message
@@ -504,7 +504,9 @@ class MetaMessage(BaseMessage):
 
             return msg
 
-    def __setattr__(self, name, value):
+    # FrozenMetaMessage overrides __setattr__() but we still need to
+    # set attributes in __init__().
+    def _setattr(self, name, value):
         spec = _META_SPECS[self.type]
         self_vars = vars(self)
 
@@ -520,6 +522,8 @@ class MetaMessage(BaseMessage):
         else:
             raise AttributeError(
                 '{} message has no attribute {}'.format(self.type, name))
+
+    __setattr__ = _setattr
 
     def bytes(self):
         spec = _META_SPECS[self.type]
