@@ -431,9 +431,11 @@ def add_meta_spec(klass):
     spec.settable_attributes = set(spec.attributes) | {'time'}
     _META_SPECS[spec.type_byte] = spec
     _META_SPECS[spec.type] = spec
+    _META_SPEC_BY_TYPE[spec.type] = spec
 
 
 _META_SPECS = {}
+_META_SPEC_BY_TYPE = {}
 
 def _add_builtin_meta_specs():
     for name, spec in globals().items():
@@ -446,7 +448,7 @@ _add_builtin_meta_specs()
 def build_meta_message(type, data, delta=0):
     # Todo: handle unknown type.
     try:
-        spec = _META_SPECS[type]
+        spec = _META_SPEC[type]
     except KeyError:
         return UnknownMetaMessage(type, data)
     else:
@@ -464,7 +466,7 @@ class MetaMessage(BaseMessage):
     def __init__(self, type, **kwargs):
         # Todo: handle unknown type?
 
-        spec = _META_SPECS[type]
+        spec = _META_SPEC_BY_TYPE[type]
         self_vars = vars(self)
         self_vars['type'] = type
 
@@ -489,25 +491,23 @@ class MetaMessage(BaseMessage):
         Only message specific attributes can be overridden. The message
         type can not be changed.
         """
-        # Make an exact copy of this object.
-        klass = self.__class__
-        msg = klass.__new__(klass)
-        vars(msg).update(vars(self))
-
-        for name, value in overrides.items():
-            try:
-                # setattr() is responsible for checking the
-                # name and type of the attribute.
-                setattr(msg, name, value)
-            except AttributeError as err:
-                raise ValueError(*err.args)
-
+        if not overrides:
+            # Bypass all checks.
+            msg = self.__class__.__new__(self.__class__)
+            vars(msg).update(vars(self))
             return msg
+
+        if 'type' in overrides and overrides['type'] != self.type:
+            raise ValueError('copy must be same message type')
+
+        attrs = vars(self).copy()
+        attrs.update(overrides)
+        return self.__class__(**attrs)
 
     # FrozenMetaMessage overrides __setattr__() but we still need to
     # set attributes in __init__().
     def _setattr(self, name, value):
-        spec = _META_SPECS[self.type]
+        spec = _META_SPEC_BY_TYPE[self.type]
         self_vars = vars(self)
 
         if name in spec.settable_attributes:
@@ -526,7 +526,7 @@ class MetaMessage(BaseMessage):
     __setattr__ = _setattr
 
     def bytes(self):
-        spec = _META_SPECS[self.type]
+        spec = _META_SPEC_BY_TYPE[self.type]
         data = spec.encode(self)
 
         return ([0xff, specspec.type_byte]
@@ -534,7 +534,7 @@ class MetaMessage(BaseMessage):
                 + data)
 
     def __repr__(self):
-        spec = _META_SPECS[self.type]
+        spec = _META_SPEC_BY_TYPE[self.type]
         attributes = []
         for name in spec.attributes:
             attributes.append('{}={!r}'.format(name, getattr(self, name)))
