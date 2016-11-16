@@ -9,7 +9,6 @@ from ..py2 import convert_py2_bytes
 
 class BaseMessage(object):
     """Abstract base class for messages."""
-    is_frozen = False
     is_meta = False
 
     def copy(self):

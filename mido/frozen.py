@@ -3,8 +3,6 @@ from .messages.messages import BaseMessage
 from .midifiles import MetaMessage, UnknownMetaMessage
 
 class Frozen(object):
-    is_frozen = True
-
     def __repr__(self):
         text = super(Frozen, self).__repr__()
         return '<frozen {}'.format(text[1:])

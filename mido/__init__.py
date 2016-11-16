@@ -11,13 +11,6 @@ Creating messages:
     MetaMessage(type, **parameters) -- create a new meta message
     UnknownMetaMessage(type_byte, data=None, time=0)
 
-Frozen messages (immutable and hashable):
-
-    FrozenMessage(type, **parameters)
-    FrozenMetaMessage(type, **parameters)
-    FrozenUnknownMetaMessage(type_byte, data=None, time=0)
-    freeze(msg)
-
 Ports:
 
     open_input(name=None, virtual=False, callback=None) -- open an input port
@@ -66,8 +59,6 @@ from .backends.backend import Backend
 from . import ports, sockets
 from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
-from .frozen import FrozenMessage, FrozenMetaMessage, freeze
-from .frozen import FrozenUnknownMetaMessage
 from .parser import Parser, parse, parse_all
 from .midifiles import MidiFile, MidiTrack, merge_tracks
 from .midifiles import MetaMessage, UnknownMetaMessage, bpm2tempo, tempo2bpm

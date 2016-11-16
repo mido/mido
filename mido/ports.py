@@ -274,9 +274,7 @@ class BaseOutput(BasePort):
             raise ValueError('send() called on closed port')
 
         with self._lock:
-            if not msg.is_frozen:
-                msg = msg.copy()
-            self._send(msg)
+            self._send(msg.copy())
 
     def reset(self):
         if self.closed:
