@@ -20,10 +20,11 @@ New implementation of messages and parser:
 
 Frozen (immutable) messages:
 
-* added `FrozenMessage` and `FrozenMetaMessage`. These are immutable
-  versions of `Message` and `MetaMessage` that are hashable and thus
-  can be used as dictionary keys. These are available in
-  `mido.frozen`. (Requested by Jasper Lyons, issue #36.)
+* added ``FrozenMessage`` and ``FrozenMetaMessage``. These are
+  immutable versions of ``Message`` and ``MetaMessage`` that are
+  hashable and thus can be used as dictionary keys. These are
+  available in ``mido.frozen``. (Requested by Jasper Lyons, issue
+  #36.)
 
 RtMidi is now the default backend:
 

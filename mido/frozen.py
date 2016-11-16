@@ -29,7 +29,7 @@ class FrozenUnknownMetaMessage(Frozen, UnknownMetaMessage):
     pass
 
 
-def freeze(msg):
+def freeze_message(msg):
     """Freeze message.
 
     Returns a frozen version of the message. Frozen messages are
@@ -38,7 +38,7 @@ def freeze(msg):
     Will return None if called with None. This allows you to do things
     like::
 
-        msg = freeze(port.poll())
+        msg = freeze_message(port.poll())
     """
     if isinstance(msg, Frozen):
         # Already frozen.
