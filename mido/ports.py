@@ -41,19 +41,17 @@ def get_sleep_time():
     return _sleep_time
 
 
-def send_reset(port):
-    """Send "All Notes Off" and "Reset All Controllers" on all channels"""
+def reset_messages():
+    """Yield "All Notes Off" and "Reset All Controllers" for all channels"""
     ALL_NOTES_OFF = 123
     RESET_ALL_CONTROLLERS = 121
     for channel in range(16):
         for control in [ALL_NOTES_OFF, RESET_ALL_CONTROLLERS]:
-            port.send(Message('control_change',
-                              channel=channel,
-                              control=control))
+            yield Message('control_change', channel=channel, control=control)
 
 
-def send_panic(port):
-    """Send "All Sounds Off" on all channels.
+def panic_messages():
+    """Yield "All Sounds Off" for all channels.
 
     This will mute all sounding notes regardless of
     envelopes. Useful when notes are hanging and nothing else
@@ -61,9 +59,8 @@ def send_panic(port):
     """
     ALL_SOUNDS_OFF = 120
     for channel in range(16):
-        port.send(Message('control_change',
-                          channel=channel,
-                          control=ALL_SOUNDS_OFF))
+        yield Message('control_change',
+                      channel=channel, control=ALL_SOUNDS_OFF)
 
 
 class BasePort(object):
@@ -277,19 +274,25 @@ class BaseOutput(BasePort):
             self._send(msg.copy())
 
     def reset(self):
+        """Send "All Notes Off" and "Reset All Controllers" on all channels"""
         if self.closed:
             return
 
-        send_reset(self)
+        for msg in reset_messages():
+            self.send(msg)
 
     def panic(self):
+        """Send "All Sounds Off" on all channels.
+
+        This will mute all sounding notes regardless of
+        envelopes. Useful when notes are hanging and nothing else
+        helps.
+        """
         if self.closed:
             return
 
-        send_panic(self)
-
-    reset.__doc__ = send_reset.__doc__
-    panic.__doc__ = send_panic.__doc__
+        for msg in panic_messages():
+            self.send(msg)
 
 
 class BaseIOPort(BaseInput, BaseOutput):

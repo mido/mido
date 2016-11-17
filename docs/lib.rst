@@ -14,14 +14,6 @@ Messages
    :undoc-members:
 
 
-Frozen Messages
----------------
-
-.. autoclass:: FrozenMessage
-.. autoclass:: FrozenMetaMessage
-.. autofunction:: freeze
-
-
 Ports
 -----
 
@@ -120,6 +112,8 @@ Port Classes and Functions
 .. autofunction:: sleep
 .. autofunction:: set_sleep_time
 .. autofunction:: get_sleep_time
+.. autofunction:: panic_messages
+.. autofunction:: reset_messages
 
 
 Socket Ports
@@ -138,3 +132,16 @@ Socket Ports
    :undoc-members:
 
 .. autofunction:: parse_address
+
+
+Frozen Messages
+---------------
+
+.. module:: mido.frozen
+
+.. autofunction:: freeze_message
+
+.. autoclass:: Frozen
+.. autoclass:: FrozenMessage
+.. autoclass:: FrozenMetaMessage
+.. autoclass:: FrozenUnknownMetaMessage

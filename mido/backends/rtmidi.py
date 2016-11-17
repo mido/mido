@@ -215,14 +215,8 @@ class Port(object):
         with self._lock:
             self._midiout.send_message(msg.bytes())
 
-    def panic(self):
-        ports.send_panic(self)
-
-    def reset(self):
-        ports.send_reset(self)
-
-    panic.__doc__ = ports.send_panic.__doc__
-    reset.__doc__ = ports.send_reset.__doc__
+    panic = ports.BaseOutput.panic
+    reset = ports.BaseOutput.reset
 
     def receive(self, block=True):
         """Blocks until a message arrives and returns the message.
