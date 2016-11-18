@@ -96,7 +96,7 @@ def _open_port(client, name, virtual=False):
     return name
 
 
-class Port(object):
+class Port(ports.BaseIOPort):
     """RtMidi port
 
     The following methods are thread safe::
@@ -132,15 +132,17 @@ class Port(object):
 
     send() uses a lock for thread safety.
     """
+    # We do our own locking.
+    locking = False
 
-    def __init__(self, name=None, is_input=False, is_output=False,
-                 client=None, virtual=False, api=None,
-                 callback=None, autoreset=False, **kwargs):
+    def _open(self, is_input=False, is_output=False,
+              client=None, virtual=False, api=None,
+              callback=None, **kwargs):
 
         if client is not None:
             virtual = True
 
-        if virtual and name is None:
+        if virtual and self.name is None:
             raise IOError('virtual port must have a name')
 
         if is_input is is_output is None:
@@ -151,13 +153,10 @@ class Port(object):
         self.virtual = virtual
         self.is_input = is_input
         self.is_output= is_output
-        self.autoreset = autoreset
-        self.closed = False
 
         if client:
             self.virtual = True
 
-        self._lock = threading.RLock()
         self._callback = None
 
         self._midiin = self._midiout = None
@@ -165,7 +164,7 @@ class Port(object):
 
         if is_input:
             self._midiin = rtmidi.MidiIn(name=client, rtapi=rtapi)
-            input_name = _open_port(self._midiin, name, self.virtual)
+            input_name = _open_port(self._midiin, self.name, self.virtual)
 
             self._midiin.ignore_types(False, False, True)
             self._queue = queue.Queue()
@@ -174,7 +173,7 @@ class Port(object):
 
         if is_output:
             self._midiout = rtmidi.MidiOut(name=client, rtapi=rtapi)
-            output_name = _open_port(self._midiout, name, self.virtual)
+            output_name = _open_port(self._midiout, self.name, self.virtual)
             # Turn of ignore of sysex, time and active_sensing.
 
         # What if is_input and is_output and these differ?
@@ -182,47 +181,31 @@ class Port(object):
 
         client = self._midiin or self._midiout
         self.api = _api_to_name[client.get_current_api()]
+        self._device_type = 'RtMidi/{}'.format(self.api)
 
-    def close(self):
-        """Close the port
 
-        If the port is already closed, nothing will happen.  The port
-        is automatically closed when the object goes out of scope or
-        is garbage collected.
-        """
+    def _close(self):
         # Note: not thread safe.
-        if not self.closed:
-            if self.is_input:
-                self._midiin.close_port()
-                del self._midiin
+        if self.is_input:
+            self._midiin.close_port()
+            del self._midiin
 
-            if self.is_output:
-                if self.autoreset:
-                    self.reset()
+        if self.is_output:
+            if self.autoreset:
+                self.reset()
 
-                self._midiout.close_port()
-                del self._midiout
+            self._midiout.close_port()
+            del self._midiout
 
-            # Virtual ports are closed when this is deleted.
-            self.closed = True
-
-    def send(self, msg):
+    def _send(self, msg):
         """Send a message on the port."""
-        self._check_closed()
         if not self.is_output:
             raise ValueError('not an output port')
 
         with self._lock:
             self._midiout.send_message(msg.bytes())
 
-    panic = ports.BaseOutput.panic
-    reset = ports.BaseOutput.reset
-
-    def receive(self, block=True):
-        """Blocks until a message arrives and returns the message.
-
-        If block=False it will behave like poll().
-        """
+    def _receive(self, block=True):
         # In Python 2 queue.get() doesn't respond to CTRL-C. A workaroud is
         # to call queue.get(timeout=100) (very high timeout) in a loop, but all
         # that does is poll with a timeout of 50 milliseconds. This results in
@@ -231,10 +214,6 @@ class Port(object):
         # It's better to do our own polling with a shorter sleep time.
         #
         # See Issue #49 and https://bugs.python.org/issue8844
-        self._check_closed()
-        if not self.is_input:
-            raise ValueError('not an input port')
-
         if PY2:
             sleep_time = ports.get_sleep_time()
             while True:
@@ -251,24 +230,6 @@ class Port(object):
                 return self._queue.get(block=block)
             except queue.Empty:
                 return None
-
-    def poll(self):
-        """Return a message if one is available, or None if not."""
-        return self.receive(block=False)
-
-    def iter_pending(self):
-        """Iterate over pending messages."""
-        while True:
-            msg = self.poll()
-            if msg:
-                yield msg
-            else:
-                return
-
-    def __iter__(self):
-        """Iterate over messages."""
-        while True:
-            yield self.receive()
 
     @property
     def callback(self):
@@ -297,10 +258,6 @@ class Port(object):
                 self._midiin.set_callback(self._feed_callback)
                 self._callback = func
 
-    def _check_closed(self):
-        if self.closed:
-            raise ValueError('port is closed')
-
     def _feed_queue(self, msg_data, data):
         self._parser.feed(msg_data[0])
         for msg in self._parser:
@@ -310,37 +267,6 @@ class Port(object):
         self._parser.feed(msg_data[0])
         for msg in self._parser:
             self._callback(msg)
-
-    def __del__(self):
-        self.close()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.close()
-        return False
-
-    def __repr__(self):
-        if self.closed:
-            state = 'closed'
-        else:
-            state = 'open'
-
-        capabilities = self.is_input, self.is_output
-        port_type = {
-            (True, False): 'input',
-            (False, True): 'output',
-            (True, True): 'I/O port',
-            }[capabilities]
-
-        if self.virtual:
-            port_type = 'virtual ' + port_type
-
-        name = self.name or ''
-
-        return '<{} {} {!r} (RtMidi/{})>'.format(
-            state, port_type, name, self.api)
 
 
 # A bit of trickery to keep the Backend object happy.
