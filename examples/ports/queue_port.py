@@ -14,7 +14,7 @@ except Importerror:
 
 class QueuePort(ports.BaseIOPort):
     # We don't need locking since the queue takes care of that.
-    locking = False
+    _locking = False
 
     def _open(self):
         self.queue = queue.Queue()

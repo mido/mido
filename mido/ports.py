@@ -79,11 +79,11 @@ class BasePort(object):
 
     is_input = False
     is_output = False
-    locking = True
+    _locking = True
 
     def __init__(self, name=None, **kwargs):
         self.name = name
-        if self.locking:
+        if self._locking:
             self._lock = threading.RLock()
         else:
             self._lock = DummyLock()

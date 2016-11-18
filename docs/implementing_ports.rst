@@ -106,10 +106,10 @@ it will also block other threads calling ``poll()``. In this case you
 need to implement your own locking.
 
 If you want to implement your own thread safety you can set the
-``locking`` attribute in your class::
+``_locking`` attribute in your class::
 
     class MyInput(ports.BaseInput):
-        locking = False
+        _locking = False
 
         ...
 

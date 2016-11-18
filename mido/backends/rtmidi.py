@@ -133,7 +133,7 @@ class Port(ports.BaseIOPort):
     send() uses a lock for thread safety.
     """
     # We do our own locking.
-    locking = False
+    _locking = False
 
     def _open(self, is_input=False, is_output=False,
               client=None, virtual=False, api=None,

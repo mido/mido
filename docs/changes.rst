@@ -47,7 +47,7 @@ Changes to the port API:
 
 * ports now have ``is_input`` and ``is_output`` attributes.
 
-* added ``locking`` attribute to ``BasePort``. You can set this to
+* added ``_locking`` attribute to ``BasePort``. You can set this to
   ``False`` in a subclass to do your own locking.
 
 * ``_receive()`` is now allowed to return a messages. This makes the
