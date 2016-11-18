@@ -199,9 +199,6 @@ class Port(ports.BaseIOPort):
 
     def _send(self, msg):
         """Send a message on the port."""
-        if not self.is_output:
-            raise ValueError('not an output port')
-
         with self._lock:
             self._midiout.send_message(msg.bytes())
 
