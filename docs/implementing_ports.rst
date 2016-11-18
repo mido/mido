@@ -92,6 +92,32 @@ The base classes are ``BaseInput``, ``BaseOutput`` and ``BaseIOPort``
 (which is a subclass of the other two.)
 
 
+Locking
+-------
+
+The calls to ``_receive()`` and ``_send()`` will are protected by a
+lock, ``left.lock``. As a result all send and receive will be thread
+safe.
+
+.. note:: If your ``_receive()`` function actually blocks instead of
+letting the parent class handle it ``poll()`` will not work. The two
+functions are protected by the same lock, so when ``receive()`` blocks
+it will also block other threads calling ``poll()``. In this case you
+need to implement your own locking.
+
+If you want to implement your own thread safety you can set the
+``locking`` attribute in your class::
+
+    class MyInput(ports.BaseInput):
+        locking = False
+
+        ...
+
+An example of this is ``mido.backends.rtmidi`` where the callback is
+used to feed an internal queue that ``receive()`` reads from.
+
+
+
 Examples
 --------
 

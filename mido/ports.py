@@ -63,6 +63,15 @@ def panic_messages():
                       channel=channel, control=ALL_SOUNDS_OFF)
 
 
+
+class DummyLock(object):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        return False
+
+
 class BasePort(object):
     """
     Abstract base class for Input and Output ports.
@@ -70,10 +79,14 @@ class BasePort(object):
 
     is_input = False
     is_output = False
+    locking = True
 
     def __init__(self, name=None, **kwargs):
         self.name = name
-        self._lock = threading.RLock()
+        if self.locking:
+            self._lock = threading.RLock()
+        else:
+            self._lock = DummyLock()
         self.closed = True
         self._open(**kwargs)
         self.closed = False
@@ -185,6 +198,9 @@ class BaseInput(BasePort):
         IOError will be raised. Todo: this seems a bit inconsistent. Should
         different errors be raised? What's most useful here?
         """
+        if not self.is_input:
+            raise ValueError('Not an input port')
+
         self._check_callback()
 
         # If there is a message pending, return it right away.
@@ -265,7 +281,9 @@ class BaseOutput(BasePort):
         A copy of the message will be sent, so you can safely modify
         the original message without any unexpected consequences.
         """
-        if not isinstance(msg, Message):
+        if not self.is_output:
+            raise 'Not an output port'
+        elif not isinstance(msg, Message):
             raise TypeError('argument to send() must be a Message')
         elif self.closed:
             raise ValueError('send() called on closed port')
