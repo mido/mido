@@ -13,10 +13,11 @@ New implementation of messages and parser:
 * completely reimplemented messages. The code is now much simpler,
   clearer and easier to work with.
 
+* new contructors ``Message.from_bytes()``, ``Message.from_hex()``,
+  ``Message.from_str()``.
+
 * new message attributes ``is_meta`` and ``is_realtime``.
 
-* new class methods for creating messages: ``Message.from_bytes()``,
-  ``Message.from_hex()``, ``Message.from_str()``.
 
 Frozen (immutable) messages:
 
@@ -25,6 +26,7 @@ Frozen (immutable) messages:
   hashable and thus can be used as dictionary keys. These are
   available in ``mido.frozen``. (Requested by Jasper Lyons, issue
   #36.)
+
 
 RtMidi is now the default backend:
 
@@ -43,6 +45,7 @@ RtMidi is now the default backend:
   client name: ``open_output('Test', client='My Client')``. When
   ``client`` is passed the port will automatically be a virtual port.
 
+
 Changes to the port API:
 
 * ports now have ``is_input`` and ``is_output`` attributes.
@@ -56,6 +59,7 @@ Changes to the port API:
 
 * ``pending()`` is gone. This had to be done to allow for the new
   ``_receive()`` behavior.
+
 
 Other changes:
 
