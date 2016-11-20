@@ -88,7 +88,7 @@ def _make_spec_lookups(specs):
 
 SPEC_LOOKUP, SPEC_BY_STATUS, SPEC_BY_TYPE = _make_spec_lookups(SPECS)
 
-REALTIME_TYPES = ['tune_request', 'clock', 'start', 'continue', 'stop']
+REALTIME_TYPES = {'tune_request', 'clock', 'start', 'continue', 'stop'}
 
 DEFAULT_VALUES = {
     'channel': 0,
