@@ -96,11 +96,14 @@ class Message(BaseMessage):
         return msg
 
     @classmethod
-    def from_hex(cl, text, time=0):
+    def from_hex(cl, text, time=0, sep=None):
         """Parse a hex encoded message.
 
         This is the reverse of msg.hex().
+
         """
+        if sep is not None:
+            text = text.replace(sep, ' ')            
         return cl(**decode_msg(bytearray.fromhex(text), time=time))
 
     @classmethod
