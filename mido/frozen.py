@@ -14,7 +14,7 @@ class Frozen(object):
         raise ValueError('frozen message is immutable')
 
     def __hash__(self):
-        return hash(repr(vars(self)))
+        return hash(tuple(sorted(vars(self).items())))
 
 
 class FrozenMessage(Frozen, Message):

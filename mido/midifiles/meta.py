@@ -549,12 +549,14 @@ class MetaMessage(BaseMessage):
 class UnknownMetaMessage(MetaMessage):
     def __init__(self, type_byte, data=None, time=0):
         if data is None:
-            data = []
+            data = ()
+        else:
+            data = tuple(data)
 
-        self.type = 'unknown_meta'
-        self.type_byte = type_byte
-        self.data = data
-        self.time = time
+        vars(self).update({
+            'type': 'unknown_meta',
+            'type_byte': type_byte,
+            'time': time})
 
     def __repr__(self):
         return ('<unknown meta message'
@@ -563,8 +565,9 @@ class UnknownMetaMessage(MetaMessage):
                 self.data,
                 self.time)
 
-    # Override all checking.
     def __setattr__(self, name, value):
+        # This doesn't do any checking.
+        # It probably should.
         vars(self)[name] = value
 
     def bytes(self):
