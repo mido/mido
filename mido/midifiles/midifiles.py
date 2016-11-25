@@ -46,6 +46,11 @@ class DebugFileWrapper(object):
         data = self.file.read(size)
 
         for byte in data:
+            # Iterating gives us byte strings instead of ints in
+            # Python 2.
+            if isinstance(byte, str):
+                byte = ord(byte)
+
             print_byte(byte, self.file.tell())
 
         return data
