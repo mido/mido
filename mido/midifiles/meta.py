@@ -448,7 +448,7 @@ _add_builtin_meta_specs()
 def build_meta_message(type, data, delta=0):
     # Todo: handle unknown type.
     try:
-        spec = _META_SPEC[type]
+        spec = _META_SPECS[type]
     except KeyError:
         return UnknownMetaMessage(type, data)
     else:
@@ -529,7 +529,7 @@ class MetaMessage(BaseMessage):
         spec = _META_SPEC_BY_TYPE[self.type]
         data = spec.encode(self)
 
-        return ([0xff, specspec.type_byte]
+        return ([0xff, spec.type_byte]
                 + encode_variable_int(len(data))
                 + data)
 

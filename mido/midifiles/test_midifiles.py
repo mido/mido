@@ -2,6 +2,7 @@ import io
 from pytest import raises
 from ..messages import Message
 from .midifiles import MidiFile
+from .meta import MetaMessage
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # MThd
@@ -73,3 +74,18 @@ def test_invalid_data_byte():
         00 00 00 04  # Chunk size
         00 90 ff 40  # note_on note=255 velocity=64
         """)
+
+
+def test_meta_messages():
+    # Todo: should this raise IOError?
+    mid = read_file(HEADER_ONE_TRACK + """
+    4d 54 72 6b  # MTrk
+    00 00 00 0c  # Chunk size
+    00 ff 03 04 54 65 73 74  # track_name name='Test'
+    00 ff 2f 00  # end_of_track
+    """)
+
+    track = mid.tracks[0]
+
+    assert track[0] == MetaMessage('track_name', name='Test')
+    assert track[1] == MetaMessage('end_of_track')
