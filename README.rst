@@ -12,8 +12,8 @@ designed to be as straight forward and Pythonic as possible:
 
 .. code-block:: python
 
-    >>> with input as mido.open_input('SH-201'):
-    ...     for msg in input:
+    >>> with mido.open_input('SH-201') as midi_input:
+    ...     for msg in midi_input:
     ...         print(msg)
 
 .. code-block:: python
