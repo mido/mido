@@ -59,6 +59,7 @@ from .backends.backend import Backend
 from . import ports, sockets
 from .messages import Message
 from .messages import parse_string, parse_string_stream, format_as_string
+from .messages import MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS
 from .parser import Parser, parse, parse_all
 from .midifiles import MidiFile, MidiTrack, merge_tracks
 from .midifiles import MetaMessage, UnknownMetaMessage, bpm2tempo, tempo2bpm

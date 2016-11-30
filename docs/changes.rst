@@ -69,6 +69,10 @@ Other changes:
 
 * added ``multi_send()``.
 
+* ``MIN_PITCHWHEEL``, ``MAX_PITCHWHEEL``, ``MIN_SONGPOS`` and
+  ``MAX_SONGPOS`` are now available in the top level module (for
+  example ``mido.MIN_PITCHWHEEL``).
+
 * added experimental new backend ``mido.backends.amidi``. This uses
   the ALSA ``amidi`` command to send and receive messages, which makes
   it very inefficient but possibly useful for sysex transfer. For now
