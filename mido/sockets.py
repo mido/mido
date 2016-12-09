@@ -77,7 +77,7 @@ class PortServer(MultiPort):
 
 class SocketPort(BaseIOPort):
     def __init__(self, host, portno, conn=None):
-        self.name = format_address(host, portno)
+        BaseIOPort.__init__(self, name=format_address(host, portno))
         self.closed = False
         self._parser = Parser()
         self._messages = self._parser.messages
