@@ -1,8 +1,23 @@
-import struct
-import select
+"""Read from /dev/input/js0 and return as dictionaries.
+
+If you have pygame it is easier and more portable to do something
+like::
+
+    import pygame.joystick
+    from pygame.event import event_name
+
+    pygame.init()
+    pygame.joystick.init()
+
+    js = pygame.joystick.Joystick(0)
+    js.init()
+
+    while True:
+        for event in pygame.event.get():
+            if event.axis == 0:
+                print(event)
 
 
-"""
 Init:
 
                   8 = init?
@@ -59,6 +74,8 @@ The + stick has two modes. When the mode light is off, it sends axis
 Other axis have values from -32767 to 32767 as well.
 
 """
+import struct
+import select
 
 JS_EVENT_BUTTON = 0x1
 JS_EVENT_AXIS = 0x2
