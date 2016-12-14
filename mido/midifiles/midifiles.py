@@ -22,8 +22,8 @@ import time
 import string
 import struct
 from ..messages import build_message, Message, get_spec
-from .meta import MetaMessage, build_meta_message, meta_charset
-from .meta import MetaSpec, add_meta_spec, encode_variable_int
+from .meta import (MetaMessage, build_meta_message, meta_charset, MetaSpec, 
+                   add_meta_spec, encode_variable_int, tick2second)
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
 
 PY2 = (sys.version_info.major == 2)
@@ -328,36 +328,26 @@ class MidiFile:
 
         return sum(msg.time for msg in self)
 
-    def _get_seconds_per_tick(self, tempo):
-        # Tempo is given in microseconds per beat (default 500000).
-        # At this tempo there are (500000 / 1000000) == 0.5 seconds
-        # per beat. At the default resolution of 480 ticks per beat
-        # this is:
-        #
-        #    (500000 / 1000000) / 480 == 0.5 / 480 == 0.0010417
-        #
-        return (tempo / 1000000.0) / self.ticks_per_beat
-
     def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
         # not be played back like this.
         if self.type == 2:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
-        seconds_per_tick = self._get_seconds_per_tick(DEFAULT_TEMPO)
-
+        tempo = DEFAULT_TEMPO
         for msg in merge_tracks(self.tracks):
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             if msg.time > 0:
-                delta = msg.time * seconds_per_tick
+                delta = tick2second(msg.time, self.ticks_per_beat, tempo)
             else:
                 delta = 0
 
             yield msg.copy(time=delta)
 
             if msg.type == 'set_tempo':
-                seconds_per_tick = self._get_seconds_per_tick(msg.tempo)
+                tempo = msg.tempo
+
 
     def play(self, meta_messages=False):
         """Play back all tracks.
