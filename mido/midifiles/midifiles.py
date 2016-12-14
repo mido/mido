@@ -20,9 +20,11 @@ import io
 import time
 import string
 import struct
+
 from ..messages import Message, SPEC_BY_STATUS
-from .meta import MetaMessage, build_meta_message, meta_charset
-from .meta import MetaSpec, add_meta_spec, encode_variable_int
+from .meta import (MetaMessage, build_meta_message, meta_charset, MetaSpec, 
+                   add_meta_spec, encode_variable_int, tick2second)
+
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
 
 # The default tempo is 120 BPM.
@@ -346,22 +348,19 @@ class MidiFile(object):
         if self.type == 2:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
-        seconds_per_tick = get_seconds_per_tick(DEFAULT_TEMPO,
-                                                self.ticks_per_beat)
-
+        tempo = DEFAULT_TEMPO
         for msg in merge_tracks(self.tracks):
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             if msg.time > 0:
-                delta = msg.time * seconds_per_tick
+                delta = tick2second(msg.time, self.ticks_per_beat, tempo)
             else:
                 delta = 0
 
             yield msg.copy(time=delta)
 
             if msg.type == 'set_tempo':
-                seconds_per_tick = get_seconds_per_tick(msg.tempo,
-                                                        self.ticks_per_beat)
+                tempo = msg.tempo
 
     def play(self, meta_messages=False):
         """Play back all tracks.

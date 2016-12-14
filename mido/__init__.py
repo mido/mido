@@ -57,12 +57,13 @@ from __future__ import absolute_import
 import os
 from .backends.backend import Backend
 from . import ports, sockets
-from .messages import Message
-from .messages import parse_string, parse_string_stream, format_as_string
-from .messages import MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS
+from .messages import (Message, parse_string, parse_string_stream,
+                       format_as_string, MIN_PITCHWHEEL, MAX_PITCHWHEEL,
+                       MIN_SONGPOS, MAX_SONGPOS)
 from .parser import Parser, parse, parse_all
-from .midifiles import MidiFile, MidiTrack, merge_tracks
-from .midifiles import MetaMessage, UnknownMetaMessage, bpm2tempo, tempo2bpm
+from .midifiles import (MidiFile, MidiTrack, merge_tracks,
+                        MetaMessage, UnknownMetaMessage,
+                        bpm2tempo, tempo2bpm, tick2second, second2tick)
 from .syx import read_syx_file, write_syx_file
 from .version import version_info, version as __version__
 

@@ -156,9 +156,9 @@ You can tell meta messages apart from normal messages with::
 
 or if you know the message type you can use the ``type`` attribute::
 
-    if msgtype == 'key_signature':
+    if msg.type == 'key_signature':
         ...
-    elif msgtype == 'note_on':
+    elif msg.type == 'note_on':
         ...
 
 Meta messages can not be sent on ports.
@@ -186,56 +186,41 @@ Tempo and Beat Resolution
 
 .. image:: images/midi_time.svg
 
-Timing in MIDI files is all centered around beats. A beat is the same
-as a quarter note.
+Timing in MIDI files is centered around ticks and beats. A beat is the same as 
+a quarter note. Beats are divided into ticks, the smallest unit of time in 
+MIDI.
 
-Tempo is given in microseconds per beat, and beats are divided into
-ticks.
+Each message in a MIDI file has a delta time, which tells how many ticks have 
+passed since the last message. The length of a tick is defined in ticks per 
+beat. This value is stored as ``ticks_per_beat`` in MidiFile objects and 
+remains fixed throughout the song.
 
-The default tempo is 500000 microseconds per beat (quarter note),
-which is half a second per beat or 120 beats per minute. The meta
-message 'set_tempo' can be used to change tempo during a song.
 
-You can use :py:func:`bpm2tempo` and :py:func:`tempo2bpm` to convert
-to and from beats per minute. Note that :py:func:`tempo2bpm` may
-return a floating point number.
+MIDI Tempo vs. BPM
+^^^^^^^^^^^^^^^^^^
 
-Computations::
+Unlike music, tempo in MIDI is not given as beats per minute, but rather in 
+microseconds per beat.
 
-    beats_per_seconds = 1000000 / tempo
-    beats_per_minute = (1000000 / tempo) * 60
-    tempo = (60 / beats_per_minute) * 1000000
+The default tempo is 500000 microseconds per beat, which is 120 beats per 
+minute. The meta message 'set_tempo' can be used to change tempo during a song.
 
-Examples::
+You can use :py:func:`bpm2tempo` and :py:func:`tempo2bpm` to convert to and 
+from beats per minute. Note that :py:func:`tempo2bpm` may return a floating 
+point number.
 
-    2 == 1000000 / 500000
-    120 == (1000000 / 500000) * 60
-    500000 == (60 / 120.0) * 1000000
+Converting Between Ticks and Seconds
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Each message in a MIDI file has a delta time, which tells how many
-ticks has passed since the last message. The length of a tick is
-defined in ticks per beat. This value is stored as ``ticks_per_beat``
-in the file header and remains fixed throughout the song. It is used
-when converting delta times to and from real time.
+To convert from MIDI time to absolute time in seconds, the number of beats per 
+minute (BPM) and ticks per beat (often called pulses per quarter note or PPQ, 
+for short) have to be decided upon.
 
-(Todo: what's the default value?) 
+You can use :py:func:`tick2second` and :py:func:`second2tick` to convert to
+and from seconds and ticks. Note that integer rounding of the result might be 
+necessary because MIDI files require ticks to be integers.
 
-Computations::
+If you have a lot of rounding errors you should increase the time resolution 
+with more ticks per beat, by setting MidiFile.ticks_per_beat to a large number.
+Typical values range from 96 to 480 but some use even more ticks per beat.
 
-    seconds_per_beat = tempo / 1000000.0
-    seconds_per_tick = seconds_per_beat / float(ticks_per_beat)
-    time_in_seconds = time_in_ticks * seconds_per_tick
-    time_in_ticks = time_in_seconds / seconds_per_tick
-
-Examples::
-
-    0.5 == 500000 / 1000000.0
-    0.005 == 0.5 / 100    
-    1.0 == 200 * 0.005
-    200 == 1.0 / 0.005
-
-(Todo: update with default value.)
-
-MidiFile objects have a ``ticks_per_beat`` attribute, while
-``msg.time`` is used for delta time. Tempo is updated by
-``set_tempo`` meta messages.
