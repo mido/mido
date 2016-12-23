@@ -19,7 +19,7 @@ designed to be as straight forward and Pythonic as possible.
 
 .. code-block:: python
 
-    >>> with input as mido.open_input('SH-201'):
+    >>> with mido.open_input('SH-201') as input:
     ...     for msg in input:
     ...         print(msg)
 
