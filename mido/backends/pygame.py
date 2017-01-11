@@ -76,10 +76,10 @@ class PortCommon(object):
             device = _get_default_device(self.is_input)
             self.name = device['name']
         else:
-            device = _get_named_device(self.name, opening_input)
+            device = _get_named_device(self.name, self.is_input)
 
         if device['opened']:
-            if opening_input:
+            if self.is_input:
                 devtype = 'input'
             else:
                 devtype = 'output'
