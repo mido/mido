@@ -66,6 +66,10 @@ MIDI Files
    :inherited-members:
    :undoc-members:
 
+.. autofunction:: tick2second
+
+.. autofunction:: second2tick
+
 .. autofunction:: bpm2tempo
 
 .. autofunction:: tempo2bpm
