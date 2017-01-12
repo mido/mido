@@ -12,6 +12,10 @@ Release History
 * bugfix: ``libportmidi.dylib`` was not found when using
   MacPorts. (Fix by yam655, issue #77.)
 
+* bugfix: ``SocketPort.__init()`` was not calling
+  ``IOPort.__init__()`` which means it didn't get a
+  ``self._lock``. (Fixed by K Lars Lohn, pull request #72.)
+
 * fixed typo in intro example (README and index.rst). Fix by Antonio
   Ospite (pull request #70), James McDermott (pull request #73) and
   Zdravko Bozakov (pull request #74).
