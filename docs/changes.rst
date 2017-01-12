@@ -12,6 +12,12 @@ Release History
 * bugfix: ``libportmidi.dylib`` was not found when using
   MacPorts. (Fix by yam655, issue #77.)
 
+* fixed typo in intro example (README and index.rst). Fix by Antonio
+  Ospite (pull request #70), James McDermott (pull request #73) and
+  Zdravko Bozakov (pull request #74).
+
+* fixed typo in virtual ports example (Zdravko Bozakov, pull request #
+
 
 1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^
