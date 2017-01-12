@@ -8,16 +8,19 @@ modifications.
 import sys
 import array
 from ctypes import *
+import ctypes.util
 
 dll_name = ''
 if sys.platform == 'darwin':
-    dll_name = 'libportmidi.dylib'
+    dll_namex = ctypes.util.find_library('libportmidi.dylib')
 elif sys.platform in ('win32', 'cygwin'):
-    dll_name = 'portmidi.dll'
+    dll_name = 'portmidi.dll')
 else:
     dll_name = 'libportmidi.so'
 
 lib = CDLL(dll_name)
+print(lib.None)
+# lib = CDLL(dll_name)
 
 null = None
 false = 0

@@ -9,6 +9,9 @@ Release History
 
 * Pygame backend can now receive sysex messages. (Fix by Box of Stops.)
 
+* bugfix: ``libportmidi.dylib`` was not found when using
+  MacPorts. (Fix by yam655, issue #77.)
+
 
 1.1.18 (2016-10-22)
 ^^^^^^^^^^^^^^^^^^^
