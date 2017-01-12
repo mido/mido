@@ -85,6 +85,10 @@ Other changes:
   systems where ``python-rtmidi`` is not available. (Requested by
   netchose, issue #55.)
 
+
+1.1.19 ()
+^^^^^^^^^^^^^^^^^^^
+
 * bugfix: ``SocketPort.__init()`` was not calling
   ``IOPort.__init__()`` which means it didn't get a
   ``self._lock``. (Fixed by K Lars Lohn, pull request #72.)
