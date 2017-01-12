@@ -129,7 +129,7 @@ def decode_string(data):
     return bytearray(data).decode(_charset)
 
 
-def tick2second(tick, ticks_per_beat, tempo):
+def tick2second(ticks, ticks_per_beat, tempo):
     """Convert absolute time in ticks to seconds.
 
     Returns absolute time in seconds for a chosen MIDI file time
@@ -137,7 +137,7 @@ def tick2second(tick, ticks_per_beat, tempo):
     note) and tempo (microseconds per beat).
     """
     scale = tempo * 1e-6 / ticks_per_beat
-    return tick * scale
+    return ticks * scale
 
 
 def second2tick(second, ticks_per_beat, tempo):
