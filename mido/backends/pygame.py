@@ -106,12 +106,6 @@ class Input(PortCommon, BaseInput):
 
         while self._port.poll():
             bytes, time = self._port.read(1)[0]
-            if bytes[0] == 0xf0:
-                # Sysex support is broken.
-                # Only the first 3 data bytes arrive.
-                # It's best to ignore these.
-                continue
-
             self._parser.feed(bytes)
 
 class Output(PortCommon, BaseOutput):
