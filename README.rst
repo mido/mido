@@ -13,7 +13,7 @@ designed to be as straight forward and Pythonic as possible:
 .. code-block:: python
 
     >>> with mido.open_input('SH-201') as inport:
-    ...     for msg in outport:
+    ...     for msg in inport:
     ...         print(msg)
 
 .. code-block:: python
