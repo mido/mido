@@ -50,6 +50,9 @@ Changes to the port API:
 
 * ports now have ``is_input`` and ``is_output`` attributes.
 
+* new functions ``tick2second()`` and ``second2tick()``. (By Carl
+  Thomé, pull request #71.)
+
 * added ``_locking`` attribute to ``BasePort``. You can set this to
   ``False`` in a subclass to do your own locking.
 
@@ -59,6 +62,9 @@ Changes to the port API:
 
 * ``pending()`` is gone. This had to be done to allow for the new
   ``_receive()`` behavior.
+
+* improved MIDI file documentation. (Written by Carl Thomé.)
+
 
 
 Other changes:
