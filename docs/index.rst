@@ -24,8 +24,9 @@ designed to be as straight forward and Pythonic as possible:
 
 .. code-block:: python
 
-    for msg in mido.open_input('SH-201'):
-        print(msg)
+    with mido.open_input('LinnStrument') as inport:
+        for msg in inport:
+            print(msg)
 
 .. code-block:: python
 
