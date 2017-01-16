@@ -100,10 +100,11 @@ lock, ``left.lock``. As a result all send and receive will be thread
 safe.
 
 .. note:: If your ``_receive()`` function actually blocks instead of
-letting the parent class handle it ``poll()`` will not work. The two
-functions are protected by the same lock, so when ``receive()`` blocks
-it will also block other threads calling ``poll()``. In this case you
-need to implement your own locking.
+          letting the parent class handle it ``poll()`` will not
+          work. The two functions are protected by the same lock, so
+          when ``receive()`` blocks it will also block other threads
+          calling ``poll()``. In this case you need to implement your
+          own locking.
 
 If you want to implement your own thread safety you can set the
 ``_locking`` attribute in your class::
