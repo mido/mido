@@ -133,14 +133,16 @@ def get_spec(type_or_status_byte):
 
 
 def check_time(time):
-    """Check type and value of time.
-    
-    Raises TypeError if value is not an integer or a float
-    """
-    if PY2 and isinstance(time, long):
-        return
-
-    if not (isinstance(time, int) or isinstance(time, float)):
+    valid = True
+    try:
+        int(time)
+    except:
+        valid = False
+    try:
+        float(time)
+    except:
+        valid = False
+    if not valid:
         raise TypeError('time must be an integer or float')
 
 
