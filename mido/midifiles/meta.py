@@ -14,6 +14,7 @@ from __future__ import print_function, division
 import sys
 import math
 import struct
+import numbers
 from contextlib import contextmanager
 from ..messages import BaseMessage, check_time
 
@@ -100,7 +101,7 @@ def encode_variable_int(value):
     This is used for delta times and meta message payload
     length.
     """
-    if not isinstance(value, int) or value < 0:
+    if not isinstance(value, numbers.Integral) or value < 0:
         raise ValueError('variable int must be a positive integer')
 
     bytes = []
@@ -128,7 +129,7 @@ def bpm2tempo(bpm):
     """Convert beats per minute to MIDI file tempo.
 
     Returns microseconds per beat as an integer::
-    
+
         240 => 250000
         120 => 500000
         60 => 1000000
@@ -188,7 +189,7 @@ class MetaSpec_sequence_number(MetaSpec):
 
     def check(self, name, value):
         check_int(value, 0, 255)
-            
+
 class MetaSpec_text(MetaSpec):
     type_byte = 0x01
     attributes = ['text']
@@ -210,7 +211,7 @@ class MetaSpec_track_name(MetaSpec_text):
     type_byte = 0x03
     attributes = ['name']
     defaults = ['']
-    
+
     def decode(self, message, data):
         message.name = decode_string(data)
 
@@ -245,7 +246,7 @@ class MetaSpec_channel_prefix(MetaSpec):
 
     def check(self, name, value):
         check_int(value, 0, 0xff)
-            
+
 
 class MetaSpec_midi_port(MetaSpec):
     type_byte = 0x21
@@ -405,7 +406,7 @@ def add_meta_spec(klass):
     spec.settable_attributes = set(spec.attributes) | {'time'}
     _specs[spec.type_byte] = spec
     _specs[spec.type] = spec
-    
+
 def _add_builtin_meta_specs():
     for name in globals():
         if name.startswith('MetaSpec_'):
@@ -470,7 +471,7 @@ class MetaMessage(BaseMessage):
         return ([0xff, self._spec.type_byte]
                 + encode_variable_int(len(data))
                 + data)
-    
+
     def __repr__(self):
         attributes = []
         for name in self._spec.attributes:
