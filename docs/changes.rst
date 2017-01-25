@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.19
+1.1.19 (2017-01-25)
 ^^^^^^^^^^^^^^^^^^^
 
 * Pygame backend can now receive sysex messages. (Fix by Box of Stops.)
