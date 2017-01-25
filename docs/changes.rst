@@ -14,13 +14,14 @@ Release History
 
 * bugfix: ``SocketPort.__init()`` was not calling
   ``IOPort.__init__()`` which means it didn't get a
-  ``self._lock``. (Fixed by K Lars Lohn, pull request #72.)
+  ``self._lock``. (Fixed by K Lars Lohn, pull request #72. Also
+  reported by John J. Foerch, issue #79.)
 
 * fixed typo in intro example (README and index.rst). Fix by Antonio
   Ospite (pull request #70), James McDermott (pull request #73) and
   Zdravko Bozakov (pull request #74).
 
-* fixed typo in virtual ports example (Zdravko Bozakov, pull request #
+* fixed typo in virtual ports example (Zdravko Bozakov, pull request #75.)
 
 
 1.1.18 (2016-10-22)
