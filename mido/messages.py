@@ -5,6 +5,7 @@ There is no need to use this module directly. All you need is
 available in the top level module.
 """
 import sys
+import numbers
 
 PY2 = (sys.version_info.major == 2)
 
@@ -19,7 +20,7 @@ MAX_SONGPOS = 16383
 class MessageSpec(object):
     """
     Specifications for creating a message.
-    
+
     status_byte is the first byte of the message. For channel
     messages, the channel (lower 4 bits) is clear.
 
@@ -42,7 +43,7 @@ class MessageSpec(object):
         self.type = type_
         self.arguments = arguments
         self.length = length
-   
+
         # Attributes that can be set on the object
         self.settable_attributes = set(self.arguments) | {'time'}
 
@@ -133,16 +134,11 @@ def get_spec(type_or_status_byte):
 
 
 def check_time(time):
-    """Check type and value of time.
-    
-    Raises TypeError if value is not an integer or a float
-    """
     if PY2 and isinstance(time, long):
         return
 
-    if not (isinstance(time, int) or isinstance(time, float)):
+    if not isinstance(value, numbers.Number):
         raise TypeError('time must be an integer or float')
-
 
 def check_channel(channel):
     """Check type and value of channel.
@@ -248,7 +244,7 @@ def encode_data(data):
     """
     return list(data) + [0xf7]
 
- 
+
 def encode_pitch(pitch):
     """Encode pitchwheel pitch as a list of bytes."""
     pitch -= MIN_PITCHWHEEL
@@ -621,5 +617,5 @@ def format_as_string(message, include_time=True):
             value = str(value)
             value = value.replace('L', '')
         words.append('{}={}'.format(name, value))
-    
+
     return ' '.join(words)
