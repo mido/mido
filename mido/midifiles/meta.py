@@ -14,6 +14,7 @@ from __future__ import print_function, division
 import sys
 import math
 import struct
+from numbers import Integral
 from contextlib import contextmanager
 from ..messages import BaseMessage, check_time
 
