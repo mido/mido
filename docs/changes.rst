@@ -66,7 +66,6 @@ Changes to the port API:
 * improved MIDI file documentation. (Written by Carl Thomé.)
 
 
-
 Other changes:
 
 * added ``mido.version_info``.
@@ -92,10 +91,24 @@ Other changes:
   netchose, issue #55.)
 
 
-1.1.20 ()
+1.1.21 (2017-01-26)
 ^^^^^^^^^^^^^^^^^^^
 
-* bugfix: close() would sometimes hang for RtMidi input ports.
+* bugfix: MidiFile save was broken in 1.1.20 due to a missing import.
+
+
+1.1.20 (2017-01-26)
+^^^^^^^^^^^^^^^^^^^
+
+* bugfix: close() would sometimes hang for RtMidi input ports. (The
+  bug was introduced in 1.1.18 when the backend was rewritten to
+  support true blocking.)
+
+* Numpy numbers can now be used for all message attributes. (Based on
+  implementation by Henry Mao, pull request #78.)
+
+  The code checks against numbers.Integral and numbers.Real (for the
+  time attribute) so values can be any subclass of these.
 
 
 1.1.19 (2017-01-25)

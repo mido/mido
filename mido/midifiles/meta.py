@@ -14,6 +14,7 @@ from __future__ import print_function, division
 import sys
 import math
 import struct
+from numbers import Integral
 from contextlib import contextmanager
 from ..messages import BaseMessage, check_time
 from ..py2 import PY2
@@ -102,7 +103,7 @@ def encode_variable_int(value):
     This is used for delta times and meta message payload
     length.
     """
-    if not isinstance(value, int) or value < 0:
+    if not isinstance(value, Integral) or value < 0:
         raise ValueError('variable int must be a positive integer')
 
     bytes = []
@@ -139,7 +140,7 @@ def meta_charset(tmp_charset):
 
 
 def check_int(value, low, high):
-    if not isinstance(value, int):
+    if not isinstance(value, Integral):
         raise TypeError('attribute must be an integer')
     elif not low <= value <= high:
         raise ValueError('attribute must be in range {}..{}'.format(low, high))

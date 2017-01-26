@@ -1,4 +1,5 @@
 import sys
+from numbers import Integral, Real
 from .specs import VALID_DATA_BYTES, MIN_SONGPOS, MAX_SONGPOS
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
 from .specs import SPEC_BY_TYPE, VALID_DATA_BYTES
@@ -10,14 +11,14 @@ def check_type(type_):
 
 
 def check_channel(channel):
-    if not isinstance(channel, int):
+    if not isinstance(channel, Integral):
         raise TypeError('channel must be int')
     elif not 0 <= channel <= 15:
         raise ValueError('channel must be in range 0..15')
 
 
 def check_pos(pos):
-    if not isinstance(pos, int):
+    if not isinstance(pos, Integral):
         raise TypeError('song pos must be int')
     elif not MIN_SONGPOS <= pos <= MAX_SONGPOS:
         raise ValueError('song pos must be in range {}..{}'.format(
@@ -25,7 +26,7 @@ def check_pos(pos):
 
 
 def check_pitch(pitch):
-    if not isinstance(pitch, int):
+    if not isinstance(pitch, Integral):
         raise TypeError('pichwheel value must be int')
     elif not MIN_PITCHWHEEL <= pitch <= MAX_PITCHWHEEL:
         raise ValueError('pitchwheel value must be in range {}..{}'.format(
@@ -38,34 +39,29 @@ def check_data(data_bytes):
 
 
 def check_frame_type(value):
-    if not isinstance(value, int):
+    if not isinstance(value, Integral):
         raise TypeError('frame_type must be int')
     elif not 0 <= value <= 7:
         raise ValueError('frame_type must be in range 0..7')
 
 
 def check_frame_value(value):
-    if not isinstance(value, int):
+    if not isinstance(value, Integral):
         raise TypeError('frame_value must be int')
     elif not 0 <= value <= 15:
         raise ValueError('frame_value must be in range 0..15')
 
 
 def check_data_byte(value):
-    if not isinstance(value, int):
+    if not isinstance(value, Integral):
         raise TypeError('data byte must be int')
     elif not value in VALID_DATA_BYTES:
         raise ValueError('data byte must be in range 0..127')
 
 
-if PY2:
-    def check_time(time):
-        if not (isinstance(time, int) or isinstance(time, float) or isinstance(time, long)):
-            raise TypeError('time must be int or float')
-else:
-    def check_time(time):
-        if not (isinstance(time, int) or isinstance(time, float)):
-            raise TypeError('time must be int or float')
+def check_time(time):
+    if not isinstance(time, Real):
+        raise TypeError('time must be int or float')
 
 
 _CHECKS = {

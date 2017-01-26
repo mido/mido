@@ -20,6 +20,7 @@ import io
 import time
 import string
 import struct
+from numbers import Integral
 
 from ..messages import Message, SPEC_BY_STATUS
 from .meta import (MetaMessage, build_meta_message, meta_charset, MetaSpec, 
@@ -232,7 +233,7 @@ def write_track(outfile, track):
 
     running_status_byte = None
     for msg in fix_end_of_track(track):
-        if not isinstance(msg.time, int):
+        if not isinstance(msg.time, Integral):
             raise ValueError('message time must be int in MIDI file')
 
         if msg.is_realtime:
