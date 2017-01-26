@@ -49,9 +49,7 @@ Mido is short for MIDi Objects.
 Source code
 -----------
 
-Latest stable release: https://github.com/olemb/mido/
-
-Latest development version: https://github.com/olemb/mido/tree/develop/
+https://github.com/olemb/mido/
 
 
 About This Document
