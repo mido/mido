@@ -18,6 +18,9 @@ import rtmidi
 from ..ports import get_sleep_time, BaseInput, BaseOutput
 
 
+MSG_LEN = 64
+SLEEP_TIME = 0.02
+
 def _get_api_lookup():
     api_to_name = {}
     name_to_api = {}
@@ -193,4 +196,12 @@ class Input(PortCommon, BaseInput):
 
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
-        self._rt.send_message(message.bytes())
+        if message.type == 'sysex':
+            t = message.bytes()
+            while len(t) > MSG_LEN:
+                h, t = t[:MSG_LEN], t[MSG_LEN:]
+                self._rt.send_message(h)
+                time.sleep(SLEEP_TIME)
+            self._rt.send_message(t)
+        else:
+            self._rt.send_message(message.bytes())
