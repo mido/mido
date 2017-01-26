@@ -7,7 +7,9 @@ Release History
 1.1.20 ()
 ^^^^^^^^^^^^^^^^^^^
 
-* bugfix: close() would sometimes hang for RtMidi input ports.
+* bugfix: close() would sometimes hang for RtMidi input ports. (The
+  bug was introduced in 1.1.18 when the backend was rewritten to
+  support true blocking.)
 
 * Numpy numbers can now be used for all message attributes. (Based on
   implementation by Henry Mao, pull request #78.)
