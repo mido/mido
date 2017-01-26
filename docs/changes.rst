@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.20 ()
+1.1.20 (2017-01-26)
 ^^^^^^^^^^^^^^^^^^^
 
 * bugfix: close() would sometimes hang for RtMidi input ports. (The
