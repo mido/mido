@@ -4,6 +4,12 @@ Changes
 Release History
 ---------------
 
+1.1.21 (2017-01-26)
+^^^^^^^^^^^^^^^^^^^
+
+* bugfix: MidiFile save was broken in 1.1.20 due to a missing import.
+
+
 1.1.20 (2017-01-26)
 ^^^^^^^^^^^^^^^^^^^
 
