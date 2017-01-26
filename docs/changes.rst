@@ -9,6 +9,12 @@ Release History
 
 * bugfix: close() would sometimes hang for RtMidi input ports.
 
+* Numpy numbers can now be used for all message attributes. (Based on
+  implementation by Henry Mao, pull request #78.)
+
+  The code checks against numbers.Integral and numbers.Real (for the
+  time attribute) so values can be any subclass of these.
+
 
 1.1.19 (2017-01-25)
 ^^^^^^^^^^^^^^^^^^^

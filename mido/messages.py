@@ -5,6 +5,7 @@ There is no need to use this module directly. All you need is
 available in the top level module.
 """
 import sys
+from numbers import Real, Integral
 
 PY2 = (sys.version_info.major == 2)
 
@@ -137,10 +138,7 @@ def check_time(time):
     
     Raises TypeError if value is not an integer or a float
     """
-    if PY2 and isinstance(time, long):
-        return
-
-    if not (isinstance(time, int) or isinstance(time, float)):
+    if not isinstance(time, Real):
         raise TypeError('time must be an integer or float')
 
 
@@ -150,7 +148,7 @@ def check_channel(channel):
     Raises TypeError if the value is not an integer, and ValueError if
     it is outside range 0..15.
     """
-    if not isinstance(channel, int):
+    if not isinstance(channel, Integral):
         raise TypeError('channel must be an integer')
     elif not 0 <= channel <= 15:
         raise ValueError('channel must be in range 0..15')
@@ -162,7 +160,7 @@ def check_pos(pos):
     Raise TypeError if the value is not an integer, and ValueError if
     it is outside range MIN_SONGPOS..MAX_SONGPOS.
     """
-    if not isinstance(pos, int):
+    if not isinstance(pos, Integral):
         raise TypeError('song pos must be and integer')
     elif not MIN_SONGPOS <= pos <= MAX_SONGPOS:
         raise ValueError('song pos must be in range {}..{}'.format(
@@ -173,7 +171,7 @@ def check_pitch(pitch):
     """Raise TypeError if the value is not an integer, and ValueError
     if it is outside range MIN_PITCHWHEEL..MAX_PITCHWHEEL.
     """
-    if not isinstance(pitch, int):
+    if not isinstance(pitch, Integral):
         raise TypeError('pichwheel value must be an integer')
     elif not MIN_PITCHWHEEL <= pitch <= MAX_PITCHWHEEL:
         raise ValueError('pitchwheel value must be in range {}..{}'.format(
@@ -204,7 +202,7 @@ def check_frame_type(value):
     Raises TypeError if the value is not an integer.
     Raises ValueError if the value is out of range.
     """
-    if not isinstance(value, int):
+    if not isinstance(value, Integral):
         raise TypeError('frame_type must be an integer')
     elif not 0 <= value <= 7:
         raise ValueError('frame_type must be in range 0..7')
@@ -216,7 +214,7 @@ def check_frame_value(value):
     Raises TypeError if the value is not an integer.
     Raises ValueError if the value is out of range.
     """
-    if not isinstance(value, int):
+    if not isinstance(value, Integral):
         raise TypeError('frame_value must be an integer')
     elif not 0 <= value <= 15:
         raise ValueError('frame_value must be in range 0..15')
@@ -229,7 +227,7 @@ def check_databyte(value):
     it is out of range. Data bytes are 7 bit, so the valid range is
     0..127.
     """
-    if not isinstance(value, int):
+    if not isinstance(value, Integral):
         raise TypeError('data byte must be an integer')
     elif not 0 <= value <= 127:
         raise ValueError('data byte must be in range 0..127')

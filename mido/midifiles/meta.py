@@ -100,7 +100,7 @@ def encode_variable_int(value):
     This is used for delta times and meta message payload
     length.
     """
-    if not isinstance(value, int) or value < 0:
+    if not isinstance(value, Integral) or value < 0:
         raise ValueError('variable int must be a positive integer')
 
     bytes = []
