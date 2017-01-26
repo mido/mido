@@ -101,9 +101,7 @@ See docs/installing.rst for more.
 Source Code
 -----------
 
-Latest version of the code: https://github.com/olemb/mido/
-
-Latest development version: https://github.com/olemb/mido/tree/develop/
+https://github.com/olemb/mido/
 
 
 License

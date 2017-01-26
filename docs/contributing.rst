@@ -2,17 +2,6 @@ Contributing
 ============
 
 
-Branches and Pull Requests
---------------------------
-
-There master branch is for the latest stable relese. Please use the
-develop branch as a starting point and send your pull requests there:
-
-     https://github.com/olemb/mido/tree/develop/
-
-This will make it easier to merge your changes.
-
-
 Testing
 -------
 
@@ -100,15 +89,8 @@ Then:
 Publish
 ^^^^^^^
 
-Publish to GitHub master branch::
-
-    git checkout master
-    git pull . develop
-    git push
-
-Make sure we're back on `develop`::
-
-    git checkout develop
+This has stopped working recently (late 2016) so instead I just go to
+the web page and upload from there.
 
 Publish in PyPI::
 
@@ -117,4 +99,7 @@ Publish in PyPI::
 
 Last thing:
 
-* update readthedocs
+
+Update readthedocs
+^^^^^^^^^^^^^^^^^^
+
