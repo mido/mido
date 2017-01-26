@@ -23,9 +23,10 @@ import struct
 
 from ..messages import Message, SPEC_BY_STATUS
 from .meta import (MetaMessage, build_meta_message, meta_charset, MetaSpec, 
-                   add_meta_spec, encode_variable_int, tick2second)
+                   add_meta_spec, encode_variable_int)
 
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
+from .units import tick2second
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
