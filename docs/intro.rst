@@ -152,7 +152,7 @@ Virtual ports allow you to create new ports that other applications
 can connect to::
 
     with mido.open_input('New Port', virtual=True) as inport:
-        for message in port:
+        for message in inport:
             print(message)
 
 The port should now appear to other applications as "New Port".

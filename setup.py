@@ -12,10 +12,6 @@ if sys.argv[-1] == "publish":
     os.system("python setup.py sdist upload")
     sys.exit()
 
-elif sys.argv[-1] == "test":
-    os.system("./run_tests.py")
-    sys.exit()
-
 elif sys.argv[-1] == "docs":
     os.system("sphinx-build docs docs/_build")
     sys.exit()

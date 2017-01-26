@@ -149,8 +149,7 @@ PortMidi
 
 Name: ``mido.backends.portmidi``
 
-Features
-^^^^^^^^
+Features:
 
 The PortMidi backend is written with ``ctypes`` and requires only the
 shared library file ``portmidi.so`` or ``portmidi.dll``.
@@ -173,30 +172,8 @@ Name: ``mido.backends.pygame``
 
 The Pygame backend uses ``pygame.midi`` for I/O.
 
-Can send but not receive ``sysex`` and ``active_sensing``.
+Doesn't receive ``active_sensing``.
 
 Callbacks are currently not implemented.
 
 Pygame.midi is implemented on top of PortMidi.
-
-
-Backend Bugs
-------------
-
-* in OS X, RtMidi and PortMidi usually hang for a second or two
-  seconds while initializing. This is actually not a Mido bug, but
-  something that happens at a lower level.
-
-* PortMidi in Ubuntu is mistakenly compiled in debug mode, which causes it
-  to print out error message instead of returning an error code::
-
-    PortMidi: `Bad pointer'
-    type ENTER...PortMidi call failed...
-
-  See https://bugs.launchpad.net/ubuntu/+source/portmidi/+bug/890600
-
-  This means here is no way for Mido to catch the error and raise an
-  exception.
-
-  This regularity occurs in two places: in PortMidi when you close a
-  port that has a callback, and in Pygame when you close any port.

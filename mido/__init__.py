@@ -52,6 +52,42 @@ Parsing objects serialized with str(message):
 Sub modules:
 
     ports -- useful tools for working with ports
+
+For more on MIDI, see:
+
+    http://www.midi.org/
+
+
+Getting started:
+
+    >>> import mido
+    >>> m = mido.Message('note_on', note=60, velocity=64)
+    >>> m
+    <message note_on channel=0, note=60, velocity=64, time=0>
+    >>> m.type
+    'note_on'
+    >>> m.channel = 6
+    >>> m.note = 19
+    >>> m.copy(velocity=120)
+    <message note_on channel=0, note=60, velocity=64, time=0>
+    >>> s = mido.Message('sysex', data=[byte for byte in range(5)])
+    >>> s.data
+    (0, 1, 2, 3, 4)
+    >>> s.hex()
+    'F0 00 01 02 03 04 F7'
+    >>> len(s)
+    7
+
+    >>> default_input = mido.open_input()
+    >>> default_input.name
+    'MPK mini MIDI 1'
+    >>> output = mido.open_output('SD-20 Part A')
+    >>>
+    >>> for message in default_input:
+    ...     output.send(message)
+
+    >>> get_input_names()
+    ['MPK mini MIDI 1', 'SH-201']
 """
 from __future__ import absolute_import
 import os
