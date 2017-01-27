@@ -91,6 +91,13 @@ Other changes:
   netchose, issue #55.)
 
 
+1.1.22 (2017-01-27)
+^^^^^^^^^^^^^^^^^^^
+
+* the bugfix in 1.1.20 broke blocking receive() for RtMidi. Reverting
+  the changes. This will need some more investigation.
+
+
 1.1.21 (2017-01-26)
 ^^^^^^^^^^^^^^^^^^^
 

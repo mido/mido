@@ -169,8 +169,7 @@ class Port(ports.BaseIOPort):
             self._midiin.ignore_types(False, False, True)
             self._queue = queue.Queue()
             self._parser = Parser()
-            if callback is not None:
-                self.callback = callback
+            self.callback = callback
 
         if is_output:
             self._midiout = rtmidi.MidiOut(name=client, rtapi=rtapi)
