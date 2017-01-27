@@ -169,7 +169,7 @@ class Port(ports.BaseIOPort):
             self._midiin.ignore_types(False, False, True)
             self._queue = queue.Queue()
             self._parser = Parser()
-            if self.callback is not None:
+            if callback is not None:
                 self.callback = callback
 
         if is_output:
