@@ -76,10 +76,7 @@ class PortCommon(object):
             self._rt = rtmidi.MidiIn(rtapi=rtapi)
             self._rt.ignore_types(False, False, True)
             self._queue = queue.Queue()
-
-            callback = kwargs.get('callback')
-            if callback is not None:
-                self.callback = kwargs.get('callback')
+            self.callback = kwargs.get('callback')
         else:
             self._rt = rtmidi.MidiOut(rtapi=rtapi)
             # Turn of ignore of sysex, time and active_sensing.
