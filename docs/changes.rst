@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.21 (2017-01-27)
+1.1.22 (2017-01-27)
 ^^^^^^^^^^^^^^^^^^^
 
 * the bugfix in 1.1.20 broke blocking receive() for RtMidi. Reverting
