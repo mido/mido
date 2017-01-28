@@ -2,7 +2,8 @@
 These classes will be made publicly available once their API is settled. For now they should only be used
 inside this package.
 """
-
+import time
+from .. import ports
 from ..parser import Parser
 from ..py2 import PY2
 
@@ -58,11 +59,8 @@ class ParserQueue:
             try:
                 return self._queue.get_nowait()
             except queue.Empty:
-                if block:
-                    time.sleep(sleep_time)
-                    continue
-                else:
-                    return None
+                time.sleep(sleep_time)
+                continue
 
     # Todo: add timeout?
     def get(self):
@@ -135,10 +133,6 @@ class InputMethods(object):
 
     def __iter__(self):
         """Iterate through messages until the port closes."""
-        # This could have simply called receive() in a loop, but that
-        # could result in a "port closed during receive()" error which
-        # is hard to catch here.
-        self._check_callback()
         while True:
             try:
                 yield self.receive()
