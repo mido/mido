@@ -331,6 +331,8 @@ class IOPort(BaseIOPort):
     is forwarded to the appropriate port.
     """
 
+    _locking = False
+
     def __init__(self, input, output):
         self.input = input
         self.output = output
