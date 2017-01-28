@@ -5,16 +5,17 @@ interface.
 
 Todo:
 
-* implement non-blocking receive (thread and queue?)
-* use parser instead of from_hex()
+* use parser instead of from_hex()?
 * default port name
 * do sysex messages work?
 * starting amidi for every message sent is costly
 """
 import os
+import select
+import threading
 import subprocess
 from ..messages import Message
-from ._common import ParserQueue, PortMethods, InputMethods, OutputMethods
+from ._common import PortMethods, InputMethods, OutputMethods
 """
 Dir Device    Name
 IO  hw:1,0,0  UM-1 MIDI 1
@@ -52,25 +53,50 @@ class Input(PortMethods, InputMethods):
         self.name = name
         self.closed = False
 
-        self._inproc = None
+        self._proc = None   
+        self._poller = select.poll()
+        self._lock = threading.RLock()
         
         dev = _get_device(self.name, 'is_input')
-        self._inproc = subprocess.Popen(['amidi', '-d',
-                                         '-p', dev['device']],
-                                        stdout=subprocess.PIPE)
-       
+        self._proc = subprocess.Popen(['amidi', '-d',
+                                       '-p', dev['device']],
+                                      stdout=subprocess.PIPE)
+        
+        self._poller.register(self._proc.stdout, select.POLLIN)
 
-    def _receive(self, block=True): 
+    def _read_message(self):
+        line = self._proc.stdout.readline().strip().decode('ascii')
+        if line:
+            return Message.from_hex(line)
+        else:
+            # The first line is sometimes blank.
+            return None
+
+
+    def receive(self, block=True): 
+        if not block:
+            return self.poll()
+
         while True:
-            line = self._inproc.stdout.readline().strip()
-            if line:
-                return Message.from_hex(line.decode('ascii'))
+            msg = self.poll()
+            if msg:
+                return msg
+
+            # Wait for message.
+            self._poller.poll()
+
+    def poll(self):
+        with self._lock:
+            while self._poller.poll(0):
+                msg = self._read_message()
+                if msg is not None:
+                    return msg 
 
     def close(self):
         if not self.closed:
-            if self._inproc:
-                self._inproc.kill()
-                self._inproc = None
+            if self._proc:
+                self._proc.kill()
+                self._proc = None
             self.closed = True
 
 

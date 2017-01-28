@@ -80,8 +80,7 @@ Other changes:
 
 * added experimental new backend ``mido.backends.amidi``. This uses
   the ALSA ``amidi`` command to send and receive messages, which makes
-  it very inefficient but possibly useful for sysex transfer. For now
-  it only supports blocking receive and has no callbacks.
+  it very inefficient but possibly useful for sysex transfer.
 
 * added new backend ``mido.backends.rtmidi_python`` (previously
   available in the examples folder.) This uses the ``rtmidi-python``
