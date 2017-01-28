@@ -10,9 +10,6 @@ class Frozen(object):
     def __setattr__(self, *_):
         raise ValueError('frozen message is immutable')
 
-    def __delattr__(self, *_):
-        raise ValueError('frozen message is immutable')
-
     def __hash__(self):
         return hash(tuple(sorted(vars(self).items())))
 

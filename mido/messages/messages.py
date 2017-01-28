@@ -36,6 +36,12 @@ class BaseMessage(object):
         """True if the message is a system realtime message."""
         return self.type in REALTIME_TYPES
 
+    def __delattr__(self, name):
+        raise AttributeError('attribute cannot be deleted')
+
+    def __setattr__(self, name):
+        raise AttributeError('message is immutable')
+
     def __eq__(self, other):
         if not isinstance(other, BaseMessage):
             raise TypeError('can\'t compare message to {}'.format(type(other)))
@@ -126,7 +132,7 @@ class Message(BaseMessage):
     def __repr__(self):
         return '<message {}>'.format(str(self))
 
-    def __setattr__(self, name, value):
+    def _setattr(self, name, value):
         if name == 'type':
             raise AttributeError('type attribute is read only')
         elif name not in vars(self):
@@ -139,8 +145,7 @@ class Message(BaseMessage):
             else:
                 vars(self)[name] = value
 
-    def __delattr__(self, name):
-        raise AttributeError('attribute cannot be deleted')
+    __setattr__ = _setattr
 
     def bytes(self):
         """Encode message and return as a list of integers."""
