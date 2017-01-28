@@ -14,7 +14,7 @@ Todo:
 import os
 import subprocess
 from ..messages import Message
-from ..ports import BaseInput, BaseOutput
+from ._common import ParserQueue, PortMethods, InputMethods, OutputMethods
 """
 Dir Device    Name
 IO  hw:1,0,0  UM-1 MIDI 1
@@ -47,8 +47,11 @@ def _get_device(name, mode):
         raise IOError('unknown port {!r}'.format(name))
 
 
-class Input(BaseInput):
-    def _open(self, **kwargs):
+class Input(PortMethods, InputMethods):
+    def __init__(self, name=None, **kwargs):
+        self.name = name
+        self.closed = False
+
         self._inproc = None
         
         dev = _get_device(self.name, 'is_input')
@@ -63,17 +66,30 @@ class Input(BaseInput):
             if line:
                 return Message.from_hex(line.decode('ascii'))
 
-    def _close(self):
-        if self._inproc:
-            self._inproc.kill()
-            self._inproc = None
+    def close(self):
+        if not self.closed:
+            if self._inproc:
+                self._inproc.kill()
+                self._inproc = None
+            self.closed = True
 
 
-class Output(BaseOutput):
-    def _open(self, **kwargs):
+class Output(PortMethods, OutputMethods):
+    def __init__(self, name=None, autoreset=False, **kwargs):
+        self.name = name
+        self.autoreset = autoreset
+        self.closed = False
+
         self._dev = _get_device(self.name, 'is_output')
 
-    def _send(self, msg):
+    def send(self, msg):
         proc = subprocess.Popen(['amidi', '--send-hex', msg.hex(),
                                  '-p', self._dev['device']])
         proc.wait()
+
+    def close(self):
+        if not self.closed:
+            if self.autoreset:
+                self.reset()
+
+            self.closed = True
