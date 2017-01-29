@@ -20,8 +20,8 @@ Ideas
 -----
 
 
-Better Support for Concurrency and Multi Threading
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Better Support for Concurrency and Multithreading
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Mido was not originally designed for multithreading. Locks were added
 to the port base classes as an attempt to get around this but it is a
