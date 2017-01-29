@@ -1,6 +1,9 @@
 Changes
 =======
 
+(See :doc:`roadmap` for future plans.)
+
+
 Release History
 ---------------
 
