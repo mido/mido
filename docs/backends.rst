@@ -105,10 +105,14 @@ You can specify a client name for the port:  (New in 1.2.0.)
 
 .. code-block:: python
 
-    >>> port = mido.open_input('New Port', client='My Client')
+    >>> port = mido.open_input('New Port', client_name='My Client')
 
-This requires python-rtmidi >= 1.0rc1. If ``client`` is passed the
-port will be a virtal port.
+This requires python-rtmidi >= 1.0rc1. If ``client_name`` is passed
+the port will be a virtal port.
+
+.. note:: Unfortunately, at least with ALSA, opening two ports with
+the same ``client_name`` creates two clients with the same name
+instead of one client with two ports.
 
 The RtMidi library can be compiled with support for more than one
 API. You can select API by adding it after the module name, either in

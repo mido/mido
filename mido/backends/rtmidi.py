@@ -66,16 +66,15 @@ def get_api_names():
     return [_api_to_name[n] for n in rtmidi.get_compiled_api()]
 
 
-def _open_port(rt, name=None, client=None, virtual=False, api=None):
+def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
 
-    if client is not None:
+    if client_name is not None:
         virtual = True
 
-
     if virtual:
-        if self.name is None:
+        if name is None:
             raise IOError('virtual port must have a name')
-        
+
         rt.open_virtual_port(name)
         return name
 
@@ -93,7 +92,7 @@ def _open_port(rt, name=None, client=None, virtual=False, api=None):
     else:
         raise IOError('unknown port {!r}'.format(name))
 
-    
+
     try:
         rt.open_port(port_id)
     except RuntimeError as err:
@@ -103,14 +102,14 @@ def _open_port(rt, name=None, client=None, virtual=False, api=None):
 
 
 class Input(PortMethods, InputMethods):
-    def __init__(self, name=None, client=None, virtual=False,
+    def __init__(self, name=None, client_name=None, virtual=False,
                  api=None, callback=None, **kwargs):
-
         self._queue = ParserQueue()
 
-        self._rt = rtmidi.MidiIn()
-        self.name = _open_port(self._rt, name, client=client,
+        self._rt = rtmidi.MidiIn(name=client_name)
+        self.name = _open_port(self._rt, name, client_name=client_name,
                                virtual=virtual, api=api)
+        self.closed = False
 
         self._rt.ignore_types(False, False, True)
 
@@ -121,8 +120,6 @@ class Input(PortMethods, InputMethods):
 
         # We need to do this last when everything is set up.
         self.callback = callback
-
-        self.closed = False
 
     def close(self):
         if not self.closed:
@@ -164,8 +161,10 @@ class Input(PortMethods, InputMethods):
 
 
 class Output(PortMethods, OutputMethods):
-    def __init__(self, name=None, client=None, virtual=False,
+    def __init__(self, name=None, client_name=None, virtual=False,
                  api=None, callback=None, autoreset=False, **kwargs):
+
+        self.closed = False
 
         self.autoreset = autoreset
 
@@ -173,14 +172,13 @@ class Output(PortMethods, OutputMethods):
 
         self._send_lock = threading.RLock()
 
-        self._rt = rtmidi.MidiOut()
-        self.name = _open_port(self._rt, name, client=client,
+        self._rt = rtmidi.MidiOut(name=client_name)
+        self.name = _open_port(self._rt, name, client_name=client_name,
                                virtual=virtual, api=api)
+        self.closed = False
 
         self.api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(self.api)
-
-        self.closed = False
 
     def send(self, msg):
         """Send a message on the port."""
@@ -189,8 +187,6 @@ class Output(PortMethods, OutputMethods):
 
     def close(self):
         if not self.closed:
-            if self.autoreset:
-                self.reset()
-
             self._rt.close_port()
+            del self._rt
             self.closed = True
