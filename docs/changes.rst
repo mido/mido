@@ -94,6 +94,13 @@ Other changes:
   netchose, issue #55.)
 
 
+1.1.23 (2017-01-31)
+^^^^^^^^^^^^^^^^^^^
+
+* bugfix: ``read_syx_file()`` didn't handle '\n' in text format file
+  causing it to crash. (Reported by Paul Forgey, issue #80.)
+
+
 1.1.22 (2017-01-27)
 ^^^^^^^^^^^^^^^^^^^
 
