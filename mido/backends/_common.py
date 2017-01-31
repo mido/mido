@@ -85,6 +85,9 @@ class ParserQueue:
 
 
 class PortMethods(object):
+    is_input = False
+    is_output = False
+
     def __del__(self):
         self.close()
 
@@ -121,6 +124,7 @@ class PortMethods(object):
 
 
 class InputMethods(object):
+    is_input = True
 
     def iter_pending(self):
         """Iterate through pending messages."""
@@ -147,6 +151,8 @@ class InputMethods(object):
 
 
 class OutputMethods(object):
+    is_output = True
+
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels"""
         for msg in ports.reset_messages():
