@@ -1,3 +1,4 @@
+import re
 import sys
 from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
 from .checks import check_msgdict, check_value, check_data
@@ -106,10 +107,17 @@ class Message(BaseMessage):
         """Parse a hex encoded message.
 
         This is the reverse of msg.hex().
-
         """
+        # bytearray.fromhex() is a bit picky about its input
+        # so we need to replace all whitespace characters with spaces.
+        text = re.sub(r'\s', ' ', text)
+
         if sep is not None:
-            text = text.replace(sep, ' ')            
+            # We also replace the separator with spaces making sure
+            # the string length remains the same so char positions will
+            # be correct in bytearray.fromhex() error messages.
+            text = text.replace(sep, ' ' * len(sep))
+
         return cl(**decode_msg(bytearray.fromhex(text), time=time))
 
     @classmethod
