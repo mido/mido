@@ -4,7 +4,7 @@ Changes
 Release History
 ---------------
 
-1.1.23 ()
+1.1.23 (2017-01-31)
 ^^^^^^^^^^^^^^^^^^^
 
 * bugfix: ``read_syx_file()`` didn't handle '\n' in text format file
