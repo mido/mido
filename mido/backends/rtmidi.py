@@ -88,7 +88,7 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
         name = port_names[0]
         port_id = 0
     elif name in port_names:
-        port_id = port_name.index(name)
+        port_id = port_names.index(name)
     else:
         raise IOError('unknown port {!r}'.format(name))
 
