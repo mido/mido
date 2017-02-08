@@ -36,6 +36,8 @@ class BaseMessage(object):
         """Returns a dictionary containing the attributes of the message.
 
         Example: {'type': 'sysex', 'data': [1, 2], 'time': 0}
+
+        Sysex data will be returned as a list.
         """
         data = vars(self).copy()
         if data['type'] == 'sysex':
