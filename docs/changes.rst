@@ -78,6 +78,12 @@ Changes to the port API:
 
 Other changes:
 
+* bugfix: if a port inherited from both ``BaseInput`` and
+  ``BaseOutput`` this would cause ``BasePort.__init__()`` to be called
+  twice, which means ``self._open()`` was also called twice. As a
+  workaround ``BasePort.__init__()`` will check if ``self.closed``
+  exists.
+
 * added ``mido.version_info``.
 
 * ``mido.set_backend()`` can now be called with ``load=True``.

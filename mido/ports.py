@@ -82,6 +82,11 @@ class BasePort(object):
     _locking = True
 
     def __init__(self, name=None, **kwargs):
+        if hasattr(self, 'closed'):
+            # __init__() called twice (from BaseInput and BaseOutput).
+            # This stops _open() from being called twice.
+            return
+
         self.name = name
         if self._locking:
             self._lock = threading.RLock()
