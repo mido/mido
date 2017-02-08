@@ -14,6 +14,8 @@ Near Future
 * a `PEP <https://www.python.org/dev/peps/>`_ like process for new
   features and major changes.
 
+* add error modes to MIDI file parser as discussed in
+  https://github.com/olemb/mido/issues/63 .
 
 
 Ideas
@@ -129,3 +131,13 @@ Some alternatives to subclassing:
 
 * mixins: write a basic port and use mixins (``PortMethods``,
   ``InputMethods``, ``OutputMethods``) to import the rest of the API.
+
+
+Maybe
+-----
+
+* add native backends? See https://github.com/olemb/mido-native-backends
+
+* add ``msg.dict()`` and ``Message.from_dict()``? This could be useful
+  in some cases. The current ``vars(msg).copy()`` and ``Message(**d)``
+  are a bit cumbersome.
