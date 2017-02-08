@@ -40,3 +40,11 @@ def test_too_many_bytes():
 def test_invalid_status():
     with raises(ValueError):
         decode_message(b'\x00')
+
+
+def test_sysex_without_stop_byte():
+    with raises(ValueError):
+        decode_message([0xf0])
+
+    with raises(ValueError):
+        decode_message([0xf0, 0])

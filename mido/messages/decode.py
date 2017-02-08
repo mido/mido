@@ -86,6 +86,9 @@ def decode_message(midi_bytes, time=0, check=True):
 
     # Sysex.
     if status_byte == SYSEX_START:
+        if len(data) < 1:
+            raise ValueError('sysex without end byte')
+
         end = data[-1]
         data = data[:-1]
         if end != SYSEX_END:
