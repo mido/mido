@@ -145,7 +145,16 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
     return name
 
 
-class Input(InputMethods, PortMethods):
+class Port(object):
+    def close(self):
+        if not self.closed:
+            self._rt.close_port()
+            self.closed = True
+
+    close.__doc__ = ports.BasePort.close.__doc__
+
+
+class Input(Port, InputMethods, PortMethods):
     def __init__(self, name=None, client_name=None, virtual=False,
                  api=None, callback=None, **kwargs):
 
@@ -166,11 +175,6 @@ class Input(InputMethods, PortMethods):
         # We need to do this last when everything is set up.
         self.callback = callback
 
-    def close(self):
-        if not self.closed:
-            self._rt.close_port()
-            self.closed = True
-
     def receive(self, block=True):
         if block:
             return self._queue.get()
@@ -179,6 +183,9 @@ class Input(InputMethods, PortMethods):
 
     def poll(self):
         return self._queue.poll()
+
+    receive.__doc__ = ports.BaseInput.receive.__doc__
+    poll.__doc__ = ports.BaseInput.poll.__doc__
 
     @property
     def callback(self):
@@ -205,7 +212,7 @@ class Input(InputMethods, PortMethods):
                 self._callback(msg)
 
 
-class Output(OutputMethods, PortMethods):
+class Output(Port, OutputMethods, PortMethods):
     def __init__(self, name=None, client_name=None, virtual=False,
                  api=None, callback=None, autoreset=False, **kwargs):
 
@@ -227,8 +234,4 @@ class Output(OutputMethods, PortMethods):
         with self._send_lock:
             self._rt.send_message(msg.bytes())
 
-    def close(self):
-        if not self.closed:
-            self._rt.close_port()
-            del self._rt
-            self.closed = True
+    send.__doc__ = ports.BaseOutput.send.__doc__
