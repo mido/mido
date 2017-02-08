@@ -32,6 +32,29 @@ class BaseMessage(object):
         """
         return sep.join('{:02X}'.format(byte) for byte in self.bytes())
 
+    def dict(self):
+        """Returns a dictionary containing the attributes of the message.
+
+        Example: {'type': 'sysex', 'data': [1, 2], 'time': 0}
+        """
+        data = vars(self).copy()
+        if data['type'] == 'sysex':
+            # Make sure we return a list instead of a SysexData object.
+            data['data'] = list(data['data'])
+
+        return data
+
+    @classmethod
+    def from_dict(cl, data):
+        """Create a message from a dictionary.
+
+        Only "type" is required. The other will be set to default
+        values.
+
+        This is the same as calling Message(**data).
+        """
+        return cl(**data)
+
     @property
     def is_realtime(self):
         """True if the message is a system realtime message."""

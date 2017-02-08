@@ -82,3 +82,17 @@ def test_copy_can_have_same_type():
 def test_compare_with_nonmessage():
     with raises(TypeError):
         Message('clock') == 'not a message'
+
+
+def test_from_dict_default_values():
+    msg = Message('note_on', channel=0, note=0, time=0)
+    data = {'type': 'note_on'}
+    assert Message.from_dict(data) == msg
+
+
+def test_dict_sysex_data():
+    msg = Message('sysex', data=(1, 2, 3))
+    data = msg.dict()
+    assert data == {'type': 'sysex', 'data': [1, 2, 3], 'time': 0}
+    assert type(data['data']) == type([])
+
