@@ -145,7 +145,7 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
     return name
 
 
-class Input(PortMethods, InputMethods):
+class Input(InputMethods, PortMethods):
     def __init__(self, name=None, client_name=None, virtual=False,
                  api=None, callback=None, **kwargs):
 
@@ -205,7 +205,7 @@ class Input(PortMethods, InputMethods):
                 self._callback(msg)
 
 
-class Output(PortMethods, OutputMethods):
+class Output(OutputMethods, PortMethods):
     def __init__(self, name=None, client_name=None, virtual=False,
                  api=None, callback=None, autoreset=False, **kwargs):
 
