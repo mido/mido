@@ -57,7 +57,7 @@ def _decode_data_bytes(status_byte, data, spec):
     return args
 
 
-def decode_msg(midi_bytes, time=0, check=True):
+def decode_message(midi_bytes, time=0, check=True):
     """Decode message bytes and return messages as a dictionary.
 
     Raises ValueError if the bytes are out of range or the message is
@@ -126,7 +126,7 @@ class Decoder(object):
 
     def _deliver(self, msg=None):
         if msg is None:
-            msg = decode_msg(self._bytes, check=False)
+            msg = decode_message(self._bytes, check=False)
         self.messages.append(msg)
 
 
@@ -135,7 +135,7 @@ class Decoder(object):
 
         if self._in_sysex and byte in REALTIME_MESSAGES:
             if spec:
-                self._deliver(decode_msg([byte]))
+                self._deliver(decode_message([byte]))
         elif byte == SYSEX_END:
             if self._in_sysex:
                 self._bytes.append(SYSEX_END)

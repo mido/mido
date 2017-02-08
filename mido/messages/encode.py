@@ -45,7 +45,7 @@ _SPECIAL_CASES = {
 }
 
 
-def encode_msg(msg):
+def encode_message(msg):
     """Encode msg dict as a list of bytes.
 
     Todo: Add type and value checking.

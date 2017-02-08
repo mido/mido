@@ -2,8 +2,8 @@ import re
 import sys
 from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
 from .checks import check_msgdict, check_value, check_data
-from .decode import decode_msg, Decoder
-from .encode import encode_msg
+from .decode import decode_message, Decoder
+from .encode import encode_message
 from .strings import msg2str, str2msg
 from ..py2 import convert_py2_bytes
 
@@ -96,7 +96,7 @@ class Message(BaseMessage):
         This is the reverse of msg.bytes() or msg.bin().
         """
         msg = cl.__new__(cl)
-        msgdict = decode_msg(data, time=time)
+        msgdict = decode_message(data, time=time)
         if 'data' in msgdict:
             msgdict['data'] = SysexData(msgdict['data'])
         vars(msg).update(msgdict)
@@ -118,7 +118,7 @@ class Message(BaseMessage):
             # be correct in bytearray.fromhex() error messages.
             text = text.replace(sep, ' ' * len(sep))
 
-        return cl(**decode_msg(bytearray.fromhex(text), time=time))
+        return cl(**decode_message(bytearray.fromhex(text), time=time))
 
     @classmethod
     def from_str(cl, text):
@@ -157,7 +157,7 @@ class Message(BaseMessage):
 
     def bytes(self):
         """Encode message and return as a list of integers."""
-        return encode_msg(vars(self))
+        return encode_message(vars(self))
 
 
 def parse_string(text):

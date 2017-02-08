@@ -1,6 +1,6 @@
 from .specs import SPEC_BY_STATUS
-from .encode import encode_msg
-from .decode import decode_msg
+from .encode import encode_message
+from .decode import decode_message
 
 def test_encode_decode_all():
     """Encode and then decode all messages on all channels.
@@ -17,4 +17,4 @@ def test_encode_decode_all():
         else:
             msg_bytes = [status_byte] + data_bytes[:spec['length'] - 1]
             
-        assert encode_msg(decode_msg(msg_bytes)) == msg_bytes
+        assert encode_message(decode_message(msg_bytes)) == msg_bytes
