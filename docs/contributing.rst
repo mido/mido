@@ -86,6 +86,16 @@ Then:
     git push --tags
 
 
+Update the stable branch (if this is a stable release):
+
+::
+
+   git checkout stable
+   git pull . master
+   git push
+   git checkout master
+
+
 Publish
 ^^^^^^^
 
