@@ -66,7 +66,51 @@ def get_api_names():
     return [_api_to_name[n] for n in rtmidi.get_compiled_api()]
 
 
+def _expand_alsa_port_name(port_names, name):
+    """Expand ALSA port name.
+
+    RtMidi/ALSA includes client name and client:port number in
+    the port name, for example:
+
+        TiMidity:TiMidity port 0 128:0
+
+    This allows you to specify only port name or client:port name when
+    opening a port. It will compare the name to each name in
+    port_names (typically returned from get_*_names()) and try these
+    three variants in turn:
+
+        TiMidity:TiMidity port 0 128:0
+        TiMidity:TiMidity port 0
+        TiMidity port 0
+
+    It returns the first match. If no match is found it returns the
+    passed name so the caller can deal with it.
+    """
+    if name is None:
+        return None
+
+    for port_name in port_names:
+        if name == port_name:
+            return name
+
+        # Try without client and port number (for example 128:0).
+        without_numbers = port_name.rsplit(None, 1)[0]
+        if name == without_numbers:
+            return port_name
+
+        if ':' in without_numbers:
+            without_client = without_numbers.split(':', 1)[1]
+            if name == without_client:
+                return port_name
+    else:
+        # Let caller deal with it.
+        return name
+
+
 def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
+
+    if api == 'LINUX_ALSA':
+        name = _expand_alsa_port_name(rt.get_ports(), name)
 
     if client_name is not None:
         virtual = True
@@ -104,19 +148,20 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
 class Input(PortMethods, InputMethods):
     def __init__(self, name=None, client_name=None, virtual=False,
                  api=None, callback=None, **kwargs):
+
+        self.closed = True
+        self._callback_lock = threading.RLock()
         self._queue = ParserQueue()
 
         self._rt = rtmidi.MidiIn(name=client_name)
-        self.name = _open_port(self._rt, name, client_name=client_name,
-                               virtual=virtual, api=api)
-        self.closed = False
-
-        self._rt.ignore_types(False, False, True)
 
         self.api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(self.api)
 
-        self._lock = threading.RLock()
+        self.name = _open_port(self._rt, name, client_name=client_name,
+                               virtual=virtual, api=self.api)
+        self._rt.ignore_types(False, False, True)
+        self.closed = False
 
         # We need to do this last when everything is set up.
         self.callback = callback
@@ -141,7 +186,7 @@ class Input(PortMethods, InputMethods):
 
     @callback.setter
     def callback(self, func):
-        with self._lock:
+        with self._callback_lock:
             # Make sure the callback doesn't run while were swapping it out.
             self._rt.cancel_callback()
 
@@ -164,21 +209,18 @@ class Output(PortMethods, OutputMethods):
     def __init__(self, name=None, client_name=None, virtual=False,
                  api=None, callback=None, autoreset=False, **kwargs):
 
-        self.closed = False
-
+        self.closed = True
         self.autoreset = autoreset
-
-        self._queue = ParserQueue()
-
         self._send_lock = threading.RLock()
 
         self._rt = rtmidi.MidiOut(name=client_name)
-        self.name = _open_port(self._rt, name, client_name=client_name,
-                               virtual=virtual, api=api)
-        self.closed = False
 
         self.api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(self.api)
+
+        self.name = _open_port(self._rt, name, client_name=client_name,
+                               virtual=virtual, api=self.api)
+        self.closed = False
 
     def send(self, msg):
         """Send a message on the port."""
