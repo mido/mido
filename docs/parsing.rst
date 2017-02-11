@@ -5,6 +5,10 @@ MIDI is a binary protocol. Each each message is encoded as a status byte
 followed by up to three data bytes. (Sysex messages can have any number of
 data bytes and use a stop byte instead.)
 
+.. note:: To parse a single message you can use the class methods
+          ``mido.Message.from_bytes()`` and
+          ``mido.Message.from_hex()`` (new in 1.2).
+
 Mido comes with a parser that turns MIDI bytes into messages. You can create a parser object, or call one of the utility functions::
 
     >>> mido.parse([0x92, 0x10, 0x20])
