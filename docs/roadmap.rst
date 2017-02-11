@@ -14,12 +14,23 @@ Near Future
 * a `PEP <https://www.python.org/dev/peps/>`_ like process for new
   features and major changes.
 
-* add error modes to MIDI file parser as discussed in
-  https://github.com/olemb/mido/issues/63 .
 
+Various Improvements to MIDI File Parsing
+-----------------------------------------
 
-Ideas
------
+* add ``mido.exceptions.MidiParseError``.
+
+* add better error handling to MIDI file parser as discussed in `issue
+  #63 <https://github.com/olemb/mido/issues/63>`_.
+
+* add configurable error handling to MIDI file parser as discussed in
+  `issue #43 <https://github.com/olemb/mido/issues/43>`_
+
+* support RIFF MIDI files (`issue #43
+  <https://github.com/olemb/mido/issues/43>`_)
+
+* support MIDI files that end in empty meta message
+  (`issue #42 <https://github.com/olemb/mido/issues/42>`_)
 
 
 Better Support for Concurrency and Multithreading
@@ -137,8 +148,28 @@ Some alternatives to subclassing:
 Maybe
 -----
 
-* add native backends? See https://github.com/olemb/mido-native-backends
+* Add native backends? See https://github.com/olemb/mido-native-backends
 
-* add ``msg.dict()`` and ``Message.from_dict()``? This could be useful
+* Add ``msg.dict()`` and ``Message.from_dict()``? This could be useful
   in some cases. The current ``vars(msg).copy()`` and ``Message(**d)``
   are a bit cumbersome.
+
+* Currently all backends ignore ``active_sensing`` messages because
+  they create a lot of noise and are usually not very useful. Should
+  this be changed (perhaps as an option)?
+
+  Filtering can be turned off with:
+
+  * rtmidi: ``self._rt.ignore_types(False, False, False)``
+
+  * portmidi: ``pm.lib.Pa_SetFilter(self._stream, 0)``
+
+  * rtmidi_python: ``self._rt.ignore_types(False, False, False)``
+
+  * pygame: (is there a way to configure this?)
+
+  * amidi: (not sure if this receives ``active_sensing`` already)
+
+* Refactor ``rtmidi`` and ``rtmidi_python`` backends to avoid code
+  duplication. This would give ``rtmidi_python`` all of the features
+  of ``rtmidi`` (as long as they are supported in the package).
