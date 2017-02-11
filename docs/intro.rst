@@ -49,34 +49,21 @@ For more about messages, see :doc:`messages`.
 Type and Value Checking
 -----------------------
 
-Mido messages come with type and value checking built in. This happens
-when you assign an out of range value to an attribute::
+Mido messages come with type and value checking built in::
 
-    >>> n = mido.Message('note_on')
-    >>> n.channel = 2092389483249829834
+    >>> import mido
+    >>> mido.Message('note_on', channel=2092389483249829834)
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
-      File "./mido/messages.py", line 327, in __setattr__
-        ret = check(value)
-      File "./mido/messages.py", line 128, in check_channel
+      File "/home/olemb/src/mido/mido/messages/messages.py", line 89, in __init__
+        check_msgdict(msgdict)
+      File "/home/olemb/src/mido/mido/messages/checks.py", line 100, in check_msgdict
+        check_value(name, value)
+      File "/home/olemb/src/mido/mido/messages/checks.py", line 87, in check_value
+        _CHECKS[name](value)
+      File "/home/olemb/src/mido/mido/messages/checks.py", line 17, in check_channel
         raise ValueError('channel must be in range 0..15')
     ValueError: channel must be in range 0..15
-
-and when you pass some nonsense as a keyword argument to the
-constructor or the copy() method::
-
-    >>> n.copy(note=['This', 'is', 'wrong'])
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "./mido/messages.py", line 316, in copy
-        return Message(self.type, **args)
-      File "./mido/messages.py", line 290, in __init__
-        setattr(self, name, value)
-      File "./mido/messages.py", line 327, in __setattr__
-        ret = check(value)
-      File "./mido/messages.py", line 181, in check_databyte
-        raise TypeError('data byte must be an integer')
-    TypeError: data byte must be an integer
 
 This means that the message object is always a valid MIDI message.
 
@@ -93,7 +80,6 @@ To create an input port and receive a message::
 
     >>> inport = mido.open_input()
     >>> msg = inport.receive()
-
 
 .. note::
 
@@ -181,6 +167,17 @@ You can then fetch messages out of the parser::
     note_on channel=0 note=64 velocity=96 time=0
 
 For more on parsers and parsing see :doc:`parsing`.
+
+You can also create a message from bytes using class methods (new in
+1.2):
+
+.. code-block:: python
+
+   msg1 = mido.Message.from_bytes([0x90, 0x40, 0x60])
+   msg2 = mido.Message.from_hex('90, 40 60')
+
+The bytes must contain exactly one complete message. If not
+``ValueError`` is raised.
 
 
 Backends
