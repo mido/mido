@@ -11,6 +11,11 @@ To encode a message, simply call ``str()`` on it::
     >>> str(cc)
     'control_change channel=9 control=1 value=122 time=60'
 
+To convert the other way (new method in 1.2)::
+
+    >>> mido.Message.from_str('control_change control=1 value=122')
+    <message control_change channel=0 control=1 value=122 time=0>
+
 Alternatively, you can the ``format_as_string`` function directly:
 
     >>> mido.format_as_string(cc)
@@ -21,6 +26,8 @@ can pass ``include_time=False``::
 
     >>> mido.format_as_string(cc)
     'control_change channel=9 control=1 value=122'
+
+(This option is also available in ``mido.Message.from_str()``.)
 
 
 Format
