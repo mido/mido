@@ -71,13 +71,13 @@ Contents
    changes
    roadmap
    installing
+   backends/index
    contributing
    intro
    messages
    ports
    midi_files
    syx
-   backends
    parsing
    string_encoding
    socket_ports
@@ -93,6 +93,8 @@ Contents
    license
    authors
    acknowledgements
+
+
 
 
 Indices and tables

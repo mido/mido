@@ -50,10 +50,10 @@ RtMidi is now the default backend:
   port.
 
 * with ``LINUX_ALSA`` you can now omit client name and ALSA
-client/port number when opening ports, allowing you to do
-``mido.open_output('TiMidity port 0')`` instead of
-``mido.open_output('TiMidity:TiMidity port 0 128:0')``. (See RtMidi
-backend docs for more.)
+  client/port number when opening ports, allowing you to do
+  ``mido.open_output('TiMidity port 0')`` instead of
+  ``mido.open_output('TiMidity:TiMidity port 0 128:0')``. (See RtMidi
+  backend docs for more.)
 
 
 Changes to the port API:

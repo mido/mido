@@ -93,8 +93,8 @@ to follow and reason about:
 * to much magic and too much you need to keep in your head
 
 * attributes like ``self.name`` and ``self.closed`` appear in your
-name space and you have to dig around in the base classes to see where
-they come from
+  name space and you have to dig around in the base classes to see
+  where they come from
 
 * there is a ``self._parser`` in every port even if you don't need it
 
@@ -117,6 +117,7 @@ possible about the rest of the code. For example a backend port should
 only need to worry about:
 
 * opening and closing the device
+
 * reading and writing data (blocking and nonblocking)
 
 It should not have to worry about things like ``autoreset``,

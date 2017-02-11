@@ -188,4 +188,4 @@ Backends
 
 Mido comes with backends for RtMidi and PortMidi and Pygame. The
 default is RtMidi. You can select another backend or even use multiple
-backends at the same time. For more on this, see :doc:`backends`.
+backends at the same time. For more on this, see :doc:`backends/index`.

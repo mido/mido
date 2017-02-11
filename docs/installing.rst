@@ -13,7 +13,7 @@ backends, which are loaded on demand.
 Mido comes with backends for `RtMidi (python-rtmidi)
 <http://github.com/superquadratic/rtmidi-python>`_ , `PortMidi
 <http://portmedia.sourceforge.net/portmidi/>`_ and `Pygame
-<http://www.pygame.org/docs/ref/midi.html>`_. See :doc:`backends` for
+<http://www.pygame.org/docs/ref/midi.html>`_. See :doc:`backends/index` for
 help choosing a backend.
 
 

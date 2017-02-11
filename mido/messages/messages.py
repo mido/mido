@@ -52,8 +52,6 @@ class BaseMessage(object):
 
         Only "type" is required. The other will be set to default
         values.
-
-        This is the same as calling Message(**data).
         """
         return cl(**data)
 

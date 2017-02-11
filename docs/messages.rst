@@ -36,7 +36,7 @@ Attributes are also settable but it's always better to use
     <message note_on channel=0 note=99 velocity=64 time=100.0>
 
 Mido supports all message types defined by the MIDI standard. For a
-full list of messages and their attributes, see :doc:`message_types`.
+full list of messages and their attributes, see :doc:`/message_types`.
 
 
 Converting To Bytes
@@ -54,7 +54,7 @@ You can convert a message to MIDI bytes with one of these methods:
     >>> msg.hex()
     '90 00 40'
 
-You can turn bytes back into messages with the :doc:`parser <parsing>`.
+You can turn bytes back into messages with the :doc:`/parser <parsing>`.
 
 
 The Time Attribute
