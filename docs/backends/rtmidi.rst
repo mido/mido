@@ -18,7 +18,7 @@ Features:
 
 * ports can be opened multiple times, each will receive a copy of each message
 
-* client name can be specified when opening a port
+* client name can be specified when opening a virtual port
 
 * sends but doesn't receive active sensing
 
