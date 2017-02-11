@@ -54,7 +54,23 @@ You can convert a message to MIDI bytes with one of these methods:
     >>> msg.hex()
     '90 00 40'
 
+
+Converting From Bytes
+---------------------
+
 You can turn bytes back into messages with the :doc:`/parser <parsing>`.
+
+You can also create a message from bytes using class methods (new in
+1.2):
+
+.. code-block:: python
+
+   msg1 = mido.Message.from_bytes([0x90, 0x40, 0x60])
+   msg2 = mido.Message.from_hex('90, 40 60')
+
+The bytes must contain exactly one complete message. If not
+``ValueError`` is raised.
+
 
 
 The Time Attribute
