@@ -75,6 +75,7 @@ Contents
    contributing
    intro
    messages
+   frozen_messages
    ports
    midi_files
    syx

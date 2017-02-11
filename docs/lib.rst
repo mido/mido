@@ -144,6 +144,8 @@ Frozen Messages
 .. module:: mido.frozen
 
 .. autofunction:: freeze_message
+.. autofunction:: thaw_message
+.. autofunction:: is_frozen
 
 .. autoclass:: Frozen
 .. autoclass:: FrozenMessage

@@ -35,6 +35,17 @@ Attributes are also settable but it's always better to use
     >>> msg.copy(note=99, time=100.0)
     <message note_on channel=0 note=99 velocity=64 time=100.0>
 
+.. note:: Mido always makes a copy of messages instead of modifying
+          them so if you do the same you have immutable messages in
+          practice. (Third party libraries may not follow the same
+          rule.)
+
+.. note:: :doc:`/frozen_messages` are a variant of messages that are
+          hashable and can be used as dictionary keys. They are also
+          safe from tampering by third party libraries. You can freely
+          convert between the two and use frozen messages wherever
+          normal messages are allowed.
+
 Mido supports all message types defined by the MIDI standard. For a
 full list of messages and their attributes, see :doc:`/message_types`.
 
