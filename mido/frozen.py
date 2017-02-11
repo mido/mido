@@ -26,6 +26,14 @@ class FrozenUnknownMetaMessage(Frozen, UnknownMetaMessage):
     pass
 
 
+def is_frozen(msg):
+    """Return True if message is frozen, otherwise False."""
+    return isinstance(msg, Frozen)
+
+
+# Todo: these two functions are almost the same except inverted. There
+# should be a way to refactor them to lessen code duplication.
+
 def freeze_message(msg):
     """Freeze message.
 
@@ -54,3 +62,29 @@ def freeze_message(msg):
     frozen = class_.__new__(class_)
     vars(frozen).update(vars(msg))
     return frozen
+
+
+def thaw_message(msg):
+    """Thaw message.
+
+    Returns a mutable version of a frozen message.
+
+    Will return None if called with None.
+    """
+    if not isinstance(msg, Frozen):
+        # Already thawed, just return a copy.
+        return msg.copy()
+    elif isinstance(msg, FrozenMessage):
+        class_ = Message
+    elif isinstance(msg, FrozenUnknownMetaMessage):
+        class_ = UnknownMetaMessage
+    elif isinstance(msg, FrozenMetaMessage):
+        class_ = MetaMessage
+    elif msg is None:
+        return None
+    else:
+        raise ValueError('first argument must be a message or None')
+
+    thawed = class_.__new__(class_)
+    vars(thawed).update(vars(msg))
+    return thawed
