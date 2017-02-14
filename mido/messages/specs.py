@@ -5,6 +5,7 @@ Todo:
     * add lookup functions for messages definitions by type and status
       byte.
 """
+# Todo: these include undefined messages.
 CHANNEL_MESSAGES = set(range(0x80, 0xf0))
 COMMON_MESSAGES = set(range(0xf0, 0xf8))
 REALTIME_MESSAGES = set(range(0xf8, 0x100))

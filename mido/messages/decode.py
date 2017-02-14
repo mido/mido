@@ -1,4 +1,5 @@
 from collections import deque
+from numbers import Integral
 from .specs import SYSEX_START, SYSEX_END
 from .specs import SPEC_BY_STATUS
 from .specs import CHANNEL_MESSAGES, REALTIME_MESSAGES
@@ -116,65 +117,76 @@ class Decoder(object):
     """
     def __init__(self, data=None):
         """Create a new decoder."""
-        self.messages = deque()
-        self._reset()
+
+        self._status_byte = 0
+        self._bytes = []
+        self._messages = deque()
+        self._datalen = 0
+
         if data is not None:
             self.feed(data)
 
-    def _reset(self):
-        self._bytes = []
-        self._len = -1
-        self._in_msg = False
-        self._in_sysex = False
+    def _decode_and_append(self, msg_bytes):
+        self._messages.append(decode_message(msg_bytes, check=False))
 
-    def _deliver(self, msg=None):
-        if msg is None:
-            msg = decode_message(self._bytes, check=False)
-        self.messages.append(msg)
-
-
-    def _handle_status_byte(self, byte):
-        spec = SPEC_BY_STATUS.get(byte)
-
-        if self._in_sysex and byte in REALTIME_MESSAGES:
-            if spec:
-                self._deliver(decode_message([byte]))
-        elif byte == SYSEX_END:
-            if self._in_sysex:
+    def _feed_status_byte(self, status_byte):
+        if status_byte == SYSEX_END:
+            if self._status_byte == SYSEX_START:
                 self._bytes.append(SYSEX_END)
-                self._deliver()
-                self._reset()
-            else:
-                self._reset()
-        elif spec:
-            # Start new message.
-            self._in_msg = True
-            self._in_sysex = (byte == SYSEX_START)
-            self._len = spec['length']
-            self._bytes = [byte]
-        else:
-            # Ignore message.
-            self._reset()
+                self._decode_and_append(self._bytes)
+            self._status_byte = 0
 
-    def _handle_data_byte(self, byte):
-        if self._in_msg:
+        elif status_byte in REALTIME_MESSAGES:
+            if self._status_byte in {0, SYSEX_START}:
+                # Realtime messages are allowed inside sysex.
+                # Deliver right away.
+                # (We need an extra check here since REALTIME_MESSAGES
+                # includes undefined messages. This should be changed.)
+                if status_byte in SPEC_BY_STATUS:
+                    self._decode_and_append([status_byte])
+            else:
+                # Not allowed inside another message.
+                self._status_byte = 0
+
+        elif status_byte in SPEC_BY_STATUS:
+            # New message.
+            spec = SPEC_BY_STATUS[status_byte]
+
+            if spec['length'] == 1:
+                self._decode_and_append([status_byte])
+            else:
+                self._status_byte = status_byte
+                self._bytes = [status_byte]
+                self._len = spec['length']
+        else:
+            # Ignore unknown message type.
+            pass
+
+    def _feed_data_byte(self, byte):
+        if self._status_byte:
             self._bytes.append(byte)
+            if len(self._bytes) == self._len:
+                # Complete message.
+                self._decode_and_append(self._bytes)
+                self._status_byte = 0
+        else:
+            # Ignore stray data byte.
+            pass
 
     def feed_byte(self, byte):
         """Feed MIDI byte to the decoder.
 
         Takes an int in range [0..255].
         """
+        if not isinstance(byte, Integral):
+            raise TypeError('message byte must be integer')
+
         if byte in VALID_DATA_BYTES:
-            self._handle_data_byte(byte)
+            self._feed_data_byte(byte)
         elif byte in VALID_BYTES:
-            self._handle_status_byte(byte)
+            self._feed_status_byte(byte)
         else:
             raise ValueError('invalid byte value {!r}'.format(byte))
-
-        if len(self._bytes) == self._len:
-            self._deliver()
-            self._reset()
 
     def feed(self, data):
         """Feed MIDI bytes to the decoder.
@@ -185,9 +197,9 @@ class Decoder(object):
             self.feed_byte(byte)
 
     def __len__(self):
-        return len(self.messages)
+        return len(self._messages)
 
     def __iter__(self):
         """Yield messages that have been parsed so far."""
-        while len(self.messages):
-            yield self.messages.popleft()
+        while len(self._messages):
+            yield self._messages.popleft()
