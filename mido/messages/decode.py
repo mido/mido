@@ -58,7 +58,7 @@ def _decode_data_bytes(status_byte, data, spec):
     return args
 
 
-def decode_message(midi_bytes, time=0, check=True):
+def decode_message(msg_bytes, time=0, check=True):
     """Decode message bytes and return messages as a dictionary.
 
     Raises ValueError if the bytes are out of range or the message is
@@ -67,13 +67,13 @@ def decode_message(midi_bytes, time=0, check=True):
     This is not a part of the public API.
     """
     # Todo: this function is getting long.
-    midi_bytes = convert_py2_bytes(midi_bytes)
+    msg_bytes = convert_py2_bytes(msg_bytes)
 
-    if len(midi_bytes) == 0:
+    if len(msg_bytes) == 0:
         raise ValueError('message is 0 bytes long')
 
-    status_byte = midi_bytes[0]
-    data = midi_bytes[1:]
+    status_byte = msg_bytes[0]
+    data = msg_bytes[1:]
 
     try:
         spec = SPEC_BY_STATUS[status_byte]
