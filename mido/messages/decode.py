@@ -2,10 +2,10 @@ from collections import deque
 from numbers import Integral
 from .specs import SYSEX_START, SYSEX_END
 from .specs import SPEC_BY_STATUS
-from .specs import CHANNEL_MESSAGES, REALTIME_MESSAGES
+from .specs import CHANNEL_MESSAGES
 from .specs import VALID_BYTES, VALID_DATA_BYTES
-from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
-from .checks import check_data_byte, check_data
+from .specs import MIN_PITCHWHEEL
+from .checks import check_data
 from ..py2 import convert_py2_bytes
 
 def _decode_sysex_data(data):

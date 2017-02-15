@@ -3,9 +3,6 @@ Read and write SYX file format
 """
 from __future__ import print_function
 import re
-import string
-import binascii
-from .messages import Message
 from .parser import Parser
 
 
@@ -19,10 +16,6 @@ def read_syx_file(filename):
     ValueError if file is plain text and byte is not a 2-digit hex
     number.
     """
-    def raise_value_error():
-        raise ValueError('{!r} line {}: invalid hex byte {!r}'.format(
-            filename, lineno, byte))
-
     with open(filename, 'rb') as infile:
         data = infile.read()
 

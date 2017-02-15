@@ -1,9 +1,7 @@
-import sys
 from numbers import Integral, Real
-from .specs import VALID_DATA_BYTES, MIN_SONGPOS, MAX_SONGPOS
-from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL
-from .specs import SPEC_BY_TYPE, VALID_DATA_BYTES
-from ..py2 import convert_py2_bytes, PY2
+from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
+                    MIN_PITCHWHEEL, MAX_PITCHWHEEL)
+from ..py2 import convert_py2_bytes
 
 def check_type(type_):
     if type_ not in SPEC_BY_TYPE:
@@ -55,7 +53,7 @@ def check_frame_value(value):
 def check_data_byte(value):
     if not isinstance(value, Integral):
         raise TypeError('data byte must be int')
-    elif not value in VALID_DATA_BYTES:
+    elif not 0 <= value <= 127:
         raise ValueError('data byte must be in range 0..127')
 
 

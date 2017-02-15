@@ -1,6 +1,3 @@
-import io
-
-from ..messages import Message
 from .meta import MetaMessage
 from .tracks import MidiTrack
 

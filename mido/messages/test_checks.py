@@ -1,4 +1,3 @@
-import sys
 from pytest import raises
 from .checks import check_time
 from ..py2 import PY2

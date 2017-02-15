@@ -19,7 +19,7 @@ def test_freeze_and_thaw():
 def test_thawed_message_is_copy():
     frozen_msg = FrozenMessage('note_on')
     thawed_msg = Message('note_on')
-    assert thaw_message(frozen_msg)
+    assert thaw_message(frozen_msg) == thawed_msg
 
 
 def test_is_frozen():

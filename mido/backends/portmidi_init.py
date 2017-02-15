@@ -4,10 +4,9 @@ Low-level wrapper for PortMidi library
 Copied straight from Grant Yoshida's portmidizero, with slight
 modifications.
 """
-
 import sys
-import array
-from ctypes import *
+from ctypes import (CDLL, CFUNCTYPE, POINTER, Structure, c_char_p,
+                    c_int, c_long, c_uint, c_void_p, cast, create_string_buffer)
 import ctypes.util
 
 dll_name = ''

@@ -31,7 +31,7 @@ def test_encode_songpos():
     assert 'F2 7F 7F' == Message('songpos', pos=MAX_SONGPOS).hex()
 
 
-def test_decode_pitchwheel():
+def test_decode_songpos():
     assert Message.from_hex('F2 00 00').pos == MIN_SONGPOS
     assert Message.from_hex('F2 7F 7F').pos == MAX_SONGPOS
 

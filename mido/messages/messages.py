@@ -1,8 +1,7 @@
 import re
-import sys
 from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
 from .checks import check_msgdict, check_value, check_data
-from .decode import decode_message, Decoder
+from .decode import decode_message
 from .encode import encode_message
 from .strings import msg2str, str2msg
 from ..py2 import convert_py2_bytes

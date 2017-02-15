@@ -11,7 +11,6 @@ Todo:
      - expose _key_signature_encode/decode?
 """
 from __future__ import print_function, division
-import sys
 import math
 import struct
 from numbers import Integral

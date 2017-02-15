@@ -23,8 +23,8 @@ import struct
 from numbers import Integral
 
 from ..messages import Message, SPEC_BY_STATUS
-from .meta import (MetaMessage, build_meta_message, meta_charset, MetaSpec, 
-                   add_meta_spec, encode_variable_int)
+from .meta import (MetaMessage, build_meta_message, meta_charset,
+                   encode_variable_int)
 
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
 from .units import tick2second

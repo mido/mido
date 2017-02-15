@@ -1,5 +1,4 @@
 from .messages import Message
-from .messages.messages import BaseMessage
 from .midifiles import MetaMessage, UnknownMetaMessage
 
 class Frozen(object):

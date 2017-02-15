@@ -85,7 +85,7 @@ class PortCommon(object):
                 devtype = 'output'
             raise IOError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
-        if is_input:
+        if self.is_input:
             self._port = midi.Input(device['id'])
         else:
             self._port = midi.Output(device['id'])

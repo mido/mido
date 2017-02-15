@@ -1,5 +1,5 @@
-from .specs import SYSEX_START, SYSEX_END, CHANNEL_MESSAGES, VALID_DATA_BYTES
-from .specs import SPEC_BY_TYPE, DEFAULT_VALUES
+from .specs import CHANNEL_MESSAGES
+from .specs import SPEC_BY_TYPE
 from .specs import MIN_PITCHWHEEL
 
 def _encode_pitchwheel(msg):

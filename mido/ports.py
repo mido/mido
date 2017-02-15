@@ -1,18 +1,10 @@
 """
 Useful tools for working with ports
-
-Module content:
-
-    multi_receive -- receive messages from multiple ports
-    IOPort -- combined input / output port. Wraps around to normal ports
-    MessageBuffer -- pseudo-port that stores messages in a deque
 """
-
 from __future__ import unicode_literals
 import threading
 import time
 import random
-from collections import deque
 from .parser import Parser
 from .messages import Message
 

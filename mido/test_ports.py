@@ -24,14 +24,9 @@ def test_ioport():
     with Port('Name') as port:
         message = Message('note_on')
 
-        # Send and receive a message. (Blocking.)
-        #port.send(message)
-        #message2 = port.receive()
-        #raise ValueError(('ost', message, message2))
-
         # Receive a message. (Non-blocking.)
         port.send(message)
-        message2 = port.poll()
+        _ = port.poll()
         assert port.poll() is None
 
     with Port('Name') as port:

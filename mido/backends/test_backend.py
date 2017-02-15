@@ -1,4 +1,3 @@
-from pytest import raises
 from .backend import Backend
 
 def test_split_api():

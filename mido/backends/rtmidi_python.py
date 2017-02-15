@@ -18,8 +18,6 @@ Todo:
 
 """
 from __future__ import absolute_import
-import os
-import time
 import rtmidi_python as rtmidi
 # Todo: change this to a relative import if the backend is included in
 # the package.

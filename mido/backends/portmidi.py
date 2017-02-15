@@ -7,10 +7,7 @@ available in the toplevel module.
 PortMidi documentation:
 http://portmedia.sourceforge.net/portmidi/doxygen/
 """
-import time
 import threading
-from ..parser import Parser
-from ..messages import Message
 from ..ports import BaseInput, BaseOutput, sleep
 from . import portmidi_init as pm
 
@@ -38,8 +35,6 @@ def _check_error(return_value):
     
     
 def _get_device(device_id):
-    device = {}
-    
     info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
     if not info_pointer:
         raise IOError('PortMidi device with id={} not found'.format(

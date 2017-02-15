@@ -1,4 +1,3 @@
-from pytest import raises
 from .rtmidi import _expand_alsa_port_name
 
 
