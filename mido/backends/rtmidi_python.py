@@ -48,6 +48,7 @@ class PortCommon(object):
     def _open(self, virtual=False, **kwargs):
 
         self._queue = queue.Queue()
+        self._callback = None
 
         # rtapi = _get_api_id(api)
         opening_input = hasattr(self, 'receive')
@@ -93,14 +94,18 @@ class PortCommon(object):
 
     @property
     def callback(self):
-        return self._rt._callback
+        return self._callback
 
     @callback.setter
     def callback(self, func):
-        self._rt.callback = func
+        self._callback = func
+        if func is None:
+            self._rt.callback = None
+        else:
+            self._rt.callback = self._callback_wrapper
 
-    def _callback_wrapper(self, *args, **kw):
-        self._parser.feed(message_data[0])
+    def _callback_wrapper(self, msg_bytes, timestamp):
+        self._parser.feed(msg_bytes)
         for message in self._parser:
             if self.callback:
                 self.callback(message)
