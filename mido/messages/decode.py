@@ -118,7 +118,7 @@ class Decoder(object):
     def __init__(self, data=None):
         """Create a new decoder."""
 
-        self._status_byte = 0
+        self._status = 0
         self._bytes = []
         self._messages = deque()
         self._datalen = 0
@@ -129,46 +129,47 @@ class Decoder(object):
     def _decode_and_append(self, msg_bytes):
         self._messages.append(decode_message(msg_bytes, check=False))
 
-    def _feed_status_byte(self, status_byte):
-        if status_byte == SYSEX_END:
-            if self._status_byte == SYSEX_START:
+    def _feed_status_byte(self, status):
+        if status == SYSEX_END:
+            if self._status == SYSEX_START:
                 self._bytes.append(SYSEX_END)
                 self._decode_and_append(self._bytes)
-            self._status_byte = 0
 
-        elif status_byte in REALTIME_MESSAGES:
-            if self._status_byte in {0, SYSEX_START}:
-                # Realtime messages are allowed inside sysex.
-                # Deliver right away.
-                # (We need an extra check here since REALTIME_MESSAGES
-                # includes undefined messages. This should be changed.)
-                if status_byte in SPEC_BY_STATUS:
-                    self._decode_and_append([status_byte])
-            else:
-                # Not allowed inside another message.
-                self._status_byte = 0
+            self._status = 0
 
-        elif status_byte in SPEC_BY_STATUS:
+        elif 0xf8 <= status <= 0xff:
+            if self._status != SYSEX_START:
+                # Realtime messages are only allowed inside sysex
+                # messages. Reset parser.
+                self._status = 0
+
+            if status in SPEC_BY_STATUS:
+                self._decode_and_append([status])
+
+        elif status in SPEC_BY_STATUS:
             # New message.
-            spec = SPEC_BY_STATUS[status_byte]
+            spec = SPEC_BY_STATUS[status]
 
             if spec['length'] == 1:
-                self._decode_and_append([status_byte])
+                self._decode_and_append([status])
+                self._status = 0
             else:
-                self._status_byte = status_byte
-                self._bytes = [status_byte]
+                self._status = status
+                self._bytes = [status]
                 self._len = spec['length']
         else:
-            # Ignore unknown message type.
+            # Undefined message. Reset parser.
+            # (Undefined realtime messages are handled above.)
+            # self._status = 0
             pass
 
     def _feed_data_byte(self, byte):
-        if self._status_byte:
+        if self._status:
             self._bytes.append(byte)
             if len(self._bytes) == self._len:
                 # Complete message.
                 self._decode_and_append(self._bytes)
-                self._status_byte = 0
+                self._status = 0
         else:
             # Ignore stray data byte.
             pass
