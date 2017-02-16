@@ -4,6 +4,14 @@ Changes
 Release History
 ---------------
 
+
+1.1.24 (2017-02-16)
+^^^^^^^^^^^^^^^^^^^
+
+* bugfix: PortMidi backend was broken on macOS due to a typo. (Fix by
+  Sylvain Le Groux, pull request #81.)
+
+
 1.1.23 (2017-01-31)
 ^^^^^^^^^^^^^^^^^^^
 
