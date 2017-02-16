@@ -12,7 +12,7 @@ import ctypes.util
 
 dll_name = ''
 if sys.platform == 'darwin':
-    dll_namex = ctypes.util.find_library('libportmidi.dylib')
+    dll_name = ctypes.util.find_library('libportmidi.dylib')
 elif sys.platform in ('win32', 'cygwin'):
     dll_name = 'portmidi.dll'
 else:
