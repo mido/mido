@@ -7,7 +7,7 @@ import threading
 
 import rtmidi
 from .. import ports
-from ._queue import ParserQueue
+from ._parser_queue import ParserQueue
 
 def _get_api_lookup():
     api_to_name = {}
