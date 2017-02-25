@@ -7,7 +7,7 @@ import threading
 
 import rtmidi
 from .. import ports
-from ._common import ParserQueue, PortMethods, InputMethods, OutputMethods
+from ._common import ParserQueue
 
 def _get_api_lookup():
     api_to_name = {}
@@ -142,21 +142,16 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
     return name
 
 
-class Port(object):
-    def close(self):
-        if self.is_output and self.autoreset:
-            self.reset()
-
-        if not self.closed:
-            self._rt.close_port()
-            self.closed = True
-
-    close.__doc__ = ports.BasePort.close.__doc__
+class PortCommon(object):
+    def _close(self):
+        self._rt.close_port()
 
 
-class Input(Port, InputMethods, PortMethods):
-    def __init__(self, name=None, client_name=None, virtual=False,
-                 api=None, callback=None, **kwargs):
+class Input(PortCommon, ports.BaseInput):
+    _locking = False
+    
+    def _open(self, client_name=None, virtual=False,
+              api=None, callback=None, **kwargs):
 
         self.closed = True
         self._callback_lock = threading.RLock()
@@ -167,7 +162,7 @@ class Input(Port, InputMethods, PortMethods):
         self.api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(self.api)
 
-        self.name = _open_port(self._rt, name, client_name=client_name,
+        self.name = _open_port(self._rt, self.name, client_name=client_name,
                                virtual=virtual, api=self.api)
         self._rt.ignore_types(False, False, True)
         self.closed = False
@@ -175,6 +170,8 @@ class Input(Port, InputMethods, PortMethods):
         # We need to do this last when everything is set up.
         self.callback = callback
 
+    # We override receive() and poll() instead of _receive() and
+    # _poll() to bypass locking.
     def receive(self, block=True):
         if block:
             return self._queue.get()
@@ -212,12 +209,13 @@ class Input(Port, InputMethods, PortMethods):
                 self._callback(msg)
 
 
-class Output(Port, OutputMethods, PortMethods):
-    def __init__(self, name=None, client_name=None, virtual=False,
-                 api=None, callback=None, autoreset=False, **kwargs):
+class Output(PortCommon, ports.BaseOutput):
+    _locking = False
+    
+    def _open(self, client_name=None, virtual=False,
+              api=None, callback=None, **kwargs):
 
         self.closed = True
-        self.autoreset = autoreset
         self._send_lock = threading.RLock()
 
         self._rt = rtmidi.MidiOut(name=client_name)
@@ -225,10 +223,11 @@ class Output(Port, OutputMethods, PortMethods):
         self.api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(self.api)
 
-        self.name = _open_port(self._rt, name, client_name=client_name,
+        self.name = _open_port(self._rt, self.name, client_name=client_name,
                                virtual=virtual, api=self.api)
         self.closed = False
 
+    # We override send() instead of _send() to bypass locking.
     def send(self, msg):
         """Send a message on the port."""
         with self._send_lock:

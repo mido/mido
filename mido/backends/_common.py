@@ -1,6 +1,6 @@
 """
-These classes will be made publicly available once their API is settled. For now they should only be used
-inside this package.
+This is experimental and should not be relied upon for now. The
+plan is to move it to mido.ports once the API is settled.
 """
 import time
 from .. import ports
@@ -82,88 +82,3 @@ class ParserQueue:
                 yield msg
             else:
                 return
-
-
-class PortMethods(object):
-    is_input = False
-    is_output = False
-
-    def __del__(self):
-        self.close()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.close()
-        return False
-
-    def __repr__(self):
-        if self.closed:
-            state = 'closed'
-        else:
-            state = 'open'
-
-        capabilities = self.is_input, self.is_output
-        port_type = {
-            (True, False): 'input',
-            (False, True): 'output',
-            (True, True): 'I/O port',
-            (False, False): 'mute port',
-            }[capabilities]
-
-        name = self.name or ''
-
-        try:
-            device_type = self._device_type
-        except AttributeError:
-            device_type = self.__class__.__name__
-
-        return '<{} {} {!r} ({})>'.format(
-            state, port_type, name, device_type)
-
-
-class InputMethods(object):
-    is_input = True
-
-    def iter_pending(self):
-        """Iterate through pending messages."""
-        while True:
-            msg = self.poll()
-            if msg is None:
-                return
-            else:
-                yield msg
-
-    def __iter__(self):
-        """Iterate through messages until the port closes."""
-        while True:
-            try:
-                yield self.receive()
-            except IOError:
-                if self.closed:
-                    # The port closed before or inside receive().
-                    # (This makes the assumption that this is the reason,
-                    # at the risk of masking other errors.)
-                    return
-                else:
-                    raise
-
-
-class OutputMethods(object):
-    is_output = True
-
-    def reset(self):
-        """Send "All Notes Off" and "Reset All Controllers" on all channels"""
-        for msg in ports.reset_messages():
-            self.send(msg)
-
-    def panic(self):
-        """Send "All Sounds Off" on all channels.
-
-        This will mute all sounding notes regardless of
-        envelopes. Useful when notes are hanging and nothing else
-        helps.
-        """
-        for msg in ports.panic_messages():
-            self.send(msg)
