@@ -7,7 +7,7 @@ import threading
 
 import rtmidi
 from .. import ports
-from ._common import ParserQueue
+from ._queue import ParserQueue
 
 def _get_api_lookup():
     api_to_name = {}
@@ -203,7 +203,7 @@ class Input(PortCommon, ports.BaseInput):
             self._rt.set_callback(self._callback_wrapper)
 
     def _callback_wrapper(self, msg_data, data):
-        self._queue.feed(msg_data[0])
+        self._queue.put_bytes(msg_data[0])
         if self._callback:
             for msg in self._queue.iterpoll():
                 self._callback(msg)

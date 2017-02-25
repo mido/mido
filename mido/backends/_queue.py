@@ -1,7 +1,3 @@
-"""
-This is experimental and should not be relied upon for now. The
-plan is to move it to mido.ports once the API is settled.
-"""
 import time
 from .. import ports
 from ..parser import Parser
@@ -11,6 +7,7 @@ if PY2:
     import Queue as queue
 else:
     import queue
+from threading import RLock
 
 
 class ParserQueue:
@@ -23,27 +20,25 @@ class ParserQueue:
 
     q = ParserQueue()
 
-    q.feed([0xf8, 0, 0])
     q.put(msg)
+    q.put_bytes([0xf8, 0, 0])
 
     msg = q.get()
     msg = q.poll()
-    for msg in q:
-        ...
     """
     def __init__(self):
         self._queue = queue.Queue()
         self._parser = Parser()
+        self._parser_lock = RLock()
 
     def put(self, msg):
         self._queue.put(msg)
 
-    def feed(self, msg_bytes):
-        # Todo: should this be protected somehow?
-        # No, it's better to put a lock around reading AND parsing.
-        self._parser.feed(msg_bytes)
-        for msg in self._parser:
-            self.put(msg)
+    def put_bytes(self, msg_bytes):
+        with self._parser_lock:
+            self._parser.feed(msg_bytes)
+            for msg in self._parser:
+                self.put(msg)
 
     def _get_py2(self):
         # In Python 2 queue.get() doesn't respond to CTRL-C. A workaroud is
@@ -75,10 +70,14 @@ class ParserQueue:
         except queue.Empty:
             return None
 
+    def __iter__(self):
+        while True:
+            return self.get()
+
     def iterpoll(self):
         while True:
             msg = self.poll()
-            if msg:
-                yield msg
-            else:
+            if msg is None:
                 return
+            else:
+                yield msg
