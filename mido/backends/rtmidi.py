@@ -144,6 +144,9 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
 
 class Port(object):
     def close(self):
+        if self.is_output and self.autoreset:
+            self.reset()
+
         if not self.closed:
             self._rt.close_port()
             self.closed = True
