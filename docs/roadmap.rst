@@ -148,6 +148,9 @@ Some alternatives to subclassing:
 Maybe
 -----
 
+* RtMidi backend: allow user to list ports without client name and
+  ALSA port numbers.
+
 * Add native backends? See https://github.com/olemb/mido-native-backends
 
 * Add ``msg.dict()`` and ``Message.from_dict()``? This could be useful
