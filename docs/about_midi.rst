@@ -91,3 +91,5 @@ Further Reading
 * `MIDI Manufacturers Association <http://www.midi.org/>`_
 
 * `A full table of MIDI messages <http://www.midi.org/techspecs/midimessages.php>`_
+
+* `Essentials of the MIDI protocol <https://ccrma.stanford.edu/~craig/articles/linuxmidi/misc/essenmidi.html>`_
