@@ -180,4 +180,4 @@ Maybe
 * Add more fine grained error types, for example ``PortNotFound``
   instead of just ``IOError``. (This should be a subclass so old code
   still works.) One problem here is that new code that uses
-  ``PortNotFound`` would not work with backends that raise ``IOError`.
+  ``PortNotFound`` would not work with backends that raise ``IOError``.
