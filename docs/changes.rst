@@ -11,6 +11,16 @@ Release History
 1.2.1 (2017-03-17)
 ------------------
 
+* bugfix: IO port never received anything when used with RtMidi
+  backend. (Reported by dagargo, issue #83.)
+
+  This was caused by a very old bug introduced in 1.0.3. IOPort
+  mistakenly called the inner method ``self.input._receive()`` instead
+  of ``self.input.receive()``. This happens to work for ports that
+  override ``_receive()`` but not for the new RtMidi backend which
+  overrides ``receive()``. (The default implementation of
+  ``_receive()`` just drops the message on the floor.)
+
 * bugfix: PortMidi backend was broken due to missing import
   (``ctypes.byref``). (Introduced in 1.2.0.)
 

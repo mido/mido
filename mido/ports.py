@@ -345,10 +345,10 @@ class IOPort(BaseIOPort):
         self.output.close()
 
     def _send(self, message):
-        self.output._send(message)
+        self.output.send(message)
 
     def _receive(self, block=True):
-        return self.input._receive()
+        return self.input.receive()
 
 
 class EchoPort(BaseIOPort):
