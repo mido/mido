@@ -8,6 +8,13 @@ Release History
 ---------------
 
 
+1.2.1 (2017-03-17)
+------------------
+
+* bugfix: PortMidi backend was broken due to missing import
+  (``ctypes.byref``). (Introduced in 1.2.0.)
+
+
 1.2.0 (2017-03-07)
 ^^^^^^^^^^^^^^^^^^^
 
