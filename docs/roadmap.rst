@@ -101,7 +101,7 @@ New API for Creating New Port Types
 The current system uses multiple inheritance making the code very hard
 to follow and reason about:
 
-* to much magic and too much you need to keep in your head
+* too much magic and too much you need to keep in your head
 
 * attributes like ``self.name`` and ``self.closed`` appear in your
   name space and you have to dig around in the base classes to see
