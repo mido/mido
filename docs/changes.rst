@@ -8,8 +8,8 @@ Release History
 ---------------
 
 
-1.2.1 (2017-03-17)
-------------------
+1.2.1 (2017-03-10)
+^^^^^^^^^^^^^^^^^^
 
 * bugfix: IO port never received anything when used with RtMidi
   backend. (Reported by dagargo, issue #83.)
