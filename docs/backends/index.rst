@@ -26,11 +26,11 @@ Mido comes with five backends:
 
 * :doc:`Pygame <pygame>` uses the ``pygame.midi``.
 
-* :doc:`rtmidi-python <pygame>` uses the ``rtmidi_python`` package, an
+* :doc:`rtmidi-python <rtmidi_python>` uses the ``rtmidi_python`` package, an
   alternative wrapper for PortMidi. It is currently very basic but
   easier to install on some Windows systems.
 
-* :doc:`Pygame <pygame>` is an experimental backend for Linux/ALSA
+* :doc:`Amidi <amidi>` is an experimental backend for Linux/ALSA
   that uses the command ``amidi`` to send and receive messages.
 
 If you want to use another than the RtMidi you can override this with
