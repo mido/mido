@@ -16,7 +16,7 @@ To convert the other way (new method in 1.2)::
     >>> mido.Message.from_str('control_change control=1 value=122')
     <message control_change channel=0 control=1 value=122 time=0>
 
-Alternatively, you can the ``format_as_string`` function directly:
+Alternatively, you can call the ``format_as_string`` function directly:
 
     >>> mido.format_as_string(cc)
     'control_change channel=9 control=1 value=122 time=60'
