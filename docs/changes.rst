@@ -8,6 +8,13 @@ Release History
 ---------------
 
 
+1.2.2 ()
+^^^^^^^^^^^^^^^^^^
+
+* doc typo fixed by Michael (miketwo), issue #84.
+
+
+
 1.2.1 (2017-03-10)
 ^^^^^^^^^^^^^^^^^^
 
