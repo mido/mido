@@ -99,9 +99,6 @@ Update the stable branch (if this is a stable release):
 Publish
 ^^^^^^^
 
-This has stopped working recently (late 2016) so instead I just go to
-the web page and upload from there.
-
 Publish in PyPI::
 
     python setup.py publish
