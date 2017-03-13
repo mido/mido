@@ -11,8 +11,8 @@ Release History
 1.2.2 ()
 ^^^^^^^^^^^^^^^^^^
 
-* incorrect links in docs fixed by Michael (miketwo), issue #84.
-
+* typo and incorrect links in docs fixed by Michael (miketwo) (pull requests
+  #84 and #85).
 
 
 1.2.1 (2017-03-10)
