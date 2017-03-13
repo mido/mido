@@ -11,6 +11,8 @@ Release History
 1.2.2 ()
 ^^^^^^^^^^^^^^^^^^
 
+* bugfix: ``BaseOutput.send()`` raised string instead of ``ValueError``.
+
 * typo and incorrect links in docs fixed by Michael (miketwo) (pull requests
   #84 and #85).
 

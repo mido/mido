@@ -279,7 +279,7 @@ class BaseOutput(BasePort):
         the original message without any unexpected consequences.
         """
         if not self.is_output:
-            raise 'Not an output port'
+            raise ValueError('Not an output port')
         elif not isinstance(msg, Message):
             raise TypeError('argument to send() must be a Message')
         elif self.closed:
