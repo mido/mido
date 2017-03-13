@@ -22,10 +22,6 @@ MIN_SONGPOS = 0
 MAX_SONGPOS = 16383
 
 
-VALID_BYTES = set(range(0, 256))
-VALID_DATA_BYTES = set(range(0, 128))
-
-
 def _defmsg(status_byte, type_, value_names, length):
     return {
         'status_byte': status_byte,

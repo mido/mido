@@ -2,7 +2,6 @@ from collections import deque
 from numbers import Integral
 from .specs import (SYSEX_START, SYSEX_END,
                     SPEC_BY_STATUS, CHANNEL_MESSAGES,
-                    VALID_BYTES, VALID_DATA_BYTES,
                     MIN_PITCHWHEEL)
 from .checks import check_data
 from ..py2 import convert_py2_bytes
@@ -181,10 +180,11 @@ class Decoder(object):
         if not isinstance(byte, Integral):
             raise TypeError('message byte must be integer')
 
-        if byte in VALID_DATA_BYTES:
-            self._feed_data_byte(byte)
-        elif byte in VALID_BYTES:
-            self._feed_status_byte(byte)
+        if 0 <= byte <= 255:
+            if byte <= 127:
+                return self._feed_data_byte(byte)
+            else:
+                return self._feed_status_byte(byte)
         else:
             raise ValueError('invalid byte value {!r}'.format(byte))
 
