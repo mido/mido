@@ -96,3 +96,8 @@ def test_dict_sysex_data():
     assert data == {'type': 'sysex', 'data': [1, 2, 3], 'time': 0}
     assert type(data['data']) == type([])
 
+
+def test_from_hex_sysex_data_type():
+    msg = Message.from_hex('F0 01 02 03 F7')
+    assert isinstance(msg.data, SysexData)
+

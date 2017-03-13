@@ -140,7 +140,7 @@ class Message(BaseMessage):
             # be correct in bytearray.fromhex() error messages.
             text = text.replace(sep, ' ' * len(sep))
 
-        return cl(**decode_message(bytearray.fromhex(text), time=time))
+        return cl.from_bytes(bytearray.fromhex(text), time=time)
 
     @classmethod
     def from_str(cl, text):
