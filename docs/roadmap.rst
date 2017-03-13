@@ -23,9 +23,6 @@ Various Improvements to MIDI File Parsing
 * add better error handling to MIDI file parser as discussed in `issue
   #63 <https://github.com/olemb/mido/issues/63>`_.
 
-* add configurable error handling to MIDI file parser as discussed in
-  `issue #43 <https://github.com/olemb/mido/issues/43>`_
-
 * support RIFF MIDI files (`issue #43
   <https://github.com/olemb/mido/issues/43>`_)
 
