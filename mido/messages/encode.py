@@ -1,6 +1,4 @@
-from .specs import CHANNEL_MESSAGES
-from .specs import SPEC_BY_TYPE
-from .specs import MIN_PITCHWHEEL
+from .specs import CHANNEL_MESSAGES, SPEC_BY_TYPE, MIN_PITCHWHEEL
 
 def _encode_pitchwheel(msg):
     pitch = msg['pitch'] - MIN_PITCHWHEEL
