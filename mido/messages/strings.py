@@ -8,7 +8,12 @@ def msg2str(msg, include_time=True):
     words = [type_]
 
     for name in spec['value_names']:
-        words.append('{}={}'.format(name, msg[name]))
+        value = msg[name]
+
+        if name == 'data':
+            value = '({})'.format(','.join(str(byte) for byte in value))
+        words.append('{}={}'.format(name, value))
+
 
     if include_time:
         words.append('time={}'.format(msg['time']))
@@ -31,6 +36,16 @@ def _parse_time(value):
     raise ValueError('invalid time {!r}'.format(value))
 
 
+def _parse_data(value):
+    if not value.startswith('(') and value.endswith(')'):
+        raise ValueError('missing parentheses in data message')
+
+    try:
+        return [int(byte) for byte in value[1:-1].split(',')]
+    except ValueError:
+        raise ValueError('unable to parse data bytes')
+
+
 def str2msg(text):
     """Parse str format and return message dict.
 
@@ -47,6 +62,8 @@ def str2msg(text):
         name, value = arg.split('=', 1)
         if name == 'time':
             value = _parse_time(value)
+        elif name == 'data':
+            value = _parse_data(value)
         else:
             value = int(value)
 

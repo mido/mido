@@ -11,6 +11,12 @@ Release History
 1.2.2 ()
 ^^^^^^^^^^^^^^^^^^
 
+* bugfix: sysex data was broken in string format encoding and decoding.
+  The data was encoded with spaces ('data=(1, 2, 3)') instead of as one word
+  ('data=(1,2,3)').
+
+* added some tests for string format.
+
 * bugfix: ``BaseOutput.send()`` raised string instead of ``ValueError``.
 
 * typo and incorrect links in docs fixed by Michael (miketwo) (pull requests
