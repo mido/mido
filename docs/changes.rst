@@ -8,6 +8,13 @@ Release History
 ---------------
 
 
+1.2.3 (2017-03-14)
+^^^^^^^^^^^^^^^^^^
+
+* typo and incorrect links in docs fixed by Michael (miketwo) (pull requests
+  #84 and #85).
+
+
 1.2.2 (2017-03-14)
 ^^^^^^^^^^^^^^^^^^
 
@@ -18,9 +25,6 @@ Release History
 * added some tests for string format.
 
 * bugfix: ``BaseOutput.send()`` raised string instead of ``ValueError``.
-
-* typo and incorrect links in docs fixed by Michael (miketwo) (pull requests
-  #84 and #85).
 
 
 1.2.1 (2017-03-10)
