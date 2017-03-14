@@ -8,7 +8,7 @@ Release History
 ---------------
 
 
-1.2.2 ()
+1.2.2 (2017-03-14)
 ^^^^^^^^^^^^^^^^^^
 
 * bugfix: sysex data was broken in string format encoding and decoding.
