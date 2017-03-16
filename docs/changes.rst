@@ -7,6 +7,12 @@ Changes
 Release History
 ---------------
 
+1.2.4 ()
+^^^^^^^^^^^^^^^^^^
+
+* fixed outdated python-rtmidi install instructions. (Reported by
+  Christopher Arndt, issue #87.)
+
 
 1.2.3 (2017-03-14)
 ^^^^^^^^^^^^^^^^^^

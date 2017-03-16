@@ -3,10 +3,33 @@ PortMidi
 
 Name: ``mido.backends.portmidi``
 
-Features:
 
-The PortMidi backend is written with ``ctypes`` and requires only the
-shared library file ``portmidi.so`` or ``portmidi.dll``.
+Installing
+^^^^^^^^^^
+
+The PortMidi backend requires the ``portmidi`` shared library.
+
+`Ubuntu <https://www.ubuntu.com/>`_::
+
+    apt install libportmidi-dev
+
+`Homebrew <http://mxcl.github.io/homebrew/>`_::
+
+    brew install portmidi
+
+`MacPorts <http://www.macports.org/>`_::
+
+    port install portmidi
+
+The backend will look for::
+
+    portmidi.so      (Linux)
+    portmidi.dll     (Windows)
+    portmidi.dynlib  (macOS)
+
+
+Features
+^^^^^^^^
 
 Can send but doesn't receive ``active_sensing`` messages.
 

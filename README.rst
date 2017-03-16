@@ -73,15 +73,11 @@ Status
 
 1.2 is the third stable release.
 
-See docs/changes.rst for a full list of changes.
-
 
 Requirements
 ------------
 
 Mido targets Python 2.7 and 3.2.
-
-See docs/installing.rst for more on requirements for port backends.
 
 
 Installing
@@ -95,7 +91,8 @@ If you want to use ports::
 
    pip install python-rtmidi
 
-See docs/installing.rst for more.
+See ``docs/backends/`` for other backends.
+
 
 
 Source Code

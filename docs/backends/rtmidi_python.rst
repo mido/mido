@@ -3,7 +3,17 @@ rtmidi_python
 
 Name: ``mido.backends.rtmidi_python``
 
-Features:
+
+Installing
+^^^^^^^^^^
+
+::
+
+    pip install rtmidi-python
+
+
+Features
+^^^^^^^^
 
 * uses the ``rtmidi_python`` package rather than ``python_rtmidi``
 
