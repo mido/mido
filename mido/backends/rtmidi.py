@@ -158,7 +158,8 @@ class Input(PortCommon, ports.BaseInput):
         self._callback_lock = threading.RLock()
         self._queue = ParserQueue()
 
-        self._rt = rtmidi.MidiIn(name=client_name)
+        rtapi = _get_api_id(api)
+        self._rt = rtmidi.MidiIn(name=client_name, rtapi=rtapi)
 
         self.api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(self.api)
@@ -222,7 +223,8 @@ class Output(PortCommon, ports.BaseOutput):
         self.closed = True
         self._send_lock = threading.RLock()
 
-        self._rt = rtmidi.MidiOut(name=client_name)
+        rtapi = _get_api_id(api)
+        self._rt = rtmidi.MidiOut(name=client_name, rtapi=rtapi)
 
         self.api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(self.api)
