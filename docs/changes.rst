@@ -8,7 +8,7 @@ Release History
 ---------------
 
 
-1.2.5 ()
+1.2.5 (2017-04-28)
 ^^^^^^^^^^^^^^^^^^
 
 * bugfix: RtMidi backend ignored ``api`` argument. (Fix by Tom Feist,
