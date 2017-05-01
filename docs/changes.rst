@@ -7,6 +7,13 @@ Changes
 Release History
 ---------------
 
+1.2.6 ()
+^^^^^^^^^^^^^^^^^^
+
+* bugfix: Sending sysex with Pygame in Python 3 failed with
+  ``"TypeError: array() argument 1 must be a unicode character, not
+  byte"``.  (Reported by Harry Williamson.)
+
 
 1.2.5 (2017-04-28)
 ^^^^^^^^^^^^^^^^^^

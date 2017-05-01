@@ -118,6 +118,8 @@ class Output(PortCommon, BaseOutput):
 
     def _send(self, message):
         if message.type == 'sysex':
-            self._port.write_sys_ex(midi.time(), message.bytes())
+            # Python 2 version of Pygame accepts a bytes or list here
+            # while Python 3 version requires bytes.
+            self._port.write_sys_ex(midi.time(), bytes(message.bin()))
         else:
             self._port.write_short(*message.bytes())
