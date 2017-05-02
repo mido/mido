@@ -91,7 +91,7 @@ class PortCommon(object):
             self._port = midi.Output(device['id'])
 
         self._device_type = 'Pygame/{}'.format(device['interface'])
-        
+
     def _close(self):
         self._port.close()
 
@@ -120,6 +120,9 @@ class Output(PortCommon, BaseOutput):
         if message.type == 'sysex':
             # Python 2 version of Pygame accepts a bytes or list here
             # while Python 3 version requires bytes.
+            # According to the docs it should accept both so this may be
+            # a bug in Pygame:
+            # https://www.pygame.org/docs/ref/midi.html#pygame.midi.Output.write_sys_ex
             self._port.write_sys_ex(midi.time(), bytes(message.bin()))
         else:
             self._port.write_short(*message.bytes())
