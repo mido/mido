@@ -14,6 +14,11 @@ Release History
   ``"TypeError: array() argument 1 must be a unicode character, not
   byte"``.  (Reported by Harry Williamson.)
 
+* now handles ``sequence_number`` and ``midi_port`` messages with 0
+  data bytes. These are incorrect but can occur in rare cases. See
+  ``mido/midifiles/test_midifiles.py`` for more. (Reported by Gilthans
+  (issue #42) and hyst329 (issue #93)).
+
 
 1.2.5 (2017-04-28)
 ^^^^^^^^^^^^^^^^^^

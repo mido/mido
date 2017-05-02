@@ -89,3 +89,39 @@ def test_meta_messages():
 
     assert track[0] == MetaMessage('track_name', name='Test')
     assert track[1] == MetaMessage('end_of_track')
+
+
+def test_meta_messages_with_length_0():
+    """sequence_number and midi_port with no data bytes should be accepted.
+
+    In rare cases these messages have length 0 and thus no data
+    bytes. (See issues 42 and 93.) It is unclear why these messages
+    are missing their data. It could be cased by a bug in the software
+    that created the files.
+
+    So far this has been fixed by adding a test to each of these two
+    meta message classes. If the problem appears with other message
+    types it may be worth finding a more general solution.
+    """
+    mid = read_file(HEADER_ONE_TRACK + """
+    4d 54 72 6b  # MTrk
+    00 00 00 17
+
+    00 ff 00 00  # sequence_number with no data bytes (should be 2).
+    00 ff 21 00  # midi_port with no data bytes (should be 1).
+
+    00 ff 00 02 00 01  # sequence_number with correct number of data bytes (2).
+    00 ff 21 01 01     # midi_port with correct number of data bytes (1).
+
+    00 ff 2f 00
+    """)
+
+    assert mid.tracks[0] == [
+        MetaMessage('sequence_number', number=0),
+        MetaMessage('midi_port', port=0),
+
+        MetaMessage('sequence_number', number=1),
+        MetaMessage('midi_port', port=1),
+
+        MetaMessage('end_of_track'),
+    ]

@@ -166,7 +166,12 @@ class MetaSpec_sequence_number(MetaSpec):
     defaults = [0]
 
     def decode(self, message, data):
-        message.number = (data[0] << 8) | data[1]
+        if len(data) == 0:
+            # Message with length 0 can occur in some files.
+            # (See issues 42 and 93.)
+            message.number = 0
+        else:
+            message.number = (data[0] << 8) | data[1]
 
     def encode(self, message):
         return [message.number >> 8, message.number & 0xff]
@@ -247,7 +252,12 @@ class MetaSpec_midi_port(MetaSpec):
     defaults = [0]
 
     def decode(self, message, data):
-        message.port = data[0]
+        if len(data) == 0:
+            # Message with length 0 can occur in some files.
+            # (See issues 42 and 93.)
+            message.port = 0
+        else:
+            message.port = data[0]
 
     def encode(self, message):
         return [message.port]
