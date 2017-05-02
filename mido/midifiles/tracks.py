@@ -16,7 +16,7 @@ class MidiTrack(list):
             if message.type == 'track_name':
                 return message.name
         else:
-            return u''
+            return ''
 
     @name.setter
     def name(self, name):
