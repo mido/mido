@@ -145,6 +145,9 @@ Some alternatives to subclassing:
 Maybe
 -----
 
+* add a way to convert between MIDI file types as suggested in `issue
+  #92 <https://github.com/olemb/mido/issues/92>`_.
+
 * RtMidi backend: allow user to list ports without client name and
   ALSA port numbers.
 
