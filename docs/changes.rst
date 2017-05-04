@@ -7,7 +7,7 @@ Changes
 Release History
 ---------------
 
-1.2.6 ()
+1.2.6 (2017-05-04)
 ^^^^^^^^^^^^^^^^^^
 
 * bugfix: Sending sysex with Pygame in Python 3 failed with
