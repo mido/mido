@@ -1,5 +1,5 @@
-Freezing Mido Programs
-======================
+Freezing to EXE File
+====================
 
 PyInstaller
 -----------
