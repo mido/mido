@@ -42,6 +42,15 @@ def test_single_message():
     """).tracks[0] == [Message('note_on', note=64, velocity=64, time=32)]
 
 
+def test_too_long_message():
+    with raises(IOError):
+      read_file(HEADER_ONE_TRACK + """
+      4d 54 72 6b  # MTrk
+      00 00 00 04
+      00 ff 03 ff ff 7f # extremely long track name message
+      """)
+
+
 def test_two_tracks():
     mid = read_file("""
     4d54 6864 0000 0006 0001 0002 0040        # Header

@@ -34,6 +34,9 @@ from .units import tick2second
 DEFAULT_TEMPO = 500000
 DEFAULT_TICKS_PER_BEAT = 480
 
+# Maximum message length to attempt to read.
+MAX_MESSAGE_LENGTH = 1000000
+
 def print_byte(byte, pos=0):
     char = chr(byte)
     if char.isspace() or not char in string.printable:
@@ -72,6 +75,9 @@ def read_byte(self):
 
 
 def read_bytes(infile, size):
+    if size > MAX_MESSAGE_LENGTH:
+        raise IOError('Message length {} exceeds maximum length {}'.format(
+            size, MAX_MESSAGE_LENGTH))
     return [read_byte(infile) for _ in range(size)]
 
 
