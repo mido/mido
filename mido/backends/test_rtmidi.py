@@ -1,4 +1,4 @@
-from .rtmidi import _expand_alsa_port_name
+from .rtmidi_utils import expand_alsa_port_name
 
 
 def test_expand_alsa_port_name():
@@ -8,7 +8,7 @@ def test_expand_alsa_port_name():
                          'Z:port 130:0'])
 
     def expand(name):
-        return _expand_alsa_port_name(port_names, name)
+        return expand_alsa_port_name(port_names, name)
 
     # Should return first matching port.
     assert expand('port') == 'A:port 128:0'

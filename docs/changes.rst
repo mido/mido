@@ -14,6 +14,9 @@ Release History
   file. Instead it will now raise an ``IOError`` with a descriptive
   error message. (Implented by Curtis Hawthorne, pull request #95.)
 
+* removed dependency on ``python-rtmidi`` from tests. (Reported by
+  Josue Ortega, issue #96.)
+
 
 1.2.6 (2017-05-04)
 ^^^^^^^^^^^^^^^^^^
