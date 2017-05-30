@@ -8,14 +8,14 @@ Testing
 `pytest <http://doc.pytest.org/>`_ is used for unit testing. The tests
 are found in `mido/test_*.py`.
 
-If you can please run tests in both Python 2 and Python 3 before you
-commit code. I've renamed the executables so I can just run `pytest2
-&& pytest3` instead of remembering what the programs are called. (I
-think they were `py.test` and `py.test-3`.)
+If possible please run tests in both Python 2 and Python 3 before you
+commit code::
+
+    python2 -m pytest && python3 -m pytest
 
 You can also set up a commit hook::
 
-    echo "pytest2 && pytest3" >.git/hooks/pre-commit
+    echo "python2 -m pytest && python3 -m pytest" >.git/hooks/pre-commit
     chmod +x .git/hooks/pre-commit
 
 This will run tests when you commit and cancel the commit if any tests
