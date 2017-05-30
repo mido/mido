@@ -7,6 +7,14 @@ Changes
 Release History
 ---------------
 
+1.2.7 ()
+^^^^^^^^^^^^^^^^^^
+* added max length when reading message from a MIDI file. This
+  prevents Python from running out of memory when reading a corrupt
+  file. Instead it will now raise an ``IOError`` with a descriptive
+  error message. (Implented by Curtis Hawthorne, pull request #95.)
+
+
 1.2.6 (2017-05-04)
 ^^^^^^^^^^^^^^^^^^
 
