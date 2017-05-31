@@ -32,7 +32,7 @@ setup(
                'bin/mido-serve',
                'bin/mido-connect'],
     include_package_data=True,
-    install_requires=[],
+    install_requires=['python-rtmidi'],
     license='MIT',
     zip_safe=False,
     classifiers=(
