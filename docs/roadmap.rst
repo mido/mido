@@ -153,10 +153,6 @@ Maybe
 
 * Add native backends? See https://github.com/olemb/mido-native-backends
 
-* Add ``msg.dict()`` and ``Message.from_dict()``? This could be useful
-  in some cases. The current ``vars(msg).copy()`` and ``Message(**d)``
-  are a bit cumbersome.
-
 * Currently all backends ignore ``active_sensing`` messages because
   they create a lot of noise and are usually not very useful. Should
   this be changed (perhaps as an option)?
