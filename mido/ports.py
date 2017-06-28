@@ -359,6 +359,8 @@ class EchoPort(BaseIOPort):
 
 
 class MultiPort(BaseIOPort):
+    _locking = False
+
     def __init__(self, ports, yield_ports=False):
         BaseIOPort.__init__(self, 'multi')
         self.ports = list(ports)
