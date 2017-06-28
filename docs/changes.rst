@@ -10,8 +10,13 @@ Release History
 1.2.8 ()
 ^^^^^^^^^^^^^^^^^^
 
-* nonblocking receive was broken for RtMidi IO ports. (Reported by
-  Chris Apple, issue #99.)
+* bugfix: nonblocking receive was broken for RtMidi IO
+  ports. (Reported by Chris Apple, issue #99.)
+
+* bugfix: ``IOPort.poll()`` would block if another thread was waiting
+  for ``receive()``.  Fixed the problem by removing the lock, which
+  was never needed in the first place as the embedded input port does
+  its own locking.
 
 
 1.2.7 (2017-05-31)
