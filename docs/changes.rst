@@ -18,8 +18,6 @@ Release History
   was never needed in the first place as the embedded input port does
   its own locking.
 
-* also removed locking from ``MultiPort`` for the same reason.
-
 
 1.2.7 (2017-05-31)
 ^^^^^^^^^^^^^^^^^^
