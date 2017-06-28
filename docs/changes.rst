@@ -7,6 +7,13 @@ Changes
 Release History
 ---------------
 
+1.2.8 ()
+^^^^^^^^^^^^^^^^^^
+
+* nonblocking receive was broken for RtMidi IO ports. (Reported by
+  Chris Apple, issue #99.)
+
+
 1.2.7 (2017-05-31)
 ^^^^^^^^^^^^^^^^^^
 * added max length when reading message from a MIDI file. This

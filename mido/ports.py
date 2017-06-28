@@ -348,7 +348,7 @@ class IOPort(BaseIOPort):
         self.output.send(message)
 
     def _receive(self, block=True):
-        return self.input.receive()
+        return self.input.receive(block=block)
 
 
 class EchoPort(BaseIOPort):
