@@ -7,7 +7,7 @@ Changes
 Release History
 ---------------
 
-1.2.8 ()
+1.2.8 (2017-06-30)
 ^^^^^^^^^^^^^^^^^^
 
 * bugfix: nonblocking receive was broken for RtMidi IO
