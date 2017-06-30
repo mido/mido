@@ -40,14 +40,6 @@ I am currently the only one with access to publishing on PyPI and
 readthedocs. This will hopefully change in the future.
 
 
-First Time: Register With PyPI
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-::
-
-    ./setup.py register
-
-
 Test
 ^^^^
 
@@ -77,7 +69,26 @@ X.Y.Z is the version, for example 1.1.18 or 1.2.0.
 
 * `git commit -a -c "Bumped version to X.Y.Z."`
 
-Then:
+
+
+Publish on PyPI
+^^^^^^^^^^^^^^^
+
+I like to do this before I push to GitHub. This way if the package
+fails to upload I can roll back and fix it before I push my changes.
+
+::
+
+    rm -rf dist/*
+
+    python setup.py bdist_wheel --universal
+    python setup.py sdist
+
+    twine upload twine upload dist/*
+
+
+Push to GitHub
+^^^^^^^^^^^^^^
 
 ::
 
@@ -96,17 +107,10 @@ Update the stable branch (if this is a stable release):
    git checkout master
 
 
-Publish
-^^^^^^^
+Update Read the Docs
+^^^^^^^^^^^^^^^^^^^^
 
-Publish in PyPI::
+Log into readthedocs.org and build the latest documentation. This is
+set up to use the stable branch.
 
-    python setup.py publish
-    python setup.py bdist_wheel upload
-
-Last thing:
-
-
-Update readthedocs
-^^^^^^^^^^^^^^^^^^
 
