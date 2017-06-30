@@ -1,8 +1,9 @@
-from pytest import raises
+import pytest
 from .messages import Message
 from .ports import BaseIOPort
 
-def test_ioport():
+
+class TestIOPort:
     class Port(BaseIOPort):
         def _open(self):
             self.close_called = False
@@ -13,35 +14,42 @@ def test_ioport():
         def _close(self):
             self.close_called = True
 
-    with Port('Name') as port:
+    @pytest.fixture
+    def port(self):
+        with self.Port('Name') as p:
+            yield p
+
+    def test_basic(self, port):
         assert port.name == 'Name'
         assert not port.closed
-
         assert port._messages is port._parser.messages
 
-        with raises(TypeError): port.send('not a message')
+        with pytest.raises(TypeError):
+            port.send('not a message')
 
-    with Port('Name') as port:
+    def test_recv_non_blocking(self, port):
         message = Message('note_on')
 
-        # Receive a message. (Non-blocking.)
         port.send(message)
-        _ = port.poll()
+        port.poll()
         assert port.poll() is None
 
-    with Port('Name') as port:
+    def test_send_message(self, port):
         message = Message('note_on')
 
         port.send(message)
         port.send(message)
 
-    with Port('Name') as port:
+    def test_port_close(self, port):
         port.close()
         assert port.close_called
         port.close_called = False
         port.close()
         assert port.closed
         assert not port.close_called
+
+    def test_mido_port_non_blocking_recv(self, port):
+        assert port.receive(block=False) is None
 
 
 def test_close_inside_iteration():
