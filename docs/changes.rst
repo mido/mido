@@ -10,6 +10,11 @@ Release History
 1.2.9 ()
 ^^^^^^^^^^^^^^^^^^
 
+* bugfix: `data` attribute was missing for `UnknownMetaMessage`
+  objects. This caused `AttributeError` when the messages were printed
+  or saved to a file. Also, the documentation incorrectly listed the
+  attribute as `_data` instead of `data`.
+
 
 1.2.8 (2017-06-30)
 ^^^^^^^^^^^^^^^^^^

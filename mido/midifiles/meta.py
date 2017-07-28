@@ -540,6 +540,7 @@ class UnknownMetaMessage(MetaMessage):
         vars(self).update({
             'type': 'unknown_meta',
             'type_byte': type_byte,
+            'data': data,
             'time': time})
 
     def __repr__(self):

@@ -242,11 +242,11 @@ described below.
 ``UnknownMetaMessage`` have two attributes::
 
     ``type_byte`` - a byte which uniquely identifies this message type
-    ``_data`` - the message data as a list of bytes
+    ``data`` - the message data as a list of bytes
 
 These are also visible in the ``repr()`` string::
 
-    <unknown meta message _type_byte=0x## _data=[...], time=0>
+    <unknown meta message type_byte=0x## data=[...], time=0>
 
 
 Implementing New Meta Messages
