@@ -72,10 +72,10 @@ def _get_named_device(name, get_input):
 
         # Skip if device is the wrong type
         if get_input:
-            if device['is_output']:
+            if not device['is_input']:
                 continue
         else:
-            if device['is_input']:
+            if not device['is_output']:
                 continue
 
         if device['opened']:
