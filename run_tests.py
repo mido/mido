@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Runs tests in Python 2 and 3.
- 
+
 If you want tests to run before each commit you can install this as
 a pre-commit hook:
 
@@ -18,8 +18,10 @@ import os
 import sys
 sys.path.insert(0, '.')
 
+
 def print_yellow(message):
     print('\033[0;33m{}\033[0m'.format(message))
+
 
 print_yellow('Python 2')
 if os.system('python2 -m pytest'):
