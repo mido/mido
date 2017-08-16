@@ -15,6 +15,10 @@ Release History
   or saved to a file. Also, the documentation incorrectly listed the
   attribute as `_data` instead of `data`.
 
+* bugfix: inputs and outputs were switched around when opening named
+  ports with PortMidi backend. (Repored by Predrag Radovic, issue
+  #108, fix by Juan Antonio Aldea, pull request #109.)
+
 
 1.2.8 (2017-06-30)
 ^^^^^^^^^^^^^^^^^^
