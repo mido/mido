@@ -128,14 +128,8 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
     size = spec['length'] - 1 - len(peek_data)
     data_bytes = peek_data + read_bytes(infile, size)
 
-    adjusted_bytes = []
     if clip:
-        for byte in data_bytes:
-            if byte > 127:
-                adjusted_bytes.append(127)
-            else:
-                adjusted_bytes.append(byte)
-        data_bytes = adjusted_bytes
+        data_bytes = [byte if byte < 127 else 127 for byte in data_bytes]
     else:
         for byte in data_bytes:
             if byte > 127:
@@ -203,7 +197,6 @@ def read_track(infile, debug=False, clip=False):
         if debug:
             _dbg('-> delta={}'.format(delta))
 
-        # TODO: not all messages have running status
         status_byte = read_byte(infile)
 
         if status_byte < 0x80:
@@ -265,7 +258,8 @@ def write_track(outfile, track):
             data.append(0xf7)
         else:
             raw = msg.bytes()
-            if (not msg.is_meta and raw[0] < 0xf0 and raw[0] == running_status_byte):
+            if (not msg.is_meta and raw[0] < 0xf0 and
+               raw[0] == running_status_byte):
                 data.extend(raw[1:])
             else:
                 data.extend(raw)
@@ -345,7 +339,9 @@ class MidiFile(object):
                 if self.debug:
                     _dbg('Track {}:'.format(i))
 
-                self.tracks.append(read_track(infile, debug=self.debug, clip=self.clip))
+                self.tracks.append(read_track(infile,
+                                              debug=self.debug,
+                                              clip=self.clip))
                 # TODO: used to ignore EOFError. I hope things still work.
 
     @property
