@@ -3,6 +3,12 @@ from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
                     MIN_PITCHWHEEL, MAX_PITCHWHEEL)
 from ..py2 import convert_py2_bytes
 
+
+# If set to False, sysex bytes must be in the range 0..127.
+# If set to True, sysex bytes must by in the range 0..255.
+ALLOW_SYSEX_LARGE_BYTES = False
+
+
 def check_type(type_):
     if type_ not in SPEC_BY_TYPE:
         raise ValueError('invalid message type {!r}'.format(type_))
@@ -53,8 +59,13 @@ def check_frame_value(value):
 def check_data_byte(value):
     if not isinstance(value, Integral):
         raise TypeError('data byte must be int')
-    elif not 0 <= value <= 127:
-        raise ValueError('data byte must be in range 0..127')
+    elif ALLOW_SYSEX_LARGE_BYTES and not 0 <= value <= 255:
+        raise ValueError('data byte must be in range 0..255')
+    elif not ALLOW_SYSEX_LARGE_BYTES and not 0 <= value <= 127:
+        raise ValueError(
+            'data byte must be in range 0..127. If this is intentional, you '
+            'may override this check by setting '
+            'mido.messages.checks.ALLOW_SYSEX_LARGE_BYTES to True')
 
 
 def check_time(time):
@@ -67,7 +78,6 @@ _CHECKS = {
     'data': check_data,
     'channel': check_channel,
     'control': check_data_byte,
-    'data': check_data,
     'frame_type': check_frame_type,
     'frame_value': check_frame_value,
     'note': check_data_byte,
