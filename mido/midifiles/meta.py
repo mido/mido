@@ -344,7 +344,7 @@ class MetaSpec_time_signature(MetaSpec):
                   'denominator',
                   'clocks_per_click',
                   'notated_32nd_notes_per_beat']
-    defaults = [4, 2, 24, 8]
+    defaults = [4, 4, 24, 8]
 
     def decode(self, message, data):
         message.numerator = data[0]
