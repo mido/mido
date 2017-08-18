@@ -166,8 +166,9 @@ class Message(BaseMessage):
         if name == 'type':
             raise AttributeError('type attribute is read only')
         elif name not in vars(self):
-            raise AttributeError(
-                        '{} message has no attribute {}'.format(self.type, name))
+            raise AttributeError('{} message has no '
+                                 'attribute {}'.format(self.type,
+                                                       name))
         else:
             check_value(name, value)
             if name == 'data':

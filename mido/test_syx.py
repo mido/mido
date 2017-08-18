@@ -7,21 +7,18 @@ def test_read(tmpdir):
     path = tmpdir.join("test.syx").strpath
     msg = Message('sysex', data=(1, 2, 3))
 
-
     with open(path, 'wb') as outfile:
         outfile.write(msg.bin())
 
-
     assert read_syx_file(path) == [msg]
-
 
     with open(path, 'wt') as outfile:
         outfile.write(msg.hex())
     assert read_syx_file(path) == [msg]
 
-
     with open(path, 'wt') as outfile:
         outfile.write('NOT HEX')
+
     with raises(ValueError):
         read_syx_file(path)
 
@@ -40,11 +37,9 @@ def test_write(tmpdir):
     path = tmpdir.join("test.syx").strpath
     msg = Message('sysex', data=(1, 2, 3))
 
-
     write_syx_file(path, [msg])
     with open(path, 'rb') as infile:
         assert infile.read() == msg.bin()
-
 
     write_syx_file(path, [msg], plaintext=True)
     with open(path, 'rt') as infile:

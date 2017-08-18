@@ -1,6 +1,7 @@
 from .messages import Message
 from .midifiles import MetaMessage, UnknownMetaMessage
 
+
 class Frozen(object):
     def __repr__(self):
         text = super(Frozen, self).__repr__()
@@ -30,7 +31,7 @@ def is_frozen(msg):
     return isinstance(msg, Frozen)
 
 
-# Todo: these two functions are almost the same except inverted. There
+# TODO: these two functions are almost the same except inverted. There
 # should be a way to refactor them to lessen code duplication.
 
 def freeze_message(msg):
@@ -38,7 +39,7 @@ def freeze_message(msg):
 
     Returns a frozen version of the message. Frozen messages are
     immutable, hashable and can be used as dictionary keys.
-   
+
     Will return None if called with None. This allows you to do things
     like::
 

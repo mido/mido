@@ -1,5 +1,6 @@
 from .backend import Backend
 
+
 def test_split_api():
     backend = Backend('test')
     assert backend.name == 'test'

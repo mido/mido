@@ -6,13 +6,14 @@ from .specs import (SYSEX_START, SYSEX_END,
 from .checks import check_data
 from ..py2 import convert_py2_bytes
 
+
 def _decode_sysex_data(data):
     return {'data': tuple(data)}
 
 
 def _decode_quarter_frame_data(data):
     return {'frame_type': data[0] >> 4,
-            'frame_value' : data[0] & 15}
+            'frame_value': data[0] & 15}
 
 
 def _decode_songpos_data(data):
@@ -36,6 +37,7 @@ def _make_special_cases():
 
     return cases
 
+
 _SPECIAL_CASES = _make_special_cases()
 
 
@@ -45,7 +47,7 @@ def _decode_data_bytes(status_byte, data, spec):
         raise ValueError(
             'wrong number of bytes for {} message'.format(spec['type']))
 
-    # Todo: better name than args?
+    # TODO: better name than args?
     names = [name for name in spec['value_names'] if name != 'channel']
     args = {name: value for name, value in zip(names, data)}
 
@@ -64,7 +66,7 @@ def decode_message(msg_bytes, time=0, check=True):
 
     This is not a part of the public API.
     """
-    # Todo: this function is getting long.
+    # TODO: this function is getting long.
     msg_bytes = convert_py2_bytes(msg_bytes)
 
     if len(msg_bytes) == 0:

@@ -11,6 +11,7 @@ from ..messages import Message
 from ._parser_queue import ParserQueue
 from .rtmidi_utils import expand_alsa_port_name
 
+
 def _get_api_lookup():
     api_to_name = {}
     name_to_api = {}
@@ -52,11 +53,10 @@ def get_devices(api=None, **kwargs):
     output_names = set(rtmidi.MidiOut(rtapi=rtapi).get_ports())
 
     for name in sorted(input_names | output_names):
-        devices.append({
-                'name': name,
-                'is_input': name in input_names,
-                'is_output': name in output_names,
-                })
+        devices.append({'name': name,
+                        'is_input': name in input_names,
+                        'is_output': name in output_names,
+                        })
 
     return devices
 
@@ -80,11 +80,9 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
         rt.open_virtual_port(name)
         return name
 
-
     port_names = rt.get_ports()
     if len(port_names) == 0:
         raise IOError('no ports available')
-
 
     if name is None:
         name = port_names[0]
@@ -93,7 +91,6 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
         port_id = port_names.index(name)
     else:
         raise IOError('unknown port {!r}'.format(name))
-
 
     try:
         rt.open_port(port_id)
@@ -110,7 +107,7 @@ class PortCommon(object):
 
 class Input(PortCommon, ports.BaseInput):
     _locking = False
-    
+
     def _open(self, client_name=None, virtual=False,
               api=None, callback=None, **kwargs):
 
@@ -176,7 +173,7 @@ class Input(PortCommon, ports.BaseInput):
 
 class Output(PortCommon, ports.BaseOutput):
     _locking = False
-    
+
     def _open(self, client_name=None, virtual=False,
               api=None, callback=None, **kwargs):
 

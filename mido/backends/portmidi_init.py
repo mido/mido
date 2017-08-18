@@ -7,7 +7,7 @@ modifications.
 import sys
 from ctypes import (CDLL, CFUNCTYPE, POINTER, Structure, c_char_p,
                     c_int, c_long, c_uint, c_void_p, cast,
-                    create_string_buffer, byref)
+                    create_string_buffer)
 import ctypes.util
 
 dll_name = ''
@@ -29,11 +29,13 @@ true = 1
 # From portmidi.h
 PM_HOST_ERROR_MSG_LEN = 256
 
+
 def get_host_error_message():
     """Return host error message."""
     buf = create_string_buffer(PM_HOST_ERROR_MSG_LEN)
     lib.Pm_GetHostErrorText(buf, PM_HOST_ERROR_MSG_LEN)
     return buf.raw.decode().rstrip('\0')
+
 
 PmError = c_int
 # PmError enum
@@ -75,6 +77,7 @@ class PmDeviceInfo(Structure):
                 ("is_input", c_int),
                 ("is_output", c_int),
                 ("opened", c_int)]
+
 
 PmDeviceInfoPtr = POINTER(PmDeviceInfo)
 
@@ -126,6 +129,7 @@ PmMessage = c_long
 class PmEvent(Structure):
     _fields_ = [("message", PmMessage),
                 ("timestamp", PmTimestamp)]
+
 
 PmEventPtr = POINTER(PmEvent)
 

@@ -41,7 +41,7 @@ def test_feed_byte():
 
     with raises(TypeError):
         parser.feed_byte([1, 2, 3])
-    
+
     with raises(ValueError):
         parser.feed_byte(-1)
 
@@ -55,7 +55,7 @@ def test_feed():
 
     parser.feed([])
     parser.feed([1, 2, 3])
-    # Todo: add more valid types.
+    # TODO: add more valid types.
 
     with raises(TypeError):
         parser.feed(1)
@@ -128,4 +128,3 @@ def test_encode_and_parse_all():
 
 def test_parser_ascii_text():
     assert parse_all(b'7 bit ASCII should not produce any messages') == []
-

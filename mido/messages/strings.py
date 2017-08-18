@@ -14,10 +14,9 @@ def msg2str(msg, include_time=True):
             value = '({})'.format(','.join(str(byte) for byte in value))
         words.append('{}={}'.format(name, value))
 
-
     if include_time:
         words.append('time={}'.format(msg['time']))
-    
+
     return str.join(' ', words)
 
 

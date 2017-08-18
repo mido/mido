@@ -1,6 +1,7 @@
 from pytest import raises
 from .meta import MetaMessage
 
+
 def test_copy_invalid_argument():
     with raises(ValueError):
         MetaMessage('track_name').copy(a=1)

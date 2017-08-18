@@ -8,8 +8,9 @@ from collections import deque
 from .messages import Message
 from .messages.decode import Decoder
 
-# Todo: make sure the method signatures are as before.
-# Todo: add doc strings.
+# TODO: make sure the method signatures are as before.
+# TODO: add doc strings.
+
 
 class Parser(object):
     """

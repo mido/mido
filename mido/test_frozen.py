@@ -1,6 +1,8 @@
 from .messages import Message
 from .frozen import (is_frozen, freeze_message, thaw_message,
-                     FrozenMessage, FrozenMetaMessage, FrozenUnknownMetaMessage)
+                     FrozenMessage, FrozenMetaMessage,
+                     FrozenUnknownMetaMessage)
+
 
 def test_hashability():
     """Test that messages are hashable."""

@@ -13,7 +13,7 @@ _DEFAULT_SLEEP_TIME = 0.001
 _sleep_time = _DEFAULT_SLEEP_TIME
 
 
-# Todo: document this more.
+# TODO: document this more.
 def sleep():
     """Sleep for N seconds.
 
@@ -55,7 +55,6 @@ def panic_messages():
                       channel=channel, control=ALL_SOUNDS_OFF)
 
 
-
 class DummyLock(object):
     def __enter__(self):
         return self
@@ -87,7 +86,7 @@ class BasePort(object):
         self.closed = True
         self._open(**kwargs)
         self.closed = False
- 
+
     def _open(self, **kwargs):
         pass
 
@@ -129,12 +128,11 @@ class BasePort(object):
             state = 'open'
 
         capabilities = self.is_input, self.is_output
-        port_type = {
-            (True, False): 'input',
-            (False, True): 'output',
-            (True, True): 'I/O port',
-            (False, False): 'mute port',
-            }[capabilities]
+        port_type = {(True, False): 'input',
+                     (False, True): 'output',
+                     (True, True): 'I/O port',
+                     (False, False): 'mute port',
+                     }[capabilities]
 
         name = self.name or ''
 
@@ -165,7 +163,6 @@ class BaseInput(BasePort):
         self._parser = Parser()
         self._messages = self._parser.messages  # Shortcut.
 
-
     def _check_callback(self):
         if hasattr(self, 'callback') and self.callback is not None:
             raise ValueError('a callback is set for this port')
@@ -192,7 +189,7 @@ class BaseInput(BasePort):
 
         If the port is closed and there are no pending messages IOError
         will be raised. If the port closes while waiting inside receive(),
-        IOError will be raised. Todo: this seems a bit inconsistent. Should
+        IOError will be raised. TODO: this seems a bit inconsistent. Should
         different errors be raised? What's most useful here?
         """
         if not self.is_input:
@@ -268,7 +265,7 @@ class BaseOutput(BasePort):
         """
         BasePort.__init__(self, name, **kwargs)
         self.autoreset = autoreset
- 
+
     def _send(self, msg):
         pass
 
@@ -367,7 +364,7 @@ class MultiPort(BaseIOPort):
     def _send(self, message):
         for port in self.ports:
             if not port.closed:
-                # Todo: what if a SocketPort connection closes in-between here?
+                # TODO: what if a SocketPort connection closes in-between here?
                 port.send(message)
 
     def _receive(self, block=True):

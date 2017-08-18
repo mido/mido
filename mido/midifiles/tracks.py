@@ -1,5 +1,6 @@
 from .meta import MetaMessage
 
+
 class MidiTrack(list):
     @property
     def name(self):
@@ -40,7 +41,7 @@ class MidiTrack(list):
             return lst
         else:
             # Otherwise, construct a MidiTrack to return.
-            # Todo: this make a copy of the list. Is there a better way?
+            # TODO: this make a copy of the list. Is there a better way?
             return self.__class__(lst)
 
     def __add__(self, other):

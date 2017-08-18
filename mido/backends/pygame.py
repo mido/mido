@@ -15,7 +15,7 @@ def _get_device(device_id):
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
     info = dict(zip(keys, midi.get_device_info(device_id)))
     info['id'] = device_id
-    info['name'] = info['name'].decode('utf-8') # Todo: correct encoding?
+    info['name'] = info['name'].decode('utf-8')  # TODO: correct encoding?
     return info
 
 

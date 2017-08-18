@@ -14,11 +14,12 @@ def _is_readable(socket):
     timeout = 0
     (rlist, wlist, elist) = select.select(
         [socket.fileno()], [], [], timeout)
-    
+
     return bool(rlist)
 
+
 class PortServer(MultiPort):
-    # Todo: queue size.
+    # TODO: queue size.
 
     def __init__(self, host, portno, backlog=1):
         MultiPort.__init__(self, format_address(host, portno))
@@ -159,4 +160,3 @@ def parse_address(address):
 
 def format_address(host, portno):
     return '{}{:d}'.format(host, portno)
-

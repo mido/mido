@@ -9,7 +9,7 @@ and call:
 
 or set shell variable $MIDO_BACKEND to mido.backends.rtmidi_python
 
-Todo:
+TODO:
 
 * add support for APIs.
 
@@ -19,7 +19,7 @@ Todo:
 """
 from __future__ import absolute_import
 import rtmidi_python as rtmidi
-# Todo: change this to a relative import if the backend is included in
+# TODO: change this to a relative import if the backend is included in
 # the package.
 from ..ports import BaseInput, BaseOutput
 from ..py2 import PY2
@@ -29,6 +29,7 @@ if PY2:
 else:
     import queue
 
+
 def get_devices(api=None, **kwargs):
     devices = []
 
@@ -36,13 +37,13 @@ def get_devices(api=None, **kwargs):
     output_names = set(rtmidi.MidiOut().ports)
 
     for name in sorted(input_names | output_names):
-        devices.append({
-                'name': name,
-                'is_input': name in input_names,
-                'is_output': name in output_names,
-                })
+        devices.append({'name': name,
+                        'is_input': name in input_names,
+                        'is_output': name in output_names,
+                        })
 
     return devices
+
 
 class PortCommon(object):
     def _open(self, virtual=False, **kwargs):
@@ -52,7 +53,7 @@ class PortCommon(object):
 
         # rtapi = _get_api_id(api)
         opening_input = hasattr(self, 'receive')
-        
+
         if opening_input:
             self._rt = rtmidi.MidiIn()
             self._rt.ignore_types(False, False, True)
@@ -69,7 +70,7 @@ class PortCommon(object):
             self._rt.open_virtual_port(self.name)
         else:
             if self.name is None:
-                # Todo: this could fail if list is empty.
+                # TODO: this could fail if list is empty.
                 # In RtMidi, the default port is the first port.
                 try:
                     self.name = ports[0]
@@ -114,6 +115,7 @@ class PortCommon(object):
         self._rt.close_port()
         del self._rt  # Virtual ports are closed when this is deleted.
 
+
 class Input(PortCommon, BaseInput):
     def _receive(self, block=True):
         # Since there is no blocking read in RtMidi, the block
@@ -126,6 +128,7 @@ class Input(PortCommon, BaseInput):
                 break
             else:
                 self._parser.feed(message_data)
+
 
 class Output(PortCommon, BaseOutput):
     def _send(self, message):

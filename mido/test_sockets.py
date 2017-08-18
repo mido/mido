@@ -1,14 +1,39 @@
-from pytest import raises
+import pytest
 from .sockets import parse_address
 
-def test_parse_address():
-    assert parse_address(':8080') == ('', 8080)
-    assert parse_address('localhost:8080') == ('localhost', 8080)
 
-    with raises(ValueError): parse_address(':to_many_colons:8080')
-    with raises(ValueError): parse_address('only_hostname')
-    with raises(ValueError): parse_address('')
-    with raises(ValueError): parse_address(':')
-    with raises(ValueError): parse_address(':shoe')
-    with raises(ValueError): parse_address(':0')
-    with raises(ValueError): parse_address(':65536')  # Out of range.
+class TestParseAddress:
+    @pytest.mark.parametrize('input_str, expected',
+                             [(':8080', ('', 8080)),
+                              ('localhost:8080', ('localhost', 8080))
+                              ])
+    def test_parse_address_normal(self, input_str, expected):
+        assert parse_address(input_str) == expected
+
+    def test_too_many_colons_raises_value_error(self):
+        with pytest.raises(ValueError):
+            parse_address(':to_many_colons:8080')
+
+    def test_only_hostname_raises_value_error(self):
+        with pytest.raises(ValueError):
+            parse_address('only_hostname')
+
+    def test_empty_string_raises_value_error(self):
+        with pytest.raises(ValueError):
+            parse_address('')
+
+    def test_only_colon_raises_value_error(self):
+        with pytest.raises(ValueError):
+            parse_address(':')
+
+    def test_non_number_port_raises_value_error(self):
+        with pytest.raises(ValueError):
+            parse_address(':shoe')
+
+    def test_port_zero_raises_value_error(self):
+        with pytest.raises(ValueError):
+            parse_address(':0')
+
+    def test_out_of_range_port_raises_value_error(self):
+        with pytest.raises(ValueError):
+            parse_address(':65536')

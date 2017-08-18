@@ -3,11 +3,12 @@ from .. import ports
 from ..parser import Parser
 from ..py2 import PY2
 
+from threading import RLock
+
 if PY2:
     import Queue as queue
 else:
     import queue
-from threading import RLock
 
 
 class ParserQueue:
@@ -57,7 +58,7 @@ class ParserQueue:
                 time.sleep(sleep_time)
                 continue
 
-    # Todo: add timeout?
+    # TODO: add timeout?
     def get(self):
         if PY2:
             return self._get_py2()

@@ -3,7 +3,7 @@
 Very experimental backend using amidi to access the ALSA rawmidi
 interface.
 
-Todo:
+TODO:
 
 * use parser instead of from_hex()?
 * default port name
@@ -23,6 +23,7 @@ IO  hw:2,0,0  nanoKONTROL2 MIDI 1
 IO  hw:2,0,0  MPK mini MIDI 1
 """
 
+
 def get_devices():
     devices = []
 
@@ -30,12 +31,11 @@ def get_devices():
     for line in lines[1:]:
         mode, device, name = line.strip().split(None, 2)
 
-        devices.append({
-            'name': name.strip(),
-            'device': device,
-            'is_input': 'I' in mode,
-            'is_output': 'O' in mode,
-            })
+        devices.append({'name': name.strip(),
+                        'device': device,
+                        'is_input': 'I' in mode,
+                        'is_output': 'O' in mode,
+                        })
 
     return devices
 
@@ -53,15 +53,15 @@ class Input(PortMethods, InputMethods):
         self.name = name
         self.closed = False
 
-        self._proc = None   
+        self._proc = None
         self._poller = select.poll()
         self._lock = threading.RLock()
-        
+
         dev = _get_device(self.name, 'is_input')
         self._proc = subprocess.Popen(['amidi', '-d',
                                        '-p', dev['device']],
                                       stdout=subprocess.PIPE)
-        
+
         self._poller.register(self._proc.stdout, select.POLLIN)
 
     def _read_message(self):
@@ -72,8 +72,7 @@ class Input(PortMethods, InputMethods):
             # The first line is sometimes blank.
             return None
 
-
-    def receive(self, block=True): 
+    def receive(self, block=True):
         if not block:
             return self.poll()
 
@@ -90,7 +89,7 @@ class Input(PortMethods, InputMethods):
             while self._poller.poll(0):
                 msg = self._read_message()
                 if msg is not None:
-                    return msg 
+                    return msg
 
     def close(self):
         if not self.closed:

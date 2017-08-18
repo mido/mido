@@ -1,11 +1,11 @@
 """Definitions and lookup tables for MIDI messages.
 
-Todo:
+TODO:
 
     * add lookup functions for messages definitions by type and status
       byte.
 """
-# Todo: these include undefined messages.
+# TODO: these include undefined messages.
 CHANNEL_MESSAGES = set(range(0x80, 0xf0))
 COMMON_MESSAGES = set(range(0xf0, 0xf8))
 REALTIME_MESSAGES = set(range(0xf8, 0x100))
@@ -40,7 +40,7 @@ SPECS = [
     _defmsg(0xc0, 'program_change', ('channel', 'program',), 2),
     _defmsg(0xd0, 'aftertouch', ('channel', 'value',), 2),
     _defmsg(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
-    
+
     # System common messages.
     # 0xf4 and 0xf5 are undefined.
     _defmsg(0xf0, 'sysex', ('data',), float('inf')),
@@ -48,7 +48,7 @@ SPECS = [
     _defmsg(0xf2, 'songpos', ('pos',), 3),
     _defmsg(0xf3, 'song_select', ('song',), 2),
     _defmsg(0xf6, 'tune_request', (), 1),
-    
+
     # System real time messages.
     # 0xf9 and 0xfd are undefined.
     _defmsg(0xf8, 'clock', (), 1),
@@ -76,7 +76,7 @@ def _make_spec_lookups(specs):
                 by_status[status_byte | channel] = spec
         else:
             by_status[status_byte] = spec
-                
+
     lookup.update(by_status)
     lookup.update(by_type)
 
@@ -105,7 +105,7 @@ DEFAULT_VALUES = {
 }
 
 
-# Todo: should this be in decode.py?
+# TODO: should this be in decode.py?
 
 def make_msgdict(type_, overrides):
     """Return a new message.

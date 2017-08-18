@@ -2,6 +2,7 @@ from pytest import raises
 from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS
 from .messages import Message, SysexData
 
+
 def test_msg_time_equality():
     # Since 1.1.18 time is included in comparison.
     assert Message('clock', time=0) == Message('clock', time=0)
@@ -94,10 +95,9 @@ def test_dict_sysex_data():
     msg = Message('sysex', data=(1, 2, 3))
     data = msg.dict()
     assert data == {'type': 'sysex', 'data': [1, 2, 3], 'time': 0}
-    assert type(data['data']) == type([])
+    assert isinstance(data['data'], list)
 
 
 def test_from_hex_sysex_data_type():
     msg = Message.from_hex('F0 01 02 03 F7')
     assert isinstance(msg.data, SysexData)
-

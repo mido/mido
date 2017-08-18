@@ -2,6 +2,7 @@ import sys
 
 PY2 = (sys.version_info.major == 2)
 
+
 def convert_py2_bytes(data):
     """Convert bytes object to bytearray in Python 2.
 

@@ -21,5 +21,4 @@ def test_encode_sysex():
 def test_encode_long_int():
     # Make sure Python 2 doesn't stick an 'L' at the end of a long
     # integer.
-    assert not 'L' in str(Message('clock', time=1231421984983298432948))
-
+    assert 'L' not in str(Message('clock', time=1231421984983298432948))

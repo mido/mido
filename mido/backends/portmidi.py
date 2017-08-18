@@ -29,18 +29,19 @@ def _check_error(return_value):
     The exception will be raised with the error message from PortMidi.
     """
     if return_value == pm.pmHostError:
-        raise IOError('PortMidi Host Error: {}'.format(pm.get_host_error_message()))
+        raise IOError('PortMidi Host Error: '
+                      '{}'.format(pm.get_host_error_message()))
     elif return_value < 0:
         raise IOError(pm.lib.Pm_GetErrorText(return_value))
-    
-    
+
+
 def _get_device(device_id):
     info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
     if not info_pointer:
         raise IOError('PortMidi device with id={} not found'.format(
             device_id))
     info = info_pointer.contents
-     
+
     return {
         'id': device_id,
         'interface': info.interface.decode('utf-8'),
@@ -56,11 +57,10 @@ def _get_default_device(get_input):
         device_id = pm.lib.Pm_GetDefaultInputDeviceID()
     else:
         device_id = pm.lib.Pm_GetDefaultOutputDeviceID()
-        
 
     if device_id < 0:
         raise IOError('no default port found')
-    
+
     return _get_device(device_id)
 
 
@@ -118,7 +118,7 @@ class PortCommon(object):
                 devtype = 'output'
             raise IOError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
-        
+
         if self.is_input:
             _check_error(pm.lib.Pm_OpenInput(
                          pm.byref(self._stream),
@@ -142,7 +142,7 @@ class PortCommon(object):
         # it to be False now (or it will just return right away.)
         self.closed = False
         _state['port_count'] += 1
- 
+
         if self.is_input:
             self._thread = None
             self.callback = kwargs.get('callback')
@@ -174,7 +174,7 @@ class Input(PortCommon, BaseInput):
 
         # Read available data from the stream and feed it to the parser.
         while pm.lib.Pm_Poll(self._stream):
-            # Todo: this should be allocated once
+            # TODO: this should be allocated once
             # Read one message. Should return 1.
             # If num_events < 0, an error occured.
             length = 1  # Buffer length
@@ -187,7 +187,7 @@ class Input(PortCommon, BaseInput):
 
             # The bytes of the message are stored like this:
             #    0x00201090 -> (0x90, 0x10, 0x10)
-            # (Todo: not sure if this is correct.)
+            # (TODO: not sure if this is correct.)
             packed_message = event.message & 0xffffffff
 
             for i in range(4):
@@ -225,7 +225,7 @@ class Input(PortCommon, BaseInput):
             self._thread = None
 
     def _thread_main(self):
-        # Todo: exceptions do not propagate to the main thread, so if
+        # TODO: exceptions do not propagate to the main thread, so if
         # something goes wrong here there is no way to detect it, and
         # there is no warning. (An unknown variable, for example, will
         # just make the thread stop silently.)

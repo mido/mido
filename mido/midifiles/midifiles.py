@@ -405,8 +405,8 @@ class MidiFile(object):
     def save(self, filename=None, file=None):
         """Save to a file.
 
-        If file is passed the data will be saved to that file. This is typically
-        an in-memory file or and already open file like sys.stdout.
+        If file is passed the data will be saved to that file. This is
+        typically an in-memory file or and already open file like sys.stdout.
 
         If filename is passed the data will be saved to that file.
 

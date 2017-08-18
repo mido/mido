@@ -3,6 +3,7 @@ from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
                     MIN_PITCHWHEEL, MAX_PITCHWHEEL)
 from ..py2 import convert_py2_bytes
 
+
 def check_type(type_):
     if type_ not in SPEC_BY_TYPE:
         raise ValueError('invalid message type {!r}'.format(type_))

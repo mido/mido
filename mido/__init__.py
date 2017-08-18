@@ -43,12 +43,12 @@ Parsing MIDI streams:
     parse_all(bytes) -- parse all messages bytes
     Parser -- MIDI parser class
 
-Parsing objects serialized with str(message):                                  
+Parsing objects serialized with str(message):
 
     parse_string(string) -- parse a string containing a message
     parse_string_stream(iterable) -- parse strings from an iterable and
                                      generate messages
- 
+
 Sub modules:
 
     ports -- useful tools for working with ports
@@ -111,6 +111,7 @@ __license__ = 'MIT'
 # Prevent splat import.
 __all__ = []
 
+
 def set_backend(name=None, load=False):
     """Set current backend.
 
@@ -134,6 +135,7 @@ def set_backend(name=None, load=False):
     for name in dir(backend):
         if name.split('_')[0] in ['open', 'get']:
             glob[name] = getattr(backend, name)
+
 
 set_backend()
 

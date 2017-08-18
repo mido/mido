@@ -1,5 +1,6 @@
 from .units import tempo2bpm, bpm2tempo, tick2second, second2tick
 
+
 def test_tempo2bpm_bpm2tempo():
     for bpm, tempo in [
             (20, 3000000),
@@ -11,7 +12,7 @@ def test_tempo2bpm_bpm2tempo():
         assert tempo == bpm2tempo(bpm)
 
 
-# Todo: these tests could be improved with better test values such as
+# TODO: these tests could be improved with better test values such as
 # edge cases.
 
 def test_tick2second():
@@ -22,4 +23,3 @@ def test_tick2second():
 def test_second2tick():
     assert second2tick(0.005, ticks_per_beat=100, tempo=500000) == 1
     assert second2tick(0.002, ticks_per_beat=100, tempo=100000) == 2
-

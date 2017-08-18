@@ -4,6 +4,7 @@ from .. import ports
 
 DEFAULT_BACKEND = 'mido.backends.rtmidi'
 
+
 class Backend(object):
     """
     Wrapper for backend module.
@@ -26,7 +27,7 @@ class Backend(object):
             self.name, self.api = self.name.split('/', 1)
         else:
             self.api = None
-            
+
         if load:
             self.load()
 
@@ -50,7 +51,7 @@ class Backend(object):
         """Load the module.
 
         Does nothing if the module is already loaded.
-        
+
         This function will be called if you access the 'module'
         property."""
         if not self.loaded:
@@ -76,7 +77,7 @@ class Backend(object):
         virtual=False
           Passing True opens a new port that other applications can
           connect to. Raises IOError if not supported by the backend.
-        
+
         callback=None
           A callback function to be called when a new message arrives.
           The function should take one argument (the message).
@@ -91,14 +92,14 @@ class Backend(object):
 
     def open_output(self, name=None, virtual=False, autoreset=False, **kwargs):
         """Open an output port.
-        
+
         If the environment variable MIDO_DEFAULT_OUTPUT is set,
         if will override the default port.
 
         virtual=False
           Passing True opens a new port that other applications can
           connect to. Raises IOError if not supported by the backend.
-        
+
         autoreset=False
           Automatically send all_notes_off and reset_all_controllers
           on all channels. This is the same as calling `port.reset()`.
@@ -120,7 +121,7 @@ class Backend(object):
         virtual=False
           Passing True opens a new port that other applications can
           connect to. Raises IOError if not supported by the backend.
-        
+
         callback=None
           A callback function to be called when a new message arrives.
           The function should take one argument (the message).
