@@ -76,8 +76,7 @@ def test_eof_in_track():
 
 
 def test_invalid_data_byte_no_clipping():
-    # TODO: should this raise IOError?
-    with raises(IOError):
+    with raises(ValueError):
         read_file(HEADER_ONE_TRACK + """
         4d 54 72 6b  # MTrk
         00 00 00 04  # Chunk size

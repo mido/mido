@@ -130,10 +130,6 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
 
     if clip:
         data_bytes = [byte if byte < 127 else 127 for byte in data_bytes]
-    else:
-        for byte in data_bytes:
-            if byte > 127:
-                raise IOError('data byte must be in range 0..127')
 
     return Message.from_bytes([status_byte] + data_bytes, time=delta)
 
