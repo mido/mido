@@ -198,6 +198,10 @@ Time signature of:
 
 3/8 : MetaMessage('time_signature', numerator=3, denominator=8)
 
+.. note:: From 1.2.9 time signature message have the correct default
+          value of 4/4. In earlier versions the default value was 2/4
+          due to a typo in the code.
+
 
 key_signature (0x59)
 ^^^^^^^^^^^^^^^^^^^^

@@ -19,6 +19,10 @@ Release History
   ports with PortMidi backend. (Repored by Predrag Radovic, issue
   #108, fix by Juan Antonio Aldea, pull request #109.)
 
+* bugfix: time signature meta messages had wrong default value of
+  2/4. The default value is now 4/4. (Fix by Sebastian Böck, pull
+  request #104.)
+
 
 1.2.8 (2017-06-30)
 ^^^^^^^^^^^^^^^^^^
