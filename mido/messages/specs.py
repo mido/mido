@@ -17,6 +17,11 @@ SYSEX_END = 0xf7
 MIN_PITCHWHEEL = -8192
 MAX_PITCHWHEEL = 8191
 
+# Pitchwheel range when stored by a non-compliant device using a 16 bit signed
+# integer
+MIN_PITCHWHEEL_LARGE = -32768
+MAX_PITCHWHEEL_LARGE = 32767
+
 # Song pos is a 14 bit unsigned integer
 MIN_SONGPOS = 0
 MAX_SONGPOS = 16383

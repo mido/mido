@@ -1,7 +1,19 @@
 from numbers import Integral, Real
 from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
-                    MIN_PITCHWHEEL, MAX_PITCHWHEEL)
+                    MIN_PITCHWHEEL, MAX_PITCHWHEEL,
+                    MIN_PITCHWHEEL_LARGE, MAX_PITCHWHEEL_LARGE)
 from ..py2 import convert_py2_bytes
+
+
+# If set to False, data bytes must be in the range 0..127.
+# If set to True, data bytes must by in the range 0..255.
+ALLOW_DATA_LARGE_BYTES = False
+
+# If set to to False, pitch wheel range must be between MIN_PITCHWHEEL and
+# MAX_PITCHWHEEL
+# If set to to True, pitch wheel range must be between MIN_PITCHWHEEL_LARGE and
+# MAX_PITCHWHEEL_LARGE
+ALLOW_LARGE_PITCHWHEEL_RANGE = False
 
 def check_type(type_):
     if type_ not in SPEC_BY_TYPE:
@@ -25,9 +37,18 @@ def check_pos(pos):
 
 def check_pitch(pitch):
     if not isinstance(pitch, Integral):
-        raise TypeError('pichwheel value must be int')
-    elif not MIN_PITCHWHEEL <= pitch <= MAX_PITCHWHEEL:
+        raise TypeError('pitchwheel value must be int')
+    elif ALLOW_LARGE_PITCHWHEEL_RANGE and (
+        not MIN_PITCHWHEEL_LARGE <= pitch <= MAX_PITCHWHEEL_LARGE):
         raise ValueError('pitchwheel value must be in range {}..{}'.format(
+                         MIN_PITCHWHEEL_LARGE, MAX_PITCHWHEEL_LARGE))
+    elif not ALLOW_LARGE_PITCHWHEEL_RANGE and (
+        not MIN_PITCHWHEEL <= pitch <= MAX_PITCHWHEEL):
+        raise ValueError(
+            'pitchwheel value must be in range {}..{}. Other values violate '
+            'the MIDI spec. However, if this is intentional, you may override '
+            'this check by setting '
+            'mido.messages.checks.ALLOW_LARGE_PITCHWHEEL_RANGE to True.'.format(
                          MIN_PITCHWHEEL, MAX_PITCHWHEEL))
 
 
@@ -53,8 +74,14 @@ def check_frame_value(value):
 def check_data_byte(value):
     if not isinstance(value, Integral):
         raise TypeError('data byte must be int')
-    elif not 0 <= value <= 127:
-        raise ValueError('data byte must be in range 0..127')
+    elif ALLOW_DATA_LARGE_BYTES and not 0 <= value <= 255:
+        raise ValueError('data byte must be in range 0..255')
+    elif not ALLOW_DATA_LARGE_BYTES and not 0 <= value <= 127:
+        raise ValueError(
+            'data byte must be in range 0..127. Values > 127 violate the MIDI '
+            'spec. However, if this is intentional, you may override this '
+            'check by setting mido.messages.checks.ALLOW_DATA_LARGE_BYTES to '
+            'True.')
 
 
 def check_time(time):
@@ -67,7 +94,6 @@ _CHECKS = {
     'data': check_data,
     'channel': check_channel,
     'control': check_data_byte,
-    'data': check_data,
     'frame_type': check_frame_type,
     'frame_value': check_frame_value,
     'note': check_data_byte,
