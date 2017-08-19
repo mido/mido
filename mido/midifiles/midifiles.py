@@ -274,17 +274,6 @@ def write_track(outfile, track):
     write_chunk(outfile, b'MTrk', data)
 
 
-def get_seconds_per_tick(tempo, ticks_per_beat):
-    # Tempo is given in microseconds per beat (default 500000).
-    # At this tempo there are (500000 / 1000000) == 0.5 seconds
-    # per beat. At the default resolution of 480 ticks per beat
-    # this is:
-    #
-    #    (500000 / 1000000) / 480 == 0.5 / 480 == 0.0010417
-    #
-    return (tempo / 1000000.0) / ticks_per_beat
-
-
 class MidiFile(object):
     def __init__(self, filename=None, file=None,
                  type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT, unit='seconds',
