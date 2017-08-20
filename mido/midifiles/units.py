@@ -17,7 +17,7 @@ def second2tick(second, ticks_per_beat, tempo):
     note) and tempo (microseconds per beat).
     """
     scale = tempo * 1e-6 / ticks_per_beat
-    return second / scale
+    return int(round(second / scale))
 
 
 def bpm2tempo(bpm, time_signature=(4, 4)):
