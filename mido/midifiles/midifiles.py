@@ -27,13 +27,9 @@ from .meta import (MetaMessage, build_meta_message, meta_charset,
                    encode_variable_int)
 
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
-from .units import tick2beat, tick2second
+from .units import (DEFAULT_TEMPO, DEFAULT_TICKS_PER_BEAT,
+                    DEFAULT_TIME_SIGNATURE, tick2beat, tick2second)
 
-# The default tempo is 120 BPM.
-# (500000 microseconds per beat (quarter note).)
-DEFAULT_TEMPO = 500000
-DEFAULT_TICKS_PER_BEAT = 480
-DEFAULT_TIME_SIGNATURE = (4, 4)
 
 # Maximum message length to attempt to read.
 MAX_MESSAGE_LENGTH = 1000000

@@ -1,3 +1,8 @@
+DEFAULT_TEMPO = 500000  # microseconds per quarter note (i.e. 120 bpm in 4/4)
+DEFAULT_TICKS_PER_BEAT = 480  # ticks per quarter note
+DEFAULT_TIME_SIGNATURE = (4, 4)
+
+
 def tick2second(tick, ticks_per_beat, tempo):
     """Convert absolute time in ticks to seconds.
 
