@@ -1,4 +1,4 @@
-from mido.midifiles.units import tempo2bpm, bpm2tempo, tick2second, second2tick
+from mido.midifiles.units import *
 
 
 def test_tempo2bpm():
@@ -66,3 +66,43 @@ def test_second2tick():
     #       The result produced by Python 3 seems the way to go
     assert second2tick(0.0015, ticks_per_beat=100, tempo=100000) == 2
     assert second2tick(0.0025, ticks_per_beat=100, tempo=100000) == 2
+
+
+def test_tick2beat():
+    # default 4/4 time signature
+    assert tick2beat(100, ticks_per_beat=100) == 1
+    assert tick2beat(200, ticks_per_beat=100) == 2
+    # default tempo and ticks (480 per quarter note)
+    assert tick2beat(480, ticks_per_beat=480) == 1
+    # 2/4 time signature
+    assert tick2beat(480, ticks_per_beat=480, time_signature=(2, 4)) == 1
+    # 2/2 time signature: 960 ticks per beat (half note = 2 quarter notes)
+    assert tick2beat(960, ticks_per_beat=480, time_signature=(2, 2)) == 1
+    # 3/8 time signature: 240 ticks per beat (eighth note = 0.5 quarter note)
+    assert tick2beat(240, ticks_per_beat=480, time_signature=(3, 8)) == 1
+
+
+def test_beat2tick():
+    # default 4/4 time signature
+    assert beat2tick(1, ticks_per_beat=100) == 100
+    assert beat2tick(1.5, ticks_per_beat=100) == 150
+    assert beat2tick(0.01, ticks_per_beat=100) == 1
+    # division rounds to the closest even integer
+    assert beat2tick(0.004, ticks_per_beat=100) == 0
+    assert beat2tick(0.005, ticks_per_beat=100) == 1
+    # TODO: Python 2 and 3 rounds differently, find a solution?
+    #       The result produced by Python 3 seems the way to go
+    assert beat2tick(0.015, ticks_per_beat=100) == 2
+    assert beat2tick(0.025, ticks_per_beat=100) == 2
+    # x/4 time signature: beat = quarter note: 480 ticks / beat
+    assert beat2tick(1, ticks_per_beat=480) == 480
+    assert beat2tick(1, ticks_per_beat=480, time_signature=(3, 4)) == 480
+    assert beat2tick(1, ticks_per_beat=300, time_signature=(3, 4)) == 300
+    # x/2 time signature: beat = half note (2 quarter notes): 960 ticks / beat
+    assert beat2tick(1, ticks_per_beat=480, time_signature=(2, 2)) == 960
+    assert beat2tick(1, ticks_per_beat=480, time_signature=(3, 2)) == 960
+    assert beat2tick(1, ticks_per_beat=300, time_signature=(3, 2)) == 600
+    # x/8 time signature: beat = eighth note (0.5 quarter n.): 240 ticks / beat
+    assert beat2tick(1, ticks_per_beat=480, time_signature=(8, 8)) == 240
+    assert beat2tick(1, ticks_per_beat=480, time_signature=(6, 8)) == 240
+    assert beat2tick(1, ticks_per_beat=300, time_signature=(6, 8)) == 150

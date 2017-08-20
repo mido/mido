@@ -40,3 +40,22 @@ def tempo2bpm(tempo, time_signature=(4, 4)):
     returned tempo depends on the time signature.
     """
     return 60 * 1e6 / tempo * time_signature[1] / 4.
+
+
+def tick2beat(tick, ticks_per_beat, time_signature=(4, 4)):
+    """Convert ticks to beats.
+
+    Returns beats for a chosen MIDI file time resolution (ticks/pulses per
+    quarter note, also called PPQN) and time signature.
+    """
+    return tick / (4. * ticks_per_beat / time_signature[1])
+
+
+def beat2tick(beat, ticks_per_beat, time_signature=(4, 4)):
+    """Convert beats to ticks.
+
+    Returns ticks for a chosen MIDI file time resolution (ticks/pulses per
+    quarter note, also called PPQN) and time signature. Normal rounding
+    applies.
+    """
+    return int(round(beat * 4. * ticks_per_beat / time_signature[1]))
