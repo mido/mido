@@ -52,10 +52,17 @@ def test_bpm2tempo():
 # TODO: these tests could be improved with better test values such as
 # edge cases.
 def test_tick2second():
+    # default tempo (500000 ms per quarter note)
     assert tick2second(1, ticks_per_beat=100, tempo=500000) == 0.005
     assert tick2second(2, ticks_per_beat=100, tempo=100000) == 0.002
 
 
 def test_second2tick():
+    # default tempo (500000 ms per quarter note)
+    assert second2tick(0.001, ticks_per_beat=100, tempo=500000) == 0
+    assert second2tick(0.004, ticks_per_beat=100, tempo=500000) == 1
     assert second2tick(0.005, ticks_per_beat=100, tempo=500000) == 1
-    assert second2tick(0.002, ticks_per_beat=100, tempo=100000) == 2
+    # TODO: Python 2 and 3 rounds differently, find a solution?
+    #       The result produced by Python 3 seems the way to go
+    assert second2tick(0.0015, ticks_per_beat=100, tempo=100000) == 2
+    assert second2tick(0.0025, ticks_per_beat=100, tempo=100000) == 2
