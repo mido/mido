@@ -20,27 +20,23 @@ def second2tick(second, ticks_per_beat, tempo):
     return second / scale
 
 
-def bpm2tempo(bpm):
-    """Convert beats per minute to MIDI file tempo.
+def bpm2tempo(bpm, time_signature=(4, 4)):
+    """Convert BPM (beats per minute) to MIDI file tempo (microseconds per
+    quarter note).
 
-    Returns microseconds per beat as an integer::
-
-        240 => 250000
-        120 => 500000
-        60 => 1000000
+    Depending on the chosen time signature a bar contains a different number of
+    beats. These beats are multiples/fractions of a quarter note, thus the
+    returned BPM depend on the time signature.
     """
-    # One minute is 60 million microseconds.
-    return int(round((60 * 1000000) / bpm))
+    return int(round(60 * 1e6 / bpm * time_signature[1] / 4.))
 
 
-def tempo2bpm(tempo):
-    """Convert MIDI file tempo to BPM.
+def tempo2bpm(tempo, time_signature=(4, 4)):
+    """Convert MIDI file tempo (microseconds per quarter note) to BPM (beats
+    per minute).
 
-    Returns BPM as an integer or float::
-
-        250000 => 240
-        500000 => 120
-        1000000 => 60
+    Depending on the chosen time signature a bar contains a different number of
+    beats. These beats are multiples/fractions of a quarter note, thus the
+    returned tempo depends on the time signature.
     """
-    # One minute is 60 million microseconds.
-    return (60 * 1000000) / tempo
+    return 60 * 1e6 / tempo * time_signature[1] / 4.
