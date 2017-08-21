@@ -11,6 +11,7 @@ TODO:
      - expose _key_signature_encode/decode?
 """
 from __future__ import print_function, division
+from bidict import bidict
 import math
 import struct
 from numbers import Integral
@@ -21,51 +22,52 @@ from ..py2 import PY2
 _charset = 'latin1'
 
 
-def reverse_table(table):
-    """Return value: key for dictionary."""
-    return {value: key for (key, value) in table.items()}
+class KeySignatureError(Exception):
+    """ Raised when key cannot be converted from key/mode to key letter """
+    pass
 
 
-_key_signature_decode = {(-7, 0): 'Cb',
-                         (-6, 0): 'Gb',
-                         (-5, 0): 'Db',
-                         (-4, 0): 'Ab',
-                         (-3, 0): 'Eb',
-                         (-2, 0): 'Bb',
-                         (-1, 0): 'F',
-                         (0, 0): 'C',
-                         (1, 0): 'G',
-                         (2, 0): 'D',
-                         (3, 0): 'A',
-                         (4, 0): 'E',
-                         (5, 0): 'B',
-                         (6, 0): 'F#',
-                         (7, 0): 'C#',
-                         (-7, 1): 'Abm',
-                         (-6, 1): 'Ebm',
-                         (-5, 1): 'Bbm',
-                         (-4, 1): 'Fm',
-                         (-3, 1): 'Cm',
-                         (-2, 1): 'Gm',
-                         (-1, 1): 'Dm',
-                         (0, 1): 'Am',
-                         (1, 1): 'Em',
-                         (2, 1): 'Bm',
-                         (3, 1): 'F#m',
-                         (4, 1): 'C#m',
-                         (5, 1): 'G#m',
-                         (6, 1): 'D#m',
-                         (7, 1): 'A#m',
-                         }
+_key_signature_decode = bidict({(-7, 0): 'Cb',
+                               (-6, 0): 'Gb',
+                               (-5, 0): 'Db',
+                               (-4, 0): 'Ab',
+                               (-3, 0): 'Eb',
+                               (-2, 0): 'Bb',
+                               (-1, 0): 'F',
+                               (0, 0): 'C',
+                               (1, 0): 'G',
+                               (2, 0): 'D',
+                               (3, 0): 'A',
+                               (4, 0): 'E',
+                               (5, 0): 'B',
+                               (6, 0): 'F#',
+                               (7, 0): 'C#',
+                               (-7, 1): 'Abm',
+                               (-6, 1): 'Ebm',
+                               (-5, 1): 'Bbm',
+                               (-4, 1): 'Fm',
+                               (-3, 1): 'Cm',
+                               (-2, 1): 'Gm',
+                               (-1, 1): 'Dm',
+                               (0, 1): 'Am',
+                               (1, 1): 'Em',
+                               (2, 1): 'Bm',
+                               (3, 1): 'F#m',
+                               (4, 1): 'C#m',
+                               (5, 1): 'G#m',
+                               (6, 1): 'D#m',
+                               (7, 1): 'A#m',
+                                })
 
-_key_signature_encode = reverse_table(_key_signature_decode)
+_key_signature_encode = _key_signature_decode.inv
 
-_smpte_framerate_decode = {0: 24,
-                           1: 25,
-                           2: 29.97,
-                           3: 30,
-                           }
-_smpte_framerate_encode = reverse_table(_smpte_framerate_decode)
+_smpte_framerate_decode = bidict({0: 24,
+                                  1: 25,
+                                  2: 29.97,
+                                  3: 30,
+                                  })
+
+_smpte_framerate_encode = _smpte_framerate_decode.inv
 
 
 def signed(to_type, n):
@@ -150,14 +152,14 @@ if PY2:
 else:
     _STRING_TYPE = str
 
+
 def check_str(value):
     if not isinstance(value, _STRING_TYPE):
         raise TypeError('attribute must a string')
 
 
 class MetaSpec(object):
-    def check(self, name, value):
-        pass
+    pass
 
 
 class MetaSpec_sequence_number(MetaSpec):
@@ -381,7 +383,16 @@ class MetaSpec_key_signature(MetaSpec):
     def decode(self, message, data):
         key = signed('byte', data[0])
         mode = data[1]
-        message.key = _key_signature_decode[(key, mode)]
+        try:
+            message.key = _key_signature_decode[(key, mode)]
+        except KeyError:
+            if key < 7:
+                msg = ('Could not decode key with {} '
+                       'flats and mode {}'.format(abs(key), mode))
+            else:
+                msg = ('Could not decode key with {} '
+                       'sharps and mode {}'.format(key, mode))
+            raise KeySignatureError(msg)
 
     def encode(self, message):
         key, mode = _key_signature_encode[message.key]
@@ -430,12 +441,12 @@ def _add_builtin_meta_specs():
 _add_builtin_meta_specs()
 
 
-def build_meta_message(type, data, delta=0):
+def build_meta_message(meta_type, data, delta=0):
     # TODO: handle unknown type.
     try:
-        spec = _META_SPECS[type]
+        spec = _META_SPECS[meta_type]
     except KeyError:
-        return UnknownMetaMessage(type, data)
+        return UnknownMetaMessage(meta_type, data)
     else:
         msg = MetaMessage(spec.type, time=delta)
 
