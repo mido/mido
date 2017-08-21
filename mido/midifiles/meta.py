@@ -147,7 +147,7 @@ def check_int(value, low, high):
 
 if PY2:
     def check_str(value):
-        if not isinstance(value, str) or not isinstance(value, unicode):
+        if not (isinstance(value, str) or isinstance(value, unicode)):
             raise TypeError('attribute must be unicode or string')
 else:
     def check_str(value):
