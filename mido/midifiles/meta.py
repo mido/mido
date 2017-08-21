@@ -146,13 +146,13 @@ def check_int(value, low, high):
 
 
 if PY2:
-    def check_str(value):
-        if not (isinstance(value, str) or isinstance(value, unicode)):
-            raise TypeError('attribute must be unicode or string')
+    _STRING_TYPE = (str, unicode)
 else:
-    def check_str(value):
-        if not isinstance(value, str):
-            raise TypeError('attribute must a string')
+    _STRING_TYPE = str
+
+def check_str(value):
+    if not isinstance(value, _STRING_TYPE):
+        raise TypeError('attribute must a string')
 
 
 class MetaSpec(object):
