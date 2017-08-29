@@ -1,4 +1,7 @@
-def tick2second(tick, ticks_per_beat, tempo):
+from .midifiles import DEFAULT_TEMPO, DEFAULT_TICKS_PER_BEAT
+
+
+def tick2second(tick, ticks_per_beat=DEFAULT_TICKS_PER_BEAT, tempo=DEFAULT_TEMPO):
     """Convert absolute time in ticks to seconds.
 
     Returns absolute time in seconds for a chosen MIDI file time
@@ -9,7 +12,7 @@ def tick2second(tick, ticks_per_beat, tempo):
     return tick * scale
 
 
-def second2tick(second, ticks_per_beat, tempo):
+def second2tick(second, ticks_per_beat=DEFAULT_TICKS_PER_BEAT, tempo=DEFAULT_TEMPO):
     """Convert absolute time in seconds to ticks.
 
     Returns absolute time in ticks for a chosen MIDI file time
