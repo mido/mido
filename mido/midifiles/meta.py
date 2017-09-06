@@ -152,7 +152,7 @@ else:
 
 def check_str(value):
     if not isinstance(value, _STRING_TYPE):
-        raise TypeError('attribute must a string')
+        raise TypeError('attribute must be a string')
 
 
 class MetaSpec(object):
