@@ -2,7 +2,7 @@ import io
 from pytest import raises
 from ..messages import Message
 from .midifiles import MidiFile
-from .meta import MetaMessage
+from .meta import MetaMessage, KeySignatureError
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # MThd
@@ -107,6 +107,26 @@ def test_meta_messages():
 
     assert track[0] == MetaMessage('track_name', name='Test')
     assert track[1] == MetaMessage('end_of_track')
+
+
+def test_meta_message_bad_key_sig_throws_key_signature_error_sharps():
+    with raises(KeySignatureError):
+        read_file(HEADER_ONE_TRACK + """
+            4d 54 72 6b  # MTrk
+            00 00 00 09  # Chunk size
+            00 ff 59 02 08 # Key Signature with 8 sharps
+            00 ff 2f 00  # end_of_track
+            """)
+
+
+def test_meta_message_bad_key_sig_throws_key_signature_error_flats():
+    with raises(KeySignatureError):
+        read_file(HEADER_ONE_TRACK + """
+            4d 54 72 6b  # MTrk
+            00 00 00 09  # Chunk size
+            00 ff 59 02 f8 # Key Signature with 8 flats
+            00 ff 2f 00  # end_of_track
+            """)
 
 
 def test_meta_messages_with_length_0():

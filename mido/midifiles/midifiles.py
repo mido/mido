@@ -163,10 +163,10 @@ def read_variable_int(infile):
 
 
 def read_meta_message(infile, delta):
-    type = read_byte(infile)
+    meta_type = read_byte(infile)
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
-    return build_meta_message(type, data, delta)
+    return build_meta_message(meta_type, data, delta)
 
 
 def read_track(infile, debug=False, clip=False):

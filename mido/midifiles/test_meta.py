@@ -1,12 +1,32 @@
-from pytest import raises
-from .meta import MetaMessage
+import pytest
+from .meta import MetaMessage, MetaSpec_key_signature, KeySignatureError
 
 
 def test_copy_invalid_argument():
-    with raises(ValueError):
+    with pytest.raises(ValueError):
         MetaMessage('track_name').copy(a=1)
 
 
 def test_copy_cant_override_type():
-    with raises(ValueError):
+    with pytest.raises(ValueError):
         MetaMessage('track_name').copy(type='end_of_track')
+
+
+class TestKeySignature:
+    @pytest.mark.parametrize('bad_key_sig', [[8, 0], [8, 1], [0, 2],
+                                             [9, 1], [255 - 7, 0]])
+    def test_bad_key_sig_throws_key_signature_error(self, bad_key_sig):
+        with pytest.raises(KeySignatureError):
+            MetaSpec_key_signature().decode(MetaMessage('key_signature'),
+                                            bad_key_sig)
+
+    @pytest.mark.parametrize('input_bytes,expect_sig', [([0, 0], 'C'),
+                                                        ([0, 1], 'Am'),
+                                                        ([255 - 6, 0], 'Cb'),
+                                                        ([255 - 6, 1], 'Abm'),
+                                                        ([7, 1], 'A#m')
+                                                        ])
+    def test_key_signature(self, input_bytes, expect_sig):
+        msg = MetaMessage('key_signature')
+        MetaSpec_key_signature().decode(msg, input_bytes)
+        assert msg.key == expect_sig
