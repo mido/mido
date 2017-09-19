@@ -1,4 +1,4 @@
-include README.rst LICENSE run_tests.py
+include README.rst LICENSE run_tests.py tox.ini
 recursive-include examples *.py
 recursive-include extras *.py
 include docs/_static/PLACEHOLDER

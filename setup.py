@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import sys
-import mido
 
 try:
     from setuptools import setup
@@ -16,14 +15,21 @@ elif sys.argv[-1] == "docs":
     os.system("sphinx-build docs docs/_build")
     sys.exit()
 
+version = '1.2.8'
+author = 'Ole Martin Bjorndalen'
+email = 'ombdalen@gmail.com'
+url = 'https://mido.readthedocs.io/'
+license = 'MIT'
+
 setup(
     name='mido',
-    version=mido.__version__,
+    version=version,
     description='MIDI Objects for Python',
     long_description=open('README.rst', 'rt').read(),
-    author=mido.__author__,
-    author_email=mido.__email__,
-    url=mido.__url__,
+    author=author,
+    author_email=email,
+    url=url,
+    license=license,
     package_data={'': ['LICENSE']},
     package_dir={'mido': 'mido'},
     packages=['mido', 'mido.backends'],
@@ -34,7 +40,15 @@ setup(
     include_package_data=True,
     install_requires=[
         'bidict>=0.13.1'],
-    license='MIT',
+    extras_require={
+        'dev': ['check-manifest>=0.35',
+                'flake8>=3.4.1',
+                'pytest>=3.2.2',
+                'sphinx>=1.6.3',
+                'tox>=2.8.2'
+                ],
+        'ports': ['python-rtmidi>=1.1.0']
+    },
     zip_safe=False,
     classifiers=(
         'Development Status :: 5 - Production/Stable',

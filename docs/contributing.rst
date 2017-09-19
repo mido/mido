@@ -2,20 +2,34 @@ Contributing
 ============
 
 
+Installing for developers
+-------------------------
+
+To install the dev dependencies, you can run the command::
+
+    pip install -e .[dev]
+
+This will install all needed dependencies for testing and documentation.
+
 Testing
 -------
 
 `pytest <http://doc.pytest.org/>`_ is used for unit testing. The tests
 are found in `mido/test_*.py`.
 
-If possible please run tests in both Python 2 and Python 3 before you
-commit code::
+Tests can be run using the command::
 
-    python2 -m pytest && python3 -m pytest
+    py.test
+
+Before submission, it is required that the tox tests run and pass. Run the tox tests using::
+
+    tox 
+
+It is required to test on at least 2.7 and 3.5 before submission. Any other passes are nice to have
 
 You can also set up a commit hook::
 
-    echo "python2 -m pytest && python3 -m pytest" >.git/hooks/pre-commit
+    echo "tox" >.git/hooks/pre-commit
     chmod +x .git/hooks/pre-commit
 
 This will run tests when you commit and cancel the commit if any tests
@@ -40,24 +54,6 @@ I am currently the only one with access to publishing on PyPI and
 readthedocs. This will hopefully change in the future.
 
 
-Test
-^^^^
-
-::
-
-    rm -rf docs/_build && ./setup.py docs
-    pytest2 && pytest3
-    check-manifest -v
-
-(`pip3 install check-manifest`)
-
-You can also test that the package installs by installing it in a
-virtualenv with `pip` and `easy_install` (Python 2 and 3) and
-importing it. This is a bit tedious. Perhaps there is a good way to
-automate it.
-
-
-
 Bump Version
 ^^^^^^^^^^^^
 
@@ -65,7 +61,7 @@ X.Y.Z is the version, for example 1.1.18 or 1.2.0.
 
 * update version and date in `docs/changes.rst`
 
-* update version in `mido/version.py`
+* update version in `setup.py`
 
 * `git commit -a -c "Bumped version to X.Y.Z."`
 
@@ -112,5 +108,3 @@ Update Read the Docs
 
 Log into readthedocs.org and build the latest documentation. This is
 set up to use the stable branch.
-
-

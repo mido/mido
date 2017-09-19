@@ -10,7 +10,7 @@ def test_check_time():
     if PY2:
         # long should be allowed. (It doesn't exist in Python3,
         # so there's no need to check for it here.)
-        check_time(long('9829389283L'))
+        check_time(long('9829389283L'))  # noqa: F821
 
     with raises(TypeError):
         check_time(None)
