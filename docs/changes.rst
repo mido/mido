@@ -23,6 +23,9 @@ Release History
   2/4. The default value is now 4/4. (Fix by Sebastian Böck, pull
   request #104.)
 
+* now using Tox for testing. (Implemented by Chris Apple, pull request
+  #123.)
+
 
 1.2.8 (2017-06-30)
 ^^^^^^^^^^^^^^^^^^
