@@ -148,7 +148,7 @@ def check_int(value, low, high):
 
 
 if PY2:
-    _STRING_TYPE = (str, unicode)
+    _STRING_TYPE = (str, unicode)  # noqa: F821
 else:
     _STRING_TYPE = str
 

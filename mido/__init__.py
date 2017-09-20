@@ -104,11 +104,6 @@ from .midifiles import (MidiFile, MidiTrack, merge_tracks,
 from .syx import read_syx_file, write_syx_file
 from .version import version_info, version as __version__
 
-__author__ = 'Ole Martin Bjorndalen'
-__email__ = 'ombdalen@gmail.com'
-__url__ = 'https://mido.readthedocs.io/'
-__license__ = 'MIT'
-
 # Prevent splat import.
 __all__ = []
 
