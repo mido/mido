@@ -8,8 +8,6 @@ It also works with MIDO_BACKEND, so you can do:
     >>> mido.get_output_names()
     ['The Printer Port']
 """
-
-import time
 import mido
 
 mido.set_backend('printer')

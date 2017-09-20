@@ -2,13 +2,14 @@
 A simple custom backend with an output port type which prints messages
 to stdout.
 """
-
 from mido.ports import BaseOutput
+
 
 def get_devices():
     return [{'name': 'The Print Port',
-            'is_input': False,
-            'is_output': True}]
+             'is_input': False,
+             'is_output': True}]
+
 
 class Output(BaseOutput):
     def _open(self, **kwargs):

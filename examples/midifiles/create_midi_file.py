@@ -4,7 +4,6 @@ Create a new MIDI file with some random notes.
 
 The file is saved to test.mid.
 """
-
 import random
 from mido import Message, MidiFile, MidiTrack
 
@@ -22,6 +21,5 @@ for i in range(4):
     note = random.choice(notes)
     track.append(Message('note_on', note=note, velocity=100, time=delta))
     track.append(Message('note_off', note=note, velocity=100, time=delta))
-    
-outfile.save('test.mid')
 
+outfile.save('test.mid')

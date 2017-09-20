@@ -7,7 +7,7 @@ from mido import ports
 
 try:
     import queue
-except Importerror:
+except ImportError:
     # Python 2.
     import Queue as queue
 
@@ -21,13 +21,13 @@ class QueuePort(ports.BaseIOPort):
 
     def _send(self, msg):
         self.queue.put(msg)
-   
+
     def _receive(self, block=True):
         try:
             return self.queue.get(block=block)
         except queue.Empty:
             return None
- 
+
     def _device_type(self):
         return 'Queue'
 

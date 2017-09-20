@@ -7,10 +7,10 @@ Usage:
 
     python example_input_filter.py portname [CHANNEL] [...]
 """
-
 from __future__ import print_function
 import sys
 import mido
+
 
 def accept_notes(port):
     """Only let note_on and note_off messages through."""

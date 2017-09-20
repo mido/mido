@@ -26,4 +26,3 @@ time.sleep(0.5)
 midiout.send_message(note_off)
 
 del midiout
-

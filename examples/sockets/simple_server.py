@@ -5,10 +5,7 @@ Simple server that just prints every message it receives.
     python simple_server.py localhost:8080
 """
 import sys
-import time
-import mido
 from mido import sockets
-from mido.ports import MultiPort
 
 if sys.argv[1:]:
     address = sys.argv[1]

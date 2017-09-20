@@ -2,7 +2,6 @@
 """
 Example of non-blocking reception from input port.
 """
-
 from __future__ import print_function
 import sys
 import time
@@ -15,7 +14,7 @@ else:
 
 try:
     with mido.open_input(portname) as port:
-        print('Using {}'.format(port))        
+        print('Using {}'.format(port))
         while True:
             for message in port.iter_pending():
                 print('Received {}'.format(message))

@@ -17,11 +17,9 @@ Other than that, it works exactly like the included python-rtmidi
 backend.
 """
 from __future__ import absolute_import
-import os
-import time
-import mido
 import rtmidi_python as rtmidi
 from mido.ports import BaseInput, BaseOutput
+
 
 def get_devices():
     devices = []
@@ -31,12 +29,13 @@ def get_devices():
 
     for name in sorted(input_names | output_names):
         devices.append({
-                'name' : name,
-                'is_input' : name in input_names,
-                'is_output' : name in output_names,
-                })
+            'name': name,
+            'is_input': name in input_names,
+            'is_output': name in output_names,
+        })
 
     return devices
+
 
 class PortCommon(object):
     def _open(self, virtual=False, callback=None):
@@ -85,6 +84,7 @@ class PortCommon(object):
     def _close(self):
         self._rt.close_port()
 
+
 class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
     def _receive(self, block=True):
@@ -97,7 +97,8 @@ class Input(PortCommon, BaseInput):
                 break
             else:
                 self._parser.feed(message)
-            
+
+
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
         self._rt.send_message(message.bytes())

@@ -1,6 +1,5 @@
 import sys
 import json
-import pprint
 import mido
 
 
@@ -14,8 +13,7 @@ def midifile_to_dict(mid):
         'tracks': tracks,
     }
 
+
 mid = mido.MidiFile(sys.argv[1])
 
 print(json.dumps(midifile_to_dict(mid), indent=2))
-
-
