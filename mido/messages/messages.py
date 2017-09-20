@@ -62,7 +62,7 @@ class BaseMessage(object):
     def __delattr__(self, name):
         raise AttributeError('attribute cannot be deleted')
 
-    def __setattr__(self, name):
+    def __setattr__(self, name, value):
         raise AttributeError('message is immutable')
 
     def __eq__(self, other):
