@@ -80,6 +80,13 @@ def test_copy_can_have_same_type():
     Message('start').copy(type='start')
 
 
+def test_copy_handles_data_generator():
+    msg1 = Message('sysex')
+    msg2 = msg1.copy(data=(i for i in range(3)))
+    assert msg2.data == (0, 1, 2)
+    assert isinstance(msg2.data, SysexData)
+
+
 def test_compare_with_nonmessage():
     with raises(TypeError):
         Message('clock') == 'not a message'

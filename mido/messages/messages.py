@@ -104,6 +104,9 @@ class Message(BaseMessage):
         if 'type' in overrides and overrides['type'] != self.type:
             raise ValueError('copy must be same message type')
 
+        if 'data' in overrides:
+            overrides['data'] = bytearray(overrides['data'])
+
         msgdict = vars(self).copy()
         msgdict.update(overrides)
         check_msgdict(msgdict)

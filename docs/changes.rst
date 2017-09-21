@@ -23,6 +23,14 @@ Release History
   2/4. The default value is now 4/4. (Fix by Sebastian Böck, pull
   request #104.)
 
+* bugfix: ``msg.copy()`` didn't handle generators for sysex
+  data. ``msg.copy(data=(i for i in range(3)))`` would give
+  ``data=()`` instead of ``data=(0,1,2)``.
+
+  (The code should be refactored so this is handled by the same
+  function everywhere, such as in ``__init__()``, in ``copy()`` and in
+  ``parser.feed()``.)
+
 * now using Tox for testing. (Implemented by Chris Apple, pull request
   #123.)
 
