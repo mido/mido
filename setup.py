@@ -12,6 +12,7 @@ if sys.argv[-1] == "publish":
     sys.exit()
 
 elif sys.argv[-1] == "docs":
+    os.system("pip install -e .")
     os.system("sphinx-build docs docs/_build")
     sys.exit()
 
