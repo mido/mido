@@ -61,7 +61,7 @@ X.Y.Z is the version, for example 1.1.18 or 1.2.0.
 
 * update version and date in `docs/changes.rst`
 
-* update version in `setup.py`
+* update version in `mido/__about__.py`
 
 * `git commit -a -c "Bumped version to X.Y.Z."`
 

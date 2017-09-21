@@ -1,5 +1,5 @@
 from collections import namedtuple
-import pkg_resources
+from .__about__ import __version__
 
 VersionInfo = namedtuple('VersionInfo',
                          ['major', 'minor', 'micro', 'releaselevel', 'serial'])
@@ -16,5 +16,4 @@ def _make_version_info(version):
     return VersionInfo(major, minor, micro, releaselevel, 0)
 
 
-version = pkg_resources.require("mido")[0].version
-version_info = _make_version_info(version)
+version_info = _make_version_info(__version__)

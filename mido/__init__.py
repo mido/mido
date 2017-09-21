@@ -102,7 +102,10 @@ from .midifiles import (MidiFile, MidiTrack, merge_tracks,
                         bpm2tempo, tempo2bpm, tick2second, second2tick,
                         KeySignatureError)
 from .syx import read_syx_file, write_syx_file
-from .version import version_info, version as __version__
+from .version import version_info
+from .__about__ import (__version__, __author__, __author_email__,
+                        __url__, __license__)
+
 # Prevent splat import.
 __all__ = []
 

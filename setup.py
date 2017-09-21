@@ -2,6 +2,23 @@
 import os
 import sys
 
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+
+def get_about():
+    about = {}
+
+    path = os.path.join(here, 'mido', '__about__.py')
+    with open(path, 'rt') as aboutfile:
+        exec(aboutfile.read(), about)
+
+    return about
+
+
+about = get_about()    
+
+
 try:
     from setuptools import setup
 except ImportError:
@@ -15,21 +32,16 @@ elif sys.argv[-1] == "docs":
     os.system("sphinx-build docs docs/_build")
     sys.exit()
 
-version = '1.2.8'
-author = 'Ole Martin Bjorndalen'
-email = 'ombdalen@gmail.com'
-url = 'https://mido.readthedocs.io/'
-license = 'MIT'
 
 setup(
     name='mido',
-    version=version,
+    version=about['__version__'],
     description='MIDI Objects for Python',
     long_description=open('README.rst', 'rt').read(),
-    author=author,
-    author_email=email,
-    url=url,
-    license=license,
+    author=about['__author__'],
+    author_email=about['__author_email__'],
+    url=about['__url__'],
+    license=about['__license__'],
     package_data={'': ['LICENSE']},
     package_dir={'mido': 'mido'},
     packages=['mido', 'mido.backends'],
