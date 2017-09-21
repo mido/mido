@@ -38,8 +38,7 @@ setup(
              'bin/mido-serve',
              'bin/mido-connect'],
     include_package_data=True,
-    install_requires=[
-        'bidict>=0.13.1'],
+    install_requires=[],
     extras_require={
         'dev': ['check-manifest>=0.35',
                 'flake8>=3.4.1',

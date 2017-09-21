@@ -103,7 +103,6 @@ from .midifiles import (MidiFile, MidiTrack, merge_tracks,
                         KeySignatureError)
 from .syx import read_syx_file, write_syx_file
 from .version import version_info, version as __version__
-
 # Prevent splat import.
 __all__ = []
 

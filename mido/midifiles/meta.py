@@ -11,7 +11,6 @@ TODO:
      - expose _key_signature_encode/decode?
 """
 from __future__ import print_function, division
-from bidict import bidict
 import math
 import struct
 from numbers import Integral
@@ -27,47 +26,52 @@ class KeySignatureError(Exception):
     pass
 
 
-_key_signature_decode = bidict({(-7, 0): 'Cb',
-                               (-6, 0): 'Gb',
-                               (-5, 0): 'Db',
-                               (-4, 0): 'Ab',
-                               (-3, 0): 'Eb',
-                               (-2, 0): 'Bb',
-                               (-1, 0): 'F',
-                               (0, 0): 'C',
-                               (1, 0): 'G',
-                               (2, 0): 'D',
-                               (3, 0): 'A',
-                               (4, 0): 'E',
-                               (5, 0): 'B',
-                               (6, 0): 'F#',
-                               (7, 0): 'C#',
-                               (-7, 1): 'Abm',
-                               (-6, 1): 'Ebm',
-                               (-5, 1): 'Bbm',
-                               (-4, 1): 'Fm',
-                               (-3, 1): 'Cm',
-                               (-2, 1): 'Gm',
-                               (-1, 1): 'Dm',
-                               (0, 1): 'Am',
-                               (1, 1): 'Em',
-                               (2, 1): 'Bm',
-                               (3, 1): 'F#m',
-                               (4, 1): 'C#m',
-                               (5, 1): 'G#m',
-                               (6, 1): 'D#m',
-                               (7, 1): 'A#m',
-                                })
+def _reverse_table(table):
+    """Return value: key for dictionary."""
+    return {value: key for (key, value) in table.items()}
 
-_key_signature_encode = _key_signature_decode.inv
 
-_smpte_framerate_decode = bidict({0: 24,
-                                  1: 25,
-                                  2: 29.97,
-                                  3: 30,
-                                  })
+_key_signature_decode = {(-7, 0): 'Cb',
+                         (-6, 0): 'Gb',
+                         (-5, 0): 'Db',
+                         (-4, 0): 'Ab',
+                         (-3, 0): 'Eb',
+                         (-2, 0): 'Bb',
+                         (-1, 0): 'F',
+                         (0, 0): 'C',
+                         (1, 0): 'G',
+                         (2, 0): 'D',
+                         (3, 0): 'A',
+                         (4, 0): 'E',
+                         (5, 0): 'B',
+                         (6, 0): 'F#',
+                         (7, 0): 'C#',
+                         (-7, 1): 'Abm',
+                         (-6, 1): 'Ebm',
+                         (-5, 1): 'Bbm',
+                         (-4, 1): 'Fm',
+                         (-3, 1): 'Cm',
+                         (-2, 1): 'Gm',
+                         (-1, 1): 'Dm',
+                         (0, 1): 'Am',
+                         (1, 1): 'Em',
+                         (2, 1): 'Bm',
+                         (3, 1): 'F#m',
+                         (4, 1): 'C#m',
+                         (5, 1): 'G#m',
+                         (6, 1): 'D#m',
+                         (7, 1): 'A#m',
+                         }
 
-_smpte_framerate_encode = _smpte_framerate_decode.inv
+_key_signature_encode = _reverse_table(_key_signature_decode)
+
+_smpte_framerate_decode = {0: 24,
+                           1: 25,
+                           2: 29.97,
+                           3: 30,
+                           }
+
+_smpte_framerate_encode = _reverse_table(_smpte_framerate_decode)
 
 
 def signed(to_type, n):
