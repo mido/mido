@@ -159,7 +159,9 @@ def check_str(value):
 
 
 class MetaSpec(object):
-    pass
+    # The default is to do no checks.
+    def check(self, name, value):
+        pass
 
 
 class MetaSpec_sequence_number(MetaSpec):
