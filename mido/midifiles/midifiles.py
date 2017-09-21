@@ -249,21 +249,30 @@ def write_track(outfile, track):
             raise ValueError('realtime messages are not allowed in MIDI files')
 
         data.extend(encode_variable_int(msg.time))
-        if msg.type == 'sysex':
+
+        if msg.is_meta:
+            data.extend(msg.bytes())
             running_status_byte = None
+        elif msg.type == 'sysex':
             data.append(0xf0)
             # length (+ 1 for end byte (0xf7))
             data.extend(encode_variable_int(len(msg.data) + 1))
             data.extend(msg.data)
             data.append(0xf7)
+            running_status_byte = None
         else:
-            raw = msg.bytes()
-            if (not msg.is_meta and raw[0] < 0xf0 and
-               raw[0] == running_status_byte):
-                data.extend(raw[1:])
+            msg_bytes = msg.bytes()
+            status_byte = msg_bytes[0]
+
+            if status_byte == running_status_byte:
+                data.extend(msg_bytes[1:])
             else:
-                data.extend(raw)
-            running_status_byte = raw[0]
+                data.extend(msg_bytes)
+
+            if status_byte < 0xf0:
+                running_status_byte = status_byte
+            else:
+                running_status_byte = None
 
     write_chunk(outfile, b'MTrk', data)
 
