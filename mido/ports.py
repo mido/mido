@@ -67,7 +67,6 @@ class BasePort(object):
     """
     Abstract base class for Input and Output ports.
     """
-
     is_input = False
     is_output = False
     _locking = True

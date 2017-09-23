@@ -14,8 +14,9 @@ from ..ports import BaseInput, BaseOutput
 def _get_device(device_id):
     keys = ['interface', 'name', 'is_input', 'is_output', 'opened']
     info = dict(zip(keys, midi.get_device_info(device_id)))
+    # TODO: correct encoding?
+    info['name'] = info['name'].decode('utf-8')
     info['id'] = device_id
-    info['name'] = info['name'].decode('utf-8')  # TODO: correct encoding?
     return info
 
 
@@ -100,7 +101,6 @@ class Input(PortCommon, BaseInput):
     """
     PortMidi Input port
     """
-
     def _receive(self, block=True):
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
         # resort to calling Pm_Read() in a loop until there are no
@@ -115,7 +115,6 @@ class Output(PortCommon, BaseOutput):
     """
     PortMidi output port
     """
-
     def _send(self, message):
         if message.type == 'sysex':
             # Python 2 version of Pygame accepts a bytes or list here
