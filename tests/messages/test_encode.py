@@ -1,6 +1,6 @@
-from .specs import SPEC_BY_STATUS
-from .encode import encode_message
-from .decode import decode_message
+from mido.messages.specs import SPEC_BY_STATUS
+from mido.messages.encode import encode_message
+from mido.messages.decode import decode_message
 
 
 def test_encode_decode_all():

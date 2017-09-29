@@ -1,6 +1,6 @@
 from pytest import raises
-from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS
-from .messages import Message, SysexData
+from mido.messages.specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS
+from mido.messages.messages import Message, SysexData
 
 
 def test_msg_time_equality():

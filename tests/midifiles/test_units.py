@@ -1,4 +1,4 @@
-from .units import tempo2bpm, bpm2tempo, tick2second, second2tick
+from mido.midifiles.units import tempo2bpm, bpm2tempo, tick2second, second2tick
 
 
 def test_tempo2bpm_bpm2tempo():

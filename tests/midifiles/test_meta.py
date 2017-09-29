@@ -1,5 +1,5 @@
 import pytest
-from .meta import MetaMessage, MetaSpec_key_signature, KeySignatureError
+from mido.midifiles.meta import MetaMessage, MetaSpec_key_signature, KeySignatureError
 
 
 def test_copy_invalid_argument():

@@ -1,4 +1,4 @@
-from .decode import Decoder
+from mido.messages.decode import Decoder
 
 NOTE_ON = dict(type='note_on', note=1, velocity=2, channel=0, time=0)
 SYSEX = dict(type='sysex', data=(1, 2, 3), time=0)
