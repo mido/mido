@@ -1,5 +1,5 @@
 from pytest import raises
-from .messages import Message
+from mido.messages import Message
 
 
 def test_decode_sysex():

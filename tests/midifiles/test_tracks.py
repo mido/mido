@@ -1,5 +1,5 @@
-from .meta import MetaMessage
-from .tracks import MidiTrack
+from mido.midifiles.meta import MetaMessage
+from mido.midifiles.tracks import MidiTrack
 
 
 def test_track_slice():

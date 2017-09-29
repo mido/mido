@@ -1,5 +1,5 @@
 import pytest
-from .sockets import parse_address
+from mido.sockets import parse_address
 
 
 class TestParseAddress:

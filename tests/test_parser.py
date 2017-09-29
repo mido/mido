@@ -2,8 +2,8 @@ from __future__ import print_function
 import random
 from pytest import raises
 
-from .messages import Message
-from .parser import Parser, parse, parse_all
+from mido.messages import Message, specs
+from mido.parser import Parser, parse, parse_all
 
 
 def test_parse():
@@ -115,7 +115,6 @@ def test_encode_and_parse_all():
 
     This checks mostly for errors in the parser.
     """
-    from .messages import specs
 
     parser = Parser()
     for type_ in sorted(specs.SPEC_BY_TYPE.keys()):

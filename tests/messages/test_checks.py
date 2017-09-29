@@ -1,6 +1,6 @@
 from pytest import raises
-from .checks import check_time
-from ..py2 import PY2
+from mido.messages.checks import check_time
+from mido.py2 import PY2
 
 
 def test_check_time():

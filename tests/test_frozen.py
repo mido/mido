@@ -1,7 +1,7 @@
-from .messages import Message
-from .frozen import (is_frozen, freeze_message, thaw_message,
-                     FrozenMessage, FrozenMetaMessage,
-                     FrozenUnknownMetaMessage)
+from mido.messages import Message
+from mido.frozen import (is_frozen, freeze_message, thaw_message,
+                         FrozenMessage, FrozenMetaMessage,
+                         FrozenUnknownMetaMessage)
 
 
 def test_hashability():

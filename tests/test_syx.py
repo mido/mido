@@ -1,6 +1,6 @@
 from pytest import raises
-from .messages import Message
-from .syx import read_syx_file, write_syx_file
+from mido.messages import Message
+from mido.syx import read_syx_file, write_syx_file
 
 
 def test_read(tmpdir):
