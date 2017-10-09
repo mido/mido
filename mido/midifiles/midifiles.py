@@ -304,7 +304,6 @@ class MidiFile(object):
         self.clip = clip
 
         self.tracks = []
-        self._msg_count = 0
 
         if type not in range(3):
             raise ValueError(
@@ -329,8 +328,7 @@ class MidiFile(object):
         return track
 
     def _load(self, infile):
-        self._msg_count = 0
-	
+
         if self.debug:
             infile = DebugFileWrapper(infile)
 
@@ -368,13 +366,9 @@ class MidiFile(object):
                              ' for type 2 (asynchronous) file')
 
         return sum(msg.time for msg in self)
-		
-    def msg_count(self):
-        """Returns the total number of messages present in the MIDI file."""
-        if self._msg_count < 1:
-            for msg in self:
-                self._msg_count += 1
-        return self._msg_count
+
+    def __len__(self):
+        return sum(len(track) for track in self.tracks)
 
     def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
