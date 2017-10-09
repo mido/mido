@@ -329,7 +329,7 @@ class MidiFile(object):
         return track
 
     def _load(self, infile):
-	    self._msg_count = 0
+        self._msg_count = 0
 	
         if self.debug:
             infile = DebugFileWrapper(infile)
