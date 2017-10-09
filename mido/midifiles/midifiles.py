@@ -304,7 +304,7 @@ class MidiFile(object):
         self.clip = clip
 
         self.tracks = []
-		self._msg_count = 0
+        self._msg_count = 0
 
         if type not in range(3):
             raise ValueError(
