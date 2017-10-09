@@ -369,7 +369,7 @@ class MidiFile(object):
 
         return sum(msg.time for msg in self)
 		
-	def msg_count(self):
+    def msg_count(self):
         """Returns the total number of messages present in the MIDI file."""
         if self._msg_count < 1:
             for msg in self:
