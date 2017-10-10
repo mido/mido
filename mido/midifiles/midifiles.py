@@ -367,7 +367,9 @@ class MidiFile(object):
         return sum(msg.time for msg in self)
 
     def msg_count(self):
-        """Return total message count of all tracks (inclusive of end of track messages)."""
+        """Return total message count of all tracks.
+
+        Inclusive of end-of-track messages."""
         return sum(len(track) for track in self.tracks)
 
     def __iter__(self):
