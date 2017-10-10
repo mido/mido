@@ -302,7 +302,7 @@ class MidiFile(object):
         self.charset = charset
         self.debug = debug
         self.clip = clip
-        self.tempo = DEFAULT_TEMPO
+
         self.tracks = []
 
         if type not in range(3):
@@ -378,18 +378,19 @@ class MidiFile(object):
         if self.type == 2:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
+        tempo = DEFAULT_TEMPO
         for msg in merge_tracks(self.tracks):
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             if msg.time > 0:
-                delta = tick2second(msg.time, self.ticks_per_beat, self.tempo)
+                delta = tick2second(msg.time, self.ticks_per_beat, tempo)
             else:
                 delta = 0
 
             yield msg.copy(time=delta)
 
             if msg.type == 'set_tempo':
-                self.tempo = msg.tempo
+                tempo = msg.tempo
 
     def play(self, meta_messages=False):
         """Play back all tracks.
