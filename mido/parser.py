@@ -6,13 +6,13 @@ available in the top level module.
 """
 from collections import deque
 from .messages import Message
-from .messages.decode import Decoder
+from .tokenizer import MidiTokenizer
 
 # TODO: make sure the method signatures are as before.
 # TODO: add doc strings.
 
 
-class Parser(object):
+class MidiParser(object):
     """
     MIDI Parser
 
@@ -22,13 +22,16 @@ class Parser(object):
     integers, byte arrays or byte strings.
     """
     def __init__(self, data=None):
+        # For historical reasons self.messages is public and must be a
+        # deque(). (It is referenced directly inside ports.)
         self.messages = deque()
-        self._decoder = Decoder(data)
-        self._wrap_messages()
+        self._tok = MidiTokenizer()
+        if data:
+            self.feed(data)
 
-    def _wrap_messages(self):
-        for msgdict in self._decoder:
-            self.messages.append(Message(**msgdict))
+    def _decode(self):
+        for midi_bytes in self._tok:
+            self.messages.append(Message.from_bytes(midi_bytes))
 
     def feed(self, data):
         """Feed MIDI data to the parser.
@@ -43,16 +46,16 @@ class Parser(object):
             bytearray()
             b''  # Will be converted to integers in Python 2.
         """
-        self._decoder.feed(data)
-        self._wrap_messages()
+        self._tok.feed(data)
+        self._decode()
 
     def feed_byte(self, byte):
         """Feed one MIDI byte into the parser.
 
         The byte must be an integer in range 0..255.
         """
-        self._decoder.feed_byte(byte)
-        self._wrap_messages()
+        self._tok.feed_byte(byte)
+        self._decode()
 
     def get_message(self):
         """Get the first parsed message.
@@ -62,8 +65,8 @@ class Parser(object):
         you can get before you get None, or just iterate over the
         parser.
         """
-        if self.messages:
-            return self.messages.popleft()
+        for msg in self:
+            return msg
         else:
             return None
 
@@ -71,13 +74,15 @@ class Parser(object):
         """Return the number of pending messages."""
         return len(self.messages)
 
-    def __len__(self):
-        return len(self.messages)
+    __len__ = pending
 
     def __iter__(self):
         """Yield messages that have been parsed so far."""
-        while len(self.messages):
+        while len(self.messages) > 0:
             yield self.messages.popleft()
+
+
+Parser = MidiParser
 
 
 def parse_all(data):

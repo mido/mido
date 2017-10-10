@@ -10,6 +10,9 @@ Release History
 1.2.9 ()
 ^^^^^^^^^^^^^^^^^^
 
+* rewrote ``Parser`` class around a MIDI tokenizer. Should lead to
+  slight speedup and much cleaner code.
+
 * bugfix: `data` attribute was missing for `UnknownMetaMessage`
   objects. This caused `AttributeError` when the messages were printed
   or saved to a file. Also, the documentation incorrectly listed the
