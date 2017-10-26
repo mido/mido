@@ -369,7 +369,7 @@ class MultiPort(BaseIOPort):
     def _receive(self, block=True):
         self._messages.extend(multi_receive(self.ports,
                                             yield_ports=self.yield_ports,
-                                            block=False))
+                                            block=block))
 
 
 def multi_receive(ports, yield_ports=False, block=True):
