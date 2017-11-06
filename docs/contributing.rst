@@ -44,7 +44,7 @@ Test Files
 ^^^^^^^^^^
 
 The `Lakh MIDI Dataset <http://www.colinraffel.com/projects/lmd/>`_ is
-a great resouce for testing the MIDI file parser.
+a great resource for testing the MIDI file parser.
 
 
 Publishing (Release Checklist)

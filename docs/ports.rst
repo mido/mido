@@ -166,7 +166,7 @@ example for GTK::
 
     gobject.timeout_add_seconds(timeout, callback)
 
-To get a bit more control you can receive messagas one at a time::
+To get a bit more control you can receive messages one at a time::
 
     msg = port.receive()
 

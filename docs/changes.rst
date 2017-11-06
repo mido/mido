@@ -19,7 +19,7 @@ Release History
   attribute as `_data` instead of `data`.
 
 * bugfix: inputs and outputs were switched around when opening named
-  ports with PortMidi backend. (Repored by Predrag Radovic, issue
+  ports with PortMidi backend. (Reproduced by Predrag Radovic, issue
   #108, fix by Juan Antonio Aldea, pull request #109.)
 
 * bugfix: time signature meta messages had wrong default value of
@@ -55,7 +55,7 @@ Release History
 * added max length when reading message from a MIDI file. This
   prevents Python from running out of memory when reading a corrupt
   file. Instead it will now raise an ``IOError`` with a descriptive
-  error message. (Implented by Curtis Hawthorne, pull request #95.)
+  error message. (Implemented by Curtis Hawthorne, pull request #95.)
 
 * removed dependency on ``python-rtmidi`` from tests. (Reported by
   Josue Ortega, issue #96.)
@@ -315,7 +315,7 @@ Other changes:
   ``parser.messages``. ``BaseInput`` and ``SocketPort`` use it so it
   should be public.
 
-* ``Parser()`` now takes an option arugment ``data`` which is passed
+* ``Parser()`` now takes an option argument ``data`` which is passed
   to ``feed()``.
 
 
