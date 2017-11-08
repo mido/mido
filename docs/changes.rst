@@ -34,6 +34,9 @@ Release History
   function everywhere, such as in ``__init__()``, in ``copy()`` and in
   ``parser.feed()``.)
 
+* bugfix: ``MultiPort._receive()`` ignored the ``block``
+  parameter. (Fix by Tom Swirly, pull request #135.)
+
 * now using Tox for testing. (Implemented by Chris Apple, pull request
   #123.)
 
