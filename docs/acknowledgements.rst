@@ -1,5 +1,5 @@
-Acknowledgements
-================
+Acknowledgments
+===============
 
 Thanks to /u/tialpoy/ on Reddit for extensive code review and helpful
 suggestions.
