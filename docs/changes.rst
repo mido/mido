@@ -40,6 +40,8 @@ Release History
 * now using Tox for testing. (Implemented by Chris Apple, pull request
   #123.)
 
+* Travis integration up by Carl Thomé and Chris Apple.
+
 
 1.2.8 (2017-06-30)
 ^^^^^^^^^^^^^^^^^^
