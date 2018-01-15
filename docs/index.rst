@@ -15,6 +15,8 @@ designed to be as straight forward and Pythonic as possible:
 
    >>> import mido
    >>> msg = mido.Message('note_on', note=60)
+   >>> msg.type
+   'note_on'
    >>> msg.note
    60
    >>> msg.bytes()
@@ -24,14 +26,14 @@ designed to be as straight forward and Pythonic as possible:
 
 .. code-block:: python
 
-    with mido.open_input('LinnStrument') as inport:
-        for msg in inport:
-            print(msg)
+   port = mido.open_output('Port Name')
+   port.send(msg)
 
 .. code-block:: python
 
-   port = mido.open_output()
-   port.send(msg)
+    with mido.open_input() as inport:
+        for msg in inport:
+            print(msg)
 
 .. code-block:: python
 
