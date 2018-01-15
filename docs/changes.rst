@@ -37,6 +37,10 @@ Release History
 * bugfix: ``MultiPort._receive()`` ignored the ``block``
   parameter. (Fix by Tom Swirly, pull request #135.)
 
+* bugfix: sequencer number meta message was incorrectly limited to
+  range 0..255 instead of 0..65335. (Reported by muranyia, issue
+  #144.)
+
 * now using Tox for testing. (Implemented by Chris Apple, pull request
   #123.)
 

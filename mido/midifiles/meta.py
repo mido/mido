@@ -185,7 +185,7 @@ class MetaSpec_sequence_number(MetaSpec):
         return [message.number >> 8, message.number & 0xff]
 
     def check(self, name, value):
-        check_int(value, 0, 255)
+        check_int(value, 0, 0xffff)
 
 
 class MetaSpec_text(MetaSpec):
