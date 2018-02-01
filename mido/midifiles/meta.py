@@ -1,7 +1,7 @@
 """
 Meta messages for MIDI files.
 
-TODO:
+Todo:
      - what if an unknown meta message is implemented and someone depends on
        the 'data' attribute?
      - is 'type_byte' a good name?
@@ -20,68 +20,62 @@ from ..py2 import PY2
 
 _charset = 'latin1'
 
-
-class KeySignatureError(Exception):
-    """ Raised when key cannot be converted from key/mode to key letter """
-    pass
-
-
-def _reverse_table(table):
+def reverse_table(table):
     """Return value: key for dictionary."""
     return {value: key for (key, value) in table.items()}
 
+_key_signature_decode = {
+        (-7, 0): 'Cb',
+        (-6, 0): 'Gb',
+        (-5, 0): 'Db',
+        (-4, 0): 'Ab',
+        (-3, 0): 'Eb',
+        (-2, 0): 'Bb',
+        (-1, 0): 'F',
+        (0, 0): 'C',
+        (1, 0): 'G',
+        (2, 0): 'D',
+        (3, 0): 'A',
+        (4, 0): 'E',
+        (5, 0): 'B',
+        (6, 0): 'F#',
+        (7, 0): 'C#',
+        (-7, 1): 'Abm',
+        (-6, 1): 'Ebm',
+        (-5, 1): 'Bbm',
+        (-4, 1): 'Fm',
+        (-3, 1): 'Cm',
+        (-2, 1): 'Gm',
+        (-1, 1): 'Dm',
+        (0, 1): 'Am',
+        (1, 1): 'Em',
+        (2, 1): 'Bm',
+        (3, 1): 'F#m',
+        (4, 1): 'C#m',
+        (5, 1): 'G#m',
+        (6, 1): 'D#m',
+        (7, 1): 'A#m',
+    }
+_key_signature_encode = reverse_table(_key_signature_decode)
 
-_key_signature_decode = {(-7, 0): 'Cb',
-                         (-6, 0): 'Gb',
-                         (-5, 0): 'Db',
-                         (-4, 0): 'Ab',
-                         (-3, 0): 'Eb',
-                         (-2, 0): 'Bb',
-                         (-1, 0): 'F',
-                         (0, 0): 'C',
-                         (1, 0): 'G',
-                         (2, 0): 'D',
-                         (3, 0): 'A',
-                         (4, 0): 'E',
-                         (5, 0): 'B',
-                         (6, 0): 'F#',
-                         (7, 0): 'C#',
-                         (-7, 1): 'Abm',
-                         (-6, 1): 'Ebm',
-                         (-5, 1): 'Bbm',
-                         (-4, 1): 'Fm',
-                         (-3, 1): 'Cm',
-                         (-2, 1): 'Gm',
-                         (-1, 1): 'Dm',
-                         (0, 1): 'Am',
-                         (1, 1): 'Em',
-                         (2, 1): 'Bm',
-                         (3, 1): 'F#m',
-                         (4, 1): 'C#m',
-                         (5, 1): 'G#m',
-                         (6, 1): 'D#m',
-                         (7, 1): 'A#m',
-                         }
-
-_key_signature_encode = _reverse_table(_key_signature_decode)
-
-_smpte_framerate_decode = {0: 24,
-                           1: 25,
-                           2: 29.97,
-                           3: 30,
-                           }
-
-_smpte_framerate_encode = _reverse_table(_smpte_framerate_decode)
+_smpte_framerate_decode = {
+        0: 24,
+        1: 25,
+        2: 29.97,
+        3: 30,
+    }
+_smpte_framerate_encode = reverse_table(_smpte_framerate_decode)
 
 
 def signed(to_type, n):
-    formats = {'byte': 'Bb',
-               'short': 'Hh',
-               'long': 'Ll',
-               'ubyte': 'bB',
-               'ushort': 'hH',
-               'ulong': 'lL'
-               }
+    formats = {
+        'byte': 'Bb',
+        'short': 'Hh',
+        'long': 'Ll',
+        'ubyte': 'bB',
+        'ushort': 'hH',
+        'ulong': 'lL',
+        }
 
     try:
         pack_format, unpack_format = formats[to_type]
@@ -109,7 +103,7 @@ def encode_variable_int(value):
     length.
     """
     if not isinstance(value, Integral) or value < 0:
-        raise ValueError('variable int must be a non-negative integer')
+        raise ValueError('variable int must be a positive integer')
 
     bytes = []
     while value:
@@ -125,6 +119,20 @@ def encode_variable_int(value):
         return bytes
     else:
         return [0]
+
+
+def decode_variable_int(value):
+    """Decode a list to a variable length integer.
+
+    Does the opposite of encode_variable_int(value)
+    """
+    for i in range(len(value) - 1):
+        value[i] &= ~0x80
+    val = 0
+    for i in value:
+        val <<= 7
+        val |= i
+    return val
 
 
 def encode_string(string):
@@ -152,18 +160,16 @@ def check_int(value, low, high):
 
 
 if PY2:
-    _STRING_TYPE = (str, unicode)  # noqa: F821
+    def check_str(value):
+        if not isinstance(value, basestring):
+            raise TypeError('attribute must be unicode or string')
 else:
-    _STRING_TYPE = str
-
-
-def check_str(value):
-    if not isinstance(value, _STRING_TYPE):
-        raise TypeError('attribute must be a string')
+    def check_str(value):
+        if not isinstance(value, str):
+            raise TypeError('attribute must a string')
 
 
 class MetaSpec(object):
-    # The default is to do no checks.
     def check(self, name, value):
         pass
 
@@ -185,7 +191,7 @@ class MetaSpec_sequence_number(MetaSpec):
         return [message.number >> 8, message.number & 0xff]
 
     def check(self, name, value):
-        check_int(value, 0, 0xffff)
+        check_int(value, 0, 255)
 
 
 class MetaSpec_text(MetaSpec):
@@ -310,8 +316,8 @@ class MetaSpec_smpte_offset(MetaSpec):
                   'seconds',
                   'frames',
                   'sub_frames'
-                  ]
-    # TODO: What are some good defaults?
+                ]
+    # Todo: What are some good defaults?
     defaults = [24, 0, 0, 0, 0, 0]
 
     def decode(self, message, data):
@@ -347,12 +353,12 @@ class MetaSpec_smpte_offset(MetaSpec):
 
 class MetaSpec_time_signature(MetaSpec):
     type_byte = 0x58
-    # TODO: these need more sensible names.
+    # Todo: these need more sensible names.
     attributes = ['numerator',
                   'denominator',
                   'clocks_per_click',
                   'notated_32nd_notes_per_beat']
-    defaults = [4, 4, 24, 8]
+    defaults = [4, 2, 24, 8]
 
     def decode(self, message, data):
         message.numerator = data[0]
@@ -361,11 +367,12 @@ class MetaSpec_time_signature(MetaSpec):
         message.notated_32nd_notes_per_beat = data[3]
 
     def encode(self, message):
-        return [message.numerator,
-                int(math.log(message.denominator, 2)),
-                message.clocks_per_click,
-                message.notated_32nd_notes_per_beat,
-                ]
+        return [
+            message.numerator,
+            int(math.log(message.denominator, 2)),
+            message.clocks_per_click,
+            message.notated_32nd_notes_per_beat,
+            ]
 
     def check(self, name, value):
         if name == 'denominator':
@@ -389,23 +396,14 @@ class MetaSpec_key_signature(MetaSpec):
     def decode(self, message, data):
         key = signed('byte', data[0])
         mode = data[1]
-        try:
-            message.key = _key_signature_decode[(key, mode)]
-        except KeyError:
-            if key < 7:
-                msg = ('Could not decode key with {} '
-                       'flats and mode {}'.format(abs(key), mode))
-            else:
-                msg = ('Could not decode key with {} '
-                       'sharps and mode {}'.format(key, mode))
-            raise KeySignatureError(msg)
+        message.key = _key_signature_decode[(key, mode)]
 
     def encode(self, message):
         key, mode = _key_signature_encode[message.key]
         return [unsigned('byte', key), mode]
 
     def check(self, name, value):
-        if value not in _key_signature_encode:
+        if not value in _key_signature_encode:
             raise ValueError('invalid key {!r}'.format(value))
 
 
@@ -437,22 +435,20 @@ def add_meta_spec(klass):
 _META_SPECS = {}
 _META_SPEC_BY_TYPE = {}
 
-
 def _add_builtin_meta_specs():
     for name, spec in globals().items():
         if name.startswith('MetaSpec_'):
             add_meta_spec(spec)
 
-
 _add_builtin_meta_specs()
 
 
-def build_meta_message(meta_type, data, delta=0):
-    # TODO: handle unknown type.
+def build_meta_message(type, data, delta=0):
+    # Todo: handle unknown type.
     try:
-        spec = _META_SPECS[meta_type]
+        spec = _META_SPECS[type]
     except KeyError:
-        return UnknownMetaMessage(meta_type, data)
+        return UnknownMetaMessage(type, data)
     else:
         msg = MetaMessage(spec.type, time=delta)
 
@@ -466,7 +462,7 @@ class MetaMessage(BaseMessage):
     is_meta = True
 
     def __init__(self, type, **kwargs):
-        # TODO: handle unknown type?
+        # Todo: handle unknown type?
 
         spec = _META_SPEC_BY_TYPE[type]
         self_vars = vars(self)
@@ -531,12 +527,40 @@ class MetaMessage(BaseMessage):
         spec = _META_SPEC_BY_TYPE[self.type]
         data = spec.encode(self)
 
-        return ([0xff, spec.type_byte] + encode_variable_int(len(data)) + data)
+        return ([0xff, spec.type_byte]
+                + encode_variable_int(len(data))
+                + data)
 
-    def _get_value_names(self):
-        """Used by BaseMessage.__repr__()."""
+    @classmethod
+    def from_bytes(cls, msg_bytes):
+        if msg_bytes[0] != 0xff:
+            raise ValueError('bytes does not correspond to a MetaMessage.')
+        scan_end = 2
+        data = []
+        flag = True
+        while flag and scan_end < len(msg_bytes):
+            scan_end += 1
+            length_data = msg_bytes[2:scan_end]
+            length = decode_variable_int(length_data)
+            data = msg_bytes[scan_end:]
+            if length == len(data):
+                flag = False
+        if flag:
+            raise ValueError('Bad data. Cannot be converted to message.')
+        msg = build_meta_message(msg_bytes[1], data)
+        return msg
+
+    def __repr__(self):
         spec = _META_SPEC_BY_TYPE[self.type]
-        return spec.attributes + ['time']
+        attributes = []
+        for name in spec.attributes:
+            attributes.append('{}={!r}'.format(name, getattr(self, name)))
+        attributes = ' '.join(attributes)
+        if attributes:
+            attributes = (' {}'.format(attributes))
+
+        return '<meta message {}{} time={}>'.format(self.type,
+                                                    attributes, self.time)
 
 
 class UnknownMetaMessage(MetaMessage):
@@ -549,12 +573,14 @@ class UnknownMetaMessage(MetaMessage):
         vars(self).update({
             'type': 'unknown_meta',
             'type_byte': type_byte,
-            'data': data,
             'time': time})
 
     def __repr__(self):
-        fmt = 'UnknownMetaMessage(type_byte={}, data={}, time={})'
-        return fmt.format(self.type_byte, self.data, self.time)
+        return ('<unknown meta message'
+                ' type_byte=0x{:02x} data={!r} time={}>').format(
+                self.type_byte,
+                self.data,
+                self.time)
 
     def __setattr__(self, name, value):
         # This doesn't do any checking.
@@ -562,5 +588,6 @@ class UnknownMetaMessage(MetaMessage):
         vars(self)[name] = value
 
     def bytes(self):
-        length = encode_variable_int(len(self.data))
-        return ([0xff, self.type_byte] + length + list(self.data))
+        return ([0xff, self.type_byte]
+                + encode_variable_int(len(self.data))
+                + self.data)
