@@ -315,7 +315,6 @@ class MidiFile(object):
             with io.open(filename, 'rb') as file:
                 self._load(file)
 
-
     def __eq__(self, other):
 
         if not isinstance(other, self.__class__):
