@@ -402,9 +402,15 @@ class MidiFile(object):
 
         """
         sleep = time.sleep
+        now = time.time
+        t0 = now()
+        file_time = 0
 
         for msg in self:
-            sleep(msg.time)
+            file_time += msg.time
+            duration_to_next_event = file_time - (now() - t0)
+            if (duration_to_next_event > 0):
+                sleep(duration_to_next_event)
 
             if isinstance(msg, MetaMessage) and not meta_messages:
                 continue
