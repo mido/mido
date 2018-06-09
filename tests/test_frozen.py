@@ -1,4 +1,5 @@
 from mido.messages import Message
+from mido.midifiles.meta import MetaMessage, UnknownMetaMessage
 from mido.frozen import (is_frozen, freeze_message, thaw_message,
                          FrozenMessage, FrozenMetaMessage,
                          FrozenUnknownMetaMessage)
@@ -27,3 +28,24 @@ def test_thawed_message_is_copy():
 def test_is_frozen():
     assert is_frozen(FrozenMessage('note_on'))
     assert not is_frozen(Message('note_on'))
+
+
+def test_frozen_repr():
+    msg = FrozenMessage('note_on', channel=1, note=2, time=3)
+    msg_eval = eval(repr(msg))
+    assert type(msg_eval) == Message
+    assert msg == msg_eval
+
+
+def test_frozen_meta_repr():
+    msg = FrozenMetaMessage('end_of_track', time=10)
+    msg_eval = eval(repr(msg))
+    assert type(msg_eval) == MetaMessage
+    assert msg == msg_eval
+
+
+def test_frozen_unknown_meta_repr():
+    msg = FrozenUnknownMetaMessage(type_byte=99, data=[1, 2], time=10)
+    msg_eval = eval(repr(msg))
+    assert type(msg_eval) == UnknownMetaMessage
+    assert msg == msg_eval

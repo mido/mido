@@ -54,6 +54,15 @@ class BaseMessage(object):
         """
         return cl(**data)
 
+    def __repr__(self):
+        d = self.dict()
+        msg_type = d.pop('type')
+        items = getattr(d, 'iteritems', d.items)
+        return "%s('%s', %s)" % (
+            type(self).__name__,
+            msg_type,
+            ', '.join('%s=%s' % item for item in items()))
+
     @property
     def is_realtime(self):
         """True if the message is a system realtime message."""
@@ -161,9 +170,6 @@ class Message(BaseMessage):
 
     def __str__(self):
         return msg2str(vars(self))
-
-    def __repr__(self):
-        return '<message {}>'.format(str(self))
 
     def _setattr(self, name, value):
         if name == 'type':

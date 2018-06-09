@@ -535,7 +535,7 @@ class MetaMessage(BaseMessage):
                 encode_variable_int(len(data)) +
                 data)
 
-    def __repr__(self):
+    def __str__(self):
         spec = _META_SPEC_BY_TYPE[self.type]
         attributes = []
         for name in spec.attributes:
@@ -561,13 +561,18 @@ class UnknownMetaMessage(MetaMessage):
             'data': data,
             'time': time})
 
-    def __repr__(self):
+    def __str__(self):
         return ('<unknown meta message'
                 ' type_byte=0x{:02x} '
                 'data={!r} time={}>').format(self.type_byte,
                                              self.data,
                                              self.time
                                              )
+
+    def __repr__(self):
+        # fix message type artifact
+        r = super(UnknownMetaMessage, self).__repr__()
+        return r.replace("'unknown_meta', ", '')
 
     def __setattr__(self, name, value):
         # This doesn't do any checking.
