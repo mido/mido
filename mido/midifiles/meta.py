@@ -577,4 +577,4 @@ class UnknownMetaMessage(MetaMessage):
     def bytes(self):
         return ([0xff, self.type_byte] +
                 encode_variable_int(len(self.data)) +
-                self.data)
+                list(self.data))

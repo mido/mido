@@ -41,6 +41,10 @@ Release History
   range 0..255 instead of 0..65335. (Reported by muranyia, issue
   #144.)
 
+* bugfix: UnknownMetaMessage encoding was broken causing crashes when
+  saving a file with unknown meta messages. (Reported by exeex, issue
+  #159.)
+
 * now using Tox for testing. (Implemented by Chris Apple, pull request
   #123.)
 
