@@ -2,6 +2,14 @@ Contributing
 ============
 
 
+Questions
+---------
+
+If you have questions about contributing code or suggestions
+for how to make contributing easier, please write to
+https://groups.google.com/forum/#!forum/mido-community.
+
+
 Installing for developers
 -------------------------
 
