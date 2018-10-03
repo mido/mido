@@ -18,6 +18,10 @@ Release History
   or saved to a file. Also, the documentation incorrectly listed the
   attribute as `_data` instead of `data`.
 
+* bugfix: UnknownMetaMessage encoding was broken causing crashes when
+  saving a file with unknown meta messages. (Reported by exeex, issue
+  #159.)
+
 * bugfix: inputs and outputs were switched around when opening named
   ports with PortMidi backend. (Reproduced by Predrag Radovic, issue
   #108, fix by Juan Antonio Aldea, pull request #109.)
@@ -40,10 +44,6 @@ Release History
 * bugfix: sequencer number meta message was incorrectly limited to
   range 0..255 instead of 0..65335. (Reported by muranyia, issue
   #144.)
-
-* bugfix: UnknownMetaMessage encoding was broken causing crashes when
-  saving a file with unknown meta messages. (Reported by exeex, issue
-  #159.)
 
 * now using Tox for testing. (Implemented by Chris Apple, pull request
   #123.)
