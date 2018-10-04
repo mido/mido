@@ -4,7 +4,7 @@ from .messages.specs import SYSEX_START, SYSEX_END, SPEC_BY_STATUS
 from .py2 import convert_py2_bytes
 
 
-class MidiTokenizer(object):
+class Tokenizer(object):
     """
     Splits a MIDI byte stream into messages.
     """

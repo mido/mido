@@ -1,7 +1,7 @@
-from mido.tokenizer import MidiTokenizer
+from mido.tokenizer import Tokenizer
 
 def tokenize(midi_bytes):
-    return list(MidiTokenizer(midi_bytes))
+    return list(Tokenizer(midi_bytes))
 
 
 def test_channel_message():

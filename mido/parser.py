@@ -6,17 +6,17 @@ available in the top level module.
 """
 from collections import deque
 from .messages import Message
-from .tokenizer import MidiTokenizer
+from .tokenizer import Tokenizer
 
 # TODO: make sure the method signatures are as before.
 # TODO: add doc strings.
 
 
-class MidiParser(object):
+class Parser(object):
     """
-    MIDI Parser
+    MIDI byte stream parser
 
-    Parses a stream of bytes and produces messages.
+    Parses a stream of MIDI bytes and produces messages.
 
     Data can be put into the parser in the form of
     integers, byte arrays or byte strings.
@@ -25,7 +25,7 @@ class MidiParser(object):
         # For historical reasons self.messages is public and must be a
         # deque(). (It is referenced directly inside ports.)
         self.messages = deque()
-        self._tok = MidiTokenizer()
+        self._tok = Tokenizer()
         if data:
             self.feed(data)
 
@@ -80,9 +80,6 @@ class MidiParser(object):
         """Yield messages that have been parsed so far."""
         while len(self.messages) > 0:
             yield self.messages.popleft()
-
-
-Parser = MidiParser
 
 
 def parse_all(data):
