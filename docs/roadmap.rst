@@ -8,11 +8,11 @@ a list of ideas.
 Near Future
 -----------
 
-* create a place for general discussion, for example a google group
-  (mido-discuss and perhaps a separate mido-dev).
+* create a place for general discussion:
+  Now exists: https://groups.google.com/forum/#!forum/mido-community
 
 * a `PEP <https://www.python.org/dev/peps/>`_ like process for new
-  features and major changes.
+  features and major changes?
 
 
 Various Improvements to MIDI File Parsing
