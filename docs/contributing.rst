@@ -88,7 +88,7 @@ fails to upload I can roll back and fix it before I push my changes.
     python setup.py bdist_wheel --universal
     python setup.py sdist
 
-    twine upload twine upload dist/*
+    twine upload dist/*
 
 
 Push to GitHub
