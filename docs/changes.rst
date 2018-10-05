@@ -7,7 +7,7 @@ Changes
 Release History
 ---------------
 
-1.2.9 ()
+1.2.9 (2018-10-05)
 ^^^^^^^^^^^^^^^^^^
 
 * rewrote ``Parser`` class around a MIDI tokenizer. Should lead to
