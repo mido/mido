@@ -16,7 +16,7 @@ Release History
 * bugfix: `data` attribute was missing for `UnknownMetaMessage`
   objects. This caused `AttributeError` when the messages were printed
   or saved to a file. Also, the documentation incorrectly listed the
-  attribute as `_data` instead of `data`.
+  attribute as `_data` instead of `data`. (Reported by Groowy.)
 
 * bugfix: UnknownMetaMessage encoding was broken causing crashes when
   saving a file with unknown meta messages. (Reported by exeex, issue
