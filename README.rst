@@ -103,7 +103,7 @@ See ``docs/backends/`` for other backends.
 Source Code
 -----------
 
-https://github.com/olemb/mido/
+https://github.com/mido/mido/
 
 
 License
