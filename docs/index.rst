@@ -48,7 +48,7 @@ Mido is short for MIDI objects.
 Source code
 -----------
 
-https://github.com/olemb/mido/
+https://github.com/mido/mido/
 
 
 About This Document

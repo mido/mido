@@ -21,13 +21,13 @@ Various Improvements to MIDI File Parsing
 * add ``mido.exceptions.MidiParseError``.
 
 * add better error handling to MIDI file parser as discussed in `issue
-  #63 <https://github.com/olemb/mido/issues/63>`_.
+  #63 <https://github.com/mido/mido/issues/63>`_.
 
 * support RIFF MIDI files (`issue #43
-  <https://github.com/olemb/mido/issues/43>`_)
+  <https://github.com/mido/mido/issues/43>`_)
 
 * support MIDI files that end in empty meta message
-  (`issue #42 <https://github.com/olemb/mido/issues/42>`_)
+  (`issue #42 <https://github.com/mido/mido/issues/42>`_)
 
 
 Better Support for Concurrency and Multithreading
@@ -69,7 +69,7 @@ this in Python.
 Making Messages Immutable
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See: https://github.com/olemb/mido/issues/36
+See: https://github.com/mido/mido/issues/36
 
 The current workaround is frozen messages (``mido.freeze``).
 
@@ -81,7 +81,7 @@ over mutation.
 Native Backends (ALSA, JACK, CoreMIDI, Windows MIDI)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See https://github.com/olemb/mido-native-backends
+See https://github.com/mido/mido-native-backends
 
 
 No Default Backend?
@@ -146,12 +146,12 @@ Maybe
 -----
 
 * add a way to convert between MIDI file types as suggested in `issue
-  #92 <https://github.com/olemb/mido/issues/92>`_.
+  #92 <https://github.com/mido/mido/issues/92>`_.
 
 * RtMidi backend: allow user to list ports without client name and
   ALSA port numbers.
 
-* Add native backends? See https://github.com/olemb/mido-native-backends
+* Add native backends? See https://github.com/mido/mido-native-backends
 
 * Currently all backends ignore ``active_sensing`` messages because
   they create a lot of noise and are usually not very useful. Should
