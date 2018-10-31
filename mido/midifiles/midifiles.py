@@ -399,18 +399,19 @@ class MidiFile(object):
 
         You will receive copies of the original messages, so you can
         safely modify them without ruining the tracks.
-
         """
-        sleep = time.sleep
-        now = time.time
-        t0 = now()
-        file_time = 0
+        t0 = time.time()
+        combined_time = 0.0
 
         for msg in self:
-            file_time += msg.time
-            duration_to_next_event = file_time - (now() - t0)
-            if (duration_to_next_event > 0):
-                sleep(duration_to_next_event)
+            combined_time += msg.time
+
+            # we compute the difference between the nominal combined time
+            # and the actual time spent at this point
+            duration_to_next_event = combined_time - (time.time() - t0)
+
+            if (duration_to_next_event > 0.0):
+                time.sleep(duration_to_next_event)
 
             if isinstance(msg, MetaMessage) and not meta_messages:
                 continue
