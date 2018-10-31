@@ -49,7 +49,8 @@ you can do::
     if msg.is_meta:
         ...
 
-This makes it easy to play back a MIDI file on a port::
+This makes it easy to play back a MIDI file on a port (though this simple
+implementation is subject to time drift)::
 
     for msg in MidiFile('song.mid'):
         time.sleep(msg.time)
@@ -61,8 +62,8 @@ This is so useful that there's a method for it::
     for msg in MidiFile('song.mid').play():
         port.send(msg)
 
-This does the sleeping and filtering for you. If you pass
-``meta_messages=True`` you will also get meta messages. These can not
+This does the sleeping and filtering for you (while avoiding drift). If you
+pass ``meta_messages=True`` you will also get meta messages. These can not
 be sent on ports, which is why they are off by default.
 
 
