@@ -409,7 +409,7 @@ class MidiFile(object):
             playback_time = time.time() - t0
             duration_to_next_event = input_time - playback_time
 
-            if (duration_to_next_event > 0.0):
+            if duration_to_next_event > 0.0:
                 time.sleep(duration_to_next_event)
 
             if isinstance(msg, MetaMessage) and not meta_messages:
