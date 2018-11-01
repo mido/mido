@@ -400,13 +400,13 @@ class MidiFile(object):
         You will receive copies of the original messages, so you can
         safely modify them without ruining the tracks.
         """
-        t0 = time.time()
+        start_time = time.time()
         input_time = 0.0
 
         for msg in self:
             input_time += msg.time
 
-            playback_time = time.time() - t0
+            playback_time = time.time() - start_time
             duration_to_next_event = input_time - playback_time
 
             if duration_to_next_event > 0.0:
