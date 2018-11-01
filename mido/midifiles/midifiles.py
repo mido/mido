@@ -406,9 +406,8 @@ class MidiFile(object):
         for msg in self:
             input_time += msg.time
 
-            # we compute the difference between the nominal combined time
-            # and the actual time spent at this point
-            duration_to_next_event = input_time - (time.time() - t0)
+            playback_time = time.time() - t0
+            duration_to_next_event = input_time - playback_time
 
             if (duration_to_next_event > 0.0):
                 time.sleep(duration_to_next_event)
