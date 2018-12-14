@@ -531,9 +531,7 @@ class MetaMessage(BaseMessage):
         spec = _META_SPEC_BY_TYPE[self.type]
         data = spec.encode(self)
 
-        return ([0xff, spec.type_byte] +
-                encode_variable_int(len(data)) +
-                data)
+        return ([0xff, spec.type_byte] + encode_variable_int(len(data)) + data)
 
     def __repr__(self):
         spec = _META_SPEC_BY_TYPE[self.type]
@@ -575,6 +573,5 @@ class UnknownMetaMessage(MetaMessage):
         vars(self)[name] = value
 
     def bytes(self):
-        return ([0xff, self.type_byte] +
-                encode_variable_int(len(self.data)) +
-                list(self.data))
+        length = encode_variable_int(len(self.data))
+        return ([0xff, self.type_byte] + length + list(self.data))
