@@ -384,9 +384,9 @@ def multi_receive(ports, yield_ports=False, block=True):
 
     If block=False only pending messages will be yielded.
     """
+    ports = list(ports)
     while True:
         # Make a shuffled copy of the port list.
-        ports = list(ports)
         random.shuffle(ports)
 
         for port in ports:
