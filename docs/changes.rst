@@ -7,6 +7,15 @@ Changes
 Release History
 ---------------
 
+1.2.10
+^^^^^^^^^^^^^^^^^^
+
+* bugfix: MIDO_DEFAULT_INPUT was misspelled in mido-ports causing it
+  to be show as 'not set' even though it was set. (Fix by Bernhard
+  Wagner, pull request #192.)
+
+
+
 1.2.9 (2018-10-05)
 ^^^^^^^^^^^^^^^^^^
 
