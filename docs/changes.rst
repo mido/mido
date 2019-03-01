@@ -7,6 +7,21 @@ Changes
 Release History
 ---------------
 
+1.2.10
+^^^^^^^^^^^^^^^^^^
+
+* Improved MidiFile.play to avoid time drift. (Implemented by John
+  Belmonte, pull request #161.)
+
+* bugfix: MIDO_DEFAULT_INPUT was misspelled in mido-ports causing it
+  to be show as 'not set' even though it was set. (Fix by Bernhard
+  Wagner, pull request #192.)
+
+* Updated linke in docs to point to the new home github.com/mido/
+  (Fixed by Joshua Mayers, pull request #177.)
+
+
+
 1.2.9 (2018-10-05)
 ^^^^^^^^^^^^^^^^^^
 
