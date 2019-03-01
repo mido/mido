@@ -18,7 +18,7 @@ print()
 print_ports('Available input Ports:', mido.get_input_names())
 print_ports('Available output Ports:', mido.get_output_names())
 
-for name in ['MIDO_DEAFULT_INPUT',
+for name in ['MIDO_DEFAULT_INPUT',
              'MIDO_DEFAULT_OUTPUT',
              'MIDO_DEFAULT_IOPORT',
              'MIDO_BACKEND']:
