@@ -17,7 +17,7 @@ You can open a file with::
 .. note:: Sysex dumps such as patch data are often stored in SYX files
    rather than MIDI files. If you get "MThd not found. Probably not a
    MIDI file" try ``mido.read_syx_file()``. (See :doc:`syx` for more.)
-   
+
 The ``tracks`` attribute is a list of tracks. Each track is a list of
 messages and meta messages, with the ``time`` attribute of each
 messages set to its delta time (in ticks). (See Tempo and Beat
@@ -83,7 +83,7 @@ argument. The file can then be saved by calling the ``save()`` method::
     track.append(Message('program_change', program=12, time=0))
     track.append(Message('note_on', note=64, velocity=64, time=32))
     track.append(Message('note_off', note=64, velocity=127, time=32))
-    
+
     mid.save('new_song.mid')
 
 The ``MidiTrack`` class is a subclass of list, so you can use all the
@@ -182,46 +182,56 @@ The ``time`` attribute is used in several different ways:
   used for absolute time in ticks or seconds
 
 
-Tempo and Beat Resolution
+Tempo and Time Resolution
 -------------------------
 
 .. image:: images/midi_time.svg
 
-Timing in MIDI files is centered around ticks and beats. A beat is the same as 
-a quarter note. Beats are divided into ticks, the smallest unit of time in 
-MIDI.
+Timing in MIDI files is centered around ticks. Each message in a MIDI file has
+a delta time, which tells how many ticks have passed since the last message.
 
-Each message in a MIDI file has a delta time, which tells how many ticks have 
-passed since the last message. The length of a tick is defined in ticks per 
-beat. This value is stored as ``ticks_per_beat`` in MidiFile objects and 
-remains fixed throughout the song.
+A tick is the smallest unit of time in MIDI and remains fixed throughout the
+song. Each quarter notes is divided into a certain number of ticks, often
+referred as the resolution of the file or pulses per quarter note (PPQN). This
+resolution is stored as ``ticks_per_beat`` in MidiFile objects.
 
+The meaning of this ``ticks_per_beat`` in terms of absolute timing depends on
+the tempo and time signature of the file.
 
 MIDI Tempo vs. BPM
 ^^^^^^^^^^^^^^^^^^
 
-Unlike music, tempo in MIDI is not given as beats per minute, but rather in 
-microseconds per beat.
+Unlike music, tempo in MIDI is not given as beats per minute (BPM), but rather
+in microseconds per quarter note, with a default tempo of 500000 microseconds
+per quarter note. Given a default 4/4 time signature where a beat is exactly a
+quarter note, this corresponds to 120 beats per minute.
 
-The default tempo is 500000 microseconds per beat, which is 120 beats per 
-minute. The meta message 'set_tempo' can be used to change tempo during a song.
+In case of different time signatures, the length of a beat depends on the
+denominator of the time signature. E.g. in 2/2 time signature a beat has a
+length of a half note, i.e. two quarter notes. Thus the default MIDI tempo of
+500000 corresponds to a beat length of 1 second which is 60 BPM.
 
-You can use :py:func:`bpm2tempo` and :py:func:`tempo2bpm` to convert to and 
-from beats per minute. Note that :py:func:`tempo2bpm` may return a floating 
+The meta messages 'set_tempo' and 'time_signature' can be used to change
+the tempo and time signature during a song, respectively.
+
+You can use :py:func:`bpm2tempo` and :py:func:`tempo2bpm` to convert to and
+from beats per minute. Note that :py:func:`tempo2bpm` may return a floating
 point number.
 
 Converting Between Ticks and Seconds
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To convert from MIDI time to absolute time in seconds, the number of beats per 
-minute (BPM) and ticks per beat (often called pulses per quarter note or PPQ, 
-for short) have to be decided upon.
+To convert from MIDI time to absolute time in seconds, the tempo (either
+in number of beats per minute (BPM) or microseconds per quarter note, see
+`MIDI Tempo vs. BPM`_ above) and ticks per per quarter note have to be decided
+upon.
 
 You can use :py:func:`tick2second` and :py:func:`second2tick` to convert to
-and from seconds and ticks. Note that integer rounding of the result might be 
+and from seconds and ticks. Note that integer rounding of the result might be
 necessary because MIDI files require ticks to be integers.
 
-If you have a lot of rounding errors you should increase the time resolution 
-with more ticks per beat, by setting MidiFile.ticks_per_beat to a large number.
-Typical values range from 96 to 480 but some use even more ticks per beat.
+If you have a lot of rounding errors you should increase the time resolution
+with more ticks per quarter note, by setting MidiFile.ticks_per_beat to a
+large number. Typical values range from 96 to 480 but some use even more ticks
+per quarter note.
 
