@@ -54,14 +54,16 @@ class BaseMessage(object):
         """
         return cl(**data)
 
+    def _get_value_names(self):
+        # This is overriden by MetaMessage.
+        return list(SPEC_BY_TYPE[self.type]['value_names']) + ['time']
+
     def __repr__(self):
-        d = self.dict()
-        msg_type = d.pop('type')
-        items = getattr(d, 'iteritems', d.items)
-        return "%s('%s', %s)" % (
-            type(self).__name__,
-            msg_type,
-            ', '.join('%s=%s' % item for item in items()))
+        items = [repr(self.type)]
+        for name in self._get_value_names():
+            items.append('{}={!r}'.format(name, getattr(self, name)))
+        
+        return '{}({})'.format(type(self).__name__, ', '.join(items))
 
     @property
     def is_realtime(self):
