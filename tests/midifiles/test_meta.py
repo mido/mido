@@ -31,10 +31,12 @@ class TestKeySignature:
         MetaSpec_key_signature().decode(msg, input_bytes)
         assert msg.key == expect_sig
 
+
 def test_meta_message_repr():
     msg = MetaMessage('end_of_track', time=10)
     msg_eval = eval(repr(msg))
     assert msg == msg_eval
+
 
 def test_unknown_meta_message_repr():
     msg = UnknownMetaMessage(type_byte=99, data=[1, 2], time=10)

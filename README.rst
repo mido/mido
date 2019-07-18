@@ -18,7 +18,7 @@ designed to be as straight forward and Pythonic as possible:
    >>> msg.bytes()
    [144, 60, 64]
    >>> msg.copy(channel=2)
-   <message note_on channel=2 note=60 velocity=64 time=0>
+   Message('note_on', channel=2, note=60, velocity=64, time=0)
 
 .. code-block:: python
 
