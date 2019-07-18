@@ -3,15 +3,6 @@ from .midifiles import MetaMessage, UnknownMetaMessage
 
 
 class Frozen(object):
-    def __str__(self):
-        text = super(Frozen, self).__str__()
-        return '<frozen {}'.format(text[1:])
-
-    def __repr__(self):
-        # canonicalize to mutable objects
-        r = super(Frozen, self).__repr__()
-        return r[len('Frozen'):]
-
     def __setattr__(self, *_):
         raise ValueError('frozen message is immutable')
 
