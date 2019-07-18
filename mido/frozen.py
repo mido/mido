@@ -19,7 +19,8 @@ class FrozenMetaMessage(Frozen, MetaMessage):
 
 
 class FrozenUnknownMetaMessage(Frozen, UnknownMetaMessage):
-    pass
+    def __repr__(self):
+        return 'Frozen' + UnknownMetaMessage.__repr__(self)
 
 
 def is_frozen(msg):
