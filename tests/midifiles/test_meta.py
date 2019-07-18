@@ -1,5 +1,5 @@
 import pytest
-from mido.midifiles.meta import MetaMessage, MetaSpec_key_signature, KeySignatureError
+from mido.midifiles.meta import MetaMessage, UnknownMetaMessage, MetaSpec_key_signature, KeySignatureError
 
 
 def test_copy_invalid_argument():
@@ -30,3 +30,13 @@ class TestKeySignature:
         msg = MetaMessage('key_signature')
         MetaSpec_key_signature().decode(msg, input_bytes)
         assert msg.key == expect_sig
+
+def test_meta_message_repr():
+    msg = MetaMessage('end_of_track', time=10)
+    msg_eval = eval(repr(msg))
+    assert msg == msg_eval
+
+def test_unknown_meta_message_repr():
+    msg = UnknownMetaMessage(type_byte=99, data=[1, 2], time=10)
+    msg_eval = eval(repr(msg))
+    assert msg == msg_eval

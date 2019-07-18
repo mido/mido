@@ -108,3 +108,9 @@ def test_dict_sysex_data():
 def test_from_hex_sysex_data_type():
     msg = Message.from_hex('F0 01 02 03 F7')
     assert isinstance(msg.data, SysexData)
+
+
+def test_repr():
+    msg = Message('note_on', channel=1, note=2, time=3)
+    msg_eval = eval(repr(msg))
+    assert msg == msg_eval

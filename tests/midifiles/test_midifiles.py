@@ -1,7 +1,7 @@
 import io
 from pytest import raises
 from mido.messages import Message
-from mido.midifiles.midifiles import MidiFile
+from mido.midifiles.midifiles import MidiFile, MidiTrack
 from mido.midifiles.meta import MetaMessage, KeySignatureError
 
 HEADER_ONE_TRACK = """
@@ -163,3 +163,19 @@ def test_meta_messages_with_length_0():
 
         MetaMessage('end_of_track'),
     ]
+
+
+def test_midifile_repr():
+    midifile = MidiFile(type=1, ticks_per_beat=123, tracks=[
+        MidiTrack([
+            Message('note_on', channel=1, note=2, time=3),
+            Message('note_off', channel=1, note=2, time=3)]),
+        MidiTrack([
+            MetaMessage('sequence_number', number=5),
+            Message('note_on', channel=2, note=6, time=9),
+            Message('note_off', channel=2, note=6, time=9)]),
+    ])
+    midifile_eval = eval(repr(midifile))
+    for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
+        for m1, m2 in zip(track, track_eval):
+            assert m1 == m2
