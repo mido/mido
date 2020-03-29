@@ -108,14 +108,14 @@ Using this, you can write the server any way you like, for example::
                 print('Connection from {}'.format(client.name))
                 clients.append(client)
 
-            for i, client in reversed(enumerate(clients)):
+            for i, client in reversed(list(enumerate(clients))):
                 if client.closed:
                     print('{} disconnected'.format(client.name))
                     del clients[i]
 
             # Receive messages.
             for client in clients:
-                for message in client.iter_pending()
+                for message in client.iter_pending():
                     print('Received {} from {}'.format(message, client))
 
             # Do other things
