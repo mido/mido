@@ -148,7 +148,7 @@ def read_sysex(infile, delta, clip=False):
         data = data[1:]
     if data and data[-1] == 0xf7:
         data = data[:-1]
-        
+
     if clip:
         data = [byte if byte < 127 else 127 for byte in data]
 
