@@ -138,7 +138,7 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
     return Message.from_bytes([status_byte] + data_bytes, time=delta)
 
 
-def read_sysex(infile, delta):
+def read_sysex(infile, delta, clip=False):
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
 
@@ -148,6 +148,9 @@ def read_sysex(infile, delta):
         data = data[1:]
     if data and data[-1] == 0xf7:
         data = data[:-1]
+        
+    if clip:
+        data = [byte if byte < 127 else 127 for byte in data]    
 
     return Message('sysex', data=data, time=delta)
 
@@ -215,7 +218,7 @@ def read_track(infile, debug=False, clip=False):
         elif status_byte in [0xf0, 0xf7]:
             # TODO: I'm not quite clear on the difference between
             # f0 and f7 events.
-            msg = read_sysex(infile, delta)
+            msg = read_sysex(infile, delta, clip)
         else:
             msg = read_message(infile, status_byte, peek_data, delta, clip)
 
