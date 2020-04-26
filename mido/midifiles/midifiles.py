@@ -150,7 +150,7 @@ def read_sysex(infile, delta, clip=False):
         data = data[:-1]
         
     if clip:
-        data = [byte if byte < 127 else 127 for byte in data]    
+        data = [byte if byte < 127 else 127 for byte in data]
 
     return Message('sysex', data=data, time=delta)
 
