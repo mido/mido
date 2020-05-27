@@ -554,7 +554,7 @@ class UnknownMetaMessage(MetaMessage):
 
     def __repr__(self):
         fmt = 'UnknownMetaMessage(type_byte={}, data={}, time={})'
-        return fmt.format( self.type_byte, self.data, self.time)
+        return fmt.format(self.type_byte, self.data, self.time)
 
     def __setattr__(self, name, value):
         # This doesn't do any checking.
