@@ -10,6 +10,9 @@ Release History
 1.2.10
 ^^^^^^^^^^^^^^^^^^
 
+* Improve docs and error message for time attribute in a message.
+  (tomerv, pull request #249.)
+
 * Improved MidiFile.play to avoid time drift. (Implemented by John
   Belmonte, pull request #161.)
 
