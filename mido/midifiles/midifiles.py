@@ -244,6 +244,8 @@ def write_track(outfile, track):
     for msg in fix_end_of_track(track):
         if not isinstance(msg.time, Integral):
             raise ValueError('message time must be int in MIDI file')
+        if msg.time < 0:
+            raise ValueError('message time must be non-negative in MIDI file')
 
         if msg.is_realtime:
             raise ValueError('realtime messages are not allowed in MIDI files')

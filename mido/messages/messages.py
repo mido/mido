@@ -62,7 +62,6 @@ class BaseMessage(object):
         items = [repr(self.type)]
         for name in self._get_value_names():
             items.append('{}={!r}'.format(name, getattr(self, name)))
-        
         return '{}({})'.format(type(self).__name__, ', '.join(items))
 
     @property
