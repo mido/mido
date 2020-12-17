@@ -472,11 +472,6 @@ class MidiFile(object):
                 else:
                     print('{!r}'.format(msg))
 
-    def __str__(self):
-        return '<midi file {!r} type {}, {} tracks, {} messages>'.format(
-            self.filename, self.type, len(self.tracks),
-            sum([len(track) for track in self.tracks]))
-
     def __repr__(self):
         tracks_str = ',\n'.join(repr(track) for track in self.tracks)
         tracks_str = '\n'.join('  ' + line for line in tracks_str.splitlines())

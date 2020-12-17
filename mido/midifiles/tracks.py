@@ -50,9 +50,6 @@ class MidiTrack(list):
     def __mul__(self, other):
         return self.__class__(list.__mul__(self, other))
 
-    def __str__(self):
-        return '<midi track {!r} {} messages>'.format(self.name, len(self))
-
     def __repr__(self):
         if len(self) > 0:
             template = '[\n  {}]' if len(self) > 1 else '[{}]'
