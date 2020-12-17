@@ -16,8 +16,7 @@ Release History
 * Improved MidiFile.play to avoid time drift. (Implemented by John
   Belmonte, pull request #161.)
 
-* New ``repr()`` format. (Original implementation by John Belmonte,
-  pull request #164.)
+* New ``repr()`` format. (Implemented by John Belmonte, pull request #164.)
 
 * Added ``msg.is_cc()`` method. Checks if message is a control change.
   Can also be used to check for a specific control change number, for
