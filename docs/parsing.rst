@@ -12,11 +12,11 @@ data bytes and use a stop byte instead.)
 Mido comes with a parser that turns MIDI bytes into messages. You can create a parser object, or call one of the utility functions::
 
     >>> mido.parse([0x92, 0x10, 0x20])
-    <message note_on channel=0 note=16 velocity=32 time=0>
+    Message('note_on', channel=2, note=16, velocity=32, time=0)
 
     >>> mido.parse_all([0x92, 0x10, 0x20, 0x82, 0x10, 0x20])
-    [<message note_on channel=2 note=16 velocity=32 time=0>,
-     <message note_off channel=2 note=16 velocity=32 time=0>]
+    [Message('note_on', channel=2, note=16, velocity=32, time=0),
+     Message('note_off', channel=2, note=16, velocity=32, time=0)]
 
 These functions are just shortcuts for the full ``Parser`` class. This
 is the parser used inside input ports to parse incoming messages.
@@ -27,13 +27,13 @@ Here are a few examples of how it can be used::
     >>> p.pending()
     1
     >>> p.get_message()
-    <message note_on channel=0 note=16 velocity=32 time=0>
+    Message('note_on', channel=0, note=16, velocity=32, time=0)
 
     >>> p.feed_byte(0x90)
     >>> p.feed_byte(0x10)
     >>> p.feed_byte(0x20)
     >>> p.feed([0x80, 0x10, 0x20])
-    <message note_on channel=0 note=16 velocity=32 time=0>
+    Message('note_on', channel=0, note=16, velocity=32, time=0)
 
 ``feed()`` accepts any iterable that generates integers in 0..255. The
 parser will skip and stray status bytes or data bytes, so you can
