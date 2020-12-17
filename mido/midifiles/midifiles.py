@@ -480,8 +480,8 @@ class MidiFile(object):
     def __repr__(self):
         tracks_str = ',\n'.join(repr(track) for track in self.tracks)
         tracks_str = '\n'.join('  ' + line for line in tracks_str.splitlines())
-        tracks_str = (', tracks=[\n%s\n]' % tracks_str) if self.tracks else ''
-        return 'MidiFile(type=%s, ticks_per_beat=%s%s)' % (
+        tracks_str = (', tracks=[\n{}\n]'.format(tracks_str)) if self.tracks else ''
+        return 'MidiFile(type={}, ticks_per_beat={}{})'.format(
             self.type, self.ticks_per_beat, tracks_str)
 
     # The context manager has no purpose but is kept around since it was

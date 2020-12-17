@@ -54,11 +54,12 @@ class MidiTrack(list):
         return '<midi track {!r} {} messages>'.format(self.name, len(self))
 
     def __repr__(self):
-        messages = ''
         if len(self) > 0:
-            template = '[\n  %s]' if len(self) > 1 else '[%s]'
-            messages = template % ',\n  '.join(repr(m) for m in self)
-        return 'MidiTrack(%s)' % messages
+            template = '[\n  {}]' if len(self) > 1 else '[{}]'
+            messages = template.format(',\n  '.join(repr(m) for m in self))
+        else:
+            messages = ''
+        return 'MidiTrack({})'.format(messages)
 
 
 def _to_abstime(messages):
