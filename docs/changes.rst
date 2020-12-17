@@ -19,6 +19,10 @@ Release History
 * New ``repr()`` format. (Original implementation by John Belmonte,
   pull request #164.)
 
+* Added ``msg.is_cc()`` method. Checks if message is a control change.
+  Can also be used to check for a specific control change number, for
+  example ``msg.is_cc(7)``.
+
 * bugfix: MIDO_DEFAULT_INPUT was misspelled in mido-ports causing it
   to be show as 'not set' even though it was set. (Fix by Bernhard
   Wagner, pull request #192.)
