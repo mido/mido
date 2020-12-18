@@ -56,7 +56,7 @@ Main Features
   used interchangeably. New port types can be written by subclassing
   and overriding a few methods.
 
-* includes a reusable MIDI parser.
+* includes a reusable MIDI stream parser.
 
 * full support for MIDI files (read, write, create and play) with
   complete access to every message in the file, including all common
