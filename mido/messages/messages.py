@@ -12,10 +12,10 @@ class BaseMessage(object):
     is_meta = False
 
     def copy(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def bytes(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def bin(self):
         """Encode message and return as a bytearray.
