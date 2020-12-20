@@ -50,6 +50,18 @@ Mido supports all message types defined by the MIDI standard. For a
 full list of messages and their attributes, see :doc:`/message_types`.
 
 
+Control Changes
+---------------
+
+.. code-block:: python
+
+    if msg.is_cc():
+        print('Control change message received')
+
+    if msg.is_cc(7):
+        print('Volume changed to', msg.value)
+
+
 Converting To Bytes
 -------------------
 
