@@ -7,7 +7,7 @@ modifications.
 import sys
 from ctypes import (CDLL, CFUNCTYPE, POINTER, Structure, c_char_p,
                     c_int, c_long, c_uint, c_void_p, cast,
-                    create_string_buffer, byref)
+                    create_string_buffer)
 import ctypes.util
 
 dll_name = ''

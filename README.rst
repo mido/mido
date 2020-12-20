@@ -4,8 +4,7 @@ Mido - MIDI Objects for Python
 .. image:: https://travis-ci.org/mido/mido.svg?branch=master
     :target: https://travis-ci.org/mido/mido
 
-Mido is a library for working with MIDI messages and ports. It's
-designed to be as straight forward and Pythonic as possible:
+Mido is a library for working with MIDI messages and ports:
 
 .. code-block:: python
 
@@ -57,7 +56,7 @@ Main Features
   used interchangeably. New port types can be written by subclassing
   and overriding a few methods.
 
-* includes a reusable MIDI parser.
+* includes a reusable MIDI stream parser.
 
 * full support for MIDI files (read, write, create and play) with
   complete access to every message in the file, including all common

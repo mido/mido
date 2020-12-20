@@ -43,7 +43,7 @@ f0 fb 37 09 00 00 82 03
 f0 fb 37 09 00 00 82 04
 f0 fb 37 09 00 00 82 05
             --+--  |
-              |    1 = button, 2 = 
+              |    1 = button, 2 =
               |
             value (little endian unsigned)
 
@@ -94,12 +94,12 @@ def read_event(device):
     event['init'] = bool(event['type'] & JS_EVENT_INIT)
     event['type'] &= 0x7f  # Strip away the flag bits (JS_EVENT_INIT etc.)
     if event['type'] != JS_EVENT_BUTTON:
-        
+
         event['normalized_value'] = \
             float(event['value']) / 0x7fff  # Normalize to -1..1
 
     event['type'] = {1: 'button', 2: 'axis'}[event['type']]
-    
+
     return event
 
 def read_events(device_name):
@@ -234,7 +234,7 @@ def play_drums(dev, out):
                 type_ = 'note_on'
             else:
                 type_ = 'note_off'
-            
+
             note = note_mapping[button]
 
             message = mido.Message(type_, channel=9, note=note, velocity=64)

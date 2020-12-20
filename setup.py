@@ -16,7 +16,7 @@ def get_about():
     return about
 
 
-about = get_about()    
+about = get_about()
 
 
 try:
