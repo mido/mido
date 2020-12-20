@@ -6,8 +6,8 @@ Questions
 ---------
 
 If you have questions about contributing code or suggestions
-for how to make contributing easier, please write to
-https://groups.google.com/forum/#!forum/mido-community.
+for how to make contributing easier, please write at
+https://github.com/mido/mido/discussions.
 
 
 Installing for developers

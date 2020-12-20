@@ -8,9 +8,6 @@ a list of ideas.
 Near Future
 -----------
 
-* create a place for general discussion:
-  Now exists: https://groups.google.com/forum/#!forum/mido-community
-
 * a `PEP <https://www.python.org/dev/peps/>`_ like process for new
   features and major changes?
 
