@@ -14,7 +14,7 @@ To encode a message, simply call ``str()`` on it::
 To convert the other way (new method in 1.2)::
 
     >>> mido.Message.from_str('control_change control=1 value=122')
-    <message control_change channel=0 control=1 value=122 time=0>
+    Message('control_change', channel=0, control=1, value=122, time=0)
 
 Alternatively, you can call the ``format_as_string`` function directly:
 
@@ -58,14 +58,14 @@ Parsing
 To parse a message, you can use ``mido.parse_string()``::
 
     >>> parse_string('control_change control=1 value=122 time=0.5')
-    <message control_change channel=0 control=1 value=122 time=0.5>
+    Message('control_change', channel=0, control=1, value=122, time=0.5)
 
 Parameters that are left out are set to their default
 values. ``ValueError`` is raised if the message could not be
 parsed. Extra whitespace is ignored::
 
     >>> parse_string('  control_change   control=1  value=122')
-    <message control_change channel=0 control=1 value=122 time=0>
+    Message('control_change', channel=0, control=1, value=122, time=0)
 
 To parse messages from a stream, you can use
 ``mido.messages.parse_string_stream()``::

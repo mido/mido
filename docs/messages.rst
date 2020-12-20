@@ -7,12 +7,12 @@ attributes will vary depending on message type.
 To create a new message::
 
     >>> mido.Message('note_on')
-    <message note_on channel=0 note=0 velocity=64 time=0>
+    Message('note_on', channel=0, note=0, velocity=64, time=0)
 
 You can pass attributes as keyword arguments::
 
     >>> mido.Message('note_on', note=100, velocity=3, time=6.2)
-    <message note_on channel=0 note=100 velocity=3 time=6.2>
+    Message('note_on', channel=0, note=100, velocity=3, time=6.2)
 
 All attributes will default to 0. The exceptions are ``velocity``,
 which defaults to 64 (middle velocity) and ``data`` which defaults to
@@ -33,7 +33,7 @@ Attributes are also settable but it's always better to use
 ``msg.copy()``::
 
     >>> msg.copy(note=99, time=100.0)
-    <message note_on channel=0 note=99 velocity=64 time=100.0>
+    Message('note_on', channel=0, note=99, velocity=64, time=100.0)
 
 .. note:: Mido always makes a copy of messages instead of modifying
           them so if you do the same you have immutable messages in
@@ -69,7 +69,7 @@ You can convert a message to MIDI bytes with one of these methods:
 
     >>> msg = mido.Message('note_on')
     >>> msg
-    <message note_on channel=0 note=0 velocity=64 time=0>
+    Message('note_on', channel=0, note=0, velocity=64, time=0)
     >>> msg.bytes()
     [144, 0, 64]
     >>> msg.bin()
@@ -132,7 +132,7 @@ the payload of the message::
 
     >>> msg = Message('sysex', data=[1, 2, 3])
     >>> msg
-    <message sysex data=(1, 2, 3) time=0>
+    Message('sysex', data=(1, 2, 3), time=0)
     >>> msg.hex()
     'F0 01 02 03 F7'
 
@@ -142,7 +142,7 @@ You can also extend the existing data::
    >>> msg.data += [4, 5]
    >>> msg.data += [6, 7, 8]
    >>> msg
-   <message sysex data=(1, 2, 3, 4, 5, 6, 7, 8) time=0>
+   Message('sysex', data=(1, 2, 3, 4, 5, 6, 7, 8), time=0)
 
 Any sequence of integers is allowed, and type and range checking is
 applied to each data byte. These are all valid::
@@ -159,4 +159,4 @@ For example::
     >>> msg = Message('sysex', data=bytearray(b'ABC'))
     >>> msg.data += bytearray(b'DEF')
     >>> msg
-    <message sysex data=(65, 66, 67, 68, 69, 70) time=0>
+    Message('sysex', data=(65, 66, 67, 68, 69, 70), time=0)

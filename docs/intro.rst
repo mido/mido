@@ -13,7 +13,7 @@ create a new message::
     >>> from mido import Message
     >>> msg = Message('note_on', note=60)
     >>> msg
-    <message note_on channel=0 note=60 velocity=64 time=0>
+    Message('note_on', channel=0, note=60, velocity=64, time=0)
 
 .. note::
 
@@ -37,7 +37,7 @@ Attributes are also settable but this should be avoided. It's better
 to use ``msg.copy()``::
 
     >>> msg.copy(note=100, velocity=127)
-    <message note_on channel=2 note=100 velocity=127 time=0)
+    Message('note_on', channel=0, note=100, velocity=127, time=0)
 
 Type and value checks are done when you pass parameters or assign to
 attributes, and the appropriate exceptions are raised. This ensures

@@ -148,7 +148,7 @@ usual way, for example::
 
     >>> from mido import MetaMessage
     >>> MetaMessage('key_signature', key='C#', mode='major')
-    <meta message key_signature key='C#' mode='major' time=0>
+    MetaMessage('key_signature', key='C#', mode='major', time=0)
 
 You can tell meta messages apart from normal messages with::
 
