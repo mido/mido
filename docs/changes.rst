@@ -7,20 +7,27 @@ Changes
 Release History
 ---------------
 
-1.2.10
+(Next release)
 ^^^^^^^^^^^^^^^^^^
 
-* Improve docs and error message for time attribute in a message.
-  (tomerv, pull request #249.)
-
-* Improved MidiFile.play to avoid time drift. (Implemented by John
-  Belmonte, pull request #161.)
-
-* New ``repr()`` format. (Implemented by John Belmonte, pull request #164.)
+* New ``repr()`` format for messages, tracks and MIDI file
+  objects. (Implemented by John Belmonte, pull request #164.)
 
 * Added ``msg.is_cc()`` method. Checks if message is a control change.
   Can also be used to check for a specific control change number, for
   example ``msg.is_cc(7)``.
+
+* Fixed memory leaks in RtMidi backend (issue #256, fix by The Other Days,
+  pull request #264.)
+
+* clip now works with sysex messages (Fix by  Avatar Timo Stüber, pull request
+  #229.)
+
+* Improved docs and error message for time attribute in a message.
+  (tomerv, pull request #249.)
+
+* Improved MidiFile.play to avoid time drift. (Implemented by John
+  Belmonte, pull request #161.)
 
 * bugfix: MIDO_DEFAULT_INPUT was misspelled in mido-ports causing it
   to be show as 'not set' even though it was set. (Fix by Bernhard
@@ -28,6 +35,9 @@ Release History
 
 * Updated linke in docs to point to the new home github.com/mido/
   (Fixed by Joshua Mayers, pull request #177.)
+
+* thanks to Christopher Arndt, Kathryn DiPippo and Timo Stüber for fixing
+  flake8 issues.
 
 
 
