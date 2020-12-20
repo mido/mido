@@ -51,11 +51,12 @@ class MidiTrack(list):
         return self.__class__(list.__mul__(self, other))
 
     def __repr__(self):
-        if len(self) > 0:
-            template = '[\n  {}]' if len(self) > 1 else '[{}]'
-            messages = template.format(',\n  '.join(repr(m) for m in self))
-        else:
+        if len(self) == 0:
             messages = ''
+        elif len(self) == 1:
+            messages = '[{}]'.format(self[0])
+        else:
+            messages = '[\n  {}]'.format(',\n  '.join(repr(m) for m in self))
         return 'MidiTrack({})'.format(messages)
 
 
