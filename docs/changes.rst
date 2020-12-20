@@ -10,11 +10,17 @@ Release History
 1.2.10
 ^^^^^^^^^^^^^^^^^^
 
+* Improve docs and error message for time attribute in a message.
+  (tomerv, pull request #249.)
+
 * Improved MidiFile.play to avoid time drift. (Implemented by John
   Belmonte, pull request #161.)
 
-* New ``repr()`` format. (Original implementation by John Belmonte,
-  pull request #164.)
+* New ``repr()`` format. (Implemented by John Belmonte, pull request #164.)
+
+* Added ``msg.is_cc()`` method. Checks if message is a control change.
+  Can also be used to check for a specific control change number, for
+  example ``msg.is_cc(7)``.
 
 * bugfix: MIDO_DEFAULT_INPUT was misspelled in mido-ports causing it
   to be show as 'not set' even though it was set. (Fix by Bernhard

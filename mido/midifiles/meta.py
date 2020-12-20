@@ -109,7 +109,7 @@ def encode_variable_int(value):
     length.
     """
     if not isinstance(value, Integral) or value < 0:
-        raise ValueError('variable int must be a positive integer')
+        raise ValueError('variable int must be a non-negative integer')
 
     bytes = []
     while value:
