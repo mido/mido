@@ -473,9 +473,12 @@ class MidiFile(object):
                     print('{!r}'.format(msg))
 
     def __repr__(self):
-        tracks_str = ',\n'.join(repr(track) for track in self.tracks)
-        tracks_str = '\n'.join('  ' + line for line in tracks_str.splitlines())
-        tracks_str = (', tracks=[\n{}\n]'.format(tracks_str)) if self.tracks else ''
+        if self.tracks:
+            tracks_str = ',\n'.join(repr(track) for track in self.tracks)
+            tracks_str = '  ' + tracks_str.replace('\n', '\n  ')
+            tracks_str = ', tracks=[\n{}\n]'.format(tracks_str)
+        else:
+            tracks_str = ''
         return 'MidiFile(type={}, ticks_per_beat={}{})'.format(
             self.type, self.ticks_per_beat, tracks_str)
 
