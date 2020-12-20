@@ -33,6 +33,9 @@ Release History
   to be show as 'not set' even though it was set. (Fix by Bernhard
   Wagner, pull request #192.)
 
+* Now only copies ports once in ports.multi_receive() (Tom Ritchford, pull
+  request #191.)
+
 * Updated linke in docs to point to the new home github.com/mido/
   (Fixed by Joshua Mayers, pull request #177.)
 
