@@ -13,6 +13,9 @@ Release History
 * New ``repr()`` format for messages, tracks and MIDI file
   objects. (Implemented by John Belmonte, pull request #164.)
 
+* added new example ``midifiles/show_midifile.py`` based on the
+  new ``repr()`` format.
+
 * Added ``msg.is_cc()`` method. Checks if message is a control change.
   Can also be used to check for a specific control change number, for
   example ``msg.is_cc(7)``.
