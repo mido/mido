@@ -1,8 +1,6 @@
 Mido - MIDI Objects for Python
 ==============================
 
-.. image:: https://travis-ci.org/mido/mido.svg?branch=master
-    :target: https://travis-ci.org/mido/mido
 .. image:: https://github.com/mido/mido/workflows/Test/badge.svg
    :target: https://github.com/mido/mido/actions
 
