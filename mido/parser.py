@@ -8,9 +8,6 @@ from collections import deque
 from .messages import Message
 from .tokenizer import Tokenizer
 
-# TODO: make sure the method signatures are as before.
-# TODO: add doc strings.
-
 
 class Parser(object):
     """
