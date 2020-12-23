@@ -5,13 +5,6 @@ This will be developed into a proper roadmap but for now it's more of
 a list of ideas.
 
 
-Near Future
------------
-
-* a `PEP <https://www.python.org/dev/peps/>`_ like process for new
-  features and major changes?
-
-
 Various Improvements to MIDI File Parsing
 -----------------------------------------
 
