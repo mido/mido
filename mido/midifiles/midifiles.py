@@ -482,8 +482,13 @@ class MidiFile(object):
             tracks_str = ', tracks=[\n{}\n]'.format(tracks_str)
         else:
             tracks_str = ''
-        return 'MidiFile(type={}, ticks_per_beat={}{})'.format(
-            self.type, self.ticks_per_beat, tracks_str)
+
+        return '{}(type={}, ticks_per_beat={}{})'.format(
+            self.__class__.__name__,
+            self.type,
+            self.ticks_per_beat,
+            tracks_str,
+        )
 
     # The context manager has no purpose but is kept around since it was
     # used in examples in the past.
