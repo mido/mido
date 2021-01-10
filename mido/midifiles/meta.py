@@ -540,14 +540,14 @@ class MetaMessage(BaseMessage):
 
 
 class UnknownMetaMessage(MetaMessage):
-    def __init__(self, type_byte, data=None, time=0):
+    def __init__(self, type_byte, data=None, time=0, type='unknown_meta'):
         if data is None:
             data = ()
         else:
             data = tuple(data)
 
         vars(self).update({
-            'type': 'unknown_meta',
+            'type': type,
             'type_byte': type_byte,
             'data': data,
             'time': time})
