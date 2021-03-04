@@ -70,7 +70,7 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
     if api == 'LINUX_ALSA':
         name = expand_alsa_port_name(rt.get_ports(), name)
 
-    if client_name is not None:
+    if client_name is not None and virtual is None:
         virtual = True
 
     if virtual:
