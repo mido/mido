@@ -49,8 +49,10 @@ def get_devices(api=None, **kwargs):
 
     rtapi = _get_api_id(api)
 
-    input_names = set(rtmidi.MidiIn(rtapi=rtapi).get_ports())
-    output_names = set(rtmidi.MidiOut(rtapi=rtapi).get_ports())
+    mi = rtmidi.MidiIn(rtapi=rtapi)
+    mo = rtmidi.MidiOut(rtapi=rtapi)
+    input_names = set(mi.get_ports())
+    output_names = set(mo.get_ports())
 
     for name in sorted(input_names | output_names):
         devices.append({'name': name,
@@ -58,6 +60,8 @@ def get_devices(api=None, **kwargs):
                         'is_output': name in output_names,
                         })
 
+    mi.delete()
+    mo.delete()
     return devices
 
 
@@ -103,6 +107,7 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
 class PortCommon(object):
     def _close(self):
         self._rt.close_port()
+        self._rt.delete()
 
 
 class Input(PortCommon, ports.BaseInput):

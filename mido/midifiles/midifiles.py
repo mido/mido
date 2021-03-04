@@ -138,7 +138,7 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
     return Message.from_bytes([status_byte] + data_bytes, time=delta)
 
 
-def read_sysex(infile, delta):
+def read_sysex(infile, delta, clip=False):
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
 
@@ -148,6 +148,9 @@ def read_sysex(infile, delta):
         data = data[1:]
     if data and data[-1] == 0xf7:
         data = data[:-1]
+
+    if clip:
+        data = [byte if byte < 127 else 127 for byte in data]
 
     return Message('sysex', data=data, time=delta)
 
@@ -215,7 +218,7 @@ def read_track(infile, debug=False, clip=False):
         elif status_byte in [0xf0, 0xf7]:
             # TODO: I'm not quite clear on the difference between
             # f0 and f7 events.
-            msg = read_sysex(infile, delta)
+            msg = read_sysex(infile, delta, clip)
         else:
             msg = read_message(infile, status_byte, peek_data, delta, clip)
 
@@ -244,6 +247,8 @@ def write_track(outfile, track):
     for msg in fix_end_of_track(track):
         if not isinstance(msg.time, Integral):
             raise ValueError('message time must be int in MIDI file')
+        if msg.time < 0:
+            raise ValueError('message time must be non-negative in MIDI file')
 
         if msg.is_realtime:
             raise ValueError('realtime messages are not allowed in MIDI files')
@@ -470,17 +475,20 @@ class MidiFile(object):
                 else:
                     print('{!r}'.format(msg))
 
-    def __str__(self):
-        return '<midi file {!r} type {}, {} tracks, {} messages>'.format(
-            self.filename, self.type, len(self.tracks),
-            sum([len(track) for track in self.tracks]))
-
     def __repr__(self):
-        tracks_str = ',\n'.join(repr(track) for track in self.tracks)
-        tracks_str = '\n'.join('  ' + line for line in tracks_str.splitlines())
-        tracks_str = (', tracks=[\n%s\n]' % tracks_str) if self.tracks else ''
-        return 'MidiFile(type=%s, ticks_per_beat=%s%s)' % (
-            self.type, self.ticks_per_beat, tracks_str)
+        if self.tracks:
+            tracks_str = ',\n'.join(repr(track) for track in self.tracks)
+            tracks_str = '  ' + tracks_str.replace('\n', '\n  ')
+            tracks_str = ', tracks=[\n{}\n]'.format(tracks_str)
+        else:
+            tracks_str = ''
+
+        return '{}(type={}, ticks_per_beat={}{})'.format(
+            self.__class__.__name__,
+            self.type,
+            self.ticks_per_beat,
+            tracks_str,
+        )
 
     # The context manager has no purpose but is kept around since it was
     # used in examples in the past.

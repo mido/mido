@@ -109,7 +109,7 @@ def encode_variable_int(value):
     length.
     """
     if not isinstance(value, Integral) or value < 0:
-        raise ValueError('variable int must be a positive integer')
+        raise ValueError('variable int must be a non-negative integer')
 
     bytes = []
     while value:
@@ -554,7 +554,7 @@ class UnknownMetaMessage(MetaMessage):
 
     def __repr__(self):
         fmt = 'UnknownMetaMessage(type_byte={}, data={}, time={})'
-        return fmt.format( self.type_byte, self.data, self.time)
+        return fmt.format(self.type_byte, self.data, self.time)
 
     def __setattr__(self, name, value):
         # This doesn't do any checking.

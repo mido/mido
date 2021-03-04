@@ -13,3 +13,4 @@ recursive-include extras *.rst
 recursive-include mido *.py
 recursive-include docs/images *.svg
 prune docs/_build
+prune logo

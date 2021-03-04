@@ -63,9 +63,7 @@ to 64 so that if you don't set it, you will still get a reasonable
 value. (64 is the recommended default for devices that don't support
 it attack or release velocity.)
 
-The ``time`` parameter is not included in the encoded message, and is
-(currently) not used by Mido in any way. You can use it for whatever
-purpose you wish.
+The ``time`` is used in MIDI files as delta time.
 
 The ``data`` parameter accepts any iterable that generates numbers in
 0..127. This includes::

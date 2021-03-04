@@ -12,10 +12,10 @@ class BaseMessage(object):
     is_meta = False
 
     def copy(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def bytes(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def bin(self):
         """Encode message and return as a bytearray.
@@ -62,13 +62,28 @@ class BaseMessage(object):
         items = [repr(self.type)]
         for name in self._get_value_names():
             items.append('{}={!r}'.format(name, getattr(self, name)))
-        
         return '{}({})'.format(type(self).__name__, ', '.join(items))
 
     @property
     def is_realtime(self):
         """True if the message is a system realtime message."""
         return self.type in REALTIME_TYPES
+
+    def is_cc(self, control=None):
+        """Return True if the message is of type 'control_change'.
+
+        The optional control argument can be used to test for a specific
+        control number, for example:
+
+        if msg.is_cc(7):
+            # Message is control change 7 (channel volume).
+        """
+        if self.type != 'control_change':
+            return False
+        elif control is None:
+            return True
+        else:
+            return self.control == control
 
     def __delattr__(self, name):
         raise AttributeError('attribute cannot be deleted')

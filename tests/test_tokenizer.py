@@ -35,7 +35,7 @@ def test_realtime_inside_sysex():
     The sysex messages should be delivered first.
 
     This is the only case where a message is allowed inside another message.
-    """ 
+    """
     assert tokenize([0xf0, 1, 0xf8, 2, 0xf7]) == [[0xf8], [0xf0, 1, 2, 0xf7]]
     assert tokenize([0xf0, 0xf8, 0xf7]) == [[0xf8], [0xf0, 0xf7]]
 

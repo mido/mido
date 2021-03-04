@@ -3,9 +3,10 @@ Mido - MIDI Objects for Python
 
 .. image:: https://travis-ci.org/mido/mido.svg?branch=master
     :target: https://travis-ci.org/mido/mido
+.. image:: https://github.com/mido/mido/workflows/Test/badge.svg
+   :target: https://github.com/mido/mido/actions
 
-Mido is a library for working with MIDI messages and ports. It's
-designed to be as straight forward and Pythonic as possible:
+Mido is a library for working with MIDI messages and ports:
 
 .. code-block:: python
 
@@ -57,7 +58,7 @@ Main Features
   used interchangeably. New port types can be written by subclassing
   and overriding a few methods.
 
-* includes a reusable MIDI parser.
+* includes a reusable MIDI stream parser.
 
 * full support for MIDI files (read, write, create and play) with
   complete access to every message in the file, including all common
@@ -82,7 +83,7 @@ Status
 Requirements
 ------------
 
-Mido targets Python 2.7 and 3.2.
+Mido targets Python 3.6 and 2.7.
 
 
 Installing
@@ -116,21 +117,6 @@ Mido is released under the terms of the `MIT license
 Questions and suggestions
 -------------------------
 
-Please ask questions about Mido at
-https://groups.google.com/forum/#!forum/mido-community.
-
-This mailing list was created to give both the user community a place to ask
-and hopefully also answer questions and for the developers a space to discuss
-Mido development. The success of the mailing list will depend on the community
-effort to also answer questions.
-
-
-Looking for maintainers
------------------------
-
-This project is looking for somebody to take over the maintenance since the
-original author @olemb is busy with other projects. We look for somebody or a
-group of people who care about the code and would like to steer this project in
-future by discussing proposals, reviewing pull requests, and looking over
-issues. Please write to mido-community@googlegroups.com if you would like to
-help out with maintenance.
+For questions and proposals which may not fit into issues or pull requests, we
+recommend to ask and discuss on `Discussions
+<https://github.com/mido/mido/discussions>`_.
