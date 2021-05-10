@@ -39,6 +39,10 @@ Release History
 * Now only copies ports once in ports.multi_receive() (Tom Ritchford, pull
   request #191.)
 
+* Ports lists returned from ``get_input_names()`` and friends are no
+  longer sorted. (Suggested and implemented by Ryan McCampbell, issue
+  #298.)
+
 * Updated linke in docs to point to the new home github.com/mido/
   (Fixed by Joshua Mayers, pull request #177.)
 
