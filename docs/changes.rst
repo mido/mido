@@ -7,8 +7,8 @@ Changes
 Release History
 ---------------
 
-(Next release)
-^^^^^^^^^^^^^^^^^^
+1.2.10 (2021-05-10)
+^^^^^^^^^^^^^^^^^^^
 
 * New ``repr()`` format for messages, tracks and MIDI file
   objects. (Implemented by John Belmonte, pull request #164.)
