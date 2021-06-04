@@ -56,7 +56,6 @@ setup(
                 'flake8>=3.4.1',
                 'pytest>=3.2.2',
                 'sphinx>=1.6.3',
-                'tox>=2.8.2'
                 ],
         'ports': ['python-rtmidi>=1.1.0']
     },

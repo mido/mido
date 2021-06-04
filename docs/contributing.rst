@@ -19,6 +19,7 @@ To install the dev dependencies, you can run the command::
 
 This will install all needed dependencies for testing and documentation.
 
+
 Testing
 -------
 
@@ -27,22 +28,11 @@ are found in `mido/test_*.py`.
 
 Tests can be run using the command::
 
-    py.test
+    pip install -q -e .[dev]
+    pytest . -rs -q
 
-Before submission, it is required that the tox tests run and pass. Run the tox tests using::
-
-    tox 
-
-It is required to test on at least 2.7 and 3.5 before submission. Any other passes are nice to have
-
-You can also set up a commit hook::
-
-    echo "tox" >.git/hooks/pre-commit
-    chmod +x .git/hooks/pre-commit
-
-This will run tests when you commit and cancel the commit if any tests
-fail.
-
+This is also run automatically at every push to the `main` branch and
+at every pull request, as part of the GitHub Actions workflow.
 
 
 Testing MIDI file support
