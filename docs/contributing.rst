@@ -96,9 +96,9 @@ Update the stable branch (if this is a stable release):
 ::
 
    git checkout stable
-   git pull . master
+   git pull . main
    git push
-   git checkout master
+   git checkout main
 
 
 Update Read the Docs
