@@ -21,6 +21,7 @@ import time
 import string
 import struct
 from numbers import Integral
+from typing import Generator, IO, List
 
 from ..messages import Message, SPEC_BY_STATUS
 from .meta import (MetaMessage, build_meta_message, meta_charset,
@@ -294,13 +295,9 @@ def get_seconds_per_tick(tempo, ticks_per_beat):
 
 
 class MidiFile(object):
-    def __init__(self, filename=None, file=None,
-                 type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
-                 charset='latin1',
-                 debug=False,
-                 clip=False,
-                 tracks=None
-                 ):
+    def __init__(self, filename: str = None, file: IO[bytes] = None, type: int = 1,
+            ticks_per_beat: int = DEFAULT_TICKS_PER_BEAT, charset: str = 'latin1',
+            debug: bool = False, clip: bool = False, tracks: List[MidiTrack] = None) -> None:
 
         self.filename = filename
         self.type = type
@@ -323,7 +320,7 @@ class MidiFile(object):
             with io.open(filename, 'rb') as file:
                 self._load(file)
 
-    def add_track(self, name=None):
+    def add_track(self, name: str = None) -> MidiTrack:
         """Add a new track to the file.
 
         This will create a new MidiTrack object and append it to the
@@ -362,7 +359,7 @@ class MidiFile(object):
                 # TODO: used to ignore EOFError. I hope things still work.
 
     @property
-    def length(self):
+    def length(self) -> float:
         """Playback time in seconds.
 
         This will be computed by going through every message in every
@@ -394,7 +391,7 @@ class MidiFile(object):
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
 
-    def play(self, meta_messages=False):
+    def play(self, meta_messages: bool = False):
         """Play back all tracks.
 
         The generator will sleep between each message by
@@ -425,7 +422,7 @@ class MidiFile(object):
             else:
                 yield msg
 
-    def save(self, filename=None, file=None):
+    def save(self, filename: str = None, file: IO[bytes] = None) -> None:
         """Save to a file.
 
         If file is passed the data will be saved to that file. This is
@@ -458,7 +455,7 @@ class MidiFile(object):
             for track in self.tracks:
                 write_track(outfile, track)
 
-    def print_tracks(self, meta_only=False):
+    def print_tracks(self, meta_only: bool = False) -> None:
         """Prints out all messages in a .midi file.
 
         May take argument meta_only to show only meta messages.
