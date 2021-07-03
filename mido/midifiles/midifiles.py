@@ -313,13 +313,13 @@ class MidiFile(object):
 
         if type not in range(3):
             raise ValueError(
-                'invalid format {} (must be 0, 1 or 2)'.format(format))
+                'invalid format {} (must be 0, 1 or 2)'.format(type))
 
         if tracks is not None:
             self.tracks = tracks
         elif file is not None:
             self._load(file)
-        elif self.filename is not None:
+        elif filename is not None:
             with io.open(filename, 'rb') as file:
                 self._load(file)
 
