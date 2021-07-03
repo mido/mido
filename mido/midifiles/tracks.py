@@ -3,7 +3,7 @@ from .meta import MetaMessage
 
 class MidiTrack(list):
     @property
-    def name(self):
+    def name(self) -> str:
         """Name of the track.
 
         This will return the name from the first track_name meta
@@ -20,7 +20,7 @@ class MidiTrack(list):
             return ''
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str):
         # Find the first track_name message and modify it.
         for message in self:
             if message.type == 'track_name':

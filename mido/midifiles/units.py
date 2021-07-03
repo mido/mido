@@ -1,4 +1,4 @@
-def tick2second(tick, ticks_per_beat, tempo):
+def tick2second(tick: float, ticks_per_beat: int, tempo: int) -> float:
     """Convert absolute time in ticks to seconds.
 
     Returns absolute time in seconds for a chosen MIDI file time
@@ -9,7 +9,7 @@ def tick2second(tick, ticks_per_beat, tempo):
     return tick * scale
 
 
-def second2tick(second, ticks_per_beat, tempo):
+def second2tick(second: float, ticks_per_beat: int, tempo: int) -> float:
     """Convert absolute time in seconds to ticks.
 
     Returns absolute time in ticks for a chosen MIDI file time
@@ -20,7 +20,7 @@ def second2tick(second, ticks_per_beat, tempo):
     return second / scale
 
 
-def bpm2tempo(bpm):
+def bpm2tempo(bpm: float) -> int:
     """Convert beats per minute to MIDI file tempo.
 
     Returns microseconds per beat as an integer::
@@ -33,7 +33,7 @@ def bpm2tempo(bpm):
     return int(round((60 * 1000000) / bpm))
 
 
-def tempo2bpm(tempo):
+def tempo2bpm(tempo: int) -> float:
     """Convert MIDI file tempo to BPM.
 
     Returns BPM as an integer or float::
