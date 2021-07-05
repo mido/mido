@@ -38,10 +38,11 @@ def get_devices(api=None, **kwargs):
 
     for name in input_names + output_names:
         if name not in devices:
-            devices[name] = {'name': name,
-                            'is_input': name in input_names,
-                            'is_output': name in output_names,
-                            }
+            devices[name] = {
+                'name': name,
+                'is_input': name in input_names,
+                'is_output': name in output_names,
+            }
 
     return list(devices.values())
 
