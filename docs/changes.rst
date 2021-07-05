@@ -7,6 +7,14 @@ Changes
 Release History
 ---------------
 
+1.2.11 ()
+^^^^^^^^^^^^^^^^^^^
+
+* The ``rtmidi`` and ``python-rtmidi`` 1.2.10 sometimes returned
+  duplicate port names. (Bug introduced in 1.2.10. Fix by Maciej
+  Sokołowski, pull request #321.)
+
+
 1.2.10 (2021-05-10)
 ^^^^^^^^^^^^^^^^^^^
 
