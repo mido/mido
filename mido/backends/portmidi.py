@@ -146,11 +146,13 @@ class PortCommon(object):
         if self.is_input:
             self._thread = None
             self.callback = kwargs.get('callback')
+            self.callback_w_args = kwargs.get('callback_w_args')
 
         self._device_type = 'PortMidi/{}'.format(device['interface'])
 
     def _close(self):
         self.callback = None
+        self.callback_w_args = None
         _check_error(pm.lib.Pm_Close(self._stream))
         _state['port_count'] -= 1
 
@@ -199,9 +201,21 @@ class Input(PortCommon, BaseInput):
     def callback(self):
         return self._callback
 
+    @property
+    def callback_w_args(self):
+        return self._callback_w_args
+
     @callback.setter
     def callback(self, func):
         self._callback = func
+        if func is None:
+            self._stop_thread()
+        else:
+            self._start_thread()
+
+    @callback_w_args.setter
+    def callback_w_args(self, func):
+        self._callback_w_args = func
         if func is None:
             self._stop_thread()
         else:
@@ -238,6 +252,8 @@ class Input(PortCommon, BaseInput):
                 for message in self._parser:
                     if self.callback:
                         self.callback(message)
+                    if self.callback_w_args:
+                        self.callback_w_args[0](message, self.callback_w_args[1])
                 sleep()
         finally:
             # Inform parent thread that we are done.

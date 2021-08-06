@@ -68,7 +68,7 @@ class Backend(object):
             kwargs['api'] = self.api
         return kwargs
 
-    def open_input(self, name=None, virtual=False, callback=None, **kwargs):
+    def open_input(self, name=None, virtual=False, callback=None, callback_w_args=None, **kwargs):
         """Open an input port.
 
         If the environment variable MIDO_DEFAULT_INPUT is set,
@@ -82,8 +82,15 @@ class Backend(object):
           A callback function to be called when a new message arrives.
           The function should take one argument (the message).
           Raises IOError if not supported by the backend.
+
+        callback_w_args=None
+          A tuple with a callback function to be called (and its
+          argument) when a new message arrives.
+          The function should take two arguments (the message and the
+          second value of this tuple (the argument)).
+          Raises IOError if not supported by the backend.
         """
-        kwargs.update(dict(virtual=virtual, callback=callback))
+        kwargs.update(dict(virtual=virtual, callback=callback, callback_w_args=callback_w_args))
 
         if name is None:
             name = self._env('MIDO_DEFAULT_INPUT')
@@ -112,7 +119,8 @@ class Backend(object):
         return self.module.Output(name, **self._add_api(kwargs))
 
     def open_ioport(self, name=None, virtual=False,
-                    callback=None, autoreset=False, **kwargs):
+                    callback=None, callback_w_args=None,
+                    autoreset=False, **kwargs):
         """Open a port for input and output.
 
         If the environment variable MIDO_DEFAULT_IOPORT is set,
@@ -127,11 +135,19 @@ class Backend(object):
           The function should take one argument (the message).
           Raises IOError if not supported by the backend.
 
+        callback_w_args=None
+          A tuple with a callback function to be called (and its
+          argument) when a new message arrives.
+          The function should take two arguments (the message and the
+          second value of this tuple (the argument)).
+          Raises IOError if not supported by the backend.
+
         autoreset=False
           Automatically send all_notes_off and reset_all_controllers
           on all channels. This is the same as calling `port.reset()`.
         """
         kwargs.update(dict(virtual=virtual, callback=callback,
+                           callback_w_args=callback_w_args,
                            autoreset=autoreset))
 
         if name is None:

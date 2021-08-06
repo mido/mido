@@ -166,6 +166,9 @@ class BaseInput(BasePort):
         if hasattr(self, 'callback') and self.callback is not None:
             raise ValueError('a callback is set for this port')
 
+        if hasattr(self, 'callback_w_args') and self.callback_w_args is not None:
+            raise ValueError('a callback_w_args is set for this port')
+
     def _receive(self, block=True):
         pass
 

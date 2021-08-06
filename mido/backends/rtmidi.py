@@ -116,7 +116,7 @@ class Input(PortCommon, ports.BaseInput):
     _locking = False
 
     def _open(self, client_name=None, virtual=False,
-              api=None, callback=None, **kwargs):
+              api=None, callback=None, callback_w_args=None, **kwargs):
 
         self.closed = True
         self._callback_lock = threading.RLock()
@@ -135,6 +135,7 @@ class Input(PortCommon, ports.BaseInput):
 
         # We need to do this last when everything is set up.
         self.callback = callback
+        self.callback_w_args = callback_w_args
 
     # We override receive() and poll() instead of _receive() and
     # _poll() to bypass locking.
@@ -154,6 +155,10 @@ class Input(PortCommon, ports.BaseInput):
     def callback(self):
         return self._callback
 
+    @property
+    def callback_w_args(self):
+        return self._callback_w_args
+
     @callback.setter
     def callback(self, func):
         with self._callback_lock:
@@ -168,6 +173,20 @@ class Input(PortCommon, ports.BaseInput):
             self._callback = func
             self._rt.set_callback(self._callback_wrapper)
 
+    @callback_w_args.setter
+    def callback_w_args(self, func):
+        with self._callback_lock:
+            # Make sure the callback doesn't run while were swapping it out.
+            self._rt.cancel_callback()
+
+            if func:
+                # Make sure the callback gets all the queued messages.
+                for msg in self._queue.iterpoll():
+                    func(msg)
+
+            self._callback_w_args = func
+            self._rt.set_callback(self._callback_wrapper)
+
     def _callback_wrapper(self, msg_data, data):
         try:
             msg = Message.from_bytes(msg_data[0])
@@ -175,7 +194,15 @@ class Input(PortCommon, ports.BaseInput):
             # Ignore invalid message.
             return
 
-        (self._callback or self._queue.put)(msg)
+        if self._callback_w_args or self._callback:
+            if self._callback_w_args:
+                self._callback_w_args[0](msg, self._callback_w_args[1])
+
+            if self._callback:
+                self._callback(msg)
+
+        else:
+            self._queue.put(msg)
 
 
 class Output(PortCommon, ports.BaseOutput):

@@ -67,7 +67,7 @@ class PortCommon(object):
         if kwargs.get('virtual'):
             raise ValueError('virtual ports are not supported'
                              ' by the Pygame backend')
-        elif kwargs.get('callback'):
+        elif kwargs.get('callback') or kwargs.get('callback_w_args'):
             raise ValueError('callbacks are not supported'
                              ' by the Pygame backend')
 
