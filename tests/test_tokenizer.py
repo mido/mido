@@ -52,4 +52,12 @@ def test_sysex_inside_sysex():
 
 def test_stray_data_bytes():
     """Data bytes outside messages should be ignored."""
-    assert tokenize([0, 1, 0x90, 2, 3, 4, 5, 0xf8, 6]) == [[0x90, 2, 3], [0xf8]]
+    assert tokenize([0, 1, 0x90, 2, 3, 0xf8, 6]) == [[0x90, 2, 3], [0xf8]]
+
+
+def test_running_status():
+    """The last known status byte should be reused if omitted in a message."""
+    assert tokenize([0x9a, 3, 127, 3, 64, 3, 0, 0xb0, 2, 3, 4, 5]) == [
+        [0x9a, 3, 127], [0x9a, 3, 64], [0x9a, 3, 0],
+        [0xb0, 2, 3], [0xb0, 4, 5]
+    ]

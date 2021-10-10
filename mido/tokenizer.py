@@ -12,6 +12,7 @@ class Tokenizer(object):
         """Create a new decoder."""
 
         self._status = 0
+        self._last_status = 0
         self._bytes = []
         self._messages = deque()
         self._datalen = 0
@@ -59,7 +60,12 @@ class Tokenizer(object):
             if len(self._bytes) == self._len:
                 # Complete message.
                 self._messages.append(self._bytes)
+                self._last_status = self._status
                 self._status = 0
+        elif self._last_status:
+            # Running status
+            self._feed_status_byte(self._last_status)
+            self._feed_data_byte(byte)
         else:
             # Ignore stray data byte.
             pass
