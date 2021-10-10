@@ -90,7 +90,7 @@ class SocketPort(BaseIOPort):
         if PY2:
             kwargs = {'bufsize': 0}
         else:
-            kwargs = {'buffering': None}
+            kwargs = {'buffering': 0}
 
         self._rfile = self._socket.makefile('rb', **kwargs)
         self._wfile = self._socket.makefile('wb', **kwargs)
