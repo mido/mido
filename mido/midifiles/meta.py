@@ -504,6 +504,10 @@ class MetaMessage(BaseMessage):
 
         attrs = vars(self).copy()
         attrs.update(overrides)
+
+        if self.type == 'unknown_meta':
+            attrs.pop('type')
+
         return self.__class__(**attrs)
 
     # FrozenMetaMessage overrides __setattr__() but we still need to
