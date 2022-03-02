@@ -41,6 +41,9 @@ setup(
     author=about['__author__'],
     author_email=about['__author_email__'],
     url=about['__url__'],
+    project_urls={
+        'Source': 'https://github.com/mido/mido',
+    },
     license=about['__license__'],
     package_data={'': ['LICENSE']},
     package_dir={'mido': 'mido'},
