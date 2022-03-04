@@ -2,9 +2,9 @@ __pycache__
 *.pyc
 *.pyo
 *~
+/.vscode/
 .cache
 /docs/_build/
 /dist/
 /build/
 /*.egg-info/
-.tox

@@ -31,18 +31,20 @@ else:
 
 
 def get_devices(api=None, **kwargs):
-    devices = []
+    devices = {}
 
-    input_names = set(rtmidi.MidiIn().ports)
-    output_names = set(rtmidi.MidiOut().ports)
+    input_names = rtmidi.MidiIn().ports
+    output_names = rtmidi.MidiOut().ports
 
-    for name in sorted(input_names | output_names):
-        devices.append({'name': name,
-                        'is_input': name in input_names,
-                        'is_output': name in output_names,
-                        })
+    for name in input_names + output_names:
+        if name not in devices:
+            devices[name] = {
+                'name': name,
+                'is_input': name in input_names,
+                'is_output': name in output_names,
+            }
 
-    return devices
+    return list(devices.values())
 
 
 class PortCommon(object):

@@ -45,24 +45,26 @@ def _get_api_id(name=None):
 
 
 def get_devices(api=None, **kwargs):
-    devices = []
+    devices = {}
 
     rtapi = _get_api_id(api)
 
     mi = rtmidi.MidiIn(rtapi=rtapi)
     mo = rtmidi.MidiOut(rtapi=rtapi)
-    input_names = set(mi.get_ports())
-    output_names = set(mo.get_ports())
+    input_names = mi.get_ports()
+    output_names = mo.get_ports()
 
-    for name in sorted(input_names | output_names):
-        devices.append({'name': name,
-                        'is_input': name in input_names,
-                        'is_output': name in output_names,
-                        })
+    for name in input_names + output_names:
+        if name not in devices:
+            devices[name] = {
+                'name': name,
+                'is_input': name in input_names,
+                'is_output': name in output_names,
+            }
 
     mi.delete()
     mo.delete()
-    return devices
+    return list(devices.values())
 
 
 def get_api_names():

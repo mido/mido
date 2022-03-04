@@ -7,8 +7,16 @@ Changes
 Release History
 ---------------
 
-(Next release)
-^^^^^^^^^^^^^^^^^^
+1.2.11 ()
+^^^^^^^^^^^^^^^^^^^
+
+* The ``rtmidi`` and ``python-rtmidi`` 1.2.10 sometimes returned
+  duplicate port names. (Bug introduced in 1.2.10. Fix by Maciej
+  Sokołowski, pull request #321.)
+
+
+1.2.10 (2021-05-10)
+^^^^^^^^^^^^^^^^^^^
 
 * New ``repr()`` format for messages, tracks and MIDI file
   objects. (Implemented by John Belmonte, pull request #164.)
@@ -38,6 +46,10 @@ Release History
 
 * Now only copies ports once in ports.multi_receive() (Tom Ritchford, pull
   request #191.)
+
+* Ports lists returned from ``get_input_names()`` and friends are no
+  longer sorted. (Suggested and implemented by Ryan McCampbell, issue
+  #298.)
 
 * Updated linke in docs to point to the new home github.com/mido/
   (Fixed by Joshua Mayers, pull request #177.)

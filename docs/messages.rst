@@ -109,7 +109,7 @@ non-negative integer.
 In other parts of Mido, this value is ignored.
 
 .. note:: Before 1.1.18 the ``time`` attribute was not included in
-          comparisons. If you want the old behavior the easies way is
+          comparisons. If you want the old behavior the easiest way is
           ``msg1.bytes()`` == ``msg2.bytes()``.
 
 To sort messages on time you can do::
