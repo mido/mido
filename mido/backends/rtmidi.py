@@ -121,14 +121,16 @@ class Input(PortCommon, ports.BaseInput):
         self._queue = ParserQueue()
 
         rtapi = _get_api_id(api)
-        self._rt = rtmidi.MidiIn(name=client_name, rtapi=rtapi)
+        # TODO: expose queue_size_limit in MIDO to allow handling of big SysEx messages
+        self._rt = rtmidi.MidiIn(name=client_name, rtapi=rtapi, queue_size_limit=8192)
 
         self.api = _api_to_name[self._rt.get_current_api()]
         self._device_type = 'RtMidi/{}'.format(self.api)
 
         self.name = _open_port(self._rt, self.name, client_name=client_name,
                                virtual=virtual, api=self.api)
-        self._rt.ignore_types(False, False, True)
+        # TODO: expose sysex, timing and active_sensing in MIDO
+        self._rt.ignore_types(sysex=False, timing=False, active_sense=False)
         self.closed = False
 
         # We need to do this last when everything is set up.
@@ -166,14 +168,19 @@ class Input(PortCommon, ports.BaseInput):
             self._callback = func
             self._rt.set_callback(self._callback_wrapper)
 
-    def _callback_wrapper(self, msg_data, data):
-        try:
-            msg = Message.from_bytes(msg_data[0])
-        except ValueError:
-            # Ignore invalid message.
-            return
-
-        (self._callback or self._queue.put)(msg)
+    def _callback_wrapper(self, msg_data: tuple, data: object) -> None:
+        """
+        msg_data[0] is the actual data
+        msg_data[1] is a delta time
+        data is a python object that was passed to set_callback() and may not be in the scope when handling
+             the callback
+        """
+        # Reverts 07b9e3a780d53aaece14fe714ad2c4c6ae8062c4
+        # FIXME: time is ill defined and not really fit for holding the delta time between messages
+        self._queue.put_bytes(msg_data[0], time=msg_data[1])  # Callback contains multiple messages (with SysEx)
+        if self._callback:
+            for msg in self._queue.iterpoll():
+                self._callback(msg)
 
 
 class Output(PortCommon, ports.BaseOutput):

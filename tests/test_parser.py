@@ -73,7 +73,10 @@ def test_parse_random_bytes():
     parser = Parser()
     for _ in range(10000):
         byte = randrange(256)
-        parser.feed_byte(byte)
+        try:
+            parser.feed_byte(byte)
+        except ValueError:  # Invalid status bytes may raise a ValueError
+            pass
 
 
 def test_parse_channel():
@@ -89,25 +92,34 @@ def test_one_byte_message():
     assert messages[0].type == 'tune_request'
 
 
+def test_sysex():
+    """A full SysEx sequence should yield two messages."""
+    messages = parse_all([0xf0, 0, 0xf7])
+    assert len(messages) == 2
+    assert messages == [Message('sysex', data=[0]), Message('end_of_exclusive')]
+
+
 def test_undefined_messages():
-    """The parser should ignore undefined status bytes and sysex_end."""
+    """The parser should ignore undefined status bytes."""
     messages = parse_all([0xf4, 0xf5, 0xf7, 0xf9, 0xfd])
-    assert messages == []
+    assert messages == [Message('end_of_exclusive')]
 
 
 def test_realtime_inside_sysex():
     """Realtime message inside sysex should be delivered first."""
     messages = parse_all([0xf0, 0, 0xfb, 0, 0xf7])
-    assert len(messages) == 2
+    assert len(messages) == 3
     assert messages[0].type == 'continue'
     assert messages[1].type == 'sysex'
+    assert messages[2].type == 'end_of_exclusive'
 
 
 def test_undefined_realtime_inside_sysex():
-    """Undefined realtime message inside sysex should ignored."""
+    """Undefined realtime message inside sysex should be ignored."""
     messages = parse_all([0xf0, 0, 0xf9, 0xfd, 0, 0xf7])
-    assert len(messages) == 1
+    assert len(messages) == 2
     assert messages[0].type == 'sysex'
+    assert messages[1].type == 'end_of_exclusive'
 
 
 def test_encode_and_parse_all():
@@ -118,9 +130,12 @@ def test_encode_and_parse_all():
 
     parser = Parser()
     for type_ in sorted(specs.SPEC_BY_TYPE.keys()):
+        if type_ == 'sysex':
+            # Ignore SysEx messages since they are not fixed size and need another message to end.
+            return
         msg = Message(type_)
         parser.feed(msg.bytes())
-        parser.get_message() == msg
+        assert parser.get_message() == msg
 
     assert parser.get_message() is None
 

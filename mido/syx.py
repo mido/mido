@@ -33,7 +33,7 @@ def read_syx_file(filename):
         data = bytearray.fromhex(re.sub(r'\s', ' ', text))
         parser.feed(data)
 
-    return [msg for msg in parser if msg.type == 'sysex']
+    return [msg for msg in parser if (msg.type == 'sysex' or msg.type == 'end_of_exclusive')]
 
 
 def write_syx_file(filename, messages, plaintext=False):
@@ -45,13 +45,16 @@ def write_syx_file(filename, messages, plaintext=False):
     ``plaintext=True`` to write the plain text format (hex encoded
     ASCII text).
     """
-    messages = [m for m in messages if m.type == 'sysex']
+    messages = [msg for msg in messages if (msg.type == 'sysex' or msg.type == 'end_of_exclusive')]
 
     if plaintext:
         with open(filename, 'wt') as outfile:
             for message in messages:
+                if message.type == 'end_of_exclusive':
+                    outfile.write(' ')
                 outfile.write(message.hex())
-                outfile.write('\n')
+                if message.type == 'end_of_exclusive':
+                    outfile.write('\n')
     else:
         with open(filename, 'wb') as outfile:
             for message in messages:

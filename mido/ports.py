@@ -283,6 +283,9 @@ class BaseOutput(BasePort):
 
         with self._lock:
             self._send(msg.copy())
+            # Per MIDI spec: append EOX to sysex messages when sending them
+            if msg.type == 'sysex':
+                self._send(Message['end_of_exclusive'])
 
     def reset(self):
         """Send "All Notes Off" and "Reset All Controllers" on all channels"""

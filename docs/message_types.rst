@@ -4,21 +4,22 @@ Message Types
 Supported Messages
 ------------------
 
-==============  ==============================
-Name            Keyword Arguments / Attributes
-==============  ==============================
-note_off        channel note velocity
-note_on         channel note velocity
-polytouch       channel note value
-control_change  channel control value
-program_change  channel program
-aftertouch      channel value
-pitchwheel      channel pitch
-sysex           data
-quarter_frame   frame_type frame_value
-songpos         pos
-song_select     song
+================  ==============================
+Name              Keyword Arguments / Attributes
+================  ==============================
+note_off          channel note velocity
+note_on           channel note velocity
+polytouch         channel note value
+control_change    channel control value
+program_change    channel program
+aftertouch        channel value
+pitchwheel        channel pitch
+sysex             data
+quarter_frame     frame_type frame_value
+songpos           pos
+song_select       song
 tune_request
+end_of_exclusive
 clock
 start
 continue
