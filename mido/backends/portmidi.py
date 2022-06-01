@@ -121,7 +121,7 @@ class PortCommon(object):
 
         if self.is_input:
             _check_error(pm.lib.Pm_OpenInput(
-                         pm.byref(self._stream),
+                         self._stream,
                          device['id'],  # Input device
                          pm.null,       # Input driver info
                          1000,          # Buffer size
@@ -129,7 +129,7 @@ class PortCommon(object):
                          pm.null))      # Time info
         else:
             _check_error(pm.lib.Pm_OpenOutput(
-                         pm.byref(self._stream),
+                         self._stream,
                          device['id'],  # Output device
                          pm.null,       # Output diver info
                          0,             # Buffer size
