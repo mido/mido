@@ -115,7 +115,7 @@ Using this, you can write the server any way you like, for example::
 
             # Receive messages.
             for client in clients:
-                for message in client.iter_pending()
+                for message in client.iter_pending():
                     print('Received {} from {}'.format(message, client))
 
             # Do other things
