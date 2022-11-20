@@ -55,7 +55,7 @@ class BaseMessage(object):
         return cl(**data)
 
     def _get_value_names(self):
-        # This is overriden by MetaMessage.
+        # This is overridden by MetaMessage.
         return list(SPEC_BY_TYPE[self.type]['value_names']) + ['time']
 
     def __repr__(self):
@@ -221,14 +221,14 @@ def parse_string(text):
 
 
 def parse_string_stream(stream):
-    """Parse a stram of messages and yield (message, error_message)
+    """Parse a stream of messages and yield (message, error_message)
 
     stream can be any iterable that generates text strings, where each
     string is a string encoded message.
 
     If a string can be parsed, (message, None) is returned. If it
-    can't be parsed (None, error_message) is returned. The error
-    message containes the line number where the error occurred.
+    can't be parsed, (None, error_message) is returned. The error
+    message contains the line number where the error occurred.
     """
     line_number = 1
     for line in stream:
