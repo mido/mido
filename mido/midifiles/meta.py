@@ -16,7 +16,6 @@ import struct
 from numbers import Integral
 from contextlib import contextmanager
 from ..messages import BaseMessage, check_time
-from ..py2 import PY2
 
 _charset = 'latin1'
 
@@ -151,14 +150,8 @@ def check_int(value, low, high):
         raise ValueError('attribute must be in range {}..{}'.format(low, high))
 
 
-if PY2:
-    _STRING_TYPE = (str, unicode)  # noqa: F821
-else:
-    _STRING_TYPE = str
-
-
 def check_str(value):
-    if not isinstance(value, _STRING_TYPE):
+    if not isinstance(value, str):
         raise TypeError('attribute must be a string')
 
 
