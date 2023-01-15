@@ -14,6 +14,10 @@ Release History
   duplicate port names. (Bug introduced in 1.2.10. Fix by Maciej
   Sokołowski, pull request #321.)
 
+* Bugfix: In Python 3, PortServer crashes with the following exception
+  when a socket client (mido.sockets.connect) disconnects. (issue
+  #291). Fix by kyleclaassen (pull request #291).
+
 
 1.2.10 (2021-05-10)
 ^^^^^^^^^^^^^^^^^^^
