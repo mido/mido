@@ -75,8 +75,8 @@ fails to upload I can roll back and fix it before I push my changes.
 
     rm -rf dist/*
 
-    python setup.py bdist_wheel --universal
-    python setup.py sdist
+    python3 setup.py bdist_wheel --universal
+    python3 setup.py sdist
 
     twine upload dist/*
 

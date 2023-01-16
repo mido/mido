@@ -43,7 +43,7 @@ Full documentation at https://mido.readthedocs.io/
 Main Features
 -------------
 
-* works in Python 2 and 3.
+* works in Python 3.
 
 * convenient message objects.
 

@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Receive messages on the input port and print messages with a specific
 channel (defaults to 0).
 
 Usage:
 
-    python example_input_filter.py portname [CHANNEL] [...]
+    python3 example_input_filter.py portname [CHANNEL] [...]
 """
-from __future__ import print_function
 import sys
+
 import mido
 
 
@@ -22,7 +22,7 @@ def accept_notes(port):
 if len(sys.argv) > 1:
     portname = sys.argv[1]
 else:
-    portname = None   # Use default port
+    portname = None  # Use default port
 
 try:
     with mido.open_input(portname) as port:

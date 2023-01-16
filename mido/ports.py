@@ -1,12 +1,12 @@
 """
 Useful tools for working with ports
 """
-from __future__ import unicode_literals
+import random
 import threading
 import time
-import random
-from .parser import Parser
+
 from .messages import Message
+from .parser import Parser
 
 # How many seconds to sleep before polling again.
 _DEFAULT_SLEEP_TIME = 0.001

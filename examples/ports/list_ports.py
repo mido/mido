@@ -1,10 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 List available ports.
 
 This is a simple version of mido-ports.
 """
-from __future__ import print_function
 import mido
 
 

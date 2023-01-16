@@ -1,12 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Forward all messages from one or more ports to server.
 
 Example:
 
-    python forward_ports.py localhost:8080 'Keyboard MIDI 1'
+    python3 forward_ports.py localhost:8080 'Keyboard MIDI 1'
 """
 import sys
+
 import mido
 
 host, port = mido.sockets.parse_address(sys.argv[1])

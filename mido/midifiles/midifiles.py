@@ -15,19 +15,17 @@ http://www.recordingblogs.com/sa/tabid/82/EntryId/44/MIDI-Part-XIII-Delta-time-a
 http://www.sonicspot.com/guide/midifiles.html
 """
 
-from __future__ import print_function, division
 import io
-import time
 import string
 import struct
+import time
 from numbers import Integral
 
-from ..messages import Message, SPEC_BY_STATUS
 from .meta import (MetaMessage, build_meta_message, meta_charset,
                    encode_variable_int)
-
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
 from .units import tick2second
+from ..messages import Message, SPEC_BY_STATUS
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -54,11 +52,6 @@ class DebugFileWrapper(object):
         data = self.file.read(size)
 
         for byte in data:
-            # Iterating gives us byte strings instead of ints in
-            # Python 2.
-            if isinstance(byte, str):
-                byte = ord(byte)
-
             print_byte(byte, self.file.tell())
 
         return data

@@ -17,13 +17,12 @@ TODO:
   mido.backends.rtmidi.)There may be a way to remove this filtering.
 
 """
-from __future__ import absolute_import
+import queue
+
 import rtmidi_python as rtmidi
 # TODO: change this to a relative import if the backend is included in
 # the package.
 from ..ports import BaseInput, BaseOutput
-
-import queue
 
 
 def get_devices(api=None, **kwargs):

@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Example of non-blocking reception from input port.
 """
-from __future__ import print_function
 import sys
 import time
+
 import mido
 
 if len(sys.argv) > 1:
