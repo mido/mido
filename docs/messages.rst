@@ -100,7 +100,7 @@ The Time Attribute
 ------------------
 
 Each message has a ``time`` attribute, which can be set to any value
-of type ``int`` or ``float`` (and in Python 2 also ``long``).
+of type ``int`` or ``float``                                .
 
 Some parts of Mido use the attribute for special purposes. In MIDI
 file tracks, it is used as delta time (in ticks), and it must be a
