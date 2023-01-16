@@ -4,7 +4,7 @@ Installing Mido
 Requirements
 ------------
 
-Mido targets Python 3.6 and 2.7.
+Mido requires Python 3.7 or higher.
 
 There are no external dependencies unless you want to use the port
 backends, which are loaded on demand.

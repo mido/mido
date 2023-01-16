@@ -5,7 +5,6 @@ import socket
 import select
 from .parser import Parser
 from .ports import MultiPort, BaseIOPort
-from .py2 import PY2
 
 
 def _is_readable(socket):
@@ -87,10 +86,7 @@ class SocketPort(BaseIOPort):
         else:
             self._socket = conn
 
-        if PY2:
-            kwargs = {'bufsize': 0}
-        else:
-            kwargs = {'buffering': None}
+        kwargs = {'buffering': None}
 
         self._rfile = self._socket.makefile('rb', **kwargs)
         self._wfile = self._socket.makefile('wb', **kwargs)

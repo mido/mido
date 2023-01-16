@@ -1,14 +1,10 @@
 import time
 from .. import ports
 from ..parser import Parser
-from ..py2 import PY2
 
 from threading import RLock
 
-if PY2:
-    import Queue as queue
-else:
-    import queue
+import queue
 
 
 class ParserQueue:
@@ -41,29 +37,9 @@ class ParserQueue:
             for msg in self._parser:
                 self.put(msg)
 
-    def _get_py2(self):
-        # In Python 2 queue.get() doesn't respond to CTRL-C. A workaroud is
-        # to call queue.get(timeout=100) (very high timeout) in a loop, but all
-        # that does is poll with a timeout of 50 milliseconds. This results in
-        # much too high latency.
-        #
-        # It's better to do our own polling with a shorter sleep time.
-        #
-        # See Issue #49 and https://bugs.python.org/issue8844
-        sleep_time = ports.get_sleep_time()
-        while True:
-            try:
-                return self._queue.get_nowait()
-            except queue.Empty:
-                time.sleep(sleep_time)
-                continue
-
     # TODO: add timeout?
     def get(self):
-        if PY2:
-            return self._get_py2()
-        else:
-            return self._queue.get()
+        return self._queue.get()
 
     def poll(self):
         try:
