@@ -4,7 +4,6 @@ from .checks import check_msgdict, check_value, check_data
 from .decode import decode_message
 from .encode import encode_message
 from .strings import msg2str, str2msg
-from ..py2 import convert_py2_bytes
 
 
 class BaseMessage(object):
@@ -103,14 +102,14 @@ class SysexData(tuple):
     """Special kind of tuple accepts and converts any sequence in +=."""
     def __iadd__(self, other):
         check_data(other)
-        return self + SysexData(convert_py2_bytes(other))
+        return self + SysexData(other)
 
 
 class Message(BaseMessage):
     def __init__(self, type, **args):
         msgdict = make_msgdict(type, args)
         if type == 'sysex':
-            msgdict['data'] = SysexData(convert_py2_bytes(msgdict['data']))
+            msgdict['data'] = SysexData(msgdict['data'])
         check_msgdict(msgdict)
         vars(self).update(msgdict)
 

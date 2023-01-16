@@ -5,7 +5,6 @@ import socket
 import select
 from .parser import Parser
 from .ports import MultiPort, BaseIOPort
-from .py2 import PY2
 
 
 def _is_readable(socket):
@@ -87,10 +86,7 @@ class SocketPort(BaseIOPort):
         else:
             self._socket = conn
 
-        if PY2:
-            kwargs = {'bufsize': 0}
-        else:
-            kwargs = {'buffering': 0}
+        kwargs = {'buffering': 0}
 
         self._rfile = self._socket.makefile('rb', **kwargs)
         self._wfile = self._socket.makefile('wb', **kwargs)
@@ -104,7 +100,7 @@ class SocketPort(BaseIOPort):
                 byte = self._rfile.read(1)
             except socket.error as err:
                 raise IOError(err.args[1])
-            if byte == '':
+            if len(byte) == 0:
                 # The other end has disconnected.
                 self.close()
                 break

@@ -22,12 +22,8 @@ import rtmidi_python as rtmidi
 # TODO: change this to a relative import if the backend is included in
 # the package.
 from ..ports import BaseInput, BaseOutput
-from ..py2 import PY2
 
-if PY2:
-    import Queue as queue
-else:
-    import queue
+import queue
 
 
 def get_devices(api=None, **kwargs):

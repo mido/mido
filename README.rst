@@ -81,7 +81,7 @@ Status
 Requirements
 ------------
 
-Mido targets Python 3.6 and 2.7.
+Mido requires Python 3.7 or higher.
 
 
 Installing
