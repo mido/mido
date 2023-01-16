@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Serve one or more output ports.
 
@@ -7,7 +7,7 @@ every output port.
 
 Example:
 
-    python serve_ports.py :8080 'SH-201' 'SD-20 Part A'
+    python3 serve_ports.py :8080 'SH-201' 'SD-20 Part A'
 
 This simply iterates through all incoming messages. More advanced and
 flexible servers can be written by calling the ``accept()`` and
@@ -15,6 +15,7 @@ flexible servers can be written by calling the ``accept()`` and
 an example.
 """
 import sys
+
 import mido
 from mido import sockets
 from mido.ports import MultiPort

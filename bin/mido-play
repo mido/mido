@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Play MIDI file on output port.
 
@@ -10,11 +10,12 @@ Todo:
 
   - add option for printing messages
 """
-from __future__ import print_function, division
-import sys
 import argparse
+import sys
+
 import mido
 from mido import MidiFile, Message, tempo2bpm
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -49,8 +50,8 @@ def play_file(output, filename, print_messages):
     print('Playing {}.'.format(midi_file.filename))
     length = midi_file.length
     print('Song length: {} minutes, {} seconds.'.format(
-            int(length / 60),
-            int(length % 60)))
+        int(length / 60),
+        int(length % 60)))
     print('Tracks:')
     for i, track in enumerate(midi_file.tracks):
         print('  {:2d}: {!r}'.format(i, track.name.strip()))
@@ -82,6 +83,7 @@ def main():
                 output.reset()
     except KeyboardInterrupt:
         pass
+
 
 args = parse_args()
 

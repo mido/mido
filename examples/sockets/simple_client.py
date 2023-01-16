@@ -1,15 +1,16 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Simple client that sends program_change messages to server at timed
 intervals.
 
 Example:
 
-    python simple_client.py localhost:8080
+    python3 simple_client.py localhost:8080
 """
+import random
 import sys
 import time
-import random
+
 import mido
 
 if sys.argv[1:]:

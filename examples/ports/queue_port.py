@@ -2,14 +2,10 @@
 
 This allows you to create internal ports to send messages between threads.
 """
+import queue
+
 import mido
 from mido import ports
-
-try:
-    import queue
-except ImportError:
-    # Python 2.
-    import Queue as queue
 
 
 class QueuePort(ports.BaseIOPort):

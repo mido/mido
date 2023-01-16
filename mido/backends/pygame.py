@@ -6,7 +6,6 @@ Pygame uses PortMidi, so this is perhaps not very useful.
 http://www.pygame.org/docs/ref/midi.html
 """
 
-from __future__ import absolute_import
 from pygame import midi
 from ..ports import BaseInput, BaseOutput
 
@@ -63,6 +62,7 @@ class PortCommon(object):
     """
     Mixin with common things for input and output ports.
     """
+
     def _open(self, **kwargs):
         if kwargs.get('virtual'):
             raise ValueError('virtual ports are not supported'
@@ -101,6 +101,7 @@ class Input(PortCommon, BaseInput):
     """
     PortMidi Input port
     """
+
     def _receive(self, block=True):
         # I get hanging notes if MAX_EVENTS > 1, so I'll have to
         # resort to calling Pm_Read() in a loop until there are no
@@ -115,6 +116,7 @@ class Output(PortCommon, BaseOutput):
     """
     PortMidi output port
     """
+
     def _send(self, message):
         if message.type == 'sysex':
             # Python 2 version of Pygame accepts a bytes or list here
