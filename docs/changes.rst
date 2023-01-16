@@ -11,7 +11,7 @@ Release History
 ^^^^^^^^^^^^^^^^^^^
 
 * Removed support for Python 2.7. * Mido now requires Python 3.7 or
-  higher. (Ole Martin Bjørndalen)
+  higher. (Ole Martin Bjørndalen, pull request #408.)
 
 * The ``rtmidi`` and ``python-rtmidi`` 1.2.10 sometimes returned
   duplicate port names. (Bug introduced in 1.2.10. Fix by Maciej
