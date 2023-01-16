@@ -10,11 +10,11 @@ TODO:
      - copy().
      - expose _key_signature_encode/decode?
 """
-from __future__ import print_function, division
 import math
 import struct
-from numbers import Integral
 from contextlib import contextmanager
+from numbers import Integral
+
 from ..messages import BaseMessage, check_time
 
 _charset = 'latin1'

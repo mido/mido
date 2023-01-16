@@ -1,8 +1,9 @@
 import re
-from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
+
 from .checks import check_msgdict, check_value, check_data
 from .decode import decode_message
 from .encode import encode_message
+from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
 from .strings import msg2str, str2msg
 
 
@@ -45,13 +46,13 @@ class BaseMessage(object):
         return data
 
     @classmethod
-    def from_dict(cl, data):
+    def from_dict(cls, data):
         """Create a message from a dictionary.
 
         Only "type" is required. The other will be set to default
         values.
         """
-        return cl(**data)
+        return cls(**data)
 
     def _get_value_names(self):
         # This is overriden by MetaMessage.

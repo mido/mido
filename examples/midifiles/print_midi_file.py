@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Open a MIDI file and print every message in every track.
 
 Support for MIDI files is still experimental.
 """
 import sys
+
 from mido import MidiFile
 
 if __name__ == '__main__':

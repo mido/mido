@@ -1,15 +1,15 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Create a new MIDI file with some random notes.
 
 The file is saved to test.mid.
 """
-from __future__ import division
 import random
 import sys
+
 from mido import Message, MidiFile, MidiTrack, MAX_PITCHWHEEL
 
-notes = [64, 64+7, 64+12]
+notes = [64, 64 + 7, 64 + 12]
 
 outfile = MidiFile()
 

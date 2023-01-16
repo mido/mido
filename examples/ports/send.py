@@ -1,15 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Send random notes to the output port.
 """
 
-from __future__ import print_function
+import random
 import sys
 import time
-import random
+
 import mido
 from mido import Message
-
 
 if len(sys.argv) > 1:
     portname = sys.argv[1]

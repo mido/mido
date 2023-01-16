@@ -5,6 +5,7 @@ There is no need to use this module directly. All you need is
 available in the top level module.
 """
 from collections import deque
+
 from .messages import Message
 from .tokenizer import Tokenizer
 
@@ -41,7 +42,6 @@ class Parser(object):
             [for i in range(256)]
             (for i in range(256)]
             bytearray()
-            b''  # Will be converted to integers in Python 2.
         """
         self._tok.feed(data)
         self._decode()

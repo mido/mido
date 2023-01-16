@@ -16,8 +16,8 @@ http://github.com/superquadratic/rtmidi-python
 Other than that, it works exactly like the included python-rtmidi
 backend.
 """
-from __future__ import absolute_import
 import rtmidi_python as rtmidi
+
 from mido.ports import BaseInput, BaseOutput
 
 
@@ -49,6 +49,7 @@ class PortCommon(object):
                     self._parser.feed(message)
                     for message in self._parser:
                         callback(message)
+
                 self._rt.callback = self._callback = callback_wrapper
                 self._has_callback = True
             else:

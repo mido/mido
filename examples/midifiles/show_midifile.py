@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-import sys
+#!/usr/bin/env python3
 import argparse
+
 import mido
 
 

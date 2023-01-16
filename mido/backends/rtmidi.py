@@ -2,14 +2,13 @@
 
 http://pypi.python.org/pypi/python-rtmidi/
 """
-from __future__ import absolute_import
 import threading
 
 import rtmidi
-from .. import ports
-from ..messages import Message
 from ._parser_queue import ParserQueue
 from .rtmidi_utils import expand_alsa_port_name
+from .. import ports
+from ..messages import Message
 
 
 def _get_api_lookup():
@@ -72,7 +71,6 @@ def get_api_names():
 
 
 def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
-
     if api == 'LINUX_ALSA':
         name = expand_alsa_port_name(rt.get_ports(), name)
 
@@ -183,7 +181,6 @@ class Output(PortCommon, ports.BaseOutput):
 
     def _open(self, client_name=None, virtual=False,
               api=None, callback=None, **kwargs):
-
         self.closed = True
         self._send_lock = threading.RLock()
 

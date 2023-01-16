@@ -1,7 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
-
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -18,7 +17,6 @@ def get_about():
 
 about = get_about()
 
-
 try:
     from setuptools import setup
 except ImportError:
@@ -31,7 +29,6 @@ if sys.argv[-1] == "publish":
 elif sys.argv[-1] == "docs":
     os.system("sphinx-build docs docs/_build")
     sys.exit()
-
 
 setup(
     name='mido',

@@ -1,5 +1,5 @@
-from __future__ import print_function
 import random
+
 from pytest import raises
 
 from mido.messages import Message, specs
