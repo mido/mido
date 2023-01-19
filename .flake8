@@ -2,3 +2,6 @@
 ignore = F401, C901, F901
 exclude = .git,__pycache__,docs/source/conf.py,old,build,dist
 max-complexity = 10
+per-file-ignores =
+    # We really need to use an `import *` here to stop confusing everyone.
+    mido/backends/portmidi_init.py:F403, F405
