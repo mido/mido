@@ -50,6 +50,7 @@ setup(
              'bin/mido-serve',
              'bin/mido-connect'],
     include_package_data=True,
+    python_requires='>=3.7',
     install_requires=[],
     extras_require={
         'dev': ['check-manifest>=0.35',

@@ -72,10 +72,11 @@ I like to do this before I push to GitHub. This way if the package
 fails to upload I can roll back and fix it before I push my changes.
 
 ::
+    python3 -m pip install --upgrade setuptools twine
 
     rm -rf dist/*
 
-    python3 setup.py bdist_wheel --universal
+    python3 setup.py bdist_wheel
     python3 setup.py sdist
 
     twine upload dist/*
