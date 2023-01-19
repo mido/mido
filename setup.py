@@ -53,7 +53,7 @@ setup(
     install_requires=[],
     extras_require={
         'dev': ['check-manifest>=0.35',
-                'flake8>=3.4.1',
+                'flake8>=3.7.0',
                 'pytest>=3.2.2',
                 'sphinx>=1.6.3',
                 ],
