@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from mido.midifiles.units import tempo2bpm, bpm2tempo, tick2second, second2tick
 
 

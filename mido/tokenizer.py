@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from collections import deque
 from numbers import Integral
 from .messages.specs import SYSEX_START, SYSEX_END, SPEC_BY_STATUS

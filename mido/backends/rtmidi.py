@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 """Backend for python-rtmidi:
 
 http://pypi.python.org/pypi/python-rtmidi/

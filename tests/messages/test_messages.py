@@ -1,5 +1,10 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from pytest import raises
-from mido.messages.specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS
+from mido.messages.specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL, \
+    MIN_SONGPOS, MAX_SONGPOS
 from mido.messages.messages import Message, SysexData
 
 

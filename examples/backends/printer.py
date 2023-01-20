@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 """
 A simple custom backend with an output port type which prints messages
 to stdout.

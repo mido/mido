@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 """Read from /dev/input/js0 and return as dictionaries.
 
 If you have pygame it is easier and more portable to do something
@@ -81,6 +85,7 @@ JS_EVENT_BUTTON = 0x1
 JS_EVENT_AXIS = 0x2
 JS_EVENT_INIT = 0x80
 
+
 def read_event(device):
     data = device.read(8)
 
@@ -94,7 +99,6 @@ def read_event(device):
     event['init'] = bool(event['type'] & JS_EVENT_INIT)
     event['type'] &= 0x7f  # Strip away the flag bits (JS_EVENT_INIT etc.)
     if event['type'] != JS_EVENT_BUTTON:
-
         event['normalized_value'] = \
             float(event['value']) / 0x7fff  # Normalize to -1..1
 
@@ -102,10 +106,12 @@ def read_event(device):
 
     return event
 
+
 def read_events(device_name):
     with open(device_name, 'rb') as device:
         while True:
             yield read_event(device)
+
 
 def panic(port):
     """
@@ -119,6 +125,7 @@ def panic(port):
                                    control=control, value=0)
             print(message)
             port.send(message)
+
 
 class Monophonic:
     # Todo: this assumes everything is on channel 0!
@@ -201,6 +208,7 @@ def play_scale(dev, out):
         #         pitch = int(event['normalized_value'] * pitch_scale)
         #         out.send(mido.Message('pitchwheel', pitch=pitch))
 
+
 def play_drums(dev, out):
     # http://www.midi.org/techspecs/gm1sound.php
     note_mapping = {
@@ -216,7 +224,7 @@ def play_drums(dev, out):
 
         9: 52,  # Chinese Cymbal
         10: 55,  # Splash Cymbal
-        }
+    }
 
     while True:
         event = read_event(dev)

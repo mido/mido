@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from pytest import raises
 from mido.messages import Message
 from mido.syx import read_syx_file, write_syx_file

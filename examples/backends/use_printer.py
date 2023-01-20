@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 """
 Try out the new printer port backend.
 
