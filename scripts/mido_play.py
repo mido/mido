@@ -71,6 +71,12 @@ def play_file(output, filename, print_messages):
 
 
 def main():
+    args = parse_args()
+
+    if args.quiet:
+        def print(*args):
+            pass
+
     try:
         with mido.open_output(args.output_port) as output:
             print('Using output {!r}.'.format(output.name))
@@ -85,10 +91,5 @@ def main():
         pass
 
 
-args = parse_args()
-
-if args.quiet:
-    def print(*args):
-        pass
-
-main()
+if __name__ == '__main__':
+    main()

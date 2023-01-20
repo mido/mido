@@ -1,19 +1,18 @@
-from collections import namedtuple
-from .__about__ import __version__
+import packaging.version
 
-VersionInfo = namedtuple('VersionInfo',
-                         ['major', 'minor', 'micro', 'releaselevel', 'serial'])
+try:
+    # Python 3.8+
+    import importlib.metadata as importlib_metadata
+except ImportError:
+    # <Python 3.7 and lower
+    import importlib_metadata
 
+__version__ = "0.0.0.dev0"
 
-def _make_version_info(version):
-    if '-' in version:
-        version, releaselevel = version.split('-')
-    else:
-        releaselevel = ''
+try:
+    __version__ = importlib_metadata.version("mido")
+except importlib_metadata.PackageNotFoundError:
+    # package is not installed
+    pass
 
-    major, minor, micro = map(int, version.split('.'))
-
-    return VersionInfo(major, minor, micro, releaselevel, 0)
-
-
-version_info = _make_version_info(__version__)
+version_info = packaging.version.Version(__version__)

@@ -1,0 +1,80 @@
+# PEP 621 (https://peps.python.org/pep-0621/) project metadata
+# Format: https://toml.io/en/
+
+[build-system]
+requires = ["setuptools>=61.0.0", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mido"
+# version is dynamic
+description = "MIDI Objects for Python"
+readme = "README.rst"
+requires-python = ">=3.7"
+license = { text = "MIT" }
+authors = [
+    { name = "Ole Martin Bjorndalen", email = "ombdalen@gmail.com" },
+]
+maintainers = [
+    { name = "Radovan Bast", email = "radovan.bast@gmail.com" },
+    { name = "Raphaël Doursenaud", email = "rdoursenaud@gmail.com" },
+]
+keywords = ["python", "midi", "midifile"]
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'Natural Language :: English',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3.7',
+]
+
+dependencies = [
+    "importlib_metadata; python_version<'3.8'",
+    "packaging",
+]
+dynamic = ["version"]
+
+[project.urls]
+documentation = "https://mido.readthedocs.io"
+source = "https://github.com/mido/mido"
+
+[project.optional-dependencies]
+dev = [
+    'check-manifest>=0.35',
+    'flake8>=3.7.0',
+    'pytest>=6.0',
+    'sphinx>=1.6.3',
+]
+ports = ["python-rtmidi>=1.1.0"]
+
+[project.scripts]
+mido-play = "scripts.mido_play:main"
+mido-ports = "scripts.mido_ports:main"
+mido-serve = "scripts.mido_serve:main"
+mido-connect = "scripts.mido_connect:main"
+
+[tool.setuptools]
+packages = ["mido", "mido.backends"]
+include-package-data = true
+
+[tool.setuptools.package-dir]
+mido = "mido"
+
+[tool.setuptools.package-data]
+mido = ["LICENSE"]
+
+[tool.setuptools_scm]
+# Enables setuptools-scm
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-rs --quiet"
+testpaths = [
+    "tests",
+]
+norecursedirs = [
+    "build",
+    "dist",
+    "examples",
+]

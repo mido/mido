@@ -29,7 +29,7 @@ are found in `mido/test_*.py`.
 Tests can be run using the command::
 
     python3 -m pip install --quiet --editable .[dev]
-    pytest --quiet -r s .
+    pytest
 
 This is also run automatically at every push to the `main` branch and
 at every pull request, as part of the GitHub Actions workflow.
@@ -55,55 +55,62 @@ readthedocs. This will hopefully change in the future.
 Bump Version
 ^^^^^^^^^^^^
 
+The version number should be `PEP440 <https://peps.python.org/pep-0440/>`_ compliant.
+
 X.Y.Z is the version, for example 1.1.18 or 1.2.0.
 
 * update version and date in `docs/changes.rst`
 
-* update version in `mido/__about__.py`
-
 * `git commit -a -c "Bumped version to X.Y.Z."`
 
+* `git tag X.Y.Z"`
 
 
-Publish on PyPI
-^^^^^^^^^^^^^^^
+Publish on Test PyPI
+^^^^^^^^^^^^^^^^^^^^
+
+.. warning::
+    TODO: Move to GitHub actions
 
 I like to do this before I push to GitHub. This way if the package
 fails to upload I can roll back and fix it before I push my changes.
 
 ::
+
     python3 -m pip install --upgrade setuptools twine
-
     rm -rf dist/*
-
-    python3 setup.py bdist_wheel
-    python3 setup.py sdist
-
-    twine upload dist/*
+    python3 -m build
+    twine upload --repository testpypi dist/*
 
 
 Push to GitHub
 ^^^^^^^^^^^^^^
 
+If all went well everything is ready for prime time.
+
 ::
 
-    git tag X.Y.Z
-    git push
     git push --tags
-
-
-Update the stable branch (if this is a stable release):
-
-::
-
-   git checkout stable
-   git pull . main
-   git push
-   git checkout main
 
 
 Update Read the Docs
 ^^^^^^^^^^^^^^^^^^^^
 
+.. warning::
+    TODO: Move to GitHub actions
+
 Log into readthedocs.org and build the latest documentation. This is
 set up to use the stable branch.
+
+
+Publish on PyPI
+^^^^^^^^^^^^^^^
+
+.. warning::
+    TODO: Move to GitHub actions
+
+::
+
+    twine upload dist/*
+
+
