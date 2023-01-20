@@ -57,7 +57,7 @@ This document is available at https://mido.readthedocs.io/
 
 To build locally::
 
-    python3 setup.py docs
+    sphinx-build docs docs/_build
 
 This requires Sphinx. The resulting files can be found in
 ``docs/_build/``.

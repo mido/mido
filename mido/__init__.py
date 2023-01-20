@@ -92,8 +92,6 @@ Getting started:
 import os
 
 from . import ports, sockets
-from .__about__ import (__version__, __author__, __author_email__,
-                        __url__, __license__)
 from .backends.backend import Backend
 from .messages import (Message, parse_string, parse_string_stream,
                        format_as_string, MIN_PITCHWHEEL, MAX_PITCHWHEEL,
