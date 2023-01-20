@@ -15,7 +15,7 @@ Installing for developers
 
 To install the dev dependencies, you can run the command::
 
-    pip install -e .[dev]
+    python3 -m pip install --editable .[dev]
 
 This will install all needed dependencies for testing and documentation.
 
@@ -28,8 +28,8 @@ are found in `mido/test_*.py`.
 
 Tests can be run using the command::
 
-    pip install -q -e .[dev]
-    pytest . -rs -q
+    python3 -m pip install --quiet --editable .[dev]
+    pytest -rs -q .
 
 This is also run automatically at every push to the `main` branch and
 at every pull request, as part of the GitHub Actions workflow.
