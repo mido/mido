@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from mido.messages.specs import SPEC_BY_STATUS
 from mido.messages.encode import encode_message
 from mido.messages.decode import decode_message

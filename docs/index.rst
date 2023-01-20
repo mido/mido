@@ -1,3 +1,7 @@
+.. SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+..
+.. SPDX-License-Identifier: CC-BY-4.0
+
 .. Mido documentation master file, created by
    sphinx-quickstart on Wed Jun 26 16:58:08 2013.
    You can adapt this file completely to your liking, but it should at least

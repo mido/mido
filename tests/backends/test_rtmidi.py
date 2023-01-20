@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from mido.backends.rtmidi_utils import expand_alsa_port_name
 
 

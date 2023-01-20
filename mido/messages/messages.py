@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 import re
 
 from .checks import check_msgdict, check_value, check_data

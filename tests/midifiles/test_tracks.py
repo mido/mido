@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 import itertools
 from mido.messages import Message
 from mido.midifiles.meta import MetaMessage

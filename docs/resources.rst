@@ -1,3 +1,7 @@
+.. SPDX-FileCopyrightText: 2014 Ole Martin Bjorndalen <ombdalen@gmail.com>
+..
+.. SPDX-License-Identifier: CC-BY-4.0
+
 Resources
 =========
 

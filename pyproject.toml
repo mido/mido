@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # PEP 621 (https://peps.python.org/pep-0621/) project metadata
 # Format: https://toml.io/en/
 
@@ -43,6 +47,7 @@ source = "https://github.com/mido/mido"
 dev = [
     'check-manifest>=0.35',
     'flake8>=3.7.0',
+    'fsfe-reuse>=1.0.0',
     'pytest>=6.0',
     'sphinx>=1.6.3',
 ]

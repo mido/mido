@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from numbers import Integral, Real
 from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
                     MIN_PITCHWHEEL, MAX_PITCHWHEEL)

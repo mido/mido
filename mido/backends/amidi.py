@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 """Mido amidi backend
 
 Very experimental backend using amidi to access the ALSA rawmidi

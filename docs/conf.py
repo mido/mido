@@ -1,4 +1,8 @@
 #
+# SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+#
 # Mido documentation build configuration file, created by
 # sphinx-quickstart on Wed Jun 26 16:58:08 2013.
 #

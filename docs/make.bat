@@ -1,3 +1,7 @@
+REM SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+REM
+REM SPDX-License-Identifier: CC0-1.0
+
 @ECHO OFF
 
 REM Command file for Sphinx documentation

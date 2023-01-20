@@ -1,4 +1,9 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from mido.tokenizer import Tokenizer
+
 
 def tokenize(midi_bytes):
     return list(Tokenizer(midi_bytes))
@@ -52,4 +57,5 @@ def test_sysex_inside_sysex():
 
 def test_stray_data_bytes():
     """Data bytes outside messages should be ignored."""
-    assert tokenize([0, 1, 0x90, 2, 3, 4, 5, 0xf8, 6]) == [[0x90, 2, 3], [0xf8]]
+    assert tokenize([0, 1, 0x90, 2, 3, 4, 5, 0xf8, 6]) == \
+           [[0x90, 2, 3], [0xf8]]

@@ -1,3 +1,7 @@
+.. SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+..
+.. SPDX-License-Identifier: CC-BY-4.0
+
 Contributing
 ============
 
@@ -34,6 +38,17 @@ Tests can be run using the command::
 This is also run automatically at every push to the `main` branch and
 at every pull request, as part of the GitHub Actions workflow.
 
+
+Copyright and REUSE compliance
+------------------------------
+
+The project is `REUSE <https://reuse.software>`_ compliant.
+
+If you wish to add your copyright to a file, please add an SPDX header and run:
+
+::
+
+    reuse lint
 
 Testing MIDI file support
 -------------------------

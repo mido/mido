@@ -1,8 +1,13 @@
-include README.rst LICENSE .flake8
+# SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+include README.rst LICENSE .flake8 .reuse/dep5
+recursive-include LICENSES *.txt
 recursive-include tests *.py
 recursive-include examples *.py
 recursive-include extras *.py
-include docs/_static/PLACEHOLDER
+include docs/_static/.gitkeep
 recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst
@@ -13,5 +18,6 @@ recursive-include extras *.rst
 recursive-include mido *.py
 recursive-include scripts *.py
 recursive-include docs/images *.svg
+recursive-include docs/images *.license
 prune docs/_build
 prune logo

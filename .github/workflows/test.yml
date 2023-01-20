@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 name: Test
 
 on:
@@ -26,7 +30,8 @@ jobs:
       run: python3 -m pip install --quiet --editable .[dev]
     - name: Run tests
       run: |
-        flake8 mido
+        flake8
+        reuse lint --quiet
         pytest
         check-manifest --verbose
         sphinx-build -q -E docs _build
