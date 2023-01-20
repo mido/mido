@@ -23,7 +23,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install the package
-      run: pip install -q -e .[dev]
+      run: python3 -m pip install --quiet --editable .[dev]
     - name: Run tests
       run: |
         pytest . -rs -q
