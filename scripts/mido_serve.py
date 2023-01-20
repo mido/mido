@@ -26,15 +26,20 @@ def parse_args():
     return parser.parse_args()
 
 
-args = parse_args()
+def main():
+    args = parse_args()
 
-try:
-    out = MultiPort([mido.open_output(name) for name in args.ports])
+    try:
+        out = MultiPort([mido.open_output(name) for name in args.ports])
 
-    (hostname, port) = sockets.parse_address(args.address)
-    with sockets.PortServer(hostname, port) as server:
-        for message in server:
-            print('Received {}'.format(message))
-            out.send(message)
-except KeyboardInterrupt:
-    pass
+        (hostname, port) = sockets.parse_address(args.address)
+        with sockets.PortServer(hostname, port) as server:
+            for message in server:
+                print('Received {}'.format(message))
+                out.send(message)
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == '__main__':
+    main()
