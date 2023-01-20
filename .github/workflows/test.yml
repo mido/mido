@@ -26,7 +26,7 @@ jobs:
       run: python3 -m pip install --quiet --editable .[dev]
     - name: Run tests
       run: |
-        pytest . -rs -q
-        check-manifest -v
-        sphinx-build docs _build -q -E
+        pytest --quiet -r s .
+        check-manifest --verbose
+        sphinx-build -q -E docs _build
         flake8 mido

@@ -29,7 +29,7 @@ are found in `mido/test_*.py`.
 Tests can be run using the command::
 
     python3 -m pip install --quiet --editable .[dev]
-    pytest -rs -q .
+    pytest --quiet -r s .
 
 This is also run automatically at every push to the `main` branch and
 at every pull request, as part of the GitHub Actions workflow.
