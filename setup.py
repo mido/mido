@@ -40,25 +40,29 @@ setup(
     url=about['__url__'],
     project_urls={
         'Source': 'https://github.com/mido/mido',
+        'Documentation': 'https://mido.readthedocs.io',
     },
     license=about['__license__'],
     package_data={'': ['LICENSE']},
     package_dir={'mido': 'mido'},
     packages=['mido', 'mido.backends'],
-    scripts=['bin/mido-play',
-             'bin/mido-ports',
-             'bin/mido-serve',
-             'bin/mido-connect'],
+    scripts=[
+        'bin/mido-play',
+        'bin/mido-ports',
+        'bin/mido-serve',
+        'bin/mido-connect'
+    ],
     include_package_data=True,
     python_requires='>=3.7',
     install_requires=[],
     extras_require={
-        'dev': ['check-manifest>=0.35',
-                'flake8>=3.7.0',
-                'pytest>=3.2.2',
-                'sphinx>=1.6.3',
-                ],
-        'ports': ['python-rtmidi>=1.1.0']
+        'dev': [
+            'check-manifest>=0.35',
+            'flake8>=3.7.0',
+            'pytest>=3.2.2',
+            'sphinx>=1.6.3',
+        ],
+        'ports': ['python-rtmidi>=1.1.0'],
     },
     zip_safe=False,
     classifiers=(
