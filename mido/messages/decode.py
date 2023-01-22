@@ -1,5 +1,4 @@
-from .specs import (SYSEX_START, SYSEX_END,
-                    SPEC_BY_STATUS, CHANNEL_MESSAGES,
+from .specs import (SPEC_BY_STATUS, CHANNEL_MESSAGES,
                     MIN_PITCHWHEEL)
 from .checks import check_data
 
@@ -66,7 +65,7 @@ def decode_message(msg_bytes, time=0, check=True):
     # TODO: this function is getting long.
 
     if len(msg_bytes) == 0:
-        raise ValueError('message is 0 bytes long')
+        raise ValueError('message is 0 byte long')
 
     status_byte = msg_bytes[0]
     data = msg_bytes[1:]
@@ -80,16 +79,6 @@ def decode_message(msg_bytes, time=0, check=True):
         'type': spec['type'],
         'time': time,
     }
-
-    # Sysex.
-    if status_byte == SYSEX_START:
-        if len(data) < 1:
-            raise ValueError('sysex without end byte')
-
-        end = data[-1]
-        data = data[:-1]
-        if end != SYSEX_END:
-            raise ValueError('invalid sysex end byte {!r}'.format(end))
 
     if check:
         check_data(data)

@@ -1,4 +1,6 @@
-from .specs import CHANNEL_MESSAGES, SPEC_BY_TYPE, MIN_PITCHWHEEL
+from .specs import CHANNEL_MESSAGES, SPEC_BY_TYPE, MIN_PITCHWHEEL, SYSTEM_EXCLUSIVE_MESSAGE, END_OF_SYSEX_MESSAGE
+
+# TODO: implement running status send?
 
 
 def _encode_pitchwheel(msg):
@@ -7,7 +9,9 @@ def _encode_pitchwheel(msg):
 
 
 def _encode_sysex(msg):
-    return [0xf0] + list(msg['data']) + [0xf7]
+    # Per MIDI spec: make sure we add the End of SysEx before sending
+    # FIXME: Doesn't seem to be the right place to do that
+    return [SYSTEM_EXCLUSIVE_MESSAGE] + list(msg['data']) + [END_OF_SYSEX_MESSAGE]
 
 
 def _encode_quarter_frame(msg):

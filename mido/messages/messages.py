@@ -181,7 +181,7 @@ class Message(BaseMessage):
 
     def __len__(self):
         if self.type == 'sysex':
-            return 2 + len(self.data)
+            return 1 + len(self.data)
         else:
             return SPEC_BY_TYPE[self.type]['length']
 

@@ -53,7 +53,8 @@ class PortCommon(object):
 
         if opening_input:
             self._rt = rtmidi.MidiIn()
-            self._rt.ignore_types(False, False, True)
+            # TODO: expose sysex, timing and active_sensing in MIDO
+            self._rt.ignore_types(sysex=False, timing=False, active_sense=False)
             self.callback = kwargs.get('callback')
         else:
             self._rt = rtmidi.MidiOut()  # rtapi=rtapi)

@@ -9,9 +9,9 @@ import queue
 
 class ParserQueue:
     """
-    Thread safe message queue with built in MIDI parser.
+    Thread safe message queue with built-in MIDI parser.
 
-    This should be avaiable to other backend implementations and perhaps
+    This should be available to other backend implementations and perhaps
     also in the public API, but the API needs a bit of review. (Ideally This
     would replace the parser.)
 
@@ -31,9 +31,9 @@ class ParserQueue:
     def put(self, msg):
         self._queue.put(msg)
 
-    def put_bytes(self, msg_bytes):
+    def put_bytes(self, msg_bytes, time=None):
         with self._parser_lock:
-            self._parser.feed(msg_bytes)
+            self._parser.feed(msg_bytes, time=time)
             for msg in self._parser:
                 self.put(msg)
 

@@ -27,11 +27,11 @@ class Parser(object):
         if data:
             self.feed(data)
 
-    def _decode(self):
+    def _decode(self, time=0):
         for midi_bytes in self._tok:
-            self.messages.append(Message.from_bytes(midi_bytes))
+            self.messages.append(Message.from_bytes(midi_bytes, time=time))
 
-    def feed(self, data):
+    def feed(self, data, time=0):
         """Feed MIDI data to the parser.
 
         Accepts any object that produces a sequence of integers in
@@ -44,7 +44,7 @@ class Parser(object):
             bytearray()
         """
         self._tok.feed(data)
-        self._decode()
+        self._decode(time=time)
 
     def feed_byte(self, byte):
         """Feed one MIDI byte into the parser.
@@ -84,7 +84,7 @@ def parse_all(data):
 
     This is typically used to parse a little bit of data with a few
     messages in it. It's best to use a Parser object for larger
-    amounts of data. Also, tt's often easier to use parse() if you
+    amounts of data. Also, it's often easier to use parse() if you
     know there is only one message in the data.
     """
     return list(Parser(data))

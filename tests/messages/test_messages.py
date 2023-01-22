@@ -38,7 +38,7 @@ def test_decode_songpos():
 
 
 def test_sysex_data_is_sysexdata_object():
-    assert isinstance(Message.from_hex('F0 00 F7').data, SysexData)
+    assert isinstance(Message.from_hex('F0 00').data, SysexData)
 
 
 def test_sysex_data_accepts_different_types():
@@ -106,7 +106,7 @@ def test_dict_sysex_data():
 
 
 def test_from_hex_sysex_data_type():
-    msg = Message.from_hex('F0 01 02 03 F7')
+    msg = Message.from_hex('F0 01 02 03')
     assert isinstance(msg.data, SysexData)
 
 
@@ -114,3 +114,8 @@ def test_repr():
     msg = Message('note_on', channel=1, note=2, time=3)
     msg_eval = eval(repr(msg))
     assert msg == msg_eval
+
+
+def test_sysex_bytes():
+    msg = Message.from_bytes(b'\xf0' b'\x01' b'\x02' b'\x03')
+    assert msg == Message('sysex', data=(1, 2, 3))

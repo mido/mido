@@ -6,12 +6,13 @@ TODO:
       byte.
 """
 # TODO: these include undefined messages.
-CHANNEL_MESSAGES = set(range(0x80, 0xf0))
-COMMON_MESSAGES = set(range(0xf0, 0xf8))
-REALTIME_MESSAGES = set(range(0xf8, 0x100))
-
-SYSEX_START = 0xf0
-SYSEX_END = 0xf7
+CHANNEL_MESSAGES = set(range(0x80, 0xef + 1))
+SYSTEM_EXCLUSIVE_MESSAGE = 0xf0
+END_OF_SYSEX_MESSAGE = 0xf7
+SYSTEM_COMMON_MESSAGES = set(range(0xf1, END_OF_SYSEX_MESSAGE + 1))
+SYSTEM_REALTIME_MESSAGES = set(range(0xf8, 0xff + 1))
+SYSTEM_MESSAGES = set.union(SYSTEM_COMMON_MESSAGES, SYSTEM_REALTIME_MESSAGES)
+SYSTEM_MESSAGES.add(SYSTEM_EXCLUSIVE_MESSAGE)
 
 # Pitchwheel is a 14 bit signed integer
 MIN_PITCHWHEEL = -8192
@@ -35,19 +36,27 @@ def _defmsg(status_byte, type_, value_names, length):
 SPECS = [
     _defmsg(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
     _defmsg(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
+    # FIXME: Should have been named polyphonic_key_pressure
     _defmsg(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
+    # FIXME: Channel Mode Messages special case (control > 119)
     _defmsg(0xb0, 'control_change', ('channel', 'control', 'value'), 3),
     _defmsg(0xc0, 'program_change', ('channel', 'program',), 2),
+    # FIXME: Should been named channel_pressure
     _defmsg(0xd0, 'aftertouch', ('channel', 'value',), 2),
+    # FIXME: Should been named pitch_bend_change
     _defmsg(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
+
+    # System exclusive message.
+    # FIXME: Should have been named system_exclusive
+    _defmsg(0xf0, 'sysex', ('data',), float('inf')),
 
     # System common messages.
     # 0xf4 and 0xf5 are undefined.
-    _defmsg(0xf0, 'sysex', ('data',), float('inf')),
     _defmsg(0xf1, 'quarter_frame', ('frame_type', 'frame_value'), 2),
     _defmsg(0xf2, 'songpos', ('pos',), 3),
     _defmsg(0xf3, 'song_select', ('song',), 2),
     _defmsg(0xf6, 'tune_request', (), 1),
+    _defmsg(0xf7, 'end_of_exclusive', (), 1),
 
     # System real time messages.
     # 0xf9 and 0xfd are undefined.
@@ -85,7 +94,13 @@ def _make_spec_lookups(specs):
 
 SPEC_LOOKUP, SPEC_BY_STATUS, SPEC_BY_TYPE = _make_spec_lookups(SPECS)
 
-REALTIME_TYPES = {'tune_request', 'clock', 'start', 'continue', 'stop'}
+REALTIME_TYPES = {  # FIXME: Derive from SYSTEM_REALTIME_MESSAGES.
+    'clock',
+    'start',
+    'continue',
+    'stop',
+    'active_sensing',
+    'reset'}
 
 DEFAULT_VALUES = {
     'channel': 0,

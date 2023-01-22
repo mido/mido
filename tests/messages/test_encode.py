@@ -14,7 +14,7 @@ def test_encode_decode_all():
 
     for status_byte, spec in SPEC_BY_STATUS.items():
         if status_byte == 0xf0:
-            msg_bytes = [0xf0] + data_bytes + [0xf7]
+            msg_bytes = [0xf0] + data_bytes
         else:
             msg_bytes = [status_byte] + data_bytes[:spec['length'] - 1]
 

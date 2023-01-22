@@ -134,7 +134,7 @@ the payload of the message::
     >>> msg
     Message('sysex', data=(1, 2, 3), time=0)
     >>> msg.hex()
-    'F0 01 02 03 F7'
+    'F0 01 02 03'
 
 You can also extend the existing data::
 

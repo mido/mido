@@ -29,6 +29,8 @@ from ..messages import Message, SPEC_BY_STATUS
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
+from ..messages.specs import END_OF_SYSEX_MESSAGE, SYSTEM_EXCLUSIVE_MESSAGE
+
 DEFAULT_TEMPO = 500000
 DEFAULT_TICKS_PER_BEAT = 480
 
@@ -137,15 +139,15 @@ def read_sysex(infile, delta, clip=False):
 
     # Strip start and end bytes.
     # TODO: is this necessary?
-    if data and data[0] == 0xf0:
+    if data and data[0] == SYSTEM_EXCLUSIVE_MESSAGE:
         data = data[1:]
-    if data and data[-1] == 0xf7:
+    if data and data[-1] == END_OF_SYSEX_MESSAGE:
         data = data[:-1]
 
     if clip:
         data = [byte if byte < 127 else 127 for byte in data]
 
-    return Message('sysex', data=data, time=delta)
+    return [Message('sysex', data=data, time=delta), Message('end_of_exclusive')]
 
 
 def read_variable_int(infile):
@@ -208,7 +210,7 @@ def read_track(infile, debug=False, clip=False):
 
         if status_byte == 0xff:
             msg = read_meta_message(infile, delta)
-        elif status_byte in [0xf0, 0xf7]:
+        elif status_byte in [SYSTEM_EXCLUSIVE_MESSAGE, END_OF_SYSEX_MESSAGE]:
             # TODO: I'm not quite clear on the difference between
             # f0 and f7 events.
             msg = read_sysex(infile, delta, clip)
@@ -252,11 +254,11 @@ def write_track(outfile, track):
             data.extend(msg.bytes())
             running_status_byte = None
         elif msg.type == 'sysex':
-            data.append(0xf0)
+            data.append(SYSTEM_EXCLUSIVE_MESSAGE)
             # length (+ 1 for end byte (0xf7))
             data.extend(encode_variable_int(len(msg.data) + 1))
             data.extend(msg.data)
-            data.append(0xf7)
+            data.extend(END_OF_SYSEX_MESSAGE)
             running_status_byte = None
         else:
             msg_bytes = msg.bytes()
@@ -267,7 +269,7 @@ def write_track(outfile, track):
             else:
                 data.extend(msg_bytes)
 
-            if status_byte < 0xf0:
+            if status_byte < SYSTEM_EXCLUSIVE_MESSAGE:
                 running_status_byte = status_byte
             else:
                 running_status_byte = None
