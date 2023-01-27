@@ -14,10 +14,10 @@ else:
 
 try:
     with mido.open_input(portname) as port:
-        print('Using {}'.format(port))
+        print(f'Using {port}')
         while True:
             for message in port.iter_pending():
-                print('Received {}'.format(message))
+                print(f'Received {message}')
 
             print('Doing something else for a while...')
             time.sleep(0.5)

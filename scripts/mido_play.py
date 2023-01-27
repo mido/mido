@@ -47,14 +47,14 @@ def parse_args():
 def play_file(output, filename, print_messages):
     midi_file = MidiFile(filename)
 
-    print('Playing {}.'.format(midi_file.filename))
+    print(f'Playing {midi_file.filename}.')
     length = midi_file.length
     print('Song length: {} minutes, {} seconds.'.format(
         int(length / 60),
         int(length % 60)))
     print('Tracks:')
     for i, track in enumerate(midi_file.tracks):
-        print('  {:2d}: {!r}'.format(i, track.name.strip()))
+        print(f'  {i:2d}: {track.name.strip()!r}')
 
     for message in midi_file.play(meta_messages=True):
         if print_messages:
@@ -79,7 +79,7 @@ def main():
 
     try:
         with mido.open_output(args.output_port) as output:
-            print('Using output {!r}.'.format(output.name))
+            print(f'Using output {output.name!r}.')
             output.reset()
             try:
                 for filename in args.files:

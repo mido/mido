@@ -12,10 +12,10 @@ import mido
 
 mido.set_backend('printer')
 
-print('Available outputs: {!r}'.format(mido.get_output_names()))
+print(f'Available outputs: {mido.get_output_names()!r}')
 
 with mido.open_output() as port:
-    print('Using {}.'.format(port))
+    print(f'Using {port}.')
 
     port.send(mido.Message('program_change', program=10))
     for i in [1, 2, 3]:

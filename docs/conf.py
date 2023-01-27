@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Mido documentation build configuration file, created by
 # sphinx-quickstart on Wed Jun 26 16:58:08 2013.
@@ -54,8 +53,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Mido'
-copyright = u'Ole Martin Bjørndalen'
+project = 'Mido'
+copyright = 'Ole Martin Bjørndalen'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -196,8 +195,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'Mido.tex', u'Mido Documentation',
-     u'Ole Martin Bjørndalen', 'manual'),
+    ('index', 'Mido.tex', 'Mido Documentation',
+     'Ole Martin Bjørndalen', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -226,8 +225,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'mido', u'Mido Documentation',
-     [u'Ole Martin Bjørndalen'], 1)
+    ('index', 'mido', 'Mido Documentation',
+     ['Ole Martin Bjørndalen'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -240,8 +239,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'Mido', u'Mido Documentation',
-     u'Ole Martin Bjørndalen', 'Mido', 'MIDI Objects for Python',
+    ('index', 'Mido', 'Mido Documentation',
+     'Ole Martin Bjørndalen', 'Mido', 'MIDI Objects for Python',
      'Miscellaneous'),
 ]
 

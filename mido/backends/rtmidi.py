@@ -35,12 +35,12 @@ def _get_api_id(name=None):
     try:
         api = _name_to_api[name]
     except KeyError:
-        raise ValueError('unknown API {}'.format(name))
+        raise ValueError(f'unknown API {name}')
 
     if name in get_api_names():
         return api
     else:
-        raise ValueError('API {} not compiled in'.format(name))
+        raise ValueError(f'API {name} not compiled in')
 
 
 def get_devices(api=None, **kwargs):
@@ -79,14 +79,14 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
 
     if virtual:
         if name is None:
-            raise IOError('virtual port must have a name')
+            raise OSError('virtual port must have a name')
 
         rt.open_virtual_port(name)
         return name
 
     port_names = rt.get_ports()
     if len(port_names) == 0:
-        raise IOError('no ports available')
+        raise OSError('no ports available')
 
     if name is None:
         name = port_names[0]
@@ -94,17 +94,17 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
     elif name in port_names:
         port_id = port_names.index(name)
     else:
-        raise IOError('unknown port {!r}'.format(name))
+        raise OSError(f'unknown port {name!r}')
 
     try:
         rt.open_port(port_id)
     except RuntimeError as err:
-        raise IOError(*err.args)
+        raise OSError(*err.args)
 
     return name
 
 
-class PortCommon(object):
+class PortCommon:
     def _close(self):
         self._rt.close_port()
         self._rt.delete()
@@ -124,7 +124,7 @@ class Input(PortCommon, ports.BaseInput):
         self._rt = rtmidi.MidiIn(name=client_name, rtapi=rtapi)
 
         self.api = _api_to_name[self._rt.get_current_api()]
-        self._device_type = 'RtMidi/{}'.format(self.api)
+        self._device_type = f'RtMidi/{self.api}'
 
         self.name = _open_port(self._rt, self.name, client_name=client_name,
                                virtual=virtual, api=self.api)
@@ -188,7 +188,7 @@ class Output(PortCommon, ports.BaseOutput):
         self._rt = rtmidi.MidiOut(name=client_name, rtapi=rtapi)
 
         self.api = _api_to_name[self._rt.get_current_api()]
-        self._device_type = 'RtMidi/{}'.format(self.api)
+        self._device_type = f'RtMidi/{self.api}'
 
         self.name = _open_port(self._rt, self.name, client_name=client_name,
                                virtual=virtual, api=self.api)

@@ -12,7 +12,7 @@ def msg2str(msg, include_time=True):
 
         if name == 'data':
             value = '({})'.format(','.join(str(byte) for byte in value))
-        words.append('{}={}'.format(name, value))
+        words.append(f'{name}={value}')
 
     if include_time:
         words.append('time={}'.format(msg['time']))
@@ -32,7 +32,7 @@ def _parse_time(value):
     except ValueError:
         pass
 
-    raise ValueError('invalid time {!r}'.format(value))
+    raise ValueError(f'invalid time {value!r}')
 
 
 def _parse_data(value):

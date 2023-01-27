@@ -54,10 +54,10 @@ class MidiTrack(list):
         if len(self) == 0:
             messages = ''
         elif len(self) == 1:
-            messages = '[{}]'.format(self[0])
+            messages = f'[{self[0]}]'
         else:
             messages = '[\n  {}]'.format(',\n  '.join(repr(m) for m in self))
-        return '{}({})'.format(self.__class__.__name__, messages)
+        return f'{self.__class__.__name__}({messages})'
 
 
 def _to_abstime(messages):

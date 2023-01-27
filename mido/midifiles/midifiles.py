@@ -41,10 +41,10 @@ def print_byte(byte, pos=0):
     if char.isspace() or char not in string.printable:
         char = '.'
 
-    print('  {:06x}: {:02x}  {}'.format(pos, byte, char))
+    print(f'  {pos:06x}: {byte:02x}  {char}')
 
 
-class DebugFileWrapper(object):
+class DebugFileWrapper:
     def __init__(self, file):
         self.file = file
 
@@ -70,7 +70,7 @@ def read_byte(self):
 
 def read_bytes(infile, size):
     if size > MAX_MESSAGE_LENGTH:
-        raise IOError('Message length {} exceeds maximum length {}'.format(
+        raise OSError('Message length {} exceeds maximum length {}'.format(
             size, MAX_MESSAGE_LENGTH))
     return [read_byte(infile) for _ in range(size)]
 
@@ -101,7 +101,7 @@ def read_file_header(infile):
     name, size = read_chunk_header(infile)
 
     if name != b'MThd':
-        raise IOError('MThd not found. Probably not a MIDI file')
+        raise OSError('MThd not found. Probably not a MIDI file')
     else:
         data = infile.read(size)
 
@@ -115,7 +115,7 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
     try:
         spec = SPEC_BY_STATUS[status_byte]
     except LookupError:
-        raise IOError('undefined status byte 0x{:02x}'.format(status_byte))
+        raise OSError(f'undefined status byte 0x{status_byte:02x}')
 
     # Subtract 1 for status byte.
     size = spec['length'] - 1 - len(peek_data)
@@ -126,7 +126,7 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
     else:
         for byte in data_bytes:
             if byte > 127:
-                raise IOError('data byte must be in range 0..127')
+                raise OSError('data byte must be in range 0..127')
 
     return Message.from_bytes([status_byte] + data_bytes, time=delta)
 
@@ -171,10 +171,10 @@ def read_track(infile, debug=False, clip=False):
     name, size = read_chunk_header(infile)
 
     if name != b'MTrk':
-        raise IOError('no MTrk header at start of track')
+        raise OSError('no MTrk header at start of track')
 
     if debug:
-        _dbg('-> size={}'.format(size))
+        _dbg(f'-> size={size}')
         _dbg()
 
     start = infile.tell()
@@ -191,13 +191,13 @@ def read_track(infile, debug=False, clip=False):
         delta = read_variable_int(infile)
 
         if debug:
-            _dbg('-> delta={}'.format(delta))
+            _dbg(f'-> delta={delta}')
 
         status_byte = read_byte(infile)
 
         if status_byte < 0x80:
             if last_status is None:
-                raise IOError('running status without last_status')
+                raise OSError('running status without last_status')
             peek_data = [status_byte]
             status_byte = last_status
         else:
@@ -218,7 +218,7 @@ def read_track(infile, debug=False, clip=False):
         track.append(msg)
 
         if debug:
-            _dbg('-> {!r}'.format(msg))
+            _dbg(f'-> {msg!r}')
             _dbg()
 
     return track
@@ -286,7 +286,7 @@ def get_seconds_per_tick(tempo, ticks_per_beat):
     return (tempo / 1000000.0) / ticks_per_beat
 
 
-class MidiFile(object):
+class MidiFile:
     def __init__(self, filename=None, file=None,
                  type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
                  charset='latin1',
@@ -306,14 +306,14 @@ class MidiFile(object):
 
         if type not in range(3):
             raise ValueError(
-                'invalid format {} (must be 0, 1 or 2)'.format(format))
+                f'invalid format {format} (must be 0, 1 or 2)')
 
         if tracks is not None:
             self.tracks = tracks
         elif file is not None:
             self._load(file)
         elif self.filename is not None:
-            with io.open(filename, 'rb') as file:
+            with open(filename, 'rb') as file:
                 self._load(file)
 
     def add_track(self, name=None):
@@ -347,7 +347,7 @@ class MidiFile(object):
 
             for i in range(num_tracks):
                 if self.debug:
-                    _dbg('Track {}:'.format(i))
+                    _dbg(f'Track {i}:')
 
                 self.tracks.append(read_track(infile,
                                               debug=self.debug,
@@ -435,7 +435,7 @@ class MidiFile(object):
         if file is not None:
             self._save(file)
         elif filename is not None:
-            with io.open(filename, 'wb') as file:
+            with open(filename, 'wb') as file:
                 self._save(file)
         else:
             raise ValueError('requires filename or file')
@@ -461,18 +461,18 @@ class MidiFile(object):
         print_tracks(meta_only=True) -> will print only MetaMessages
         """
         for i, track in enumerate(self.tracks):
-            print('=== Track {}'.format(i))
+            print(f'=== Track {i}')
             for msg in track:
                 if not isinstance(msg, MetaMessage) and meta_only:
                     pass
                 else:
-                    print('{!r}'.format(msg))
+                    print(f'{msg!r}')
 
     def __repr__(self):
         if self.tracks:
             tracks_str = ',\n'.join(repr(track) for track in self.tracks)
             tracks_str = '  ' + tracks_str.replace('\n', '\n  ')
-            tracks_str = ', tracks=[\n{}\n]'.format(tracks_str)
+            tracks_str = f', tracks=[\n{tracks_str}\n]'
         else:
             tracks_str = ''
 

@@ -15,7 +15,7 @@ else:
 
 try:
     (hostname, portno) = sockets.parse_address(address)
-    print('Serving on {}'.format(address))
+    print(f'Serving on {address}')
     with sockets.PortServer(hostname, portno) as server:
         for message in server:
             print(message)

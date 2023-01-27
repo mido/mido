@@ -11,7 +11,7 @@ import mido
 def print_ports(heading, port_names):
     print(heading)
     for name in port_names:
-        print("    '{}'".format(name))
+        print(f"    '{name}'")
     print()
 
 
@@ -26,11 +26,11 @@ def main():
                  'MIDO_BACKEND']:
         try:
             value = os.environ[name]
-            print('{}={!r}'.format(name, value))
+            print(f'{name}={value!r}')
         except LookupError:
-            print('{} not set.'.format(name))
+            print(f'{name} not set.')
     print()
-    print('Using backend {}.'.format(mido.backend.name))
+    print(f'Using backend {mido.backend.name}.')
     print()
 
 

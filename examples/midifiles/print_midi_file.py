@@ -14,6 +14,6 @@ if __name__ == '__main__':
     midi_file = MidiFile(filename)
 
     for i, track in enumerate(midi_file.tracks):
-        sys.stdout.write('=== Track {}\n'.format(i))
+        sys.stdout.write(f'=== Track {i}\n')
         for message in track:
-            sys.stdout.write('  {!r}\n'.format(message))
+            sys.stdout.write(f'  {message!r}\n')

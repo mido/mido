@@ -33,7 +33,7 @@ def main():
         with mido.sockets.connect(hostname, port) as server_port:
             print('Connected.')
             for message in mido.ports.multi_receive(ports):
-                print('Sending {}'.format(message))
+                print(f'Sending {message}')
                 server_port.send(message)
     except KeyboardInterrupt:
         pass
