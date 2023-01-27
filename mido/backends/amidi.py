@@ -45,7 +45,7 @@ def _get_device(name, mode):
         if name == dev['name'] and dev[mode]:
             return dev
     else:
-        raise IOError('unknown port {!r}'.format(name))
+        raise OSError(f'unknown port {name!r}')
 
 
 class Input(PortMethods, InputMethods):

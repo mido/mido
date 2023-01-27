@@ -120,7 +120,7 @@ def make_msgdict(type_, overrides):
     if type_ in SPEC_BY_TYPE:
         spec = SPEC_BY_TYPE[type_]
     else:
-        raise LookupError('Unknown message type {!r}'.format(type_))
+        raise LookupError(f'Unknown message type {type_!r}')
 
     msg = {'type': type_, 'time': DEFAULT_VALUES['time']}
 

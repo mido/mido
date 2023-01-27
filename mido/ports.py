@@ -55,7 +55,7 @@ def panic_messages():
                       channel=channel, control=ALL_SOUNDS_OFF)
 
 
-class DummyLock(object):
+class DummyLock:
     def __enter__(self):
         return self
 
@@ -63,7 +63,7 @@ class DummyLock(object):
         return False
 
 
-class BasePort(object):
+class BasePort:
     """
     Abstract base class for Input and Output ports.
     """
@@ -104,7 +104,7 @@ class BasePort(object):
                 if hasattr(self, 'autoreset') and self.autoreset:
                     try:
                         self.reset()
-                    except IOError:
+                    except OSError:
                         pass
 
                 self._close()
@@ -218,7 +218,7 @@ class BaseInput(BasePort):
                 elif not block:
                     return None
                 elif self.closed:
-                    raise IOError('port closed during receive()')
+                    raise OSError('port closed during receive()')
 
             sleep()
 
@@ -237,7 +237,7 @@ class BaseInput(BasePort):
         while True:
             try:
                 yield self.receive()
-            except IOError:
+            except OSError:
                 if self.closed:
                     # The port closed before or inside receive().
                     # (This makes the assumption that this is the reason,
@@ -331,7 +331,7 @@ class IOPort(BaseIOPort):
         self.output = output
 
         # We use str() here in case name is None.
-        self.name = '{} + {}'.format(str(input.name), str(output.name))
+        self.name = f'{str(input.name)} + {str(output.name)}'
         self._messages = self.input._messages
         self.closed = False
         self._lock = DummyLock()

@@ -26,7 +26,7 @@ def _get_default_device(get_input):
         device_id = midi.get_default_output_id()
 
     if device_id < 0:
-        raise IOError('no default port found')
+        raise OSError('no default port found')
 
     return _get_device(device_id)
 
@@ -46,11 +46,11 @@ def _get_named_device(name, get_input):
                 continue
 
         if device['opened']:
-            raise IOError('port already opened: {!r}'.format(name))
+            raise OSError(f'port already opened: {name!r}')
 
         return device
     else:
-        raise IOError('unknown port: {!r}'.format(name))
+        raise OSError(f'unknown port: {name!r}')
 
 
 def get_devices(**kwargs):
@@ -58,7 +58,7 @@ def get_devices(**kwargs):
     return [_get_device(device_id) for device_id in range(midi.get_count())]
 
 
-class PortCommon(object):
+class PortCommon:
     """
     Mixin with common things for input and output ports.
     """
@@ -84,7 +84,7 @@ class PortCommon(object):
                 devtype = 'input'
             else:
                 devtype = 'output'
-            raise IOError('{} port {!r} is already open'.format(devtype,
+            raise OSError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
         if self.is_input:
             self._port = midi.Input(device['id'])

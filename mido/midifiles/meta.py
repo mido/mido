@@ -85,7 +85,7 @@ def signed(to_type, n):
     try:
         pack_format, unpack_format = formats[to_type]
     except KeyError:
-        raise ValueError('invalid integer type {}'.format(to_type))
+        raise ValueError(f'invalid integer type {to_type}')
 
     try:
         packed = struct.pack(pack_format, n)
@@ -95,7 +95,7 @@ def signed(to_type, n):
 
 
 def unsigned(to_type, n):
-    return signed('u{}'.format(to_type), n)
+    return signed(f'u{to_type}', n)
 
 
 def encode_variable_int(value):
@@ -147,7 +147,7 @@ def check_int(value, low, high):
     if not isinstance(value, Integral):
         raise TypeError('attribute must be an integer')
     elif not low <= value <= high:
-        raise ValueError('attribute must be in range {}..{}'.format(low, high))
+        raise ValueError(f'attribute must be in range {low}..{high}')
 
 
 def check_str(value):
@@ -155,7 +155,7 @@ def check_str(value):
         raise TypeError('attribute must be a string')
 
 
-class MetaSpec(object):
+class MetaSpec:
     # The default is to do no checks.
     def check(self, name, value):
         pass
@@ -327,7 +327,7 @@ class MetaSpec_smpte_offset(MetaSpec):
         if name == 'frame_rate':
             if value not in _smpte_framerate_encode:
                 valid = ', '.join(sorted(_smpte_framerate_encode.keys()))
-                raise ValueError('frame_rate must be one of {}'.format(valid))
+                raise ValueError(f'frame_rate must be one of {valid}')
         elif name == 'hours':
             check_int(value, 0, 255)
         elif name in ['minutes', 'seconds']:
@@ -399,7 +399,7 @@ class MetaSpec_key_signature(MetaSpec):
 
     def check(self, name, value):
         if value not in _key_signature_encode:
-            raise ValueError('invalid key {!r}'.format(value))
+            raise ValueError(f'invalid key {value!r}')
 
 
 class MetaSpec_sequencer_specific(MetaSpec):
@@ -513,10 +513,10 @@ class MetaMessage(BaseMessage):
             self_vars[name] = value
 
         elif name in self_vars:
-            raise AttributeError('{} attribute is read only'.format(name))
+            raise AttributeError(f'{name} attribute is read only')
         else:
             raise AttributeError(
-                '{} message has no attribute {}'.format(self.type, name))
+                f'{self.type} message has no attribute {name}')
 
     __setattr__ = _setattr
 

@@ -29,16 +29,16 @@ def _check_error(return_value):
     The exception will be raised with the error message from PortMidi.
     """
     if return_value == pm.pmHostError:
-        raise IOError('PortMidi Host Error: '
+        raise OSError('PortMidi Host Error: '
                       '{}'.format(pm.get_host_error_message()))
     elif return_value < 0:
-        raise IOError(pm.lib.Pm_GetErrorText(return_value))
+        raise OSError(pm.lib.Pm_GetErrorText(return_value))
 
 
 def _get_device(device_id):
     info_pointer = pm.lib.Pm_GetDeviceInfo(device_id)
     if not info_pointer:
-        raise IOError('PortMidi device with id={} not found'.format(
+        raise OSError('PortMidi device with id={} not found'.format(
             device_id))
     info = info_pointer.contents
 
@@ -59,7 +59,7 @@ def _get_default_device(get_input):
         device_id = pm.lib.Pm_GetDefaultOutputDeviceID()
 
     if device_id < 0:
-        raise IOError('no default port found')
+        raise OSError('no default port found')
 
     return _get_device(device_id)
 
@@ -79,11 +79,11 @@ def _get_named_device(name, get_input):
                 continue
 
         if device['opened']:
-            raise IOError('port already opened: {!r}'.format(name))
+            raise OSError(f'port already opened: {name!r}')
 
         return device
     else:
-        raise IOError('unknown port {!r}'.format(name))
+        raise OSError(f'unknown port {name!r}')
 
 
 def get_devices(**kwargs):
@@ -92,7 +92,7 @@ def get_devices(**kwargs):
     return [_get_device(i) for i in range(pm.lib.Pm_CountDevices())]
 
 
-class PortCommon(object):
+class PortCommon:
     """
     Mixin with common things for input and output ports.
     """
@@ -116,7 +116,7 @@ class PortCommon(object):
                 devtype = 'input'
             else:
                 devtype = 'output'
-            raise IOError('{} port {!r} is already open'.format(devtype,
+            raise OSError('{} port {!r} is already open'.format(devtype,
                                                                 self.name))
 
         if self.is_input:

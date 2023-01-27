@@ -20,17 +20,17 @@ notes = [60, 62, 64, 67, 69, 72]
 
 try:
     with mido.open_output(portname, autoreset=True) as port:
-        print('Using {}'.format(port))
+        print(f'Using {port}')
         while True:
             note = random.choice(notes)
 
             on = Message('note_on', note=note)
-            print('Sending {}'.format(on))
+            print(f'Sending {on}')
             port.send(on)
             time.sleep(0.05)
 
             off = Message('note_off', note=note)
-            print('Sending {}'.format(off))
+            print(f'Sending {off}')
             port.send(off)
             time.sleep(0.1)
 except KeyboardInterrupt:

@@ -25,7 +25,7 @@ on = mido.Message('note_on', velocity=100)
 off = mido.Message('note_off', velocity=100)
 base = random.randrange(12)
 
-print('Connecting to {}'.format(address))
+print(f'Connecting to {address}')
 
 with mido.sockets.connect(host, port) as server_port:
     try:

@@ -10,7 +10,7 @@ from .messages import Message
 from .tokenizer import Tokenizer
 
 
-class Parser(object):
+class Parser:
     """
     MIDI byte stream parser
 

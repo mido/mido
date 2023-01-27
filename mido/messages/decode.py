@@ -74,7 +74,7 @@ def decode_message(msg_bytes, time=0, check=True):
     try:
         spec = SPEC_BY_STATUS[status_byte]
     except KeyError:
-        raise ValueError('invalid status byte {!r}'.format(status_byte))
+        raise ValueError(f'invalid status byte {status_byte!r}')
 
     msg = {
         'type': spec['type'],
@@ -89,7 +89,7 @@ def decode_message(msg_bytes, time=0, check=True):
         end = data[-1]
         data = data[:-1]
         if end != SYSEX_END:
-            raise ValueError('invalid sysex end byte {!r}'.format(end))
+            raise ValueError(f'invalid sysex end byte {end!r}')
 
     if check:
         check_data(data)

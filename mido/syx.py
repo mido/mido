@@ -48,7 +48,7 @@ def write_syx_file(filename, messages, plaintext=False):
     messages = [m for m in messages if m.type == 'sysex']
 
     if plaintext:
-        with open(filename, 'wt') as outfile:
+        with open(filename, 'w') as outfile:
             for message in messages:
                 outfile.write(message.hex())
                 outfile.write('\n')

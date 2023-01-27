@@ -7,7 +7,7 @@ from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
 from .strings import msg2str, str2msg
 
 
-class BaseMessage(object):
+class BaseMessage:
     """Abstract base class for messages."""
     is_meta = False
 
@@ -29,7 +29,7 @@ class BaseMessage(object):
 
         Each number is separated by the string sep.
         """
-        return sep.join('{:02X}'.format(byte) for byte in self.bytes())
+        return sep.join(f'{byte:02X}' for byte in self.bytes())
 
     def dict(self):
         """Returns a dictionary containing the attributes of the message.
@@ -61,7 +61,7 @@ class BaseMessage(object):
     def __repr__(self):
         items = [repr(self.type)]
         for name in self._get_value_names():
-            items.append('{}={!r}'.format(name, getattr(self, name)))
+            items.append(f'{name}={getattr(self, name)!r}')
         return '{}({})'.format(type(self).__name__, ', '.join(items))
 
     @property
@@ -93,7 +93,7 @@ class BaseMessage(object):
 
     def __eq__(self, other):
         if not isinstance(other, BaseMessage):
-            raise TypeError('can\'t compare message to {}'.format(type(other)))
+            raise TypeError(f'can\'t compare message to {type(other)}')
 
         # This includes time in comparison.
         return vars(self) == vars(other)
