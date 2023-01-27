@@ -26,12 +26,12 @@ else:
 
 try:
     with mido.open_input(portname) as port:
-        print('Using {}'.format(port))
+        print(f'Using {port}')
 
         print("Ignoring everything but 'note_on' and 'note_off'.")
         print('Waiting for notes...')
 
         for message in accept_notes(port):
-            print('Received {}'.format(message))
+            print(f'Received {message}')
 except KeyboardInterrupt:
     pass

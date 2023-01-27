@@ -12,11 +12,11 @@ def test_read(tmpdir):
 
     assert read_syx_file(path) == [msg]
 
-    with open(path, 'wt') as outfile:
+    with open(path, 'w') as outfile:
         outfile.write(msg.hex())
     assert read_syx_file(path) == [msg]
 
-    with open(path, 'wt') as outfile:
+    with open(path, 'w') as outfile:
         outfile.write('NOT HEX')
 
     with raises(ValueError):
@@ -26,7 +26,7 @@ def test_read(tmpdir):
 def test_handle_any_whitespace(tmpdir):
     path = tmpdir.join("test.syx").strpath
 
-    with open(path, 'wt') as outfile:
+    with open(path, 'w') as outfile:
         outfile.write('F0 01 02 \t F7\n   F0 03 04 F7\n')
     assert read_syx_file(path) == [Message('sysex', data=[1, 2]),
                                    Message('sysex', data=[3, 4])]
@@ -42,5 +42,5 @@ def test_write(tmpdir):
         assert infile.read() == msg.bin()
 
     write_syx_file(path, [msg], plaintext=True)
-    with open(path, 'rt') as infile:
+    with open(path) as infile:
         assert infile.read().strip() == msg.hex()

@@ -16,5 +16,5 @@ ports = [mido.open_input(name) for name in sys.argv[2:]]
 with mido.sockets.connect(host, port) as server_port:
     print('Connected.')
     for message in mido.ports.multi_receive(ports):
-        print('Sending {}'.format(message))
+        print(f'Sending {message}')
         server_port.send(message)

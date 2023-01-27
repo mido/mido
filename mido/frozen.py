@@ -2,7 +2,7 @@ from .messages import Message
 from .midifiles import MetaMessage, UnknownMetaMessage
 
 
-class Frozen(object):
+class Frozen:
     def __setattr__(self, *_):
         raise ValueError('frozen message is immutable')
 

@@ -13,10 +13,10 @@ else:
 
 try:
     with mido.open_input(portname) as port:
-        print('Using {}'.format(port))
+        print(f'Using {port}')
         print('Waiting for messages...')
         for message in port:
-            print('Received {}'.format(message))
+            print(f'Received {message}')
             sys.stdout.flush()
 except KeyboardInterrupt:
     pass

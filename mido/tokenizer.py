@@ -3,7 +3,7 @@ from numbers import Integral
 from .messages.specs import SYSEX_START, SYSEX_END, SPEC_BY_STATUS
 
 
-class Tokenizer(object):
+class Tokenizer:
     """
     Splits a MIDI byte stream into messages.
     """
@@ -77,7 +77,7 @@ class Tokenizer(object):
             else:
                 return self._feed_status_byte(byte)
         else:
-            raise ValueError('invalid byte value {!r}'.format(byte))
+            raise ValueError(f'invalid byte value {byte!r}')
 
     def feed(self, data):
         """Feed MIDI bytes to the decoder.

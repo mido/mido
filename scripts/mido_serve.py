@@ -35,7 +35,7 @@ def main():
         (hostname, port) = sockets.parse_address(args.address)
         with sockets.PortServer(hostname, port) as server:
             for message in server:
-                print('Received {}'.format(message))
+                print(f'Received {message}')
                 out.send(message)
     except KeyboardInterrupt:
         pass
