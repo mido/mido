@@ -126,6 +126,20 @@ def encode_variable_int(value):
         return [0]
 
 
+def decode_variable_int(value):
+    """Decode a list to a variable length integer.
+
+    Does the opposite of encode_variable_int(value)
+    """
+    for i in range(len(value) - 1):
+        value[i] &= ~0x80
+    val = 0
+    for i in value:
+        val <<= 7
+        val |= i
+    return val
+
+
 def encode_string(string):
     return list(bytearray(string.encode(_charset)))
 
@@ -525,6 +539,25 @@ class MetaMessage(BaseMessage):
         data = spec.encode(self)
 
         return ([0xff, spec.type_byte] + encode_variable_int(len(data)) + data)
+
+    @classmethod
+    def from_bytes(cls, msg_bytes):
+        if msg_bytes[0] != 0xff:
+            raise ValueError('bytes does not correspond to a MetaMessage.')
+        scan_end = 2
+        data = []
+        flag = True
+        while flag and scan_end < len(msg_bytes):
+            scan_end += 1
+            length_data = msg_bytes[2:scan_end]
+            length = decode_variable_int(length_data)
+            data = msg_bytes[scan_end:]
+            if length == len(data):
+                flag = False
+        if flag:
+            raise ValueError('Bad data. Cannot be converted to message.')
+        msg = build_meta_message(msg_bytes[1], data)
+        return msg
 
     def _get_value_names(self):
         """Used by BaseMessage.__repr__()."""
