@@ -42,3 +42,46 @@ def test_unknown_meta_message_repr():
     msg = UnknownMetaMessage(type_byte=99, data=[1, 2], time=10)
     msg_eval = eval(repr(msg))
     assert msg == msg_eval
+
+
+def test_meta_from_bytes_invalid():
+    test_bytes = [
+        0xC0,  # Not a meta event (Program Change channel 1)
+        0x05   # Program #5
+    ]
+    with pytest.raises(ValueError):
+        MetaMessage.from_bytes(test_bytes)
+
+
+def test_meta_from_bytes_data_too_short():
+    test_bytes = [
+        0xFF,  # Meta event
+        0x01,  # Event Type: Text
+        0x04,  # Length
+        ord('T'), ord('E'), ord('S'),  # Text: TES
+    ]
+    with pytest.raises(ValueError):
+        MetaMessage.from_bytes(test_bytes)
+
+
+def test_meta_from_bytes_data_too_long():
+    test_bytes = [
+        0xFF,  # Meta event
+        0x01,  # Event Type: Text
+        0x04,  # Length
+        ord('T'), ord('E'), ord('S'), ord('T'), ord('S')  # Text: TESTS
+    ]
+    with pytest.raises(ValueError):
+        MetaMessage.from_bytes(test_bytes)
+
+
+def test_meta_from_bytes_text():
+    test_bytes = [
+        0xFF,  # Meta event
+        0x01,  # Event Type: Text
+        0x04,  # Length
+        ord('T'), ord('E'), ord('S'), ord('T')  # Text: TEST
+    ]
+    msg = MetaMessage.from_bytes(test_bytes)
+    assert msg.type == 'text'
+    assert msg.text == 'TEST'
