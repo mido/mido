@@ -1,8 +1,8 @@
 import io
 from pytest import raises
-from ..messages import Message
-from .midifiles import MidiFile
-from .meta import MetaMessage
+from mido.messages import Message
+from mido.midifiles.midifiles import MidiFile, MidiTrack
+from mido.midifiles.meta import MetaMessage, KeySignatureError
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # MThd
@@ -10,7 +10,7 @@ HEADER_ONE_TRACK = """
       00 01  # Type 1
       00 01  # 1 track
       00 78  # 120 ticks per beat
-"""    
+"""
 
 
 def parse_hexdump(hexdump):
@@ -20,8 +20,8 @@ def parse_hexdump(hexdump):
     return data
 
 
-def read_file(hexdump):
-    return MidiFile(file=io.BytesIO(parse_hexdump(hexdump)))
+def read_file(hexdump, clip=False):
+    return MidiFile(file=io.BytesIO(parse_hexdump(hexdump)), clip=clip)
 
 
 def test_no_tracks():
@@ -44,11 +44,11 @@ def test_single_message():
 
 def test_too_long_message():
     with raises(IOError):
-      read_file(HEADER_ONE_TRACK + """
-      4d 54 72 6b  # MTrk
-      00 00 00 04
-      00 ff 03 ff ff 7f # extremely long track name message
-      """)
+        read_file(HEADER_ONE_TRACK + """
+        4d 54 72 6b  # MTrk
+        00 00 00 04
+        00 ff 03 ff ff 7f # extremely long track name message
+        """)
 
 
 def test_two_tracks():
@@ -58,13 +58,13 @@ def test_two_tracks():
     4d54 726b 0000 0008 00 90 47 10  40 80 47 10   # Track 1
     """)
     assert len(mid.tracks) == 2
-    # Todo: add some more tests here.
+    # TODO: add some more tests here.
 
 
 def test_empty_file():
     with raises(EOFError):
         read_file("")
-   
+
 
 def test_eof_in_track():
     with raises(EOFError):
@@ -75,8 +75,8 @@ def test_eof_in_track():
         """)
 
 
-def test_invalid_data_byte():
-    # Todo: should this raise IOError?
+def test_invalid_data_byte_no_clipping():
+    # TODO: should this raise IOError?
     with raises(IOError):
         read_file(HEADER_ONE_TRACK + """
         4d 54 72 6b  # MTrk
@@ -85,8 +85,17 @@ def test_invalid_data_byte():
         """)
 
 
+def test_invalid_data_byte_with_clipping_high():
+    midi_file = read_file(HEADER_ONE_TRACK + """
+                          4d 54 72 6b  # MTrk
+                          00 00 00 04  # Chunk size
+                          00 90 ff 40  # note_on note=255 velocity=64
+                          """, clip=True)
+    assert midi_file.tracks[0][0].note == 127
+
+
 def test_meta_messages():
-    # Todo: should this raise IOError?
+    # TODO: should this raise IOError?
     mid = read_file(HEADER_ONE_TRACK + """
     4d 54 72 6b  # MTrk
     00 00 00 0c  # Chunk size
@@ -98,6 +107,26 @@ def test_meta_messages():
 
     assert track[0] == MetaMessage('track_name', name='Test')
     assert track[1] == MetaMessage('end_of_track')
+
+
+def test_meta_message_bad_key_sig_throws_key_signature_error_sharps():
+    with raises(KeySignatureError):
+        read_file(HEADER_ONE_TRACK + """
+            4d 54 72 6b  # MTrk
+            00 00 00 09  # Chunk size
+            00 ff 59 02 08 # Key Signature with 8 sharps
+            00 ff 2f 00  # end_of_track
+            """)
+
+
+def test_meta_message_bad_key_sig_throws_key_signature_error_flats():
+    with raises(KeySignatureError):
+        read_file(HEADER_ONE_TRACK + """
+            4d 54 72 6b  # MTrk
+            00 00 00 09  # Chunk size
+            00 ff 59 02 f8 # Key Signature with 8 flats
+            00 ff 2f 00  # end_of_track
+            """)
 
 
 def test_meta_messages_with_length_0():
@@ -134,3 +163,19 @@ def test_meta_messages_with_length_0():
 
         MetaMessage('end_of_track'),
     ]
+
+
+def test_midifile_repr():
+    midifile = MidiFile(type=1, ticks_per_beat=123, tracks=[
+        MidiTrack([
+            Message('note_on', channel=1, note=2, time=3),
+            Message('note_off', channel=1, note=2, time=3)]),
+        MidiTrack([
+            MetaMessage('sequence_number', number=5),
+            Message('note_on', channel=2, note=6, time=9),
+            Message('note_off', channel=2, note=6, time=9)]),
+    ])
+    midifile_eval = eval(repr(midifile))
+    for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
+        for m1, m2 in zip(track, track_eval):
+            assert m1 == m2

@@ -1,10 +1,8 @@
-from collections import deque
-from numbers import Integral
 from .specs import (SYSEX_START, SYSEX_END,
                     SPEC_BY_STATUS, CHANNEL_MESSAGES,
                     MIN_PITCHWHEEL)
 from .checks import check_data
-from ..py2 import convert_py2_bytes
+
 
 def _decode_sysex_data(data):
     return {'data': tuple(data)}
@@ -12,7 +10,7 @@ def _decode_sysex_data(data):
 
 def _decode_quarter_frame_data(data):
     return {'frame_type': data[0] >> 4,
-            'frame_value' : data[0] & 15}
+            'frame_value': data[0] & 15}
 
 
 def _decode_songpos_data(data):
@@ -36,6 +34,7 @@ def _make_special_cases():
 
     return cases
 
+
 _SPECIAL_CASES = _make_special_cases()
 
 
@@ -45,7 +44,7 @@ def _decode_data_bytes(status_byte, data, spec):
         raise ValueError(
             'wrong number of bytes for {} message'.format(spec['type']))
 
-    # Todo: better name than args?
+    # TODO: better name than args?
     names = [name for name in spec['value_names'] if name != 'channel']
     args = {name: value for name, value in zip(names, data)}
 
@@ -64,8 +63,7 @@ def decode_message(msg_bytes, time=0, check=True):
 
     This is not a part of the public API.
     """
-    # Todo: this function is getting long.
-    msg_bytes = convert_py2_bytes(msg_bytes)
+    # TODO: this function is getting long.
 
     if len(msg_bytes) == 0:
         raise ValueError('message is 0 bytes long')
@@ -76,7 +74,7 @@ def decode_message(msg_bytes, time=0, check=True):
     try:
         spec = SPEC_BY_STATUS[status_byte]
     except KeyError:
-        raise ValueError('invalid status byte {!r}'.format(status_byte))
+        raise ValueError(f'invalid status byte {status_byte!r}')
 
     msg = {
         'type': spec['type'],
@@ -91,7 +89,7 @@ def decode_message(msg_bytes, time=0, check=True):
         end = data[-1]
         data = data[:-1]
         if end != SYSEX_END:
-            raise ValueError('invalid sysex end byte {!r}'.format(end))
+            raise ValueError(f'invalid sysex end byte {end!r}')
 
     if check:
         check_data(data)
@@ -105,101 +103,3 @@ def decode_message(msg_bytes, time=0, check=True):
         msg.update(_decode_data_bytes(status_byte, data, spec))
 
     return msg
-
-
-class Decoder(object):
-    """
-    Encodes MIDI message bytes to dictionaries.
-
-    This is not a part of the public API.
-    """
-    def __init__(self, data=None):
-        """Create a new decoder."""
-
-        self._status = 0
-        self._bytes = []
-        self._messages = deque()
-        self._datalen = 0
-
-        if data is not None:
-            self.feed(data)
-
-    def _decode_and_append(self, msg_bytes):
-        self._messages.append(decode_message(msg_bytes, check=False))
-
-    def _feed_status_byte(self, status):
-        if status == SYSEX_END:
-            if self._status == SYSEX_START:
-                self._bytes.append(SYSEX_END)
-                self._decode_and_append(self._bytes)
-
-            self._status = 0
-
-        elif 0xf8 <= status <= 0xff:
-            if self._status != SYSEX_START:
-                # Realtime messages are only allowed inside sysex
-                # messages. Reset parser.
-                self._status = 0
-
-            if status in SPEC_BY_STATUS:
-                self._decode_and_append([status])
-
-        elif status in SPEC_BY_STATUS:
-            # New message.
-            spec = SPEC_BY_STATUS[status]
-
-            if spec['length'] == 1:
-                self._decode_and_append([status])
-                self._status = 0
-            else:
-                self._status = status
-                self._bytes = [status]
-                self._len = spec['length']
-        else:
-            # Undefined message. Reset parser.
-            # (Undefined realtime messages are handled above.)
-            # self._status = 0
-            pass
-
-    def _feed_data_byte(self, byte):
-        if self._status:
-            self._bytes.append(byte)
-            if len(self._bytes) == self._len:
-                # Complete message.
-                self._decode_and_append(self._bytes)
-                self._status = 0
-        else:
-            # Ignore stray data byte.
-            pass
-
-    def feed_byte(self, byte):
-        """Feed MIDI byte to the decoder.
-
-        Takes an int in range [0..255].
-        """
-        if not isinstance(byte, Integral):
-            raise TypeError('message byte must be integer')
-
-        if 0 <= byte <= 255:
-            if byte <= 127:
-                return self._feed_data_byte(byte)
-            else:
-                return self._feed_status_byte(byte)
-        else:
-            raise ValueError('invalid byte value {!r}'.format(byte))
-
-    def feed(self, data):
-        """Feed MIDI bytes to the decoder.
-
-        Takes an iterable of ints in in range [0..255].
-        """
-        for byte in convert_py2_bytes(data):
-            self.feed_byte(byte)
-
-    def __len__(self):
-        return len(self._messages)
-
-    def __iter__(self):
-        """Yield messages that have been parsed so far."""
-        while len(self._messages):
-            yield self._messages.popleft()

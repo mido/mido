@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Receive messages from multiple ports.
 """
@@ -8,11 +8,11 @@ from mido.ports import multi_receive
 # Open all available inputs.
 ports = [mido.open_input(name) for name in mido.get_input_names()]
 for port in ports:
-    print('Using {}'.format(port))
+    print(f'Using {port}')
 print('Waiting for messages...')
 
 try:
     for message in multi_receive(ports):
-        print('Received {}'.format(message))
+        print(f'Received {message}')
 except KeyboardInterrupt:
     pass

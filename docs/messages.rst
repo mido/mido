@@ -7,12 +7,12 @@ attributes will vary depending on message type.
 To create a new message::
 
     >>> mido.Message('note_on')
-    <message note_on channel=0 note=0 velocity=64 time=0>
+    Message('note_on', channel=0, note=0, velocity=64, time=0)
 
 You can pass attributes as keyword arguments::
 
     >>> mido.Message('note_on', note=100, velocity=3, time=6.2)
-    <message note_on channel=0 note=100 velocity=3 time=6.2>
+    Message('note_on', channel=0, note=100, velocity=3, time=6.2)
 
 All attributes will default to 0. The exceptions are ``velocity``,
 which defaults to 64 (middle velocity) and ``data`` which defaults to
@@ -33,7 +33,7 @@ Attributes are also settable but it's always better to use
 ``msg.copy()``::
 
     >>> msg.copy(note=99, time=100.0)
-    <message note_on channel=0 note=99 velocity=64 time=100.0>
+    Message('note_on', channel=0, note=99, velocity=64, time=100.0)
 
 .. note:: Mido always makes a copy of messages instead of modifying
           them so if you do the same you have immutable messages in
@@ -50,6 +50,18 @@ Mido supports all message types defined by the MIDI standard. For a
 full list of messages and their attributes, see :doc:`/message_types`.
 
 
+Control Changes
+---------------
+
+.. code-block:: python
+
+    if msg.is_cc():
+        print('Control change message received')
+
+    if msg.is_cc(7):
+        print('Volume changed to', msg.value)
+
+
 Converting To Bytes
 -------------------
 
@@ -57,7 +69,7 @@ You can convert a message to MIDI bytes with one of these methods:
 
     >>> msg = mido.Message('note_on')
     >>> msg
-    <message note_on channel=0 note=0 velocity=64 time=0>
+    Message('note_on', channel=0, note=0, velocity=64, time=0)
     >>> msg.bytes()
     [144, 0, 64]
     >>> msg.bin()
@@ -88,14 +100,16 @@ The Time Attribute
 ------------------
 
 Each message has a ``time`` attribute, which can be set to any value
-of type ``int`` or ``float`` (and in Python 2 also ``long``). What you
-do with this value is entirely up to you.
+of type ``int`` or ``float``                                .
 
 Some parts of Mido use the attribute for special purposes. In MIDI
-file tracks, it is used as delta time (in ticks).
+file tracks, it is used as delta time (in ticks), and it must be a
+non-negative integer.
+
+In other parts of Mido, this value is ignored.
 
 .. note:: Before 1.1.18 the ``time`` attribute was not included in
-          comparisons. If you want the old behavior the easies way is
+          comparisons. If you want the old behavior the easiest way is
           ``msg1.bytes()`` == ``msg2.bytes()``.
 
 To sort messages on time you can do::
@@ -118,7 +132,7 @@ the payload of the message::
 
     >>> msg = Message('sysex', data=[1, 2, 3])
     >>> msg
-    <message sysex data=(1, 2, 3) time=0>
+    Message('sysex', data=(1, 2, 3), time=0)
     >>> msg.hex()
     'F0 01 02 03 F7'
 
@@ -128,7 +142,7 @@ You can also extend the existing data::
    >>> msg.data += [4, 5]
    >>> msg.data += [6, 7, 8]
    >>> msg
-   <message sysex data=(1, 2, 3, 4, 5, 6, 7, 8) time=0>
+   Message('sysex', data=(1, 2, 3, 4, 5, 6, 7, 8), time=0)
 
 Any sequence of integers is allowed, and type and range checking is
 applied to each data byte. These are all valid::
@@ -145,4 +159,4 @@ For example::
     >>> msg = Message('sysex', data=bytearray(b'ABC'))
     >>> msg.data += bytearray(b'DEF')
     >>> msg
-    <message sysex data=(65, 66, 67, 68, 69, 70) time=0>
+    Message('sysex', data=(65, 66, 67, 68, 69, 70), time=0)

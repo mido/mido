@@ -5,29 +5,31 @@ There is no need to use this module directly. All you need is
 available in the top level module.
 """
 from collections import deque
+
 from .messages import Message
-from .messages.decode import Decoder
+from .tokenizer import Tokenizer
 
-# Todo: make sure the method signatures are as before.
-# Todo: add doc strings.
 
-class Parser(object):
+class Parser:
     """
-    MIDI Parser
+    MIDI byte stream parser
 
-    Parses a stream of bytes and produces messages.
+    Parses a stream of MIDI bytes and produces messages.
 
     Data can be put into the parser in the form of
     integers, byte arrays or byte strings.
     """
     def __init__(self, data=None):
+        # For historical reasons self.messages is public and must be a
+        # deque(). (It is referenced directly inside ports.)
         self.messages = deque()
-        self._decoder = Decoder(data)
-        self._wrap_messages()
+        self._tok = Tokenizer()
+        if data:
+            self.feed(data)
 
-    def _wrap_messages(self):
-        for msgdict in self._decoder:
-            self.messages.append(Message(**msgdict))
+    def _decode(self):
+        for midi_bytes in self._tok:
+            self.messages.append(Message.from_bytes(midi_bytes))
 
     def feed(self, data):
         """Feed MIDI data to the parser.
@@ -40,18 +42,17 @@ class Parser(object):
             [for i in range(256)]
             (for i in range(256)]
             bytearray()
-            b''  # Will be converted to integers in Python 2.
         """
-        self._decoder.feed(data)
-        self._wrap_messages()
+        self._tok.feed(data)
+        self._decode()
 
     def feed_byte(self, byte):
         """Feed one MIDI byte into the parser.
 
         The byte must be an integer in range 0..255.
         """
-        self._decoder.feed_byte(byte)
-        self._wrap_messages()
+        self._tok.feed_byte(byte)
+        self._decode()
 
     def get_message(self):
         """Get the first parsed message.
@@ -61,8 +62,8 @@ class Parser(object):
         you can get before you get None, or just iterate over the
         parser.
         """
-        if self.messages:
-            return self.messages.popleft()
+        for msg in self:
+            return msg
         else:
             return None
 
@@ -70,12 +71,11 @@ class Parser(object):
         """Return the number of pending messages."""
         return len(self.messages)
 
-    def __len__(self):
-        return len(self.messages)
+    __len__ = pending
 
     def __iter__(self):
         """Yield messages that have been parsed so far."""
-        while len(self.messages):
+        while len(self.messages) > 0:
             yield self.messages.popleft()
 
 

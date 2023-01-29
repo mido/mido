@@ -9,7 +9,7 @@ and call:
 
 or set shell variable $MIDO_BACKEND to mido.backends.rtmidi_python
 
-Todo:
+TODO:
 
 * add support for APIs.
 
@@ -17,34 +17,32 @@ Todo:
   mido.backends.rtmidi.)There may be a way to remove this filtering.
 
 """
-from __future__ import absolute_import
+import queue
+
 import rtmidi_python as rtmidi
-# Todo: change this to a relative import if the backend is included in
+# TODO: change this to a relative import if the backend is included in
 # the package.
 from ..ports import BaseInput, BaseOutput
-from ..py2 import PY2
 
-if PY2:
-    import Queue as queue
-else:
-    import queue
 
 def get_devices(api=None, **kwargs):
-    devices = []
+    devices = {}
 
-    input_names = set(rtmidi.MidiIn().ports)
-    output_names = set(rtmidi.MidiOut().ports)
+    input_names = rtmidi.MidiIn().ports
+    output_names = rtmidi.MidiOut().ports
 
-    for name in sorted(input_names | output_names):
-        devices.append({
+    for name in input_names + output_names:
+        if name not in devices:
+            devices[name] = {
                 'name': name,
                 'is_input': name in input_names,
                 'is_output': name in output_names,
-                })
+            }
 
-    return devices
+    return list(devices.values())
 
-class PortCommon(object):
+
+class PortCommon:
     def _open(self, virtual=False, **kwargs):
 
         self._queue = queue.Queue()
@@ -52,7 +50,7 @@ class PortCommon(object):
 
         # rtapi = _get_api_id(api)
         opening_input = hasattr(self, 'receive')
-        
+
         if opening_input:
             self._rt = rtmidi.MidiIn()
             self._rt.ignore_types(False, False, True)
@@ -65,32 +63,32 @@ class PortCommon(object):
 
         if virtual:
             if self.name is None:
-                raise IOError('virtual port must have a name')
+                raise OSError('virtual port must have a name')
             self._rt.open_virtual_port(self.name)
         else:
             if self.name is None:
-                # Todo: this could fail if list is empty.
+                # TODO: this could fail if list is empty.
                 # In RtMidi, the default port is the first port.
                 try:
                     self.name = ports[0]
                 except IndexError:
-                    raise IOError('no ports available')
+                    raise OSError('no ports available')
 
             try:
                 port_id = ports.index(self.name)
             except ValueError:
-                raise IOError('unknown port {!r}'.format(self.name))
+                raise OSError(f'unknown port {self.name!r}')
 
             try:
                 self._rt.open_port(port_id)
             except RuntimeError as err:
-                raise IOError(*err.args)
+                raise OSError(*err.args)
 
         # api = _api_to_name[self._rt.get_current_api()]
         api = ''
-        self._device_type = 'RtMidi/{}'.format(api)
+        self._device_type = f'RtMidi/{api}'
         if virtual:
-            self._device_type = 'virtual {}'.format(self._device_type)
+            self._device_type = f'virtual {self._device_type}'
 
     @property
     def callback(self):
@@ -114,6 +112,7 @@ class PortCommon(object):
         self._rt.close_port()
         del self._rt  # Virtual ports are closed when this is deleted.
 
+
 class Input(PortCommon, BaseInput):
     def _receive(self, block=True):
         # Since there is no blocking read in RtMidi, the block
@@ -126,6 +125,7 @@ class Input(PortCommon, BaseInput):
                 break
             else:
                 self._parser.feed(message_data)
+
 
 class Output(PortCommon, BaseOutput):
     def _send(self, message):

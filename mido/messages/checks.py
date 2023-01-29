@@ -1,11 +1,11 @@
 from numbers import Integral, Real
 from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
                     MIN_PITCHWHEEL, MAX_PITCHWHEEL)
-from ..py2 import convert_py2_bytes
+
 
 def check_type(type_):
     if type_ not in SPEC_BY_TYPE:
-        raise ValueError('invalid message type {!r}'.format(type_))
+        raise ValueError(f'invalid message type {type_!r}')
 
 
 def check_channel(channel):
@@ -32,7 +32,7 @@ def check_pitch(pitch):
 
 
 def check_data(data_bytes):
-    for byte in convert_py2_bytes(data_bytes):
+    for byte in data_bytes:
         check_data_byte(byte)
 
 

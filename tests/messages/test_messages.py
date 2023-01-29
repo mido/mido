@@ -1,6 +1,7 @@
 from pytest import raises
-from .specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS
-from .messages import Message, SysexData
+from mido.messages.specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS
+from mido.messages.messages import Message, SysexData
+
 
 def test_msg_time_equality():
     # Since 1.1.18 time is included in comparison.
@@ -79,6 +80,13 @@ def test_copy_can_have_same_type():
     Message('start').copy(type='start')
 
 
+def test_copy_handles_data_generator():
+    msg1 = Message('sysex')
+    msg2 = msg1.copy(data=(i for i in range(3)))
+    assert msg2.data == (0, 1, 2)
+    assert isinstance(msg2.data, SysexData)
+
+
 def test_compare_with_nonmessage():
     with raises(TypeError):
         Message('clock') == 'not a message'
@@ -94,10 +102,15 @@ def test_dict_sysex_data():
     msg = Message('sysex', data=(1, 2, 3))
     data = msg.dict()
     assert data == {'type': 'sysex', 'data': [1, 2, 3], 'time': 0}
-    assert type(data['data']) == type([])
+    assert isinstance(data['data'], list)
 
 
 def test_from_hex_sysex_data_type():
     msg = Message.from_hex('F0 01 02 03 F7')
     assert isinstance(msg.data, SysexData)
 
+
+def test_repr():
+    msg = Message('note_on', channel=1, note=2, time=3)
+    msg_eval = eval(repr(msg))
+    assert msg == msg_eval

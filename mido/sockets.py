@@ -5,7 +5,6 @@ import socket
 import select
 from .parser import Parser
 from .ports import MultiPort, BaseIOPort
-from .py2 import PY2
 
 
 def _is_readable(socket):
@@ -14,11 +13,12 @@ def _is_readable(socket):
     timeout = 0
     (rlist, wlist, elist) = select.select(
         [socket.fileno()], [], [], timeout)
-    
+
     return bool(rlist)
 
+
 class PortServer(MultiPort):
-    # Todo: queue size.
+    # TODO: queue size.
 
     def __init__(self, host, portno, backlog=1):
         MultiPort.__init__(self, format_address(host, portno))
@@ -86,10 +86,7 @@ class SocketPort(BaseIOPort):
         else:
             self._socket = conn
 
-        if PY2:
-            kwargs = {'bufsize': 0}
-        else:
-            kwargs = {'buffering': None}
+        kwargs = {'buffering': 0}
 
         self._rfile = self._socket.makefile('rb', **kwargs)
         self._wfile = self._socket.makefile('wb', **kwargs)
@@ -101,9 +98,9 @@ class SocketPort(BaseIOPort):
         while _is_readable(self._socket):
             try:
                 byte = self._rfile.read(1)
-            except socket.error as err:
-                raise IOError(err.args[1])
-            if byte == '':
+            except OSError as err:
+                raise OSError(err.args[1])
+            if len(byte) == 0:
                 # The other end has disconnected.
                 self.close()
                 break
@@ -114,12 +111,12 @@ class SocketPort(BaseIOPort):
         try:
             self._wfile.write(message.bin())
             self._wfile.flush()
-        except socket.error as err:
+        except OSError as err:
             if err.errno == 32:
                 # Broken pipe. The other end has disconnected.
                 self.close()
 
-            raise IOError(err.args[1])
+            raise OSError(err.args[1])
 
     def _close(self):
         self._socket.close()
@@ -158,5 +155,4 @@ def parse_address(address):
 
 
 def format_address(host, portno):
-    return '{}{:d}'.format(host, portno)
-
+    return f'{host}{portno:d}'

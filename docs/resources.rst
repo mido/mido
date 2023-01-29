@@ -1,7 +1,7 @@
 Resources
 =========
 
-* `MIDI Manufacturers Association <http://midi.org/>`_ (midi.org)
+* `MIDI Association <http://midi.org/>`_ (midi.org)
 
 * `Table of MIDI Messages <http://www.midi.org/techspecs/midimessages.php>`_
   (midi.org)

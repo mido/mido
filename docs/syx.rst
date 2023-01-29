@@ -27,7 +27,7 @@ same way::
 
     messages = mido.read_syx_file('patch.txt')
 
-``read_syx_file()`` determins which format the file is by looking at
+``read_syx_file()`` determines which format the file is by looking at
 the first byte.  It Raises ValueError if file is plain text and byte
 is not a 2-digit hex number.
 

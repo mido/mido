@@ -1,11 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Example of non-blocking reception from input port.
 """
-
-from __future__ import print_function
 import sys
 import time
+
 import mido
 
 if len(sys.argv) > 1:
@@ -15,10 +14,10 @@ else:
 
 try:
     with mido.open_input(portname) as port:
-        print('Using {}'.format(port))        
+        print(f'Using {port}')
         while True:
             for message in port.iter_pending():
-                print('Received {}'.format(message))
+                print(f'Received {message}')
 
             print('Doing something else for a while...')
             time.sleep(0.5)

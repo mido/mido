@@ -1,30 +1,34 @@
 Mido - MIDI Objects for Python
 ==============================
 
-Mido is a library for working with MIDI messages and ports. It's
-designed to be as straight forward and Pythonic as possible:
+.. image:: https://github.com/mido/mido/workflows/Test/badge.svg
+   :target: https://github.com/mido/mido/actions
+
+Mido is a library for working with MIDI messages and ports:
 
 .. code-block:: python
 
    >>> import mido
    >>> msg = mido.Message('note_on', note=60)
+   >>> msg.type
+   'note_on'
    >>> msg.note
    60
    >>> msg.bytes()
    [144, 60, 64]
    >>> msg.copy(channel=2)
-   <message note_on channel=2 note=60 velocity=64 time=0>
+   Message('note_on', channel=2, note=60, velocity=64, time=0)
 
 .. code-block:: python
 
-    with mido.open_input('LinnStrument') as inport:
+   port = mido.open_output('Port Name')
+   port.send(msg)
+
+.. code-block:: python
+
+    with mido.open_input() as inport:
         for msg in inport:
             print(msg)
-
-.. code-block:: python
-
-   port = mido.open_output()
-   port.send(msg)
 
 .. code-block:: python
 
@@ -39,7 +43,7 @@ Full documentation at https://mido.readthedocs.io/
 Main Features
 -------------
 
-* works in Python 2 and 3.
+* works in Python 3.
 
 * convenient message objects.
 
@@ -52,7 +56,7 @@ Main Features
   used interchangeably. New port types can be written by subclassing
   and overriding a few methods.
 
-* includes a reusable MIDI parser.
+* includes a reusable MIDI stream parser.
 
 * full support for MIDI files (read, write, create and play) with
   complete access to every message in the file, including all common
@@ -77,7 +81,7 @@ Status
 Requirements
 ------------
 
-Mido targets Python 2.7 and 3.2.
+Mido requires Python 3.7 or higher.
 
 
 Installing
@@ -85,11 +89,11 @@ Installing
 
 ::
 
-    pip install mido
+    python3 -m pip install mido
 
 If you want to use ports::
 
-   pip install python-rtmidi
+   python3 -m pip install python-rtmidi
 
 See ``docs/backends/`` for other backends.
 
@@ -98,7 +102,7 @@ See ``docs/backends/`` for other backends.
 Source Code
 -----------
 
-https://github.com/olemb/mido/
+https://github.com/mido/mido/
 
 
 License
@@ -108,7 +112,9 @@ Mido is released under the terms of the `MIT license
 <http://en.wikipedia.org/wiki/MIT_License>`_.
 
 
-Contact
--------
+Questions and suggestions
+-------------------------
 
-Ole Martin Bjorndalen - ombdalen@gmail.com
+For questions and proposals which may not fit into issues or pull requests, we
+recommend to ask and discuss on `Discussions
+<https://github.com/mido/mido/discussions>`_.

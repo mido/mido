@@ -41,12 +41,7 @@ things like:
 
     msg = freeze_message(port.receive())
 
-    # Python 3 only:
     for msg in map(freeze_message, port):
-        ...
-
-    # Python 2 and 3:
-    for msg in (freeze_message(msg) for msg in port):
         ...
 
 To check if a message is frozen:
@@ -57,4 +52,3 @@ To check if a message is frozen:
 
     if is_frozen(msg):
         ...
-

@@ -76,10 +76,10 @@ three environment variables::
 
 For example::
 
-    $ MIDO_DEFAULT_INPUT='SH-201' python program.py
+    $ MIDO_DEFAULT_INPUT='SH-201' python3 program.py
 
 or::
 
     $ export MIDO_DEFAULT_OUTPUT='Integra-7'
-    $ python program1.py
-    $ python program2.py
+    $ python3 program1.py
+    $ python3 program2.py

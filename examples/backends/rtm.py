@@ -16,12 +16,10 @@ http://github.com/superquadratic/rtmidi-python
 Other than that, it works exactly like the included python-rtmidi
 backend.
 """
-from __future__ import absolute_import
-import os
-import time
-import mido
 import rtmidi_python as rtmidi
+
 from mido.ports import BaseInput, BaseOutput
+
 
 def get_devices():
     devices = []
@@ -31,14 +29,15 @@ def get_devices():
 
     for name in sorted(input_names | output_names):
         devices.append({
-                'name' : name,
-                'is_input' : name in input_names,
-                'is_output' : name in output_names,
-                })
+            'name': name,
+            'is_input': name in input_names,
+            'is_output': name in output_names,
+        })
 
     return devices
 
-class PortCommon(object):
+
+class PortCommon:
     def _open(self, virtual=False, callback=None):
         opening_input = hasattr(self, 'receive')
 
@@ -50,6 +49,7 @@ class PortCommon(object):
                     self._parser.feed(message)
                     for message in self._parser:
                         callback(message)
+
                 self._rt.callback = self._callback = callback_wrapper
                 self._has_callback = True
             else:
@@ -62,7 +62,7 @@ class PortCommon(object):
 
         if virtual:
             if self.name is None:
-                raise IOError('virtual port must have a name')
+                raise OSError('virtual port must have a name')
             self._rt.open_virtual_port(self.name)
         else:
             if self.name is None:
@@ -71,12 +71,12 @@ class PortCommon(object):
                 try:
                     self.name = ports[0]
                 except IndexError:
-                    raise IOError('no ports available')
+                    raise OSError('no ports available')
 
             try:
                 port_id = ports.index(self.name)
             except ValueError:
-                raise IOError('unknown port {!r}'.format(self.name))
+                raise OSError(f'unknown port {self.name!r}')
 
             self._rt.open_port(port_id)
 
@@ -85,11 +85,12 @@ class PortCommon(object):
     def _close(self):
         self._rt.close_port()
 
+
 class Input(PortCommon, BaseInput):
     # Todo: sysex messages do not arrive here.
     def _receive(self, block=True):
         if self._has_callback:
-            raise IOError('a callback is currently set for this port')
+            raise OSError('a callback is currently set for this port')
 
         while True:
             (message, delta_time) = self._rt.get_message()
@@ -97,7 +98,8 @@ class Input(PortCommon, BaseInput):
                 break
             else:
                 self._parser.feed(message)
-            
+
+
 class Output(PortCommon, BaseOutput):
     def _send(self, message):
         self._rt.send_message(message.bytes())

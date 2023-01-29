@@ -198,6 +198,10 @@ Time signature of:
 
 3/8 : MetaMessage('time_signature', numerator=3, denominator=8)
 
+.. note:: From 1.2.9 time signature message have the correct default
+          value of 4/4. In earlier versions the default value was 2/4
+          due to a typo in the code.
+
 
 key_signature (0x59)
 ^^^^^^^^^^^^^^^^^^^^
@@ -242,11 +246,11 @@ described below.
 ``UnknownMetaMessage`` have two attributes::
 
     ``type_byte`` - a byte which uniquely identifies this message type
-    ``_data`` - the message data as a list of bytes
+    ``data`` - the message data as a list of bytes
 
 These are also visible in the ``repr()`` string::
 
-    <unknown meta message _type_byte=0x## _data=[...], time=0>
+    UnknownMetaMessage(type_byte=251, data=(1, 2, 3), time=0>
 
 
 Implementing New Meta Messages
@@ -256,7 +260,7 @@ If you come across a meta message which is not implemented, or you
 want to use a custom meta message, you can add it by writing a new
 meta message spec::
 
-    from mido.midifiles import MetaSpec, add_meta_spec
+    from mido.midifiles.meta import MetaSpec, add_meta_spec
 
     class MetaSpec_light_color(MetaSpec):
         type_byte = 0xf0
@@ -296,7 +300,7 @@ and create messages in the usual way::
 
     >>> from mido import MetaMessage
     >>> MetaMessage('light_color', r=120, g=60, b=10)
-    <meta message light_color r=120 g=60 b=10 time=0>
+    MetaMessage('light_color', r=120, g=60, b=10, time=0)
 
 and the new message type will now work when reading and writing MIDI
 files.

@@ -9,7 +9,7 @@ Installing
 
 ::
 
-    pip install rtmidi-python
+    python3 - m pip install rtmidi-python
 
 
 Features

@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Receive messages from the input port and print them out.
 """
-from __future__ import print_function
 import sys
+
 import mido
 
 if len(sys.argv) > 1:
@@ -13,10 +13,10 @@ else:
 
 try:
     with mido.open_input(portname) as port:
-        print('Using {}'.format(port))
+        print(f'Using {port}')
         print('Waiting for messages...')
         for message in port:
-            print('Received {}'.format(message))
+            print(f'Received {message}')
             sys.stdout.flush()
 except KeyboardInterrupt:
     pass

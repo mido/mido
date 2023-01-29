@@ -1,13 +1,14 @@
-#!/usr/bin/env python
-"""                                                                            
+#!/usr/bin/env python3
+"""
 Play MIDI file on output port.
 
 Run with (for example):
 
     ./play_midi_file.py 'SH-201 MIDI 1' 'test.mid'
 """
-
 import sys
+import time
+
 import mido
 from mido import MidiFile
 
@@ -19,9 +20,13 @@ else:
 
 with mido.open_output(portname) as output:
     try:
-        for message in MidiFile(filename).play():
+        midifile = MidiFile(filename)
+        t0 = time.time()
+        for message in midifile.play():
             print(message)
             output.send(message)
+        print('play time: {:.2f} s (expected {:.2f})'.format(
+            time.time() - t0, midifile.length))
 
     except KeyboardInterrupt:
         print()

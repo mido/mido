@@ -1,4 +1,5 @@
-include README.rst LICENSE run_tests.py
+include README.rst LICENSE .flake8
+recursive-include tests *.py
 recursive-include examples *.py
 recursive-include extras *.py
 include docs/_static/PLACEHOLDER
@@ -10,5 +11,7 @@ recursive-include examples *.py
 recursive-include examples *.sh
 recursive-include extras *.rst
 recursive-include mido *.py
+recursive-include scripts *.py
 recursive-include docs/images *.svg
 prune docs/_build
+prune logo

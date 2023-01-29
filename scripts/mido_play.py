@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-"""                                                                            
+#!/usr/bin/env python3
+"""
 Play MIDI file on output port.
 
 Example:
@@ -10,11 +10,12 @@ Todo:
 
   - add option for printing messages
 """
-from __future__ import print_function, division
-import sys
 import argparse
+import sys
+
 import mido
 from mido import MidiFile, Message, tempo2bpm
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -44,16 +45,16 @@ def parse_args():
 
 
 def play_file(output, filename, print_messages):
-    midi_file = MidiFile(filename) 
+    midi_file = MidiFile(filename)
 
-    print('Playing {}.'.format(midi_file.filename))
+    print(f'Playing {midi_file.filename}.')
     length = midi_file.length
     print('Song length: {} minutes, {} seconds.'.format(
-            int(length / 60),
-            int(length % 60)))
+        int(length / 60),
+        int(length % 60)))
     print('Tracks:')
     for i, track in enumerate(midi_file.tracks):
-        print('  {:2d}: {!r}'.format(i, track.name.strip()))
+        print(f'  {i:2d}: {track.name.strip()!r}')
 
     for message in midi_file.play(meta_messages=True):
         if print_messages:
@@ -70,9 +71,15 @@ def play_file(output, filename, print_messages):
 
 
 def main():
+    args = parse_args()
+
+    if args.quiet:
+        def print(*args):
+            pass
+
     try:
         with mido.open_output(args.output_port) as output:
-            print('Using output {!r}.'.format(output.name))
+            print(f'Using output {output.name!r}.')
             output.reset()
             try:
                 for filename in args.files:
@@ -83,10 +90,6 @@ def main():
     except KeyboardInterrupt:
         pass
 
-args = parse_args()
 
-if args.quiet:
-    def print(*args):
-        pass
-
-main()
+if __name__ == '__main__':
+    main()

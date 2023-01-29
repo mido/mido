@@ -1,7 +1,10 @@
 """Utility functions for RtMidi backend.
 
-These are in a separate file so they can be tested without the `python-rtmidi` package.
+These are in a separate file so they can be tested without
+the `python-rtmidi` package.
+
 """
+
 
 def expand_alsa_port_name(port_names, name):
     """Expand ALSA port name.

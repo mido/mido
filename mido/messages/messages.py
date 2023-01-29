@@ -1,21 +1,21 @@
 import re
-from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
+
 from .checks import check_msgdict, check_value, check_data
 from .decode import decode_message
 from .encode import encode_message
+from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
 from .strings import msg2str, str2msg
-from ..py2 import convert_py2_bytes
 
 
-class BaseMessage(object):
+class BaseMessage:
     """Abstract base class for messages."""
     is_meta = False
 
     def copy(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def bytes(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def bin(self):
         """Encode message and return as a bytearray.
@@ -29,7 +29,7 @@ class BaseMessage(object):
 
         Each number is separated by the string sep.
         """
-        return sep.join('{:02X}'.format(byte) for byte in self.bytes())
+        return sep.join(f'{byte:02X}' for byte in self.bytes())
 
     def dict(self):
         """Returns a dictionary containing the attributes of the message.
@@ -46,28 +46,54 @@ class BaseMessage(object):
         return data
 
     @classmethod
-    def from_dict(cl, data):
+    def from_dict(cls, data):
         """Create a message from a dictionary.
 
         Only "type" is required. The other will be set to default
         values.
         """
-        return cl(**data)
+        return cls(**data)
+
+    def _get_value_names(self):
+        # This is overridden by MetaMessage.
+        return list(SPEC_BY_TYPE[self.type]['value_names']) + ['time']
+
+    def __repr__(self):
+        items = [repr(self.type)]
+        for name in self._get_value_names():
+            items.append(f'{name}={getattr(self, name)!r}')
+        return '{}({})'.format(type(self).__name__, ', '.join(items))
 
     @property
     def is_realtime(self):
         """True if the message is a system realtime message."""
         return self.type in REALTIME_TYPES
 
+    def is_cc(self, control=None):
+        """Return True if the message is of type 'control_change'.
+
+        The optional control argument can be used to test for a specific
+        control number, for example:
+
+        if msg.is_cc(7):
+            # Message is control change 7 (channel volume).
+        """
+        if self.type != 'control_change':
+            return False
+        elif control is None:
+            return True
+        else:
+            return self.control == control
+
     def __delattr__(self, name):
         raise AttributeError('attribute cannot be deleted')
 
-    def __setattr__(self, name):
+    def __setattr__(self, name, value):
         raise AttributeError('message is immutable')
 
     def __eq__(self, other):
         if not isinstance(other, BaseMessage):
-            raise TypeError('can\'t compare message to {}'.format(type(other)))
+            raise TypeError(f'can\'t compare message to {type(other)}')
 
         # This includes time in comparison.
         return vars(self) == vars(other)
@@ -77,14 +103,14 @@ class SysexData(tuple):
     """Special kind of tuple accepts and converts any sequence in +=."""
     def __iadd__(self, other):
         check_data(other)
-        return self + SysexData(convert_py2_bytes(other))
+        return self + SysexData(other)
 
 
 class Message(BaseMessage):
     def __init__(self, type, **args):
         msgdict = make_msgdict(type, args)
         if type == 'sysex':
-            msgdict['data'] = SysexData(convert_py2_bytes(msgdict['data']))
+            msgdict['data'] = SysexData(msgdict['data'])
         check_msgdict(msgdict)
         vars(self).update(msgdict)
 
@@ -103,6 +129,9 @@ class Message(BaseMessage):
 
         if 'type' in overrides and overrides['type'] != self.type:
             raise ValueError('copy must be same message type')
+
+        if 'data' in overrides:
+            overrides['data'] = bytearray(overrides['data'])
 
         msgdict = vars(self).copy()
         msgdict.update(overrides)
@@ -159,15 +188,13 @@ class Message(BaseMessage):
     def __str__(self):
         return msg2str(vars(self))
 
-    def __repr__(self):
-        return '<message {}>'.format(str(self))
-
     def _setattr(self, name, value):
         if name == 'type':
             raise AttributeError('type attribute is read only')
         elif name not in vars(self):
-            raise AttributeError(
-                        '{} message has no attribute {}'.format(self.type, name))
+            raise AttributeError('{} message has no '
+                                 'attribute {}'.format(self.type,
+                                                       name))
         else:
             check_value(name, value)
             if name == 'data':
@@ -194,14 +221,14 @@ def parse_string(text):
 
 
 def parse_string_stream(stream):
-    """Parse a stram of messages and yield (message, error_message)
+    """Parse a stream of messages and yield (message, error_message)
 
     stream can be any iterable that generates text strings, where each
     string is a string encoded message.
 
     If a string can be parsed, (message, None) is returned. If it
-    can't be parsed (None, error_message) is returned. The error
-    message containes the line number where the error occurred.
+    can't be parsed, (None, error_message) is returned. The error
+    message contains the line number where the error occurred.
     """
     line_number = 1
     for line in stream:

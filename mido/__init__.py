@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MIDI Objects for Python
 
@@ -43,12 +42,12 @@ Parsing MIDI streams:
     parse_all(bytes) -- parse all messages bytes
     Parser -- MIDI parser class
 
-Parsing objects serialized with str(message):                                  
+Parsing objects serialized with str(message):
 
     parse_string(string) -- parse a string containing a message
     parse_string_stream(iterable) -- parse strings from an iterable and
                                      generate messages
- 
+
 Sub modules:
 
     ports -- useful tools for working with ports
@@ -89,27 +88,24 @@ Getting started:
     >>> get_input_names()
     ['MPK mini MIDI 1', 'SH-201']
 """
-from __future__ import absolute_import
 import os
-from .backends.backend import Backend
+
 from . import ports, sockets
+from .backends.backend import Backend
 from .messages import (Message, parse_string, parse_string_stream,
                        format_as_string, MIN_PITCHWHEEL, MAX_PITCHWHEEL,
                        MIN_SONGPOS, MAX_SONGPOS)
-from .parser import Parser, parse, parse_all
 from .midifiles import (MidiFile, MidiTrack, merge_tracks,
                         MetaMessage, UnknownMetaMessage,
-                        bpm2tempo, tempo2bpm, tick2second, second2tick)
+                        bpm2tempo, tempo2bpm, tick2second, second2tick,
+                        KeySignatureError)
+from .parser import Parser, parse, parse_all
 from .syx import read_syx_file, write_syx_file
-from .version import version_info, version as __version__
-
-__author__ = 'Ole Martin Bjorndalen'
-__email__ = 'ombdalen@gmail.com'
-__url__ = 'https://mido.readthedocs.io/'
-__license__ = 'MIT'
+from .version import version_info
 
 # Prevent splat import.
 __all__ = []
+
 
 def set_backend(name=None, load=False):
     """Set current backend.
@@ -135,6 +131,7 @@ def set_backend(name=None, load=False):
         if name.split('_')[0] in ['open', 'get']:
             glob[name] = getattr(backend, name)
 
+
 set_backend()
 
-del os, absolute_import
+del os

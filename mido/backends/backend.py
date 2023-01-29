@@ -4,7 +4,8 @@ from .. import ports
 
 DEFAULT_BACKEND = 'mido.backends.rtmidi'
 
-class Backend(object):
+
+class Backend:
     """
     Wrapper for backend module.
 
@@ -26,7 +27,7 @@ class Backend(object):
             self.name, self.api = self.name.split('/', 1)
         else:
             self.api = None
-            
+
         if load:
             self.load()
 
@@ -50,7 +51,7 @@ class Backend(object):
         """Load the module.
 
         Does nothing if the module is already loaded.
-        
+
         This function will be called if you access the 'module'
         property."""
         if not self.loaded:
@@ -71,12 +72,12 @@ class Backend(object):
         """Open an input port.
 
         If the environment variable MIDO_DEFAULT_INPUT is set,
-        if will override the default port.
+        it will override the default port.
 
         virtual=False
           Passing True opens a new port that other applications can
           connect to. Raises IOError if not supported by the backend.
-        
+
         callback=None
           A callback function to be called when a new message arrives.
           The function should take one argument (the message).
@@ -91,14 +92,14 @@ class Backend(object):
 
     def open_output(self, name=None, virtual=False, autoreset=False, **kwargs):
         """Open an output port.
-        
+
         If the environment variable MIDO_DEFAULT_OUTPUT is set,
-        if will override the default port.
+        it will override the default port.
 
         virtual=False
           Passing True opens a new port that other applications can
           connect to. Raises IOError if not supported by the backend.
-        
+
         autoreset=False
           Automatically send all_notes_off and reset_all_controllers
           on all channels. This is the same as calling `port.reset()`.
@@ -115,12 +116,12 @@ class Backend(object):
         """Open a port for input and output.
 
         If the environment variable MIDO_DEFAULT_IOPORT is set,
-        if will override the default port.
+        it will override the default port.
 
         virtual=False
           Passing True opens a new port that other applications can
           connect to. Raises IOError if not supported by the backend.
-        
+
         callback=None
           A callback function to be called when a new message arrives.
           The function should take one argument (the message).
@@ -164,23 +165,24 @@ class Backend(object):
             return []
 
     def get_input_names(self, **kwargs):
-        """Return a sorted list of all input port names."""
+        """Return a list of all input port names."""
         devices = self._get_devices(**self._add_api(kwargs))
         names = [device['name'] for device in devices if device['is_input']]
-        return list(sorted(names))
+        return names
 
     def get_output_names(self, **kwargs):
-        """Return a sorted list of all output port names."""
+        """Return a list of all output port names."""
         devices = self._get_devices(**self._add_api(kwargs))
         names = [device['name'] for device in devices if device['is_output']]
-        return list(sorted(names))
+        return names
 
     def get_ioport_names(self, **kwargs):
-        """Return a sorted list of all I/O port names."""
+        """Return a list of all I/O port names."""
         devices = self._get_devices(**self._add_api(kwargs))
         inputs = [device['name'] for device in devices if device['is_input']]
-        outputs = [device['name'] for device in devices if device['is_output']]
-        return sorted(set(inputs) & set(outputs))
+        outputs = {
+            device['name'] for device in devices if device['is_output']}
+        return [name for name in inputs if name in outputs]
 
     def __repr__(self):
         if self.loaded:
@@ -189,8 +191,8 @@ class Backend(object):
             status = 'not loaded'
 
         if self.api:
-            name = '{}/{}'.format(self.name, self.api)
+            name = f'{self.name}/{self.api}'
         else:
             name = self.name
 
-        return '<backend {} ({})>'.format(name, status)
+        return f'<backend {name} ({status})>'

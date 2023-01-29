@@ -1,5 +1,6 @@
 from .meta import MetaMessage
 
+
 class MidiTrack(list):
     @property
     def name(self):
@@ -40,7 +41,7 @@ class MidiTrack(list):
             return lst
         else:
             # Otherwise, construct a MidiTrack to return.
-            # Todo: this make a copy of the list. Is there a better way?
+            # TODO: this make a copy of the list. Is there a better way?
             return self.__class__(lst)
 
     def __add__(self, other):
@@ -50,7 +51,13 @@ class MidiTrack(list):
         return self.__class__(list.__mul__(self, other))
 
     def __repr__(self):
-        return '<midi track {!r} {} messages>'.format(self.name, len(self))
+        if len(self) == 0:
+            messages = ''
+        elif len(self) == 1:
+            messages = f'[{self[0]}]'
+        else:
+            messages = '[\n  {}]'.format(',\n  '.join(repr(m) for m in self))
+        return f'{self.__class__.__name__}({messages})'
 
 
 def _to_abstime(messages):

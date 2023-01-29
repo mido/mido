@@ -1,12 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Serve one or more output ports. Every message received on any of the
 connected sockets will be sent to every output port.
 """
 import argparse
+
 import mido
 from mido import sockets
 from mido.ports import MultiPort
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -23,15 +25,21 @@ def parse_args():
 
     return parser.parse_args()
 
-args = parse_args()
 
-try:
-    out = MultiPort([mido.open_output(name) for name in args.ports])
+def main():
+    args = parse_args()
 
-    (hostname, port) = sockets.parse_address(args.address)
-    with sockets.PortServer(hostname, port) as server:
-        for message in server:
-            print('Received {}'.format(message))
-            out.send(message)
-except KeyboardInterrupt:
-    pass
+    try:
+        out = MultiPort([mido.open_output(name) for name in args.ports])
+
+        (hostname, port) = sockets.parse_address(args.address)
+        with sockets.PortServer(hostname, port) as server:
+            for message in server:
+                print(f'Received {message}')
+                out.send(message)
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == '__main__':
+    main()

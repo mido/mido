@@ -1,19 +1,19 @@
 """
 Useful tools for working with ports
 """
-from __future__ import unicode_literals
+import random
 import threading
 import time
-import random
-from .parser import Parser
+
 from .messages import Message
+from .parser import Parser
 
 # How many seconds to sleep before polling again.
 _DEFAULT_SLEEP_TIME = 0.001
 _sleep_time = _DEFAULT_SLEEP_TIME
 
 
-# Todo: document this more.
+# TODO: document this more.
 def sleep():
     """Sleep for N seconds.
 
@@ -55,8 +55,7 @@ def panic_messages():
                       channel=channel, control=ALL_SOUNDS_OFF)
 
 
-
-class DummyLock(object):
+class DummyLock:
     def __enter__(self):
         return self
 
@@ -64,11 +63,10 @@ class DummyLock(object):
         return False
 
 
-class BasePort(object):
+class BasePort:
     """
     Abstract base class for Input and Output ports.
     """
-
     is_input = False
     is_output = False
     _locking = True
@@ -87,7 +85,7 @@ class BasePort(object):
         self.closed = True
         self._open(**kwargs)
         self.closed = False
- 
+
     def _open(self, **kwargs):
         pass
 
@@ -106,7 +104,7 @@ class BasePort(object):
                 if hasattr(self, 'autoreset') and self.autoreset:
                     try:
                         self.reset()
-                    except IOError:
+                    except OSError:
                         pass
 
                 self._close()
@@ -129,12 +127,11 @@ class BasePort(object):
             state = 'open'
 
         capabilities = self.is_input, self.is_output
-        port_type = {
-            (True, False): 'input',
-            (False, True): 'output',
-            (True, True): 'I/O port',
-            (False, False): 'mute port',
-            }[capabilities]
+        port_type = {(True, False): 'input',
+                     (False, True): 'output',
+                     (True, True): 'I/O port',
+                     (False, False): 'mute port',
+                     }[capabilities]
 
         name = self.name or ''
 
@@ -165,7 +162,6 @@ class BaseInput(BasePort):
         self._parser = Parser()
         self._messages = self._parser.messages  # Shortcut.
 
-
     def _check_callback(self):
         if hasattr(self, 'callback') and self.callback is not None:
             raise ValueError('a callback is set for this port')
@@ -192,7 +188,7 @@ class BaseInput(BasePort):
 
         If the port is closed and there are no pending messages IOError
         will be raised. If the port closes while waiting inside receive(),
-        IOError will be raised. Todo: this seems a bit inconsistent. Should
+        IOError will be raised. TODO: this seems a bit inconsistent. Should
         different errors be raised? What's most useful here?
         """
         if not self.is_input:
@@ -222,7 +218,7 @@ class BaseInput(BasePort):
                 elif not block:
                     return None
                 elif self.closed:
-                    raise IOError('port closed during receive()')
+                    raise OSError('port closed during receive()')
 
             sleep()
 
@@ -241,7 +237,7 @@ class BaseInput(BasePort):
         while True:
             try:
                 yield self.receive()
-            except IOError:
+            except OSError:
                 if self.closed:
                     # The port closed before or inside receive().
                     # (This makes the assumption that this is the reason,
@@ -268,7 +264,7 @@ class BaseOutput(BasePort):
         """
         BasePort.__init__(self, name, **kwargs)
         self.autoreset = autoreset
- 
+
     def _send(self, msg):
         pass
 
@@ -335,7 +331,7 @@ class IOPort(BaseIOPort):
         self.output = output
 
         # We use str() here in case name is None.
-        self.name = '{} + {}'.format(str(input.name), str(output.name))
+        self.name = f'{str(input.name)} + {str(output.name)}'
         self._messages = self.input._messages
         self.closed = False
         self._lock = DummyLock()
@@ -367,13 +363,13 @@ class MultiPort(BaseIOPort):
     def _send(self, message):
         for port in self.ports:
             if not port.closed:
-                # Todo: what if a SocketPort connection closes in-between here?
+                # TODO: what if a SocketPort connection closes in-between here?
                 port.send(message)
 
     def _receive(self, block=True):
         self._messages.extend(multi_receive(self.ports,
                                             yield_ports=self.yield_ports,
-                                            block=False))
+                                            block=block))
 
 
 def multi_receive(ports, yield_ports=False, block=True):
@@ -388,9 +384,9 @@ def multi_receive(ports, yield_ports=False, block=True):
 
     If block=False only pending messages will be yielded.
     """
+    ports = list(ports)
     while True:
         # Make a shuffled copy of the port list.
-        ports = list(ports)
         random.shuffle(ports)
 
         for port in ports:

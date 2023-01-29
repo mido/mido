@@ -1,8 +1,8 @@
 """
 Read and write SYX file format
 """
-from __future__ import print_function
 import re
+
 from .parser import Parser
 
 
@@ -25,9 +25,7 @@ def read_syx_file(filename):
 
     parser = Parser()
 
-    # data[0] will give a byte string in Python 2 and an integer in
-    # Python 3.
-    if data[0] in (b'\xf0', 240):
+    if data[0] == 240:
         # Binary format.
         parser.feed(data)
     else:
@@ -50,7 +48,7 @@ def write_syx_file(filename, messages, plaintext=False):
     messages = [m for m in messages if m.type == 'sysex']
 
     if plaintext:
-        with open(filename, 'wt') as outfile:
+        with open(filename, 'w') as outfile:
             for message in messages:
                 outfile.write(message.hex())
                 outfile.write('\n')

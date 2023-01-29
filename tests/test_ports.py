@@ -1,6 +1,6 @@
 import pytest
-from .messages import Message
-from .ports import BaseIOPort
+from mido.messages import Message
+from mido.ports import BaseIOPort
 
 
 class TestIOPort:

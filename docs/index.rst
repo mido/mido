@@ -8,30 +8,31 @@ Mido - MIDI Objects for Python
 
 Version |version|
 
-Mido is a library for working with MIDI messages and ports. It's
-designed to be as straight forward and Pythonic as possible:
+Mido is a library for working with MIDI messages and ports:
 
 .. code-block:: python
 
    >>> import mido
    >>> msg = mido.Message('note_on', note=60)
+   >>> msg.type
+   'note_on'
    >>> msg.note
    60
    >>> msg.bytes()
    [144, 60, 64]
    >>> msg.copy(channel=2)
-   <message note_on channel=2 note=60 velocity=64 time=0>
+   Message('note_on', channel=2, note=60, velocity=64, time=0)
 
 .. code-block:: python
 
-    with mido.open_input('LinnStrument') as inport:
+   port = mido.open_output('Port Name')
+   port.send(msg)
+
+.. code-block:: python
+
+    with mido.open_input() as inport:
         for msg in inport:
             print(msg)
-
-.. code-block:: python
-
-   port = mido.open_output()
-   port.send(msg)
 
 .. code-block:: python
 
@@ -46,7 +47,7 @@ Mido is short for MIDI objects.
 Source code
 -----------
 
-https://github.com/olemb/mido/
+https://github.com/mido/mido/
 
 
 About This Document
@@ -56,7 +57,7 @@ This document is available at https://mido.readthedocs.io/
 
 To build locally::
 
-    python setup.py docs
+    sphinx-build docs docs/_build
 
 This requires Sphinx. The resulting files can be found in
 ``docs/_build/``.

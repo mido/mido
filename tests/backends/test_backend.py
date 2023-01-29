@@ -1,4 +1,5 @@
-from .backend import Backend
+from mido.backends.backend import Backend
+
 
 def test_split_api():
     backend = Backend('test')

@@ -1,5 +1,6 @@
 from .specs import CHANNEL_MESSAGES, SPEC_BY_TYPE, MIN_PITCHWHEEL
 
+
 def _encode_pitchwheel(msg):
     pitch = msg['pitch'] - MIN_PITCHWHEEL
     return [0xe0 | msg['channel'], pitch & 0x7f, pitch >> 7]
@@ -46,7 +47,7 @@ _SPECIAL_CASES = {
 def encode_message(msg):
     """Encode msg dict as a list of bytes.
 
-    Todo: Add type and value checking.
+    TODO: Add type and value checking.
           (Can be turned off with keyword argument.)
 
     This is not a part of the public API.

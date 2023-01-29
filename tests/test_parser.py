@@ -1,9 +1,9 @@
-from __future__ import print_function
 import random
+
 from pytest import raises
 
-from .messages import Message
-from .parser import Parser, parse, parse_all
+from mido.messages import Message, specs
+from mido.parser import Parser, parse, parse_all
 
 
 def test_parse():
@@ -41,7 +41,7 @@ def test_feed_byte():
 
     with raises(TypeError):
         parser.feed_byte([1, 2, 3])
-    
+
     with raises(ValueError):
         parser.feed_byte(-1)
 
@@ -55,7 +55,7 @@ def test_feed():
 
     parser.feed([])
     parser.feed([1, 2, 3])
-    # Todo: add more valid types.
+    # TODO: add more valid types.
 
     with raises(TypeError):
         parser.feed(1)
@@ -115,7 +115,6 @@ def test_encode_and_parse_all():
 
     This checks mostly for errors in the parser.
     """
-    from .messages import specs
 
     parser = Parser()
     for type_ in sorted(specs.SPEC_BY_TYPE.keys()):
@@ -128,4 +127,3 @@ def test_encode_and_parse_all():
 
 def test_parser_ascii_text():
     assert parse_all(b'7 bit ASCII should not produce any messages') == []
-

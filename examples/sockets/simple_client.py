@@ -1,15 +1,16 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Simple client that sends program_change messages to server at timed
 intervals.
 
 Example:
 
-    python simple_client.py localhost:8080
+    python3 simple_client.py localhost:8080
 """
+import random
 import sys
 import time
-import random
+
 import mido
 
 if sys.argv[1:]:
@@ -24,7 +25,7 @@ on = mido.Message('note_on', velocity=100)
 off = mido.Message('note_off', velocity=100)
 base = random.randrange(12)
 
-print('Connecting to {}'.format(address))
+print(f'Connecting to {address}')
 
 with mido.sockets.connect(host, port) as server_port:
     try:
