@@ -36,7 +36,7 @@ def tempo2bpm(tempo, time_signature=(4, 4)):
     per minute).
 
     Depending on the chosen time signature a bar contains a different number of
-    beats. These beats are multiples/fractions of a quarter note, thus the
-    returned tempo depends on the time signature.
+    beats. The beats are multiples/fractions of a quarter note, thus the
+    returned tempo depends on the time signature denominator.
     """
     return 60 * 1e6 / tempo * time_signature[1] / 4.
