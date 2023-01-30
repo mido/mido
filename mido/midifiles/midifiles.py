@@ -7,6 +7,8 @@ MIDI file reading and playback.
 
 References:
 
+https://www.midi.org/specifications/file-format-specifications/standard-midi-files
+
 http://home.roadrunner.com/~jgglatt/
 http://home.roadrunner.com/~jgglatt/tech/miditech.htm
 http://home.roadrunner.com/~jgglatt/tech/midifile.htm
@@ -19,10 +21,10 @@ http://www.recordingblogs.com/sa/tabid/82/EntryId/44/MIDI-Part-XIII-Delta-time-a
 http://www.sonicspot.com/guide/midifiles.html
 """
 
-import io
 import string
 import struct
 import time
+import warnings
 from numbers import Integral
 
 from .meta import (MetaMessage, build_meta_message, meta_charset,
@@ -34,10 +36,17 @@ from ..messages import Message, SPEC_BY_STATUS
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
 DEFAULT_TEMPO = 500000
-DEFAULT_TICKS_PER_BEAT = 480
+DEFAULT_DIVISION = 480
 
 # Maximum message length to attempt to read.
 MAX_MESSAGE_LENGTH = 1000000
+
+
+def __getattr__(name):
+    if name == 'DEFAULT_TICKS_PER_BEAT':
+        warnings.warn("DEFAULT_TICKS_PER_BEAT has been replaced "
+                      "by DEFAULT_DIVISION.", UserWarning)
+        return DEFAULT_DIVISION
 
 
 def print_byte(byte, pos=0):
@@ -91,8 +100,9 @@ def _dbg(text=''):
 # 2. the chunk module assumes that chunks are padded to the nearest
 # multiple of 2. This is not true of MIDI files.
 
-def read_chunk_header(infile):
+def read_chunk_header(infile) -> (bytes, int):
     header = infile.read(8)
+
     if len(header) < 8:
         raise EOFError
 
@@ -101,18 +111,50 @@ def read_chunk_header(infile):
     return struct.unpack('>4sL', header)
 
 
-def read_file_header(infile):
-    name, size = read_chunk_header(infile)
+def look_for_chunk_type(chunk_type_lookup, infile):
+    chunk_type = None
 
-    if name != b'MThd':
-        raise OSError('MThd not found. Probably not a MIDI file')
-    else:
-        data = infile.read(size)
+    while chunk_type != chunk_type_lookup:
+        try:
+            (chunk_type, size) = read_chunk_header(infile)
+        except EOFError as exc:
+            raise ValueError(f"Chunk '{chunk_type_lookup}' not found!") \
+                from exc
+        if chunk_type != chunk_type_lookup:
+            alien_data = infile.read(size)
+            warnings.warn(f"Alien chunk ignored. "
+                          f"Type: {chunk_type} "
+                          f"Size: {size} bytes "
+                          f"Data: {alien_data}")
+    return size
 
-        if len(data) < 6:
-            raise EOFError
 
-        return struct.unpack('>hhh', data[:6])
+def read_file_header(infile, size):
+    if not size:
+        warnings.warn("API has changed. Please use look_for_chunk_type first"
+                      "to get the size and pass it.", DeprecationWarning)
+
+        name, size = read_chunk_header(infile)
+        if name != b'MThd':
+            raise OSError("MThd not found. Probably not a MIDI file.")
+
+    specified_size = 6
+
+    if size < specified_size:
+        raise ValueError("Standard MIDI file should be exactly 6 bytes long "
+                         f"not {size}")
+
+    if size > specified_size:
+        warnings.warn("Header larger than expected. "
+                      f"Bytes following the {specified_size} specified bytes "
+                      "will be ignored!")
+
+    data = infile.read(size)
+
+    if len(data) < size:
+        raise EOFError
+
+    return struct.unpack('>hhh', data[:specified_size])
 
 
 def read_message(infile, status_byte, peek_data, delta, clip=False):
@@ -169,13 +211,16 @@ def read_meta_message(infile, delta):
     return build_meta_message(meta_type, data, delta)
 
 
-def read_track(infile, debug=False, clip=False):
+def read_track(infile, size, debug=False, clip=False):
     track = MidiTrack()
 
-    name, size = read_chunk_header(infile)
+    if not size:
+        warnings.warn("API has changed. Please use look_for_chunk_type first"
+                      "to get the size and pass it.", DeprecationWarning)
 
-    if name != b'MTrk':
-        raise OSError('no MTrk header at start of track')
+        name, size = read_chunk_header(infile)
+        if name != b'MTrk':
+            raise OSError("No MTrk header at start of track.")
 
     if debug:
         _dbg(f'-> size={size}')
@@ -292,25 +337,36 @@ def get_seconds_per_tick(tempo, ticks_per_beat):
 
 class MidiFile:
     def __init__(self, filename=None, file=None,
-                 type=1, ticks_per_beat=DEFAULT_TICKS_PER_BEAT,
+                 format_type=1, division=DEFAULT_DIVISION,
                  charset='latin1',
                  debug=False,
                  clip=False,
-                 tracks=None
+                 tracks=None,
+                 **kwargs,
                  ):
 
+        if 'type' in kwargs:
+            warnings.warn("type is deprecated in favor of format_type",
+                          DeprecationWarning)
+            format == kwargs['type']
+
+        if 'ticks_per_beat' in kwargs:
+            warnings.warn("ticks_per_beat is deprecated in favor of division",
+                          DeprecationWarning)
+            division == kwargs['ticks_per_beat']
+
         self.filename = filename
-        self.type = type
-        self.ticks_per_beat = ticks_per_beat
+        self.format_type = format_type
+        self.division = division
         self.charset = charset
         self.debug = debug
         self.clip = clip
 
         self.tracks = []
 
-        if type not in range(3):
+        if format_type not in range(3):
             raise ValueError(
-                f'invalid format {format} (must be 0, 1 or 2)')
+                f'invalid format {format_type} (must be 0, 1 or 2)')
 
         if tracks is not None:
             self.tracks = tracks
@@ -323,6 +379,42 @@ class MidiFile:
         # first call to __iter__()
         if self.type != 2:
             self.merged_track = merge_tracks(self.tracks)
+
+    @property
+    def type(self):
+        warnings.warn("type is deprecated in favor of format_type",
+                      DeprecationWarning)
+        return self.format_type
+
+    @type.setter
+    def type(self, value):
+        warnings.warn("type is deprecated in favor of format",
+                      DeprecationWarning)
+        self.format_type = value
+
+    @property
+    def ticks_per_beat(self):
+        warnings.warn("ticks_per_beat is deprecated in favor of division",
+                      DeprecationWarning)
+        return self.division
+
+    @ticks_per_beat.setter
+    def ticks_per_beat(self, value):
+        warnings.warn("ticks_per_beat is deprecated in favor of division",
+                      DeprecationWarning)
+        self.division = value
+
+    @property
+    def format_type(self):
+        return self._format_type
+
+    @format_type.setter
+    def format_type(self, value):
+        defined_format_types = (0, 1, 2)
+        if value not in defined_format_types:
+            warnings.warn(f"Undefined Standard MIDI File format type {value}."
+                          f"Only types {defined_format_types} are supported!")
+        self._format_type = value
 
     def add_track(self, name=None):
         """Add a new track to the file.
@@ -344,27 +436,63 @@ class MidiFile:
         if self.debug:
             infile = DebugFileWrapper(infile)
 
+        if self.debug:
+            _dbg('Header:')
+
+        # Ignore alien chunks and look for the first MIDI file header
+        chunk_type = b'MThd'
+        try:
+            size = look_for_chunk_type(chunk_type, infile)
+        except ValueError:
+            raise ValueError(f"Standard MIDI file ({chunk_type}) "
+                             f"header not found!")
+        (format_type, num_tracks, division) = read_file_header(infile, size)
+
+        if not num_tracks:
+            raise ValueError("The file should at least contain one track!")
+
+        if format_type == 0 and num_tracks != 1:
+            # TODO: We may want to issue a warning instead and continue with
+            #       `num_tracks=1`.
+            raise ValueError(f"Format 0 files should only have 1 track, "
+                             f"not {num_tracks}")
+
+        self.format_type = format_type
+        self.division = division
+
+        # FIXME: Autodetect charset and only apply to
+        #        events using the Text Event interface.
         with meta_charset(self.charset):
             if self.debug:
-                _dbg('Header:')
-
-            (self.type,
-             num_tracks,
-             self.ticks_per_beat) = read_file_header(infile)
-
-            if self.debug:
-                _dbg('-> type={}, tracks={}, ticks_per_beat={}'.format(
-                    self.type, num_tracks, self.ticks_per_beat))
+                _dbg('-> format_type={}, tracks={}, division={}'.format(
+                    self.format_type, num_tracks, self.division))
                 _dbg()
 
-            for i in range(num_tracks):
+            track_num = 0
+            while True:
+                if track_num > num_tracks:
+                    warnings.warn("Extra track found (Not declared in header)!"
+                                  "Appending anyway.")
+
                 if self.debug:
-                    _dbg(f'Track {i}:')
+                    _dbg(f'Track {track_num}:')
+
+                try:
+                    size = look_for_chunk_type(b'MTrk', infile)
+                except ValueError:
+                    if track_num < num_tracks:
+                        warnings.warn("Track(s) missing from file!"
+                                      f"Expected {num_tracks}, "
+                                      f"found {track_num}")
+                    break
 
                 self.tracks.append(read_track(infile,
+                                              size,
                                               debug=self.debug,
                                               clip=self.clip))
                 # TODO: used to ignore EOFError. I hope things still work.
+
+                track_num += 1
 
     @property
     def length(self):
@@ -373,7 +501,7 @@ class MidiFile:
         This will be computed by going through every message in every
         track and adding up delta times.
         """
-        if self.type == 2:
+        if self.format_type == 2:
             raise ValueError('impossible to compute length'
                              ' for type 2 (asynchronous) file')
 
@@ -382,15 +510,16 @@ class MidiFile:
     def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
         # not be played back like this.
-        if self.type == 2:
+        if self.format_type == 2:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
         tempo = DEFAULT_TEMPO
         for msg in self.merged_track:
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
+            # FIXME: Handle SMPTE division
             if msg.time > 0:
-                delta = tick2second(msg.time, self.ticks_per_beat, tempo)
+                delta = tick2second(msg.time, self.division, tempo)
             else:
                 delta = 0
 
@@ -446,7 +575,7 @@ class MidiFile:
         Raises ValueError if both file and filename are None,
         or if a type 0 file has != one track.
         """
-        if self.type == 0 and len(self.tracks) != 1:
+        if self.format_type == 0 and len(self.tracks) != 1:
             raise ValueError('type 0 file must have exactly 1 track')
 
         if file is not None:
@@ -459,9 +588,9 @@ class MidiFile:
 
     def _save(self, outfile):
         with meta_charset(self.charset):
-            header = struct.pack('>hhh', self.type,
+            header = struct.pack('>hhh', self.format_type,
                                  len(self.tracks),
-                                 self.ticks_per_beat)
+                                 self.divison)
 
             write_chunk(outfile, b'MThd', header)
 
@@ -493,10 +622,10 @@ class MidiFile:
         else:
             tracks_str = ''
 
-        return '{}(type={}, ticks_per_beat={}{})'.format(
+        return '{}(format_type={}, division={}{})'.format(
             self.__class__.__name__,
-            self.type,
-            self.ticks_per_beat,
+            self.format_type,
+            self.division,
             tracks_str,
         )
 
