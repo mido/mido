@@ -112,12 +112,23 @@ Software Foundation online spaces:
 -  all community members
 
 
-Procedure for Handling Incidents
---------------------------------
+Contact and Procedure for Handling Incidents
+--------------------------------------------
 
-.. warning::
-  We need a lightweight but well-defined procedure and contact
-  information for handling incidents. This is currently not yet in place.
+Please mention "@mido" in the issue or discussion or open a new issue
+on https://github.com/mido/mido and tag the organization admins using "@mido".
+
+You can also contact one or several organization admins directly:
+- radovan.bast@uit.no
+- ombdalen@gmail.com
+- raphael@doursenaud.fr
+
+We will then immediately discuss with the problematic user and convey why their
+behavior was inappropriate. We will also explain what the user can do to
+improve their behavior in the future. We will also explain that if the user
+continues to behave inappropriately, they will be banned from the community.
+Depending on the severity of the violation, we may also ban the user
+immediately.
 
 
 License
