@@ -1,3 +1,8 @@
+.. SPDX-FileCopyrightText: 2023 Mido project
+..
+.. SPDX-License-Identifier: CC-BY-SA-3.0
+
+
 Code of Conduct
 ===============
 
@@ -10,7 +15,7 @@ respectful**. Behaviours that reinforce these values contribute to a
 positive environment, and include:
 
 -  **Being open.** Members of the community are open to collaboration,
-   whether it’s on PEPs, patches, problems, or otherwise.
+   whether it’s on patches, problems, or otherwise.
 -  **Focusing on what is best for the community.** We’re respectful of
    the processes set forth in the community, and we work within them.
 -  **Acknowledging time and effort.** We’re respectful of the volunteer
@@ -84,7 +89,7 @@ Consequences
 ------------
 
 If a participant engages in behavior that violates this code of conduct,
-the Python community Code of Conduct team may take any action they deem
+the Mido project maintainers may take any action they deem
 appropriate, including warning the offender or expulsion from the
 community.
 
@@ -100,10 +105,9 @@ This Code of Conduct applies to the following online spaces:
 -  Code repositories, issue trackers, and pull requests made against
    the Mido GitHub organization.
 -  Discussions in the Mido GitHub organization.
--  The Mido mailing list.
 
-This Code of Conduct applies to the following people in official Python
-Software Foundation online spaces:
+This Code of Conduct applies to the following people in the Mido project
+online spaces:
 
 -  admins of the online space
 -  maintainers
