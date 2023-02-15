@@ -74,7 +74,7 @@ Contents
    installing
    backends/index
    contributing
-   code-of-conduct
+   code_of_conduct
    intro
    messages
    frozen_messages
