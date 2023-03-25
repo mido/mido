@@ -319,6 +319,9 @@ class MidiFile:
         elif self.filename is not None:
             with open(filename, 'rb') as file:
                 self._load(file)
+        
+        if self.type != 2:
+            self.merged_track = merge_tracks(self.tracks)
 
     def add_track(self, name=None):
         """Add a new track to the file.
@@ -330,6 +333,8 @@ class MidiFile:
         if name is not None:
             track.name = name
         self.tracks.append(track)
+        if self.type != 2:
+            self.merged_track = merge_tracks(self.tracks)
         return track
 
     def _load(self, infile):
@@ -378,7 +383,7 @@ class MidiFile:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
         tempo = DEFAULT_TEMPO
-        for msg in merge_tracks(self.tracks):
+        for msg in self.merged_track:
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             if msg.time > 0:
