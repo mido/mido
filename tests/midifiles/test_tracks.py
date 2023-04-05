@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 import itertools
-
+import mido
+import time
 from mido.messages import Message
 from mido.midifiles.meta import MetaMessage
 from mido.midifiles.tracks import MidiTrack
@@ -35,3 +36,22 @@ def test_track_repr():
     track_eval = eval(repr(track))
     for m1, m2 in zip(track, track_eval):
         assert m1 == m2
+
+
+def test_merge_large_midifile():
+    mid = mido.MidiFile()
+    for k in range(4):
+        t = mido.MidiTrack()
+        for _ in range(10000):
+            msg = mido.Message("note_on", note=72, time=1000 + 100 * k)
+            msg = mido.Message("note_off", note=72, time=500 + 100 * k)
+            t.append(msg)
+        mid.tracks.append(t)
+
+    start = time.time()
+    i = 0
+    for _ in mido.merge_tracks(mid.tracks):
+        i += 1
+    finish = time.time()
+
+    assert (finish - start) < 0.1
