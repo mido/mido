@@ -118,14 +118,14 @@ class Message(BaseMessage):
         check_msgdict(msgdict)
         vars(self).update(msgdict)
 
-    def copy(self, **overrides):
+    def copy(self, skip_checks=False, **overrides):
         """Return a copy of the message.
 
         Attributes will be overridden by the passed keyword arguments.
         Only message specific attributes can be overridden. The message
         type can not be changed.
         """
-        if not overrides:
+        if skip_checks or not overrides:
             # Bypass all checks.
             msg = self.__class__.__new__(self.__class__)
             vars(msg).update(vars(self))
