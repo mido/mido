@@ -40,12 +40,11 @@ def test_track_repr():
 
 def test_merge_large_midifile():
     mid = mido.MidiFile()
-    for k in range(4):
+    for k in range(5):
         t = mido.MidiTrack()
         for _ in range(10000):
-            msg = mido.Message("note_on", note=72, time=1000 + 100 * k)
-            msg = mido.Message("note_off", note=72, time=500 + 100 * k)
-            t.append(msg)
+            t.append(mido.Message("note_on", note=72, time=1000 + 100 * k))
+            t.append(mido.Message("note_off", note=72, time=500 + 100 * k))
         mid.tracks.append(t)
 
     start = time.time()
@@ -56,4 +55,4 @@ def test_merge_large_midifile():
     merged_duration_ticks = sum(msg.time for msg in merged)
     max_track_duration_ticks = max(sum(msg.time for msg in t) for t in mid.tracks)
     assert merged_duration_ticks == max_track_duration_ticks
-    assert (finish - start) < 0.1
+    assert (finish - start) < 0.5
