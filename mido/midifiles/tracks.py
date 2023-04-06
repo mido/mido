@@ -64,7 +64,7 @@ class MidiTrack(list):
         return f'{self.__class__.__name__}({messages})'
 
 
-def _to_abstime(messages, skip_checks=True):
+def _to_abstime(messages, skip_checks=False):
     """Convert messages to absolute time."""
     now = 0
     for msg in messages:
@@ -72,7 +72,7 @@ def _to_abstime(messages, skip_checks=True):
         yield msg.copy(skip_checks=skip_checks, time=now)
 
 
-def _to_reltime(messages, skip_checks=True):
+def _to_reltime(messages, skip_checks=False):
     """Convert messages to relative time."""
     now = 0
     for msg in messages:
@@ -81,7 +81,7 @@ def _to_reltime(messages, skip_checks=True):
         now = msg.time
 
 
-def fix_end_of_track(messages, skip_checks=True):
+def fix_end_of_track(messages, skip_checks=False):
     """Remove all end_of_track messages and add one at the end.
 
     This is used by merge_tracks() and MidiFile.save()."""
@@ -103,7 +103,7 @@ def fix_end_of_track(messages, skip_checks=True):
     yield MetaMessage('end_of_track', time=accum)
 
 
-def merge_tracks(tracks, skip_checks=True):
+def merge_tracks(tracks, skip_checks=False):
     """Returns a MidiTrack object with all messages from all tracks.
 
     The messages are returned in playback order with delta times
