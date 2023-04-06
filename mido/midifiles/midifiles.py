@@ -396,7 +396,7 @@ class MidiFile:
             else:
                 delta = 0
 
-            yield msg.copy(time=delta)
+            yield msg.copy(skip_checks=True, time=delta)
 
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
