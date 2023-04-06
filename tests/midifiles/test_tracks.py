@@ -50,8 +50,10 @@ def test_merge_large_midifile():
 
     start = time.time()
     i = 0
-    for _ in mido.merge_tracks(mid.tracks):
-        i += 1
+    merged = list(mido.merge_tracks(mid.tracks, skip_checks=True))
     finish = time.time()
 
+    merged_duration_ticks = sum(msg.time for msg in merged)
+    max_track_duration_ticks = max(sum(msg.time for msg in t) for t in mid.tracks)
+    assert merged_duration_ticks == max_track_duration_ticks
     assert (finish - start) < 0.1
