@@ -127,6 +127,9 @@ class Message(BaseMessage):
         Attributes will be overridden by the passed keyword arguments.
         Only message specific attributes can be overridden. The message
         type can not be changed.
+
+        The skip_checks arg can be used to bypass validation of message
+        attributes and should be used cautiously.
         """
         if not overrides:
             # Bypass all checks.
