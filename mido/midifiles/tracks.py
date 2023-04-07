@@ -109,9 +109,9 @@ def merge_tracks(tracks, skip_checks=False):
     The messages are returned in playback order with delta times
     as if they were all in one track.
 
-    By default, assumes the messages in tracks have already been
-    validated by mido.checks. Pass skip_checks=False if you need to
-    validate the  messages before merging.
+    Pass skip_checks=True to skip validation of messages before merging.
+    This should ONLY be used when the messages in tracks have already
+    been validated by mido.checks.
     """
     messages = []
     for track in tracks:
