@@ -319,7 +319,7 @@ class MidiFile:
         elif self.filename is not None:
             with open(filename, 'rb') as file:
                 self._load(file)
-        # merge tracks at load time to prevent timing error on 
+        # merge tracks at load time to prevent timing error on
         # first call to __iter__()
         if self.type != 2:
             self.merged_track = merge_tracks(self.tracks)
@@ -334,7 +334,7 @@ class MidiFile:
         if name is not None:
             track.name = name
         self.tracks.append(track)
-        # merge new track immediately to prevent timing error on 
+        # merge new track immediately to prevent timing error on
         # first call to __iter__()
         if self.type != 2:
             self.merged_track = merge_tracks(self.tracks)
