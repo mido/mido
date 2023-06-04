@@ -1,5 +1,10 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 import pytest
-from mido.midifiles.meta import MetaMessage, UnknownMetaMessage, MetaSpec_key_signature, KeySignatureError
+from mido.midifiles.meta import MetaMessage, UnknownMetaMessage, \
+    MetaSpec_key_signature, KeySignatureError
 
 
 def test_copy_invalid_argument():

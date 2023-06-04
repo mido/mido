@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 def tick2second(tick, ticks_per_beat, tempo):
     """Convert absolute time in ticks to seconds.
 

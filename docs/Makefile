@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # Makefile for Sphinx documentation
 #
 

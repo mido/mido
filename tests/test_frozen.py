@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from mido.messages import Message
 from mido.midifiles.meta import MetaMessage, UnknownMetaMessage
 from mido.frozen import (is_frozen, freeze_message, thaw_message,

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2020 Ole Martin Bjorndalen <ombdalen@gmail.com>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # The Mido Logo
 
 The logo for Mido is two DIN (MIDI) connectors in the colors and position of
