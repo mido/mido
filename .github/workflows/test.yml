@@ -26,12 +26,17 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install the package
+    - name: Upgrade pip
+      run: python3 -m pip install --upgrade pip
+    - name: Install mido in dev mode
       run: python3 -m pip install --quiet --editable .[dev]
-    - name: Run tests
-      run: |
-        flake8
-        reuse lint --quiet
-        pytest
-        check-manifest --verbose
-        sphinx-build -q -E docs _build
+    - name: Lint with flake
+      run: flake8
+    - name: Lint reuse
+      run: reuse lint
+    - name: Test with pytest
+      run: pytest
+    - name: Check manifest is complete
+      run: check-manifest --verbose
+    - name: Build documentation
+      run: sphinx-build -q -E docs docs/_build
