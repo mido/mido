@@ -47,7 +47,7 @@ source = "https://github.com/mido/mido"
 dev = [
     'check-manifest>=0.35',
     'flake8>=3.7.0',
-    'fsfe-reuse>=1.0.0',
+    'reuse>=1.0.0',
     'pytest>=6.0',
     'sphinx>=1.6.3',
 ]
