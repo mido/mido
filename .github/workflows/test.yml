@@ -16,27 +16,45 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
-        os: [ubuntu-latest, macOS-latest, windows-latest]
+        os: [
+          macOS-latest,
+          ubuntu-latest,
+          windows-latest,
+        ]
+        python-version: [
+          '3.7',
+          '3.8',
+          '3.9',
+          '3.10',
+          '3.11',
+        ]
+        # check-manifest is unhappy with windows and python < 3.10
+        exclude:
+          - os: windows-latest
+            python-version: '3.7'
+          - os: windows-latest
+            python-version: '3.8'
+          - os: windows-latest
+            python-version: '3.9'
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Upgrade pip
-      run: python3 -m pip install --upgrade pip
-    - name: Install mido in dev mode
-      run: python3 -m pip install --quiet --editable .[dev]
-    - name: Lint with flake
-      run: flake8
-    - name: Lint reuse
-      run: reuse lint
-    - name: Test with pytest
-      run: pytest
-    - name: Check manifest is complete
-      run: check-manifest --verbose
-    - name: Build documentation
-      run: sphinx-build -q -E docs docs/_build
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
+      - name: Install mido in dev mode
+        run: python3 -m pip install --quiet --editable .[dev]
+      - name: Lint with flake
+        run: flake8
+      - name: Lint reuse
+        run: reuse lint
+      - name: Test with pytest
+        run: pytest
+      - name: Check manifest is complete
+        run: check-manifest --verbose
+      - name: Build documentation
+        run: sphinx-build -q -E docs docs/_build
