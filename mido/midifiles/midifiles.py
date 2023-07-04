@@ -399,7 +399,7 @@ class MidiFile:
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
 
-    def play(self, meta_messages=False):
+    def play(self, meta_messages=False, now=time.time):
         """Play back all tracks.
 
         The generator will sleep between each message by
@@ -412,14 +412,19 @@ class MidiFile:
 
         You will receive copies of the original messages, so you can
         safely modify them without ruining the tracks.
+
+        By default the system clock is used for the timing of yielded
+        MIDI events. To use a different clock (e.g. to synchronize to
+        an audio stream), pass now=time_fn where time_fn is a zero
+        argument function that yields the current time in seconds.
         """
-        start_time = time.time()
+        start_time = now()
         input_time = 0.0
 
         for msg in self:
             input_time += msg.time
 
-            playback_time = time.time() - start_time
+            playback_time = now() - start_time
             duration_to_next_event = input_time - playback_time
 
             if duration_to_next_event > 0.0:
