@@ -47,11 +47,18 @@ source = "https://github.com/mido/mido"
 dev = [
     'check-manifest>=0.35',
     'flake8>=3.7.0',
-    'reuse>=1.0.0',
     'pytest>=6.0',
+    'reuse>=1.0.0',
     'sphinx>=1.6.3',
+    'sphinx_rtd_theme',
+    'twine',
 ]
-ports = ["python-rtmidi>=1.1.0"]
+ports-rtmidi = [
+    'python-rtmidi>=1.1.0',
+]
+ports-pygame = [
+    'PyGame',
+]
 
 [project.scripts]
 mido-play = "scripts.mido_play:main"
@@ -60,17 +67,27 @@ mido-serve = "scripts.mido_serve:main"
 mido-connect = "scripts.mido_connect:main"
 
 [tool.setuptools]
-packages = ["mido", "mido.backends"]
+packages = [
+    "mido",
+    "mido.backends",
+]
 include-package-data = true
 
 [tool.setuptools.package-dir]
 mido = "mido"
 
 [tool.setuptools.package-data]
-mido = ["LICENSE"]
+mido = [
+    "LICENSE",
+]
 
 [tool.setuptools_scm]
-# Enables setuptools-scm
+# Enables setuptools-scm which updates the version file `mido/_version.py`
+# automatically based on git tags.
+# The version information can be retrieved using:
+# ```python
+# importlib_metadata.version('mido')
+# ```
 
 [tool.pytest.ini_options]
 minversion = "6.0"

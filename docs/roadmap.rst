@@ -5,8 +5,10 @@
 Roadmap
 =======
 
-This will be developed into a proper roadmap but for now it's more of
-a list of ideas.
+.. note::
+
+    This will be developed into a proper roadmap but for now it's more of
+    a list of ideas.
 
 
 Various Improvements to MIDI File Parsing
@@ -71,6 +73,7 @@ In any case, the documentation should be updated to encourage copying
 over mutation.
 
 
+.. _native_backends:
 
 Native Backends (ALSA, JACK, CoreMIDI, Windows MIDI)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

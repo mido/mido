@@ -5,7 +5,7 @@
 Introduction (Basic Concepts)
 =============================
 
-Mido is all about messages and ports.
+Mido is all about messages, ports and files.
 
 
 Messages
@@ -21,9 +21,9 @@ create a new message::
 
 .. note::
 
-    Mido numbers channels 0 to 15 instead of 1 to 16. This makes them
-    easier to work with in Python but you may want to add and subtract
-    1 when communicating with the user.
+    Mido numbers channels ``0`` to ``15`` instead of ``1`` to ``16``. This makes
+    them easier to work with from Python but you may want to add and subtract
+    ``1`` when communicating with the user.
 
 A list of all supported message types and their parameters can be
 found in :doc:`message_types`.
@@ -47,11 +47,11 @@ Type and value checks are done when you pass parameters or assign to
 attributes, and the appropriate exceptions are raised. This ensures
 that the message is always valid.
 
-For more about messages, see :doc:`messages`.
+For more about messages, see :doc:`messages/index`.
 
 
 Type and Value Checking
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Mido messages come with type and value checking built in::
 
@@ -112,49 +112,58 @@ To iterate through all incoming messages::
 You can also receive and iterate over messages in a non-blocking
 way.
 
-For more about ports, see :doc:`ports`.
+For more about ports, see :doc:`ports/index`.
 
 
 All Ports are Ports
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 The input and output ports used above are device ports, which
-communicate with a (physical or virtual) MIDI device.
+communicate with a physical or virtual MIDI device.
 
 Other port types include:
 
-* ``MultiPort``, which wraps around a set of ports and allow you to send to all of them or receive from all of them as if they were one.
+* ``MultiPort``, which wraps around a set of ports and allows you to send to
+  all of them or receive from all of them as if they were one.
 
-* ``SocketPort``, which communicates with another port over a TCP/IP (network) connection.
+* ``SocketPort``, which communicates with another port over a TCP/IP (network)
+  connection.
 
-* ``IOPort``, which wraps around an input and an output port and allows you to send and receive messages as if the two were the same port.
+* ``IOPort``, which wraps around an input and an output port and allows you to
+  send and receive messages as if the two were the same port.
 
 Ports of all types look and behave the same way, so they can be used
 interchangeably.
 
-It's easy to write new port types. See :doc:`implementing_ports`.
+It's easy to write new port types. See :doc:`ports/custom`.
 
 
 Virtual Ports
--------------
+^^^^^^^^^^^^^
 
-Virtual ports allow you to create new ports that other applications
+Virtual ports allows you to create new ports that other applications
 can connect to::
 
     with mido.open_input('New Port', virtual=True) as inport:
         for message in inport:
             print(message)
 
-The port should now appear to other applications as "New Port".
-
-Unfortunately virtual ports are not supported by PortMidi and Pygame
-so this only works with RtMidi.
+The port should now appear to other applications as "``New Port``".
 
 
-Parsing MIDI Bytes
-------------------
+.. warning::
 
-Mido comes with a parser that allows you to turn bytes into
+    Unfortunately virtual ports are not supported by PortMidi and Pygame
+    so this only works with RtMidi.
+
+    Furthermore, RtMidi's virtual ports are not available under Microsoft
+    Windows. See: :doc:`backends/rtmidi` for details.
+
+
+Raw MIDI Bytes Parser
+---------------------
+
+Mido comes with a parser that allows you to turn ``bytes`` into
 messages. You can create a new parser::
 
     >>> p = mido.Parser()
@@ -170,23 +179,16 @@ You can then fetch messages out of the parser::
     ...
     note_on channel=0 note=64 velocity=96 time=0
 
-For more on parsers and parsing see :doc:`parsing`.
+For more on parsers and parsing see :doc:`messages/parsing`.
 
-You can also create a message from bytes using class methods (new in
-1.2):
+.. versionadded:: 1.2
+
+You can also create a message from ``bytes`` using class methods:
 
 .. code-block:: python
 
    msg1 = mido.Message.from_bytes([0x90, 0x40, 0x60])
    msg2 = mido.Message.from_hex('90, 40 60')
 
-The bytes must contain exactly one complete message. If not
+The ``bytes`` must contain exactly one complete message. If not
 ``ValueError`` is raised.
-
-
-Backends
---------
-
-Mido comes with backends for RtMidi and PortMidi and Pygame. The
-default is RtMidi. You can select another backend or even use multiple
-backends at the same time. For more on this, see :doc:`backends/index`.

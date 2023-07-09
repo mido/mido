@@ -1,36 +1,57 @@
 .. SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+.. SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 ..
 .. SPDX-License-Identifier: CC-BY-4.0
 
-Installing Mido
-===============
+Installing
+==========
+
 
 Requirements
 ------------
 
-Mido requires Python 3.7 or higher.
+Mido requires :term:`Python` version 3.7 or higher.
 
-There are no external dependencies unless you want to use the port
-backends, which are loaded on demand.
+A few dependencies are also required in order to allow Mido to introspect its
+own version:
 
-Mido comes with backends for RtMidi
-(`python-rtmidi <https://github.com/SpotlightKid/python-rtmidi>`_ or
-`rtmidi_python <https://mido.readthedocs.io/en/latest/backends/rtmidi_python.html>`_),
-`PortMidi <http://portmedia.sourceforge.net/portmidi/>`_ and
-`Pygame <http://www.pygame.org/docs/ref/midi.html>`_. See :doc:`backends/index` for
-help choosing a backend.
+* `packaging`
+* `importlib_metadata` for :term:`Python` < 3.8
+
+.. note::
+
+    Dependency management is handled automatically when installing using the
+    recommended methods. No need to bother installing these manually.
 
 
-Installing
-----------
+Optional
+--------
 
-To install::
+Dependencies for the loaded on-demand :term:`port` :term:`backend(s)` are
+optional unless you want to use the :term:`ports` feature.
+
+See :doc:`backends/index` for help choosing a :term:`backend`.
+
+
+Installation
+------------
+
+The recommended installation method is to use :term:`pip` to retrieve the
+package from :term:`PyPi`.
+
+.. note::
+
+    Consider using a *virtual environment* to isolate your installation from
+    your current environment.
+
+This ensures that you always get the latest released stable version::
 
     python3 -m pip install mido
 
-If you want to use ports::
+Or, alternatively, if you want to use :term:`ports` with the default
+:term:`backend`::
 
-    python3 -m pip install python-rtmidi
+    python3 -m pip install mido[ports-rtmidi]
 
 See :doc:`backends/index` for installation instructions for other
-backends.
+:term:`backends`.

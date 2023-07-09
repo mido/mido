@@ -3,34 +3,39 @@
 .. SPDX-License-Identifier: CC-BY-4.0
 
 Socket Ports - MIDI over TCP/IP
-===============================
+-------------------------------
 
-About Socket Ports
-------------------
 
-Socket ports allow you to send MIDI messages over a computer
+About
+^^^^^
+
+Socket :term:`ports` allows you to send :term:`MIDI` messages over a computer
 network.
 
-The protocol is standard MIDI bytes over a TCP stream.
+The protocol is a simple MIDI bytes stream over :term:`TCP`.
+
+.. warning::
+
+    It is **not** :term:`rtpmidi`!
 
 
 Caveats
--------
+^^^^^^^
 
-The data is sent over an unencrypted channel. Also, the default server
-allows connections from any host and also accepts arbitrary sysex
+The data is sent over an *unencrypted channel*. Also, the default server
+allows connections from any host and also accepts arbitrary :term:`sysex`
 messages, which could allow anyone to for example overwrite patches on
-your synths (or worse). Use only on trusted networks.
+your synths (or **worse**). Use **only** on *trusted networks*.
 
-If you need more security, you can build a custom server with a white
-list of clients that are allowed to connect.
+If you need more security, you can build a *custom server* with a whitelist
+of clients allowed to connect.
 
-If timing is critical, latency and jitter (especially on wireless
-networks) may make socket ports unusable.
+If *timing* is critical, *latency* and *jitter* (especially on *wireless
+networks*) may make socket ports *unusable*.
 
 
 Sending Messages to a Server
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 First, let's import some things::
 
@@ -49,13 +54,18 @@ You can then connect to the server and send it messages::
 Each end of the connection behaves like a normal Mido I/O port, with
 all the usual methods.
 
-The host may be a DNS host name or IP address (as a string). It may
-also be '', in which case connections are accepted on any ip address
-on the computer.
+The host may be an host name or IP address (as a string). It may also be '',
+in which case connections are accepted from any IP address on the computer.
+
+.. todo::
+
+    Test and clarify "Any IP address on the computer".
+    Does this mean only local adresses can connect or that any connection
+    from any network is allowed?
 
 
 Turning Things on their Head
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want the server to send messages the client, you can instead
 do::
@@ -76,13 +86,13 @@ clients.
 
 
 Under the Hood
---------------
+^^^^^^^^^^^^^^
 
-The examples above use the server and client ports as normal I/O
+The examples above use the server and client ports as normal Mido I/O
 ports. This makes it easy to write simple servers, but you don't have
-any control connections and the way messages are sent and received.
+any control on connections and the way messages are sent and received.
 
-To get more control, you can ignore all the other methods of the
+To get more control,you can ignore all the other methods of the
 ``PortServer`` object and use only ``accept()``. Here's a simple
 server implemented this way::
 
@@ -92,16 +102,18 @@ server implemented this way::
             for message in client:
                 print(message)
 
-``accept()`` waits for a client to connect, and returns a SocketPort
-object which is connected to the SocketPort object returned by
-``connect()`` at the other end.
+``accept()`` waits for a client to connect, and returns a ``SocketPort``
+object which is connected to the ``SocketPort`` object returned by
+``connect()`` on the other end.
 
-The server above has one weakness: it allows only one connection at a
+The server above has one weakness: it only allows one connection at a
 time. You can get around this by using ``accept(block=False)``. This
-will return a SocketPort if there is a connection waiting and None if
+will return a ``SocketPort`` if there's a connection waiting and ``None`` if
 there is connection yet.
 
-Using this, you can write the server any way you like, for example::
+.. todo:: Clarify "Connection waiting" vs "There is a connection yet".
+
+Using this you can write the server any way you like, for example::
 
     with PortServer('localhost', 8080) as server:
         clients = []
@@ -127,8 +139,8 @@ Using this, you can write the server any way you like, for example::
 
 
 Possible Future Additions
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Optional HTTP-style headers could be added. As long as these are 7-bit
-ASCII, they will be counted as data bytes and ignored by clients or
+:term:`ASCII`, they will be counted as data bytes and ignored by clients or
 servers who don't expect them.

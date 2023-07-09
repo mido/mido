@@ -5,7 +5,21 @@
 Included Programs
 =================
 
-These are installed with Mido.
+A few sample programs are installed with Mido and available directly from the
+:term:`CLI`.
+
+.. warning::
+
+    These are intended to demonstrate the capabilities of Mido and used as a
+    template for your own programs. These are not fully fledged and may miss
+    crucial features.
+
+
+mido-ports
+----------
+
+Lists all available input and output ports, shows environment variables
+and the current backend module.
 
 
 mido-play
@@ -13,14 +27,7 @@ mido-play
 
 Plays back one or more MIDI files::
 
-    $ mido-play song1.mid song2.mid
-
-
-mido-ports
-----------
-
-Lists available input and output ports and shows environment variables
-and the current backend module.
+    $ mido-play song1.mid [song2.mid]
 
 
 mido-serve

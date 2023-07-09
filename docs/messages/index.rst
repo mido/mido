@@ -18,9 +18,9 @@ You can pass attributes as keyword arguments::
     >>> mido.Message('note_on', note=100, velocity=3, time=6.2)
     Message('note_on', channel=0, note=100, velocity=3, time=6.2)
 
-All attributes will default to 0. The exceptions are ``velocity``,
-which defaults to 64 (middle velocity) and ``data`` which defaults to
-``()``.
+All attributes will default to ``0``.
+The exceptions are ``velocity``, which defaults to ``64`` (middle velocity)
+and ``data`` which defaults to ``()``.
 
 You can set and get attributes as you would expect::
 
@@ -44,14 +44,14 @@ Attributes are also settable but it's always better to use
           practice. (Third party libraries may not follow the same
           rule.)
 
-.. note:: :doc:`/frozen_messages` are a variant of messages that are
+.. note:: :doc:`frozen` are a variant of messages that are
           hashable and can be used as dictionary keys. They are also
           safe from tampering by third party libraries. You can freely
           convert between the two and use frozen messages wherever
           normal messages are allowed.
 
-Mido supports all message types defined by the MIDI standard. For a
-full list of messages and their attributes, see :doc:`/message_types`.
+Mido supports all message types defined by the :term:`MIDI` standard. For a
+full list of messages and their attributes, see :doc:`../message_types`.
 
 
 Control Changes
@@ -66,10 +66,13 @@ Control Changes
         print('Volume changed to', msg.value)
 
 
-Converting To Bytes
--------------------
+Converting To & From Bytes
+--------------------------
 
-You can convert a message to MIDI bytes with one of these methods:
+To Bytes
+^^^^^^^^
+
+You can convert a message to :term:`MIDI` ``bytes`` with one of these methods:
 
     >>> msg = mido.Message('note_on')
     >>> msg
@@ -82,20 +85,21 @@ You can convert a message to MIDI bytes with one of these methods:
     '90 00 40'
 
 
-Converting From Bytes
----------------------
+From Bytes
+^^^^^^^^^^
 
-You can turn bytes back into messages with the :doc:`/parser <parsing>`.
+You can turn ``bytes`` back into messages with the :doc:`parser <parsing>`.
 
-You can also create a message from bytes using class methods (new in
-1.2):
+.. versionadded:: 1.2
+
+You can also create a message from ``bytes`` using class methods:
 
 .. code-block:: python
 
    msg1 = mido.Message.from_bytes([0x90, 0x40, 0x60])
    msg2 = mido.Message.from_hex('90, 40 60')
 
-The bytes must contain exactly one complete message. If not
+The ``bytes`` must contain exactly one complete message. If not
 ``ValueError`` is raised.
 
 
@@ -104,17 +108,19 @@ The Time Attribute
 ------------------
 
 Each message has a ``time`` attribute, which can be set to any value
-of type ``int`` or ``float``                                .
+of type ``int`` or ``float``.
 
-Some parts of Mido use the attribute for special purposes. In MIDI
-file tracks, it is used as delta time (in ticks), and it must be a
+Some parts of Mido use the attribute for special purposes. In ``MIDI file``
+tracks, it is used as delta time (in :term:`ticks`), and it must be a
 non-negative integer.
 
 In other parts of Mido, this value is ignored.
 
-.. note:: Before 1.1.18 the ``time`` attribute was not included in
-          comparisons. If you want the old behavior the easiest way is
-          ``msg1.bytes()`` == ``msg2.bytes()``.
+.. versionchanged:: 1.1.18
+
+    In earlier versions, the ``time`` attribute was not included in
+    comparisons. If you want the old behavior the easiest way is
+    ``msg1.bytes() == msg2.bytes()``.
 
 To sort messages on time you can do::
 
@@ -130,8 +136,8 @@ or::
 System Exclusive Messages
 -------------------------
 
-System Exclusive (SysEx) messages are used to send device specific
-data. The ``data`` attribute is a tuple of data bytes which serves as
+:term:`System Exclusive` (aka :term:`SysEx`) messages are used to send device
+specific data. The ``data`` attribute is a tuple of data bytes which serves as
 the payload of the message::
 
     >>> msg = Message('sysex', data=[1, 2, 3])
@@ -148,8 +154,10 @@ You can also extend the existing data::
    >>> msg
    Message('sysex', data=(1, 2, 3, 4, 5, 6, 7, 8), time=0)
 
-Any sequence of integers is allowed, and type and range checking is
-applied to each data byte. These are all valid::
+Any sequence of integers between `0` and `127` is allowed, and type and range
+checking is applied to each data byte.
+
+These are all valid::
 
     (65, 66, 67)
     [65, 66, 67]
@@ -164,3 +172,10 @@ For example::
     >>> msg.data += bytearray(b'DEF')
     >>> msg
     Message('sysex', data=(65, 66, 67, 68, 69, 70), time=0)
+
+
+.. include:: frozen.rst
+
+.. include:: parsing.rst
+
+.. include:: serializing.rst

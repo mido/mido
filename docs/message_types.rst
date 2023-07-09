@@ -5,6 +5,7 @@
 Message Types
 =============
 
+
 Supported Messages
 ------------------
 
@@ -31,8 +32,7 @@ active_sensing
 reset
 ==============  ==============================
 
-``quarter_frame`` is used for SMPTE time codes. See:
-http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/MTC.htm
+``quarter_frame`` is used for SMPTE time codes.
 
 
 Parameter Types
@@ -75,7 +75,3 @@ The ``data`` parameter accepts any iterable that generates numbers in
     mido.Message('sysex', data=[1, 2, 3])
     mido.Message('sysex', data=range(10))
     mido.Message('sysex', data=(i for i in range(10) if i % 2 == 0))
-
-For details about the binary encoding of a MIDI message, see:
-
-http://www.midi.org/techspecs/midimessages.php
