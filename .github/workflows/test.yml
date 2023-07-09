@@ -6,14 +6,92 @@ name: Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [
+      main,
+    ]
   pull_request:
-    branches: [ main ]
+    branches: [
+      main,
+    ]
 
 jobs:
-  build:
+  style:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.7'  # Use the lowest supported version.
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
+      - name: Install mido in dev mode
+        run: python3 -m pip install --quiet --editable .[dev]
+      - name: Lint with flake
+        run: flake8
+
+  reuse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.7'  # Use the lowest supported version.
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
+      - name: Install mido in dev mode
+        run: python3 -m pip install --quiet --editable .[dev]
+      - name: Lint reuse
+        run: reuse lint
+
+  manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.7'  # Use the lowest supported version.
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
+      - name: Install mido in dev mode
+        run: python3 -m pip install --quiet --editable .[dev]
+      - name: Check manifest is complete
+        run: check-manifest --verbose
+
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.7'  # Use the lowest supported version.
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
+      - name: Install mido in dev mode
+        run: python3 -m pip install --quiet --editable .[dev]
+      - name: Check documentation
+        run: sphinx-build -b linkcheck -j auto -q -W -E --keep-going docs docs/_build
+
+  test:
+    needs: [
+      docs,
+      manifest,
+      reuse,
+      style,
+    ]
     runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         os: [
@@ -28,14 +106,6 @@ jobs:
           '3.10',
           '3.11',
         ]
-        # check-manifest is unhappy with windows and python < 3.10
-        exclude:
-          - os: windows-latest
-            python-version: '3.7'
-          - os: windows-latest
-            python-version: '3.8'
-          - os: windows-latest
-            python-version: '3.9'
 
     steps:
       - name: Checkout
@@ -48,13 +118,5 @@ jobs:
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
         run: python3 -m pip install --quiet --editable .[dev]
-      - name: Lint with flake
-        run: flake8
-      - name: Lint reuse
-        run: reuse lint
       - name: Test with pytest
         run: pytest
-      - name: Check manifest is complete
-        run: check-manifest --verbose
-      - name: Build documentation
-        run: sphinx-build -q -E docs docs/_build

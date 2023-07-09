@@ -2,17 +2,19 @@
 ..
 .. SPDX-License-Identifier: CC-BY-4.0
 
-Changes
-=======
+Version Changes
+===============
 
-(See :doc:`roadmap` for future plans.)
+.. seealso::
+
+    :doc:`roadmap` for future plans.
 
 
 Release History
 ---------------
 
-1.2.11 ()
-^^^^^^^^^^^^^^^^^^^
+2.0.0 (Planned: 2023-07-20)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Removed support for Python 2.7. * Mido now requires Python 3.7 or
   higher. (Ole Martin Bjørndalen, pull request #408.)
@@ -643,7 +645,7 @@ Thanks to Richard Vogl and Tim Cook for reporting errors in the docs.
 * bugfix: 100% memory consumption when calling blocking receive()
   on a PortMidi input. (Issue #15, reported by Francesco Ceruti.)
 
-* added wheel support: http://pythonwheels.com/
+* added wheel support: https://pythonwheels.com/
 
 
 1.1.5 (2014-04-18)

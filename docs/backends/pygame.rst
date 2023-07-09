@@ -7,10 +7,19 @@ Pygame
 
 Name: ``mido.backends.pygame``
 
-The Pygame backend uses ``pygame.midi`` for I/O.
+Resources:
 
-Doesn't receive ``active_sensing``.
+* `PyGame Python Library <https://www.pygame.org>`_
+* `PortMidi C Library <https://github.com/PortMidi/portmidi>`_
 
-Callbacks are currently not implemented.
+The Pygame backend uses the `pygame.midi
+<https://www.pygame.org/docs/ref/midi.html>`_ module for I/O.
 
-Pygame.midi is implemented on top of PortMidi.
+Features
+^^^^^^^^
+
+* Doesn't receive ``active_sensing``.
+
+* Callbacks are currently not implemented.
+
+* Pygame.midi is implemented on top of PortMidi.

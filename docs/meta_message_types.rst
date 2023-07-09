@@ -202,9 +202,10 @@ Time signature of:
 
 3/8 : MetaMessage('time_signature', numerator=3, denominator=8)
 
-.. note:: From 1.2.9 time signature message have the correct default
-          value of 4/4. In earlier versions the default value was 2/4
-          due to a typo in the code.
+.. versionadded:: 1.2.9
+
+    Time signature message have the correct default value of 4/4. In earlier
+    versions the default value was 2/4 due to a typo in the code.
 
 
 key_signature (0x59)
@@ -219,8 +220,9 @@ key        'C', 'F#m', ...     'C'
 Valid values: A A#m Ab Abm Am B Bb Bbm Bm C C# C#m Cb Cm D D#m Db Dm E
 Eb Ebm Em F F# F#m Fm G G#m Gb Gm
 
-Note: the mode attribute was removed in 1.1.5. Instead, an 'm' is
-appended to minor keys.
+.. versionchanged:: 1.1.5
+
+    The mode attribute was removed. Instead, an 'm' is appended to minor keys.
 
 
 sequencer_specific (0x7f)
@@ -247,20 +249,21 @@ in question is ever implemented, so it's best to only use these to
 learn about the format of the new message and then implement it as
 described below.
 
-``UnknownMetaMessage`` have two attributes::
+``UnknownMetaMessage`` have two attributes:
 
-    ``type_byte`` - a byte which uniquely identifies this message type
-    ``data`` - the message data as a list of bytes
+* ``type_byte`` - a byte which uniquely identifies this message type
+
+* ``data`` - the message data as a list of bytes
 
 These are also visible in the ``repr()`` string::
 
-    UnknownMetaMessage(type_byte=251, data=(1, 2, 3), time=0>
+    UnknownMetaMessage(type_byte=251, data=(1, 2, 3), time=0)
 
 
-Implementing New Meta Messages
-------------------------------
+Implementing New or Custom Meta Messages
+----------------------------------------
 
-If you come across a meta message which is not implemented, or you
+If you come across a meta message which is not implemented or you
 want to use a custom meta message, you can add it by writing a new
 meta message spec::
 
@@ -330,4 +333,4 @@ messages with these attributes, for example::
 This allows you to skip everything but ``type_byte``, since the rest
 is inherited.
 
-See the existing MetaSpec classes for further examples.
+See the existing ``MetaSpec`` classes for further examples.

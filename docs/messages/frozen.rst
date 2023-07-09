@@ -5,13 +5,13 @@
 Frozen Messages
 ---------------
 
-(New in 1.2.)
+.. versionadded:: 1.2
 
-Since Mido messages are mutable (can change) they can not be hashed or
+Since Mido messages are *mutable* (can change) they can not be hashed or
 put in dictionaries. This makes it hard to use them for things like
 Markov chains.
 
-In these situations you can use frozen messages:
+In these situations you can use *frozen messages*:
 
 .. code-block:: python
 
@@ -20,13 +20,13 @@ In these situations you can use frozen messages:
     msg = FrozenMessage('note_on')
     d = {msg: 'interesting'}
 
-Frozen messages are used and behave in exactly the same way as normal
-messages with one exception: attributes are not settable.
+*Frozen messages* are used and behave in exactly the same way as normal
+messages with one exception: **attributes are not settable**.
 
 There are also variants for meta messages (``FrozenMetaMessage`` and
 ``FrozenUnknownMetaMessage``).
 
-You can freeze and thaw messages with:
+You can *freeze* and *thaw* messages with:
 
 .. code-block:: python
 
@@ -35,7 +35,7 @@ You can freeze and thaw messages with:
     frozen = freeze_message(msg)
     thawed = thaw_message(frozen)
 
-``thaw_message()`` will always return a copy. Passing a frozen message
+``thaw_message()`` will always return a *copy*. Passing a *frozen message*
 to ``freeze_message()`` will return the original message.
 
 Both functions return ``None`` if you pass ``None`` which is handy for
@@ -48,7 +48,7 @@ things like:
     for msg in map(freeze_message, port):
         ...
 
-To check if a message is frozen:
+To check if a message is *frozen*:
 
 .. code-block:: python
 

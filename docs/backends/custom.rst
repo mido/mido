@@ -2,8 +2,8 @@
 ..
 .. SPDX-License-Identifier: CC-BY-4.0
 
-Writing a New Backend
-=====================
+Writing a New or Custom Backend
+-------------------------------
 
 A backend is a Python module with one or more of these::
 
