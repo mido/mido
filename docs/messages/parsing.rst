@@ -3,17 +3,22 @@
 .. SPDX-License-Identifier: CC-BY-4.0
 
 Parsing MIDI Bytes
-==================
+------------------
 
-MIDI is a binary protocol. Each message is encoded as a status byte
-followed by up to three data bytes. (Sysex messages can have any number of
-data bytes and use a stop byte instead.)
+The MIDI protocol is a *binary protocol*. Each message is encoded as a *status*
+byte followed by up to three *data* bytes. (Except :term:`SysEx` messages
+which can have an arbitrary number of *data* bytes immediately followed by an
+EOX status byte.)
+
+.. versionadded:: 1.2 ``mido.Message.from_hex()``
 
 .. note:: To parse a single message you can use the class methods
-          ``mido.Message.from_bytes()`` and
-          ``mido.Message.from_hex()`` (new in 1.2).
+          ``mido.Message.from_bytes()`` and ``mido.Message.from_hex()``
 
-Mido comes with a parser that turns MIDI bytes into messages. You can create a parser object, or call one of the utility functions::
+
+
+Mido comes with a *parser* that turns MIDI bytes into messages. You can create
+a *parser object* or call one of the *utility functions*::
 
     >>> mido.parse([0x92, 0x10, 0x20])
     Message('note_on', channel=2, note=16, velocity=32, time=0)
@@ -23,7 +28,7 @@ Mido comes with a parser that turns MIDI bytes into messages. You can create a p
      Message('note_off', channel=2, note=16, velocity=32, time=0)]
 
 These functions are just shortcuts for the full ``Parser`` class. This
-is the parser used inside input ports to parse incoming messages.
+is the same parser as used inside input ports to parse incoming messages.
 Here are a few examples of how it can be used::
 
     >>> p = mido.Parser()
@@ -60,7 +65,4 @@ it::
     note_on channel=2 note=16 velocity=32 time=0
     note_off channel=2 note=16 velocity=32 time=0
 
-The messages are available in `p.messages` (a `collections.deque`).
-
-For the full table of MIDI binary encoding, see:
-`<http://www.midi.org/techspecs/midimessages.php>`_
+The messages are available in ``p.messages`` (a ``collections.deque``).

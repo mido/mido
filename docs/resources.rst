@@ -1,56 +1,45 @@
 .. SPDX-FileCopyrightText: 2014 Ole Martin Bjorndalen <ombdalen@gmail.com>
+.. SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 ..
 .. SPDX-License-Identifier: CC-BY-4.0
 
 Resources
 =========
 
-* `MIDI Association <http://midi.org/>`_ (midi.org)
+* `MIDI Association <https://midi.org/>`_
 
-* `Table of MIDI Messages <http://www.midi.org/techspecs/midimessages.php>`_
-  (midi.org)
+  * `An Introduction to MIDI
+    <https://www.midi.org/articles/an-intro-to-midi>`_
 
-* `Tech Specs & Info <http://www.midi.org/techspecs/index.php>`_ (midi.org)
+  * `Official MIDI 1.0 detail specification
+    <https://www.midi.org/specifications/midi1-specifications/midi-1-0-core-specifications/midi-1-0-detailed-specification-2>`_
+    *Free registration required*.
 
+  * `Standard MIDI Files Specification
+    <https://www.midi.org/specifications/file-format-specifications/standard-midi-files/rp-001-v1-0-standard-midi-files-specification-96-1-4-pdf>`_
+    *Free registration required*.
 
+  * `MIDI Reference Tables
+    <https://www.midi.org/specifications-old/category/reference-tables>`_
 
-* `MIDI <http://en.wikipedia.org/wiki/MIDI>`_ (Wikipedia)
+* `MIDI <https://en.wikipedia.org/wiki/MIDI>`_ (Wikipedia)
 
 * `Essentials of the MIDI Protocol
   <https://ccrma.stanford.edu/~craig/articles/linuxmidi/misc/essenmidi.html>`_
   (Craig Stuart Sapp, CCRMA)
 
 * `Outline of the Standard MIDI File Structure
-  <http://www.ccarh.org/courses/253/handout/smf/>`_ (Craig Stuart Sapp,
-  CCRMA)
+  <https://www.ccarh.org/courses/253/handout/smf/>`_
+  (Craig Stuart Sapp,  CCRMA)
 
-* `Active Sense
-  <http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/midispec/sense.htm>`_
-  (About the active sensing message.)
-
-* `Active Sensing <http://www.sweetwater.com/insync/active-sensing/>`_
+* `Active Sensing <https://www.sweetwater.com/insync/active-sensing/>`_
   (Sweetwater)
 
-* `MIDI Technical/Programming Docs <http://home.roadrunner.com/~jgglatt/>`_
-  (Jeff Glatt)
-
-* `Standard MIDI Files <http://cnx.org/content/m15051/latest/>`_
-  (cnx.org)
-
 * `MIDI File Parsing
-  <http://www.ccarh.org/courses/253/assignment/midifile/>`_ (Course
-  assignment in `Music 253 <http://wiki.ccarh.org/wiki/Music_253>`_ at
+  <https://www.ccarh.org/courses/253/assignment/midifile/>`_ (Course
+  assignment in `Music 253 <https://wiki.ccarh.org/wiki/Music_253>`_ at
   Stanford University)
 
-* `MIDI File Format <http://www.sonicspot.com/guide/midifiles.html>`_
-  (The Sonic Spot)
-
-* `Delta time and running status <http://www.recordingblogs.com/sa/tabid/82/EntryId/44/MIDI-Part-XIII-Delta-time-and-running-status.aspx>`_
-  (mic at recordingblogs.com)
-
-* `MIDI meta messages
-  <http://www.recordingblogs.com/sa/tabid/88/Default.aspx?topic=MIDI+meta+messages>`_ (recordingblog.com)
-
 * `Meta Message
-  <http://www.soundonsound.com/sos/jun03/articles/logicnotes0603.asp>`_
+  <https://www.soundonsound.com/techniques/meta-messages-logic>`_
   (Sound On Sound)

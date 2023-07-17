@@ -2,6 +2,8 @@
 ..
 .. SPDX-License-Identifier: CC-BY-SA-3.0
 
+.. include:: shared/licenses_logos.rst
+
 
 Code of Conduct
 ===============
@@ -119,10 +121,12 @@ online spaces:
 Contact and Procedure for Handling Incidents
 --------------------------------------------
 
-Please mention "@mido" in the issue or discussion or open a new issue
-on https://github.com/mido/mido and tag the organization admins using "@mido".
+Please mention "``@mido``" in the issue or discussion or open a new issue
+on https://github.com/mido/mido and tag the organization admins using
+"``@mido``".
 
 You can also contact one or several organization admins directly:
+
 - radovan.bast@uit.no
 - ombdalen@gmail.com
 - raphael@doursenaud.fr
@@ -142,19 +146,16 @@ This Code of Conduct is licensed under the `Creative Commons
 Attribution-ShareAlike 3.0 Unported
 License <https://creativecommons.org/licenses/by-sa/3.0/>`__.
 
-|Creative Commons License|
+|Creative Commons BY-SA-3.0 License|
 
 
 Attributions
 ------------
 
 This Code of Conduct was adapted from
-the `PSF Code of Conduct <https://www.python.org/psf/codeofconduct/>`__, which
+the `PSF Code of Conduct <https://www.python.org/psf/conduct/>`__, which
 was forked from the example policy from the `Geek
 Feminism wiki, created by the Ada Initiative and other
-volunteers <http://geekfeminism.wikia.com/wiki/Conference_anti-harassment/Policy>`__,
+volunteers <https://geekfeminism.fandom.com/wiki/Conference_anti-harassment/Policy>`__,
 which is under a `Creative Commons Zero
 license <https://creativecommons.org/publicdomain/zero/1.0/>`__.
-
-.. |Creative Commons License| image:: https://licensebuttons.net/l/by-sa/3.0/88x31.png
-   :target: http://creativecommons.org/licenses/by-sa/3.0/

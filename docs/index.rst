@@ -1,18 +1,25 @@
 .. SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+.. SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 ..
 .. SPDX-License-Identifier: CC-BY-4.0
 
-.. Mido documentation master file, created by
+.. Mido documentation main file, created by
    sphinx-quickstart on Wed Jun 26 16:58:08 2013.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. include:: shared/licenses_logos.rst
+
+
 Mido - MIDI Objects for Python
 ==============================
 
-Version |version|
 
-Mido is a library for working with MIDI messages and ports:
+Overview
+--------
+
+Mido is a :term:`Python` library for working with
+:term:`MIDI` 1.0 :term:`ports`, :term:`messages` and :term:`files`:
 
 .. code-block:: python
 
@@ -45,64 +52,113 @@ Mido is a library for working with MIDI messages and ports:
         port.send(msg)
 
 
-Mido is short for MIDI objects.
+Mido is short for *MIDI objects*.
 
 
-Source code
------------
+About this document
+^^^^^^^^^^^^^^^^^^^
 
-https://github.com/mido/mido/
+This document refers to Mido version |version|.
 
+.. note::
 
-About This Document
--------------------
+   An up-to-date version of this document is always available at
+   https://mido.readthedocs.io.
 
-This document is available at https://mido.readthedocs.io/
-
-To build locally::
-
-    sphinx-build docs docs/_build
-
-This requires Sphinx. The resulting files can be found in
-``docs/_build/``.
+.. Build instructions have been moved to contributing.
 
 
-Contents
+License
+^^^^^^^
+
+This documentation (Except our code of conduct) is licensed under the
+`Creative Commons Attribution 4.0 International
+License <https://creativecommons.org/licenses/by/4.0/>`__.
+
+|Creative Commons BY-4.0 License|
+
+.. seealso::
+
+   :doc:`licenses`
+
+
+Community & Source Code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Come visit us at https://github.com/mido.
+
+Everybody is welcome!
+
+.. seealso::
+
+   * :doc:`code_of_conduct`
+
+   * :doc:`contributing`
+
+
+Basics
+------
+
+.. toctree::
+   :maxdepth: 3
+
+   installing
+   intro
+
+
+Details
+-------
+
+.. toctree::
+   :maxdepth: 3
+
+   messages/index
+   backends/index
+   ports/index
+   files/index
+   binaries
+
+
+Reference
+---------
+
+.. toctree::
+   :maxdepth: 3
+
+   api
+
+
+Community
+---------
+
+.. toctree::
+   :maxdepth: 3
+
+   code_of_conduct
+   contributing
+
+
+Appendix
 --------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   changes
-   roadmap
-   installing
-   backends/index
-   contributing
-   code_of_conduct
-   intro
-   messages
-   frozen_messages
-   ports
-   midi_files
-   syx
-   parsing
-   string_encoding
-   socket_ports
-   bin
-   implementing_ports
-   implementing_backends
-   freezing
    about_midi
    message_types
    meta_message_types
-   lib
    resources
-   license
+
+   freezing_exe
+
+   changes
+   roadmap
+
    authors
+   licenses
    acknowledgements
 
-
-
+   glossary
 
 Indices and tables
 ------------------

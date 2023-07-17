@@ -2,8 +2,8 @@
 ..
 .. SPDX-License-Identifier: CC-BY-4.0
 
-Writing a New Port
-==================
+Writing a New or Custom Port
+----------------------------
 
 The Mido port API allows you to write new ports to do practically
 anything.
@@ -26,7 +26,7 @@ actually sending the message somewhere (or in this case print it out).
 
 
 Overridable Methods
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 There are four overridable methods (all of them default to doing
 nothing)::
@@ -97,7 +97,7 @@ The base classes are ``BaseInput``, ``BaseOutput`` and ``BaseIOPort``
 
 
 Locking
--------
+^^^^^^^
 
 The calls to ``_receive()`` and ``_send()`` will are protected by a
 lock, ``left.lock``. As a result all send and receive will be thread
@@ -122,9 +122,8 @@ An example of this is ``mido.backends.rtmidi`` where the callback is
 used to feed an internal queue that ``receive()`` reads from.
 
 
-
 Examples
---------
+^^^^^^^^
 
 An full example of a device port for the imaginary MIDI library
 ``fjopp``::
@@ -135,9 +134,9 @@ An full example of a device port for the imaginary MIDI library
     # This defines an I/O port.
     class FjoppPort(BaseIOPort):
         def _open(self, **kwargs):
-	    self._device = fjopp.open_device(self.name)
+        self._device = fjopp.open_device(self.name)
 
-	def _close(self):
+    def _close(self):
             self._device.close()
 
         def _send(self, message):
@@ -145,9 +144,9 @@ An full example of a device port for the imaginary MIDI library
 
         def _receive(self, block=True):
             while True:
-	        data = self.device.read()
-	        if data:
-	            self._parser.feed(data)
+            data = self.device.read()
+            if data:
+                self._parser.feed(data)
                 else:
                     return
 
@@ -158,16 +157,16 @@ wait for you::
     def _receive(self, block=True):
         if block:
             # Actually block on the device.
-	    # (``read_blocking()`` will always return some data.)
-	    while not ``self._messages``:
-	        data = self._device.read_blocking()
-		self._parser.feed(data)
+        # (``read_blocking()`` will always return some data.)
+        while not ``self._messages``:
+            data = self._device.read_blocking()
+        self._parser.feed(data)
         else:
-	    # Non-blocking read like above.
+        # Non-blocking read like above.
             while True:
-	        data = self.device.read()
-		if data:
-		     self._parser.feed(data)
+            data = self.device.read()
+        if data:
+             self._parser.feed(data)
 
 This can be used for any kind of port that wants to block on a pipe,
 an socket or another input source. Note that Mido will still use
@@ -184,7 +183,7 @@ methods ```send()`` and ``receive()``, for example::
 
     def _open(self, **kwargs):
         if hasattr(self, 'send'):
-	    # This is an output port.
+        # This is an output port.
 
         if hasattr(self, 'receive'):
             # This is an input port.
@@ -194,7 +193,7 @@ methods ```send()`` and ``receive()``, for example::
 
 
 Attributes
-----------
+^^^^^^^^^^
 
 A port has some attributes that can be useful inside your methods.
 

@@ -2,14 +2,18 @@
 ..
 .. SPDX-License-Identifier: CC-BY-4.0
 
+
+Serializing
+-----------
+
 String Encoding
-===============
+^^^^^^^^^^^^^^^
 
 Mido messages can be serialized to a text format, which can be used to
 safely store messages in text files, send them across sockets or embed
 them in JSON, among other things.
 
-To encode a message, simply call ``str()`` on it::
+To *encode* a message, simply call ``str()`` on it::
 
     >>> cc = control_change(channel=9, control=1, value=122, time=60)
     >>> str(cc)
@@ -35,16 +39,16 @@ can pass ``include_time=False``::
 
 
 Format
-------
+^^^^^^
 
 The format is simple::
 
     MESSAGE_TYPE [PARAMETER=VALUE ...]
 
 These are the same as the arguments to ``mido.Message()``. The order
-of parameters doesn't matter, but each one can only appear once.
+of parameters doesn't matter but each one can only appear once.
 
-Only these character will ever occur in a string encoded Mido message::
+Only these characters will ever occur in a string encoded Mido message::
 
     [a-z][0-9][ =_.+()]
 
@@ -57,16 +61,16 @@ any form of escaping.
 
 
 Parsing
--------
+^^^^^^^
 
-To parse a message, you can use ``mido.parse_string()``::
+To *parse* a message, you can use ``mido.parse_string()``::
 
     >>> parse_string('control_change control=1 value=122 time=0.5')
     Message('control_change', channel=0, control=1, value=122, time=0.5)
 
 Parameters that are left out are set to their default
 values. ``ValueError`` is raised if the message could not be
-parsed. Extra whitespace is ignored::
+parsed. *Extra whitespace is ignored*::
 
     >>> parse_string('  control_change   control=1  value=122')
     Message('control_change', channel=0, control=1, value=122, time=0)
@@ -89,7 +93,7 @@ The argument to ``parse_string_stream()`` can be any object that
 generates strings when iterated over, such as a file or a list.
 
 ``parse_string_stream()`` will ignore blank lines and comments (which
-start with a # and go to the end of the line). An example of valid
+start with a ``#`` and go to the end of the line). An example of valid
 input::
 
     # A very short song with an embedded sysex message.
@@ -103,12 +107,16 @@ input::
 
 
 Examples
---------
+^^^^^^^^
 
-And example of messages embedded in JSON::
+An example of messages embedded into JSON:
 
-    {'messages': [
-       '0.0 note_on channel=9 note=60 velocity=120',
-       '0.5 sysex data=(1,2,3)',
-       ...
-    ])
+.. code-block:: json
+
+    {
+        "messages": [
+            "0.0 note_on channel=9 note=60 velocity=120",
+            "0.5 sysex data=(1,2,3)",
+            "...",
+        ]
+    }

@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Docs
+
+on: [
+  push,
+  pull_request,
+  workflow_dispatch,
+]
+
+permissions:
+    contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
+      - name: Install mido
+        run: python3 -m pip install --quiet --editable .[dev]
+      - name: Sphinx build
+        run: sphinx-build -j auto docs docs/_build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_build/
+          force_orphan: true

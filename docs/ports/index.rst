@@ -5,15 +5,15 @@
 Ports
 =====
 
-A Mido port is an object that can send or receive messages (or both).
+A Mido :term:`port` is an *object* that can *send* and/or *receive* messages.
 
-You can open a port by calling one of the open methods, for example::
+You can open a :term:`port` by calling one of the *open methods*, for example::
 
     >>> inport = mido.open_input('SH-201')
     >>> outport = mido.open_output('Integra-7')
 
-Now you can receive messages on the input port and send messages on
-the output port::
+Now you can *receive* messages on the *input port* and *send* messages on
+the *output port*::
 
     >>> msg = inport.receive()
     >>> outport.send(msg)
@@ -24,7 +24,7 @@ system.
 
 In this case, the ports are device ports, and are connected to some
 sort of (physical or virtual) MIDI device, but a port can be
-anything. For example, you can use a ``MultiPort`` receive messages
+anything. For example, you can use a ``MultiPort`` to receive messages
 from multiple ports as if they were one::
 
     from mido.ports import MultiPort
@@ -42,14 +42,14 @@ will look and behave like any other Mido port, so all kinds of ports
 can be used interchangeably.
 
 
-.. note:: Sending and receiving messages is thread safe. Opening and
+.. warning:: Sending and receiving messages is thread safe. Opening and
           closing ports and listing port names are not.
 
 
-Common Things
--------------
+Common
+------
 
-How to open a port depends on the port type. Device ports (PortMidi,
+How to open a :term:`port` depends on the port type. Device ports (PortMidi,
 RtMidi and others defined in backends) are opened with the open
 functions, for example::
 
@@ -57,11 +57,11 @@ functions, for example::
 
 Input and I/O ports (which support both input and output) are opened
 with ``open_input()`` and ``open_ioport()`` respectively. If you call
-these without a port name like above, you will get the (system
-specific) default port. You can override this by setting the
+these without a port name like above, you will get the - system
+specific - default port. You can override this by setting the
 ``MIDO_DEFAULT_OUTPUT`` etc. environment variables.
 
-To get a list of available ports, you can do::
+To get a *list* of available ports, you can do::
 
     >>> mido.get_output_names()
     ['SH-201', 'Integra-7']
@@ -70,14 +70,14 @@ and then::
 
     >>> port = mido.open_output('Integra-7')
 
-There are corresponding function for input and I/O ports.
+There are corresponding functions for input and I/O ports.
 
-To learn how to open other kinds of ports, see the documentation for
-the port type in question.
+To learn how to open other kinds of ports, see documentation of
+the relevant port type.
 
-The port name is available in ``port.name``.
+The *port name* is available in ``port.name``.
 
-To close a port, call::
+To *close* a port, call::
 
     port.close()
 
@@ -87,7 +87,7 @@ or use the ``with`` statement to have the port closed automatically::
         for message in port:
             do_something_with(message)
 
-You can check if the port is closed with::
+You can check if the *port is closed* with::
 
     if port.closed:
         print("Yup, it's closed.")
@@ -95,15 +95,16 @@ You can check if the port is closed with::
 If the port is already closed, calling ``close()`` will simply do nothing.
 
 
-Output Ports
-------------
+Output
+------
 
-Output ports basically have only one method::
+Output :term:`ports` basically only have one method::
 
     outport.send(message)
 
-This will send the message immediately. (Well, the port can choose to
-do whatever it wants with the message, but at least it's sent.)
+This will *send* the message immediately. (Well, the port can choose to
+do whatever it wants with the message, but at least it's sent from Mido's
+point of view.)
 
 There are also a couple of utility methods::
 
@@ -133,10 +134,10 @@ not be turned off gracefully, but will stop immediately with no regard
 to decay time.
 
 
-Input Ports
------------
+Input
+-----
 
-To iterate over incoming messages:::
+To *iterate* over *incoming messages*::
 
     for msg in port:
         print(msg)
@@ -145,7 +146,7 @@ This will iterate over messages as they arrive on the port until the
 port closes. (So far only socket ports actually close by
 themselves. This happens if the other end disconnects.)
 
-You can also do non-blocking iteration::
+You can also do *non-blocking iteration*::
 
     for msg in port.iter_pending():
         print(msg)
@@ -160,8 +161,8 @@ you wait for messages::
 
         do_other_stuff()
 
-In an event based system like a GUI where you don't write the main
-loop you can install a handler that's called periodically. Here's an
+In an *event based system* like a GUI where you don't write the main
+loop you can install a *handler* that's called periodically. Here's an
 example for GTK::
 
     def callback(self):
@@ -170,43 +171,46 @@ example for GTK::
 
     gobject.timeout_add_seconds(timeout, callback)
 
-To get a bit more control you can receive messages one at a time::
+To get a bit more control you can receive messages *one at a time*::
 
     msg = port.receive()
 
-This will block until a message arrives. To get a message only if one
+This will *block* until a message arrives. To get a message only if one
 is available, you can use `poll()`::
 
     msg = port.poll()
 
-This will return ``None`` if no message is available.
+This will return ``None`` immediately if *no message is available*.
 
-.. note:: There used to be a ``pending()`` method which returned the
-          number of pending messages. It was removed in 1.2.0 for
-          three reasons:
+.. deprecated:: 1.2
+
+    There used to be a ``pending()`` method which returned the number of
+    pending messages.
+
+    It was removed for three reasons:
           
-          * with ``poll()`` and ``iter_pending()`` it is no longer
-            necessary
+    * with ``poll()`` and ``iter_pending()`` it is no longer
+      necessary
 
-          * it was unreliable when multithreading and for some ports
-            it doesn't even make sense
+    * it was unreliable when multithreading and for some ports
+      it doesn't even make sense
 
-          * it made the internal method API confusing. `_send()` sends
-            a message so `_receive()` should receive a message.
+    * it made the internal method API confusing. `_send()` sends
+      a message so `_receive()` should receive a message.
 
 
 Callbacks
 ---------
 
-Instead of reading from the port you can install a callback function
-which will be called for every message that arrives.
+Instead of manually reading from the :term:`port` you can install a
+:term:`callback` function which will be called for every message that arrives.
 
 Here's a simple callback function::
 
     def print_message(message):
         print(message)
 
-To install the callback you can either pass it when you create the
+To *install* the callback you can either pass it when you create the
 port or later by setting the ``callback`` attribute::
 
     port = mido.open_input(callback=print_message)
@@ -214,43 +218,47 @@ port or later by setting the ``callback`` attribute::
     ...
     port.callback = another_function
 
-.. note::
+.. warning::
 
-    Since the callback runs in a different thread you may need to use
+    Since the :term:`callback` runs in a different thread you may need to use
     locks or other synchronization mechanisms to keep your main program and
     the callback from stepping on each other's toes.
 
-Calling ``receive()``, ``__iter__()``, or ``iter_pending()`` on a port
-with a callback will raise an exception::
+Calling ``receive()``, ``__iter__()``, or ``iter_pending()`` on a :term:`port`
+with a :term:`callback` will raise an exception::
 
     ValueError: a callback is set for this port
 
-To clear the callback::
+To *clear* the :term:`callback`::
 
     port.callback = None
 
-This will return the port to normal.
+This will return the :term:`port` to normal.
 
 
-Port API
---------
+API
+---
+
+.. todo:: Add abstract code to describe these interfaces.
+
 
 Common Methods and Attributes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``close()``
 
-Close the port. If the port is already closed this will simply do
-nothing.
+Closes the :term:`port`. If the :term:`port` is already closed this will
+simply do nothing.
+
 
 ``name``
 
-Name of the port or None.
+Name of the port or ``None``.
 
 
 ``closed``
 
-True if the port is closed.
+``True`` if the port is closed.
 
 
 Output Port Methods
@@ -258,12 +266,12 @@ Output Port Methods
 
 ``send(message)``
 
-Send a message.
+Sends a message.
 
 
 ``reset()``
 
-Sends "all notes off" and "reset all controllers on all channels.
+Sends "all notes off" and "reset all controllers" on all channels.
 
 
 ``panic()``
@@ -277,8 +285,8 @@ Input Port Methods
 
 ``receive(block=True)``
 
-Receive a message. This will block until it returns a message. If
-``block=True`` is passed it will instead return ``None`` if there is
+Receives a message. This will block until it returns a message. If
+``block=False`` is passed it will instead return ``None`` if there is
 no message.
 
 
@@ -294,5 +302,10 @@ Iterates through pending messages.
 
 ``__iter__()``
 
-Iterates through messages as they arrive on the port until the port
-closes.
+Iterates through messages as they arrive on the :term:`port` until the
+:term:`port` closes.
+
+
+.. include:: socket.rst
+
+.. include:: custom.rst

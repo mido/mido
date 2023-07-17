@@ -7,6 +7,10 @@ rtmidi_python
 
 Name: ``mido.backends.rtmidi_python``
 
+Resources:
+
+* `rtmidi-python Python Library <https://pypi.org/project/rtmidi-python/>`_
+
 
 Installing
 ^^^^^^^^^^
@@ -19,7 +23,7 @@ Installing
 Features
 ^^^^^^^^
 
-* uses the ``rtmidi_python`` package rather than ``python_rtmidi``
+* uses the ``rtmidi_python`` package rather than ``python-rtmidi``
 
 * supports callbacks
 
@@ -27,8 +31,10 @@ Features
 
 * no true blocking
 
-* sends but doesn't receive active sensing
+* sends but doesn't receive ``active sensing``
 
-Since the API of ``rtmidi_python`` and ``python_rtmidi`` are almost
-identical it would make sense to refactor so they share most of the
-code.
+.. todo::
+
+    Since the API of ``rtmidi_python`` and ``python-rtmidi`` are almost
+    identical it would make sense to refactor so they share most of the
+    code.

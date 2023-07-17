@@ -30,7 +30,7 @@ and then run ``pyinstaller`` like usual::
 
 If you don't want to change the program, you can instead declare the
 backend module as a `hidden import
-<http://pythonhosted.org/PyInstaller/#listing-hidden-imports>`_.
+<https://pyinstaller.org/en/stable/when-things-go-wrong.html#listing-hidden-imports>`_.
 
 
 bbFreeze, py2exe, cx_Freeze, py2app, etc.
