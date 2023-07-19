@@ -5,6 +5,8 @@
 Version Changes
 ===============
 
+This project uses [Semantic Versioning](https://semver.org/).
+
 .. seealso::
 
     :doc:`roadmap` for future plans.
