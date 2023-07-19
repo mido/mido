@@ -15,7 +15,7 @@ This project uses [Semantic Versioning](https://semver.org/).
 Release History
 ---------------
 
-2.0.0 (Planned: 2023-07-20)
+1.3.0 (Planned: 2023-07-20)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Removed support for Python 2.7. * Mido now requires Python 3.7 or
