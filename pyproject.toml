@@ -50,7 +50,7 @@ dev = [
     'pytest>=6.0',
     'reuse>=1.0.0',
     'sphinx>=1.6.3',
-    'sphinx_rtd_theme',
+    'sphinx-rtd-theme',
     'twine',
 ]
 ports-rtmidi = [
