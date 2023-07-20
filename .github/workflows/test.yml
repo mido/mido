@@ -14,9 +14,9 @@ on:
   workflow_dispatch:
 
 jobs:
+
   style:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -26,7 +26,7 @@ jobs:
           python-version-file: 'pyproject.toml'
           cache: 'pip'
       - name: Upgrade pip
-        run: python3 -m pip install --upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
       - name: Install mido in dev mode
         run: python3 -m pip install --quiet .[lint-code]
       - name: Lint code with flake
@@ -34,7 +34,6 @@ jobs:
 
   reuse:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -44,7 +43,7 @@ jobs:
           python-version-file: 'pyproject.toml'
           cache: 'pip'
       - name: Upgrade pip
-        run: python3 -m pip install --upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
       - name: Install mido in dev mode
         run: python3 -m pip install --quiet .[lint-reuse]
       - name: Lint reuse
@@ -52,7 +51,6 @@ jobs:
 
   manifest:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -62,7 +60,7 @@ jobs:
           python-version-file: 'pyproject.toml'
           cache: 'pip'
       - name: Upgrade pip
-        run: python3 -m pip install --upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
       - name: Install mido in dev mode
         run: python3 -m pip install --quiet .[check-manifest]
       - name: Check manifest is complete
@@ -70,7 +68,6 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -80,7 +77,7 @@ jobs:
           python-version-file: 'pyproject.toml'
           cache: 'pip'
       - name: Upgrade pip
-        run: python3 -m pip install --upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
       - name: Install mido in dev mode
         run: python3 -m pip install --quiet .[build-docs]
       - name: Check documentation
@@ -93,7 +90,6 @@ jobs:
       - reuse
       - style
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os:
@@ -106,7 +102,6 @@ jobs:
             - '3.9'
             - '3.10'
             - '3.11'
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -116,7 +111,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
       - name: Upgrade pip
-        run: python3 -m pip install --upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
       - name: Install mido in dev mode
         run: python3 -m pip install --quiet .[test-code]
       - name: Test with pytest

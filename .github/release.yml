@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version-file: 'pyproject.toml'
+          cache: 'pip'
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
+      - name: Install or upgrade build
+        run: python3 -m pip install --upgrade build
+      # Build dependencies are automatically installed from `pyproject.toml`.
+      - name: Build mido
+        run: python3 -m build
+      # TODO: store build artifacts from ./dist
+
+  publish-test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # TODO: retrieve and parse tag version
+      # TODO: filter versions?
+      # TODO: retrieve build artifacts
+      - name: Publish to test.pypi.org
+        run: twine upload --repository testpypi dist/*
+      - name: Test installation
+        run: |
+          python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps mido-rdoursenaud
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - publish-test
+    steps:
+      # TODO: retrieve and parse tag version
+      # TODO: filter versions?
+      # TODO: retrieve build artifacts
+      - name: Publish to pypi.org
+        run: twine upload dist/*

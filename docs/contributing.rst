@@ -82,8 +82,13 @@ Or, alternatively if you want to use ports::
 Developers
 ^^^^^^^^^^
 
-We recommend that you first setup a *virtual environment* to
-avoid conflicts with already installed files.
+.. warning::
+
+    We recommend that you first setup a *virtual environment* to
+    avoid conflicts with already installed files.
+
+    :seelalso:
+        https://packaging.python.org/en/latest/tutorials/installing-packages/
 
 Then, to install the *development dependencies*, you can run the following
 command from inside your virtual environment::
@@ -217,26 +222,45 @@ is a great resource for testing the MIDI file parser.
 Publishing (Release Checklist)
 ------------------------------
 
-I - Ole Martin - am currently the only one with access to publishing
-on PyPI and readthedocs. This will hopefully change in the future.
+The processes are now automated.
+
+To generate the official documentation, we use :term:`Read the Docs` integration
+services for GitHub. Every time a new commit is pushed or merged onto our
+``main`` development branch on GitHub, the ``latest`` version of the
+documentation is updated by Read the Docs. Each time a new version is tagged,
+the new  documentation version is created, built, published and eventually
+promoted to``stable`` following Semantic Versioning.
+The ``stable`` version of the documentation is the one served by default if
+no specific version is chosen.
+
+We also build a mirror of the current ``main`` development branch documentation
+using a GitHub Workflow and hosted on GitHub pages.
+
+.. note::
+    The whole team has access to manual publishing
+    to :term:`PyPI` and :term:`Read the Docs` in case of automation defect.
 
 
-Bump Version
-^^^^^^^^^^^^
+Update the Changelog and Bump Version number
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The version number should be :pep:`440` compliant.
 
 X.Y.Z is the version, for example 1.1.18 or 1.2.0.
 
-* update version and date in :file:`docs/changes.rst`
+1. update version and date in :file:`docs/changes.rst`
 
-* ::
+2. commit the changes::
 
     git commit -a -c "Bumped version to <X.Y.Z>."
 
-* ::
+3. set the version number by tagging the release::
 
     git tag <X.Y.Z>
+
+4. don’t forget to push your changes to GitHub::
+
+    git push --tags
 
 
 Publish on Test PyPI
@@ -249,8 +273,8 @@ fails to upload I can roll back and fix it before I push my changes.
 
 ::
 
-    python3 -m pip install --upgrade setuptools twine
     python3 -m build
+
     twine upload --repository testpypi dist/mido-<X.Y.Z>*
 
 
