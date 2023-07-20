@@ -2,17 +2,16 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: Test
+name: Tests
 
 on:
-  push:
-    branches: [
-      main,
-    ]
   pull_request:
-    branches: [
-      main,
-    ]
+    branches:
+      - main
+  push:
+    branches-ignore:
+      - gh-pages
+  workflow_dispatch:
 
 jobs:
   style:
@@ -84,28 +83,25 @@ jobs:
         run: sphinx-build -b linkcheck -j auto -q -W -E --keep-going docs docs/_build
 
   test:
-    needs: [
-      docs,
-      manifest,
-      reuse,
-      style,
-    ]
+    needs:
+      - docs
+      - manifest
+      - reuse
+      - style
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [
-          macOS-latest,
-          ubuntu-latest,
-          windows-latest,
-        ]
-        python-version: [
-          '3.7',
-          '3.8',
-          '3.9',
-          '3.10',
-          '3.11',
-        ]
+        os:
+          - macOS-latest
+          - ubuntu-latest
+          - windows-latest
+        python-version:
+            - '3.7'
+            - '3.8'
+            - '3.9'
+            - '3.10'
+            - '3.11'
 
     steps:
       - name: Checkout
