@@ -2,28 +2,34 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: Docs
+name: Documentation
 
-on: [
-  push,
-  pull_request,
-  workflow_dispatch,
-]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
     contents: write
 
 jobs:
-  docs:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido
-        run: python3 -m pip install --quiet --editable .[dev]
+        run: python3 -m pip install --quiet .[build-docs]
       - name: Sphinx build
         run: sphinx-build -j auto docs docs/_build
       - name: Deploy

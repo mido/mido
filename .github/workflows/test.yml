@@ -2,17 +2,16 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: Test
+name: Tests
 
 on:
-  push:
-    branches: [
-      main,
-    ]
   pull_request:
-    branches: [
-      main,
-    ]
+    branches:
+      - main
+  push:
+    branches-ignore:
+      - gh-pages
+  workflow_dispatch:
 
 jobs:
   style:
@@ -24,12 +23,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'  # Use the lowest supported version.
+          python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
-        run: python3 -m pip install --quiet --editable .[dev]
-      - name: Lint with flake
+        run: python3 -m pip install --quiet .[lint-code]
+      - name: Lint code with flake
         run: flake8
 
   reuse:
@@ -41,11 +41,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'  # Use the lowest supported version.
+          python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
-        run: python3 -m pip install --quiet --editable .[dev]
+        run: python3 -m pip install --quiet .[lint-reuse]
       - name: Lint reuse
         run: reuse lint
 
@@ -58,11 +59,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'  # Use the lowest supported version.
+          python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
-        run: python3 -m pip install --quiet --editable .[dev]
+        run: python3 -m pip install --quiet .[check-manifest]
       - name: Check manifest is complete
         run: check-manifest --verbose
 
@@ -75,37 +77,35 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'  # Use the lowest supported version.
+          python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
-        run: python3 -m pip install --quiet --editable .[dev]
+        run: python3 -m pip install --quiet .[build-docs]
       - name: Check documentation
         run: sphinx-build -b linkcheck -j auto -q -W -E --keep-going docs docs/_build
 
   test:
-    needs: [
-      docs,
-      manifest,
-      reuse,
-      style,
-    ]
+    needs:
+      - docs
+      - manifest
+      - reuse
+      - style
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [
-          macOS-latest,
-          ubuntu-latest,
-          windows-latest,
-        ]
-        python-version: [
-          '3.7',
-          '3.8',
-          '3.9',
-          '3.10',
-          '3.11',
-        ]
+        os:
+          - macOS-latest
+          - ubuntu-latest
+          - windows-latest
+        python-version:
+            - '3.7'
+            - '3.8'
+            - '3.9'
+            - '3.10'
+            - '3.11'
 
     steps:
       - name: Checkout
@@ -114,9 +114,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
-        run: python3 -m pip install --quiet --editable .[dev]
+        run: python3 -m pip install --quiet .[test-code]
       - name: Test with pytest
         run: pytest
