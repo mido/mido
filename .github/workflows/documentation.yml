@@ -2,13 +2,16 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: Docs
+name: Documentation
 
-on: [
-  push,
-  pull_request,
-  workflow_dispatch,
-]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
     contents: write
@@ -30,7 +33,6 @@ jobs:
         run: sphinx-build -j auto docs docs/_build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
