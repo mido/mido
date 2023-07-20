@@ -59,6 +59,12 @@ Glossary
     python
         The `Python programming language <https://www.python.org>`_.
 
+    rtd
+    read the docs
+        `Read the Docs <https://www.readthedocs.org>`_ or RTD for short
+        is a popular service to build, manage versions and host documentation
+        generated from Sphinx (and now MkDocs) in the Python ecosystem.
+
     rtpmidi
         A standard protocol to send MIDI over a TCP/IP link.
 

@@ -1,0 +1,89 @@
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# This workflow needs access to 2 GitHub secrets:
+#   - TEST_PYPI_TOKEN: The API token to deploy on https://test.pypi.org
+#   - PROD_PYPI_TOKEN: The API token to deploy on https://pypi.org
+#
+# Both API tokens shall be generated from a user account with appropriate
+# permissions on the target project and have their scope set to the project.
+#
+# The API tokens have then to be registered as secrets in the GitHub
+# repository's configuration under the names specified above.
+# See: https://docs.github.com/actions/security-guides/encrypted-secrets
+
+# TODO: Allow the publishing of pre-releases (a, b, rc).
+# The "Test installation" step requires a `--pre` argument to install
+# pre-releases.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version-file: 'pyproject.toml'
+          cache: 'pip'
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
+      - name: Install or upgrade build
+        run: python3 -m pip install --upgrade build
+      # Build dependencies are automatically installed from `pyproject.toml`.
+      - name: Build mido
+        run: python3 -m build
+      # Store build artifacts
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mido-build
+          path: dist/
+
+  publish-test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Retrieve build artifacts
+      - uses: actions/download-artifact@v3
+        with:
+          name: mido-build
+      - name: Check distribution name
+        run: twine check dist/*
+      - name: Publish to test.pypi.org
+        run: twine upload --repository testpypi dist/*
+        env:
+          TWINE_NON_INTERACTIVE: 1
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
+      - name: Test installation
+        run: |
+          python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps mido
+      - name: Test importing package
+        run: python3 -c "import mido; print(mido.version_info)"
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - publish-test
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: mido-build
+      - name: Publish to pypi.org
+        run: twine upload dist/*
+        env:
+          TWINE_NON_INTERACTIVE: 1
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PROD_PYPI_TOKEN }}

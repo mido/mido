@@ -17,7 +17,7 @@ permissions:
     contents: write
 
 jobs:
-  build:
+  build-github-pages:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,7 @@ jobs:
           python-version-file: 'pyproject.toml'
           cache: 'pip'
       - name: Upgrade pip
-        run: python3 -m pip install --upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
       - name: Install mido
         run: python3 -m pip install --quiet .[build-docs]
       - name: Sphinx build

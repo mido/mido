@@ -82,8 +82,13 @@ Or, alternatively if you want to use ports::
 Developers
 ^^^^^^^^^^
 
-We recommend that you first setup a *virtual environment* to
-avoid conflicts with already installed files.
+.. warning::
+
+    We recommend that you first setup a *virtual environment* to
+    avoid conflicts with already installed files.
+
+    :seelalso:
+        https://packaging.python.org/en/latest/tutorials/installing-packages/
 
 Then, to install the *development dependencies*, you can run the following
 command from inside your virtual environment::
@@ -214,70 +219,110 @@ The
 is a great resource for testing the MIDI file parser.
 
 
-Publishing (Release Checklist)
-------------------------------
+Releasing
+---------
 
-I - Ole Martin - am currently the only one with access to publishing
-on PyPI and readthedocs. This will hopefully change in the future.
+The processes are now automated.
+
+.. note::
+    The whole team has access to manual publishing
+    to :term:`PyPI` and :term:`Read the Docs` in case of automation defect.
 
 
-Bump Version
-^^^^^^^^^^^^
+Documentation
+^^^^^^^^^^^^^
 
-The version number should be :pep:`440` compliant.
+To generate the official documentation, we use :term:`Read the Docs` integration
+services for GitHub. Every time a new commit is pushed or merged onto our
+``main`` development branch on GitHub, the ``latest`` version of the
+documentation is updated by Read the Docs. Each time a new version is tagged,
+the new  documentation version is created, built, published and eventually
+promoted to``stable`` following Semantic Versioning.
+The ``stable`` version of the documentation is the one served by default if
+no specific version is chosen.
 
-X.Y.Z is the version, for example 1.1.18 or 1.2.0.
+We also build a mirror of the current ``main`` development branch documentation
+using a GitHub Workflow and hosted on GitHub pages.
 
-* update version and date in :file:`docs/changes.rst`
+All of this is defined by :file:`.github/workflow/documentation.yml`
 
-* ::
 
-    git commit -a -c "Bumped version to <X.Y.Z>."
+Package
+^^^^^^^
 
-* ::
+The process uses GitHub Action Workflow defined by
+:file:`.github/workflow/release.yml` and is triggered upon receiving a tag.
+
+
+Preparation
+^^^^^^^^^^^
+
+Make sure all the tests pass, documentation has been updated and everything
+is in good order before proceeding.
+
+Update the Changelog and Bump Version number.
+
+.. note::
+
+    The version number should be :pep:`440` & SemVer compliant.
+
+    ``X.Y.Z`` is the version, for example ``1.1.18`` or ``1.2.0``.
+
+1. update version and date in :file:`docs/changes.rst`
+
+2. commit the changes::
+
+    git commit -a -c "Prepare <X.Y.Z> release."
+
+3. set the version number by tagging the release::
 
     git tag <X.Y.Z>
 
-
-Publish on Test PyPI
-^^^^^^^^^^^^^^^^^^^^
-
-.. todo:: Move to GitHub actions to build development previews?
-
-I like to do this before I push to GitHub. This way if the package
-fails to upload I can roll back and fix it before I push my changes.
-
-::
-
-    python3 -m pip install --upgrade setuptools twine
-    python3 -m build
-    twine upload --repository testpypi dist/mido-<X.Y.Z>*
-
-
-Push to GitHub
-^^^^^^^^^^^^^^
-
-If all went well everything is ready for prime time.
-
-::
+4. don’t forget to push your changes including the tags to GitHub to trigger
+the auto-release process::
 
     git push --tags
 
 
-Update Read the Docs
-^^^^^^^^^^^^^^^^^^^^
+Manual steps (Recovery)
+^^^^^^^^^^^^^^^^^^^^^^^
 
-.. todo:: Move to GitHub actions or configure to build from tags.
+.. warning::
 
-Log into readthedocs.org and build the latest documentation. This is
-set up to use the stable branch.
+    Only use if the automatic process fails for some reason.
 
+Prepare a clean environment::
 
-Publish on PyPI
-^^^^^^^^^^^^^^^
+    cd <an empty directory>
+    git clone https://github.com/mido/mido
+    cd mido
+    python3 -m venv mido-build
 
-.. todo:: Move to GitHub actions.
+Build::
 
-::
+    source mido-build/bin/activate
+    python3 -m pip install --upgrade pip setuptools wheel build
+    python3 -m build
 
-    twine upload dist/mido-<X.Y.Z>*
+Publish on Test PyPI::
+
+    python3 -m build
+    twine upload --repository testpypi dist/*
+
+Check that the published package is good::
+
+    python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps mido
+    python3 -c "import mido; print(mido.version_info)"
+
+.. todo::
+
+    Now would be a good time to run some integration tests once we have them.
+
+Publish on PyPI::
+
+    twine upload dist/*
+
+.. warning::
+
+    This is the most critical step of the process. This **cannot** be undone.
+    Make sure everything is in good order before pressing the "big red button"!
