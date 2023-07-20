@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-include README.rst LICENSE .flake8 .reuse/dep5
+include README.rst LICENSE .readthedocs.yaml .flake8 .reuse/dep5
 recursive-include LICENSES *.txt
 recursive-include tests *.py
 recursive-include examples *.py
