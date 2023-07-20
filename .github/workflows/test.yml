@@ -24,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'  # Use the lowest supported version.
+          python-version-file: 'pyproject.toml'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
@@ -41,7 +41,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'  # Use the lowest supported version.
+          python-version-file: 'pyproject.toml'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
@@ -58,7 +58,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'  # Use the lowest supported version.
+          python-version-file: 'pyproject.toml'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
@@ -75,7 +75,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'  # Use the lowest supported version.
+          python-version-file: 'pyproject.toml'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
