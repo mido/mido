@@ -35,8 +35,8 @@ classifiers = [
 ]
 
 dependencies = [
-    "importlib_metadata; python_version<'3.8'",
-    "packaging",
+    "importlib_metadata; python_version<'3.8'",  # For version introspection
+    "packaging~=23.1",  # To provide a nice version_info opbject
 ]
 dynamic = ["version"]
 
@@ -46,22 +46,22 @@ source = "https://github.com/mido/mido"
 
 [project.optional-dependencies]
 dev = [
-    'check-manifest>=0.35',
-    'flake8>=3.7.0',
-    'pytest>=6.0',
-    'reuse>=1.0.0',
-    'sphinx>=1.6.3',
-    'sphinx-rtd-theme',
-    'twine',
+    'check-manifest>=0.49',
+    'flake8~=5.0.4',
+    'pytest~=7.4.0',
+    'reuse~=1.1.2',
+    'sphinx~=4.3.2',
+    'sphinx-rtd-theme~=1.2.2',
+    'twine~=4.0.2',
 ]
 ports-pygame = [
-    'PyGame',
+    'PyGame~=2.5',
 ]
 ports-rtmidi = [
-    'python-rtmidi>=1.1.0',
+    'python-rtmidi~=1.5.4',
 ]
 ports-rtmidi-python = [
-    'rtmidi-python',
+    'rtmidi-python~=0.2.2',
 ]
 
 [project.scripts]
