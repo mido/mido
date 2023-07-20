@@ -45,23 +45,33 @@ documentation = "https://mido.readthedocs.io"
 source = "https://github.com/mido/mido"
 
 [project.optional-dependencies]
-dev = [
-    'check-manifest>=0.49',
-    'flake8~=5.0.4',
-    'pytest~=7.4.0',
-    'reuse~=1.1.2',
+# Separated by tasks for automation efficiency
+build-docs = [
     'sphinx~=4.3.2',
     'sphinx-rtd-theme~=1.2.2',
-    'twine~=4.0.2',
 ]
-ports-pygame = [
-    'PyGame~=2.5',
+check-manifest = ['check-manifest>=0.49',]
+lint-code = ['flake8~=5.0.4',]
+lint-reuse = ['reuse~=1.1.2',]
+ports-pygame = ['PyGame~=2.5',]
+ports-rtmidi = ['python-rtmidi~=1.5.4',]
+ports-rtmidi-python = ['rtmidi-python~=0.2.2',]
+release = ['twine~=4.0.2',]
+test-code = ['pytest~=7.4.0',]
+
+# Convenience groups for human interaction
+dev = [
+    'mido[check-manifest]',
+    'mido[lint-code]',
+    'mido[test]',
+    'mido[lint-reuse]',
+    'mido[build-docs]',
+    'mido[release]',
 ]
-ports-rtmidi = [
-    'python-rtmidi~=1.5.4',
-]
-ports-rtmidi-python = [
-    'rtmidi-python~=0.2.2',
+ports-all = [
+    'mido[ports-pygame]',
+    'mido[ports-rtmidi]',
+    'mido[ports-rtmidi-python]',
 ]
 
 [project.scripts]
