@@ -24,6 +24,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
@@ -41,6 +42,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
@@ -58,6 +60,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
@@ -75,6 +78,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version-file: 'pyproject.toml'
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
@@ -110,6 +114,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido in dev mode
