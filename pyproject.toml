@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2023 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: CC0-1.0
 
@@ -53,11 +54,14 @@ dev = [
     'sphinx-rtd-theme',
     'twine',
 ]
+ports-pygame = [
+    'PyGame',
+]
 ports-rtmidi = [
     'python-rtmidi>=1.1.0',
 ]
-ports-pygame = [
-    'PyGame',
+ports-rtmidi-python = [
+    'rtmidi-python',
 ]
 
 [project.scripts]
