@@ -23,7 +23,7 @@ jobs:
       - name: Upgrade pip
         run: python3 -m pip install --upgrade pip
       - name: Install mido
-        run: python3 -m pip install --quiet --editable .[dev]
+        run: python3 -m pip install --quiet .[dev]
       - name: Sphinx build
         run: sphinx-build -j auto docs docs/_build
       - name: Deploy
