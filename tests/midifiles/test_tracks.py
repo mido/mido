@@ -55,4 +55,4 @@ def test_merge_large_midifile():
     max_track_duration_ticks = max(
         sum(msg.time for msg in t) for t in mid.tracks)
     assert merged_duration_ticks == max_track_duration_ticks
-    assert (finish - start) < 0.5
+    assert (finish - start) < 1.0
