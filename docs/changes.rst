@@ -5,15 +5,17 @@
 Version Changes
 ===============
 
-This project uses [Semantic Versioning](https://semver.org/).
+This project uses `Semantic Versioning <https://semver.org>`_.
 
 .. seealso::
 
-    :doc:`roadmap` for future plans.
+    The `Future <https://github.com/mido/mido/milestone/2>`_ milestone on
+    Github for future plans.
 
 
 Release History
 ---------------
+
 
 1.3.0 (Planned: 2023-07-20)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

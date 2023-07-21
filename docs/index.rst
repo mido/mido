@@ -152,7 +152,6 @@ Appendix
    freezing_exe
 
    changes
-   roadmap
 
    authors
    licenses
