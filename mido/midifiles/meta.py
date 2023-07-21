@@ -327,7 +327,7 @@ class MetaSpec_smpte_offset(MetaSpec):
 
     def decode(self, message, data):
         message.frame_rate = _smpte_framerate_decode[(data[0] >> 6)]
-        message.hours = (data[0] & 0x3f)
+        message.hours = (data[0] & 0b0001_1111)
         message.minutes = data[1]
         message.seconds = data[2]
         message.frames = data[3]
