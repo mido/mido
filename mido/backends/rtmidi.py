@@ -138,6 +138,12 @@ class Input(PortCommon, ports.BaseInput):
         # We need to do this last when everything is set up.
         self.callback = callback
 
+    def _close(self):
+        # Deregister the callback before closing the port
+        # to prevent crashing another thread.
+        self.callback = None
+        super()._close()
+
     # We override receive() and poll() instead of _receive() and
     # _poll() to bypass locking.
     def receive(self, block=True):
