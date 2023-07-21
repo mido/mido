@@ -307,16 +307,14 @@ Manual steps (Recovery)
 
 Prepare a clean environment::
 
-    cd <an empty directory>
-    git clone https://github.com/mido/mido
-    git checkout <X.Y.Z>
-    cd mido
+    git clone --branch <X.Y.Z> --single-branch https://github.com/mido/mido mido-<X.Y.Z>
+    cd mido-<X.Y.Z>
     python3 -m venv mido-build
 
 Build::
 
     source mido-build/bin/activate
-    python3 -m pip install --upgrade pip setuptools wheel build
+    python3 -m pip install --upgrade pip setuptools wheel build twine
     python3 -m build
 
 Publish on Test PyPI::
