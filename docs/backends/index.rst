@@ -14,7 +14,7 @@ Mido's backend subsystem has been designed to be extensible so you can add
 your own backends if required. See :doc:`custom`.
 
 Providing platform specific Python-native backends is currently evaluated.
-See: :ref:`native_backends`.
+See: https://github.com/mido/mido/issues/506
 
 .. todo:: Insert a stack diagram to clear things up.
 

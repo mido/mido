@@ -80,7 +80,8 @@ Status
 ------
 
 1.2 is the third stable release.
-This project uses [Semantic Versioning](https://semver.org/).
+
+This project uses `Semantic Versioning <https://semver.org>`_.
 
 
 Requirements
