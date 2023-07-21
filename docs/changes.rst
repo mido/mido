@@ -64,7 +64,7 @@ Release History
   Sokołowski, pull request #321)
 
 * Bugfix Backends/Socket: In Python 3, PortServer used to crashe when a socket
- client disconnects. (issue #290) (@kyleclaassen, pull request #291)
+  client disconnects. (issue #290) (@kyleclaassen, pull request #291)
 
 * MidiFile: Make ``UnknownMetaMessage`` robust to faulty MIDI files (@sonovice,
   pull request #286)
