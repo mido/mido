@@ -326,7 +326,7 @@ class MetaSpec_smpte_offset(MetaSpec):
     defaults = [24, 0, 0, 0, 0, 0]
 
     def decode(self, message, data):
-        message.frame_rate = _smpte_framerate_decode[(data[0] >> 6)]
+        message.frame_rate = _smpte_framerate_decode[(data[0] >> 5)]
         message.hours = (data[0] & 0b0001_1111)
         message.minutes = data[1]
         message.seconds = data[2]
@@ -334,7 +334,7 @@ class MetaSpec_smpte_offset(MetaSpec):
         message.sub_frames = data[4]
 
     def encode(self, message):
-        frame_rate_lookup = _smpte_framerate_encode[message.frame_rate] << 6
+        frame_rate_lookup = _smpte_framerate_encode[message.frame_rate] << 5
         return [frame_rate_lookup | message.hours,
                 message.minutes,
                 message.seconds,
