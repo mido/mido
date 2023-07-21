@@ -97,9 +97,9 @@ Installing
 
     python3 -m pip install mido
 
-If you want to use ports::
+Or, alternatively, if you want to use ports with the default backend::
 
-   python3 -m pip install python-rtmidi
+   python3 -m pip install mido[ports-rtmidi]
 
 See ``docs/backends/`` for other backends.
 
