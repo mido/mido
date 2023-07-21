@@ -190,11 +190,11 @@ To generate the HTML documentation::
 
 If you wish to build a PDF version for *local* use:
 
-1. Install a `LaTeX <https://www.latex-project.org/get>`_ distribution
+# Install a `LaTeX <https://www.latex-project.org/get>`_ distribution
 
-2. Install `ImageMagick <https://imagemagick.org>`_
+# Install `ImageMagick <https://imagemagick.org>`_
 
-3. use::
+# use::
 
     sphinx-build -M latexpdf docs docs/_build
 
@@ -268,17 +268,31 @@ Update the Changelog and Bump Version number.
 
     ``X.Y.Z`` is the version, for example ``1.1.18`` or ``1.2.0``.
 
-1. update version and date in :file:`docs/changes.rst`
+# update the changelog in :file:`docs/changes.rst`. The following commands
+may prove useful to retrieve all Pull Requests & all commits::
 
-2. commit the changes::
+    previous_release_tag=git describe --abbrev=0
+    git log --oneline --merges --reverse "${previous_release_tag}.."
+    git log --oneline --no-merges --reverse "${previous_release_tag}.."
+
+# update version and date in :file:`docs/changes.rst`
+
+# commit the changes::
 
     git commit -a -c "Prepare <X.Y.Z> release."
 
-3. set the version number by tagging the release::
+# set the version number by tagging the release::
 
-    git tag <X.Y.Z>
+    git tag -a <X.Y.Z> -m "mido version <X.Y.Z>"
 
-4. don’t forget to push your changes including the tags to GitHub to trigger
+.. note::
+
+    We use an annotated tag here to retain all information about the tagger
+    and create a proper object in the GIT database instead of a commit alias.
+
+    .. seealso:: https://git-scm.com/book/en/v2/Git-Basics-Tagging
+
+# don’t forget to push your changes including the tags to GitHub to trigger
 the auto-release process::
 
     git push --tags
@@ -295,6 +309,7 @@ Prepare a clean environment::
 
     cd <an empty directory>
     git clone https://github.com/mido/mido
+    git checkout <X.Y.Z>
     cd mido
     python3 -m venv mido-build
 
