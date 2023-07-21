@@ -75,9 +75,6 @@ def get_api_names():
 
 
 def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
-    if api == 'LINUX_ALSA':
-        name = expand_alsa_port_name(rt.get_ports(), name)
-
     if client_name is not None:
         virtual = True
 
@@ -87,6 +84,9 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
 
         rt.open_virtual_port(name)
         return name
+
+    if api == 'LINUX_ALSA':
+        name = expand_alsa_port_name(rt.get_ports(), name)
 
     port_names = rt.get_ports()
     if len(port_names) == 0:
