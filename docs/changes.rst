@@ -25,10 +25,10 @@ Release History
     This release drops support for Python 2 and is only compatible with 3.7
     onwards.
 
-* Bugfix Backend/rtmidi: Prevent virtual port name mangling (@rdoursenaud,
+* Bugfix Backends/rtmidi: Prevent virtual port name mangling (@rdoursenaud,
   thanks to @digitalsignalperson for reporting)
 
-* Bugfix Backend/rtmidi: Remove callback before closing the port to avoid a
+* Bugfix Backends/rtmidi: Remove callback before closing the port to avoid a
   race condition (@rdoursenaud)
 
 * Bugfix MidiFile: Properly decode/encode SMPTE hours in the SMPTE offset Meta
@@ -40,7 +40,7 @@ Release History
 * Documentation: updated, overhauled and proofread (@rdoursenaud, nomadbyte,
   @superbock)
 
-* Bugfix: Backend/Portmidi (@akx, pull request #483)
+* Bugfix: Backends/Portmidi (@akx, pull request #483)
 
 * MidiFile: Move merging track out of ``__iter__()`` to prevent hanging on
   first call (@Frnot, pull request #470)
@@ -53,13 +53,13 @@ Release History
 
 * Packaging is now PEP-518 compliant (@rdoursenaud)
 
-* Backend/Socket: Disable buffering (@m-vo, pull request #342)
+* Backends/Socket: Disable buffering (@m-vo, pull request #342)
 
 * Removed support for Python 2.7. * Mido now requires Python 3.7 or
   higher. (Ole Martin Bjørndalen, pull request #408, with additional cleanup
   from @rdoursenaud)
 
-* Backend: The ``rtmidi`` and ``python-rtmidi`` 1.2.10 sometimes returned
+* Backends: The ``rtmidi`` and ``python-rtmidi`` 1.2.10 sometimes returned
   duplicate port names. (Bug introduced in 1.2.10. Fix by Maciej
   Sokołowski, pull request #321)
 
@@ -69,7 +69,8 @@ Release History
 * MidiFile: Make ``UnknownMetaMessage`` robust to faulty MIDI files (@sonovice,
   pull request #286)
 
-* Bugfix: BPM <-> MIDI tempo conversions (@superbock, pull request #114)
+* Bugfix MIDIFile: BPM <-> MIDI tempo conversions (@superbock, pull request
+  #114)
 
 * MidiFile: Added ``from_bytes()`` to ``MetaMessage`` (@gulaki, pull request
   #149)
