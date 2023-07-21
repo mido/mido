@@ -17,20 +17,62 @@ Release History
 ---------------
 
 
-1.3.0 (Planned: 2023-07-20)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1.3.0 (2023-07-21)
+^^^^^^^^^^^^^^^^^^
+
+.. warning::
+
+    This release drops support for Python 2 and is only compatible with 3.7
+    onwards.
+
+* Bugfix Backend/rtmidi: Prevent virtual port name mangling (@rdoursenaud,
+  thanks to @digitalsignalperson for reporting)
+
+* Bugfix Backend/rtmidi: Remove callback before closing the port to avoid a
+  race condition (@rdoursenaud)
+
+* Bugfix MidiFile: Properly decode/encode SMPTE hours in the SMPTE offset Meta
+  (Thanks to @laori93 for reporting and @heilei for investigating. Issue #156)
+
+* Installation: support the "extras" syntax to install optional dependencies
+  (@rdoursenaud)
+
+* Documentation: updated, overhauled and proofread (@rdoursenaud, nomadbyte,
+  @superbock)
+
+* Bugfix: Backend/Portmidi (@akx, pull request #483)
+
+* MidiFile: Move merging track out of ``__iter__()`` to prevent hanging on
+  first call (@Frnot, pull request #470)
+
+* MidiFile: ``play()`` can now use an optional custom clock source
+  (@almostimplemented, pull request #153)
+
+* The project is now REUSE compliant. See https://reuse.software/ for details
+  (@rdoursenaud)
+
+* Packaging is now PEP-518 compliant (@rdoursenaud)
+
+* Backend/Socket: Disable buffering (@m-vo, pull request #342)
 
 * Removed support for Python 2.7. * Mido now requires Python 3.7 or
-  higher. (Ole Martin Bjørndalen, pull request #408.)
+  higher. (Ole Martin Bjørndalen, pull request #408, with additional cleanup
+  from @rdoursenaud)
 
-* The ``rtmidi`` and ``python-rtmidi`` 1.2.10 sometimes returned
+* Backend: The ``rtmidi`` and ``python-rtmidi`` 1.2.10 sometimes returned
   duplicate port names. (Bug introduced in 1.2.10. Fix by Maciej
-  Sokołowski, pull request #321.)
+  Sokołowski, pull request #321)
 
-* Bugfix: In Python 3, PortServer crashes with the following exception
-  when a socket client (mido.sockets.connect) disconnects. (issue
-  #291). Fix by kyleclaassen (pull request #291).
+* Bugfix Backends/Socket: In Python 3, PortServer used to crashe when a socket
+ client disconnects. (issue #290) (@kyleclaassen, pull request #291)
 
+* MidiFile: Make ``UnknownMetaMessage`` robust to faulty MIDI files (@sonovice,
+  pull request #286)
+
+* Bugfix: BPM <-> MIDI tempo conversions (@superbock, pull request #114)
+
+* MidiFile: Added ``from_bytes()`` to ``MetaMessage`` (@gulaki, pull request
+  #149)
 
 1.2.10 (2021-05-10)
 ^^^^^^^^^^^^^^^^^^^
