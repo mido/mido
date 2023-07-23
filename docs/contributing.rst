@@ -87,7 +87,7 @@ Developers
     We recommend that you first setup a *virtual environment* to
     avoid conflicts with already installed files.
 
-    :seelalso:
+    :seealso:
         https://packaging.python.org/en/latest/tutorials/installing-packages/
 
 Then, to install the *development dependencies*, you can run the following
