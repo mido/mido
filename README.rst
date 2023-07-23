@@ -121,6 +121,6 @@ Mido is released under the terms of the `MIT license
 Questions and suggestions
 -------------------------
 
-For questions and proposals which may not fit into issues or pull requests, we
-recommend to ask and discuss on `Discussions
-<https://github.com/mido/mido/discussions>`_.
+For questions and proposals which may not fit into issues or pull requests,
+we recommend to ask and discuss in the `Discussions
+<https://github.com/mido/mido/discussions>`_ section.
