@@ -274,30 +274,30 @@ meta message spec::
         attributes = ['r', 'g', 'b']
         defaults = [0, 0, 0]
 
-    def decode(self, message, data):
-        # Interpret the data bytes and assign them to attributes.
-        (message.r, message.g, message.b) = data
+        def decode(self, message, data):
+            # Interpret the data bytes and assign them to attributes.
+            (message.r, message.g, message.b) = data
 
-    def encode(self, message):
-        # Encode attributes to data bytes and
-        # return them as a list of ints.
-        return [message.r, message.g, message.b]
+        def encode(self, message):
+            # Encode attributes to data bytes and
+            # return them as a list of ints.
+            return [message.r, message.g, message.b]
 
-    def check(self, name, value):
-        # (Optional)
-        # This is called when the user assigns
-        # to an attribute. You can use this for
-        # type and value checking. (Name checking
-        # is already done.
-        #
-        # If this method is left out, no type and
-        # value checking will be done.
+        def check(self, name, value):
+            # (Optional)
+            # This is called when the user assigns
+            # to an attribute. You can use this for
+            # type and value checking. (Name checking
+            # is already done.
+            #
+            # If this method is left out, no type and
+            # value checking will be done.
 
-        if not isinstance(value, int):
-            raise TypeError('{} must be an integer'.format(name))
+            if not isinstance(value, int):
+                raise TypeError('{} must be an integer'.format(name))
 
-        if not 0 <= value <= 255:
-            raise TypeError('{} must be in range 0..255'.format(name))
+            if not 0 <= value <= 255:
+                raise TypeError('{} must be in range 0..255'.format(name))
 
 Then you can add your new message type with::
 
