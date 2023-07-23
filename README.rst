@@ -79,7 +79,7 @@ Main Features
 Status
 ------
 
-1.2 is the third stable release.
+1.3 is the fourth stable release.
 
 This project uses `Semantic Versioning <https://semver.org>`_.
 
