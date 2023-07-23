@@ -15,6 +15,27 @@ Mido - MIDI Objects for Python
 ==============================
 
 
+.. Main TOC to get a proper title in the PDF:
+.. toctree::
+   :caption: Table of Contents
+   :maxdepth: 4
+
+
+.. Workaround to Properly show parts in both PDF (latex) and HTML (ReadTheDocs)
+   While awaiting a resolution of
+   https://github.com/sphinx-doc/sphinx/issues/4977
+.. raw:: latex
+
+   \part{Introduction}
+
+.. toctree::
+   :caption: Introduction
+   :maxdepth: 3
+   :hidden:
+
+   self
+
+
 Overview
 --------
 
@@ -58,6 +79,8 @@ Mido is short for *MIDI objects*.
 About this document
 ^^^^^^^^^^^^^^^^^^^
 
+.. version is automatically generated.
+
 This document refers to Mido version |version|.
 
 .. note::
@@ -75,7 +98,7 @@ This documentation (Except our code of conduct) is licensed under the
 `Creative Commons Attribution 4.0 International
 License <https://creativecommons.org/licenses/by/4.0/>`__.
 
-|Creative Commons BY-4.0 License|
+|Creative Commons BY-4.0 License|  .. From included shared/licenses_logos.rst
 
 .. seealso::
 
@@ -96,21 +119,39 @@ Everybody is welcome!
    * :doc:`contributing`
 
 
-Basics
-------
+Indices and tables
+------------------
+
+* :ref:`genindex`
+
+* :ref:`modindex`
+
+* :ref:`search`
+
+
+.. The rest of the TOC and documents:
+
+.. raw:: latex
+
+   \part{Basics}
 
 .. toctree::
+   :caption: Basics
    :maxdepth: 3
+   :hidden:
 
    installing
    intro
 
 
-Details
--------
+.. raw:: latex
+
+   \part{Details}
 
 .. toctree::
+   :caption: Details
    :maxdepth: 3
+   :hidden:
 
    messages/index
    backends/index
@@ -119,30 +160,39 @@ Details
    binaries
 
 
-Reference
----------
+.. raw:: latex
+
+   \part{Reference}
 
 .. toctree::
+   :caption: Reference
    :maxdepth: 3
+   :hidden:
 
    api
 
 
-Community
----------
+.. raw:: latex
+
+   \part{Community}
 
 .. toctree::
+   :caption: Community
    :maxdepth: 3
+   :hidden:
 
    code_of_conduct
    contributing
 
 
-Appendix
---------
+.. raw:: latex
+
+   \part{Appendix}
 
 .. toctree::
+   :caption: Appendix
    :maxdepth: 3
+   :hidden:
 
    about_midi
    message_types
@@ -159,11 +209,3 @@ Appendix
 
    glossary
 
-Indices and tables
-------------------
-
-* :ref:`genindex`
-
-* :ref:`modindex`
-
-* :ref:`search`
