@@ -31,7 +31,13 @@ classifiers = [
     'Natural Language :: English',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python',
+    'Programming Language :: Python :: 3 :: Only',
     'Programming Language :: Python :: 3.7',
+    'Topic :: Multimedia :: Sound/Audio :: MIDI',
+    'Topic :: Software Development',
+    'Topic :: Software Development :: Libraries',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Topic :: Utilities',
 ]
 
 dependencies = [
