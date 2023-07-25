@@ -47,8 +47,6 @@ Full documentation at https://mido.readthedocs.io/
 Main Features
 -------------
 
-* works in Python 3.
-
 * convenient message objects.
 
 * supports RtMidi, PortMidi and Pygame. New backends are easy to
