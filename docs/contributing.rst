@@ -191,11 +191,11 @@ To generate the HTML documentation::
 
 If you wish to build a PDF version for *local* use:
 
-# Install a `LaTeX <https://www.latex-project.org/get>`_ distribution
+#. Install a `LaTeX <https://www.latex-project.org/get>`_ distribution
 
-# Install `ImageMagick <https://imagemagick.org>`_
+#. Install `ImageMagick <https://imagemagick.org>`_
 
-# use::
+#. use::
 
     sphinx-build -M latexpdf docs docs/_build
 
@@ -269,32 +269,32 @@ Update the Changelog and Bump Version number.
 
     ``X.Y.Z`` is the version, for example ``1.1.18`` or ``1.2.0``.
 
-# update the changelog in :file:`docs/changes.rst`. The following commands
-may prove useful to retrieve all Pull Requests & all commits::
+#. update the changelog in :file:`docs/changes.rst`. The following commands
+   may prove useful to retrieve all Pull Requests & all commits::
 
     previous_release_tag=git describe --abbrev=0
     git log --oneline --merges --reverse "${previous_release_tag}.."
     git log --oneline --no-merges --reverse "${previous_release_tag}.."
 
-# update version and date in :file:`docs/changes.rst`
+#. update version and date in :file:`docs/changes.rst`
 
-# commit the changes::
+#. commit the changes::
 
     git commit -a -c "Prepare <X.Y.Z> release."
 
-# set the version number by tagging the release::
+#. set the version number by tagging the release::
 
     git tag -a <X.Y.Z> -m "mido version <X.Y.Z>"
 
-.. note::
+   .. note::
 
-    We use an annotated tag here to retain all information about the tagger
-    and create a proper object in the GIT database instead of a commit alias.
+        We use an annotated tag here to retain all information about the tagger
+        and create a proper object in the GIT database instead of a commit alias.
 
-    .. seealso:: https://git-scm.com/book/en/v2/Git-Basics-Tagging
+        .. seealso:: https://git-scm.com/book/en/v2/Git-Basics-Tagging
 
-# don’t forget to push your changes including the tags to GitHub to trigger
-the auto-release process::
+#. don’t forget to push your changes including the tags to GitHub to trigger
+   the auto-release process::
 
     git push --tags
 
@@ -306,37 +306,37 @@ Manual steps (Recovery)
 
     Only use if the automatic process fails for some reason.
 
-Prepare a clean environment::
+#. Prepare a clean environment::
 
     git clone --branch <X.Y.Z> --single-branch https://github.com/mido/mido mido-<X.Y.Z>
     cd mido-<X.Y.Z>
     python3 -m venv mido-build
 
-Build::
+#. Build::
 
     source mido-build/bin/activate
     python3 -m pip install --upgrade pip setuptools wheel build twine
     python3 -m build
 
-Publish on Test PyPI::
+#. Publish on Test PyPI::
 
     python3 -m build
     twine upload --repository testpypi dist/*
 
-Check that the published package is good::
+#. Check that the published package is good::
 
     python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps mido
     python3 -c "import mido; print(mido.version_info)"
 
-.. todo::
+   .. todo::
 
-    Now would be a good time to run some integration tests once we have them.
+        Now would be a good time to run some integration tests once we have them.
 
-Publish on PyPI::
+#. Publish on PyPI::
 
     twine upload dist/*
 
-.. warning::
+   .. warning::
 
-    This is the most critical step of the process. This **cannot** be undone.
-    Make sure everything is in good order before pressing the "big red button"!
+        This is the most critical step of the process. This **cannot** be undone.
+        Make sure everything is in good order before pressing the "big red button"!
