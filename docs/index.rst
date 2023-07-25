@@ -114,7 +114,7 @@ Everybody is welcome!
 
 .. seealso::
 
-   * :doc:`code_of_conduct`
+   * :doc:`CODE_OF_CONDUCT`
 
    * :doc:`contributing`
 
@@ -186,7 +186,7 @@ Everybody is welcome!
    :maxdepth: 3
    :hidden:
 
-   code_of_conduct
+   CODE_OF_CONDUCT
    contributing
 
 
