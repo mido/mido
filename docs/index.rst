@@ -21,7 +21,7 @@ Mido - MIDI Objects for Python
    :maxdepth: 4
 
 
-.. Workaround to Properly show parts in both PDF (latex) and HTML (ReadTheDocs)
+.. Workaround to properly show parts in both PDF (latex) and HTML (ReadTheDocs)
    While awaiting a resolution of
    https://github.com/sphinx-doc/sphinx/issues/4977
 .. raw:: latex
@@ -119,14 +119,19 @@ Everybody is welcome!
    * :doc:`contributing`
 
 
-Indices and tables
-------------------
+.. Indices are systematically generated for the PDF.
+   Wrap into an HTML only section to prevent spurious title in the TOC.
+.. only:: html
 
-* :ref:`genindex`
+    Tables and indices
+    ------------------
 
-* :ref:`modindex`
+    * :ref:`genindex`
 
-* :ref:`search`
+    * :ref:`modindex`
+
+    .. Comment since Search is provided by the ReadTheDocs theme.
+    .. * :ref:`search`
 
 
 .. The rest of the TOC and documents:
@@ -208,4 +213,3 @@ Indices and tables
    acknowledgements
 
    glossary
-
