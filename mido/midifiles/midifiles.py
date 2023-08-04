@@ -241,7 +241,7 @@ def write_track(outfile, track):
     data = bytearray()
 
     running_status_byte = None
-    for msg in fix_end_of_track(track, readonly_promise=True):
+    for msg in fix_end_of_track(track, safe=False):
         if not isinstance(msg.time, Integral):
             raise ValueError('message time must be int in MIDI file')
         if msg.time < 0:
