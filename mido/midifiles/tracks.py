@@ -81,18 +81,18 @@ def _to_reltime(messages):
         now = msg.time
 
 
-def fix_end_of_track(messages, *, read_only_promise=False):
+def fix_end_of_track(messages, *, readonly_promise=False):
     """Remove all `'end_of_track'` messages and add one at the end.
 
     This is used by `merge_tracks()` and `MidiFile.save()`.
     
-    `read_only_promise=True` saves memory but yields a mix of original
+    `readonly_promise=True` saves memory but yields a mix of original
     and copied messages that is not intended for further modifications,
     i.e. whose modifications will affect the original input in weird
-    ways. `MidiFile.save()` uses `read_only_promise=True` because it
+    ways. `MidiFile.save()` uses `readonly_promise=True` because it
     discards the data without modifying it. If you might modify the
     outputs of `fix_end_of_track()` or pass them on for modification
-    or are unsure, use the default `read_only_promise=False`."""
+    or are unsure, use the default `readonly_promise=False`."""
     # Accumulated delta time from removed end of track messages.
     # This is added to the next message.
     accum = 0
@@ -106,7 +106,7 @@ def fix_end_of_track(messages, *, read_only_promise=False):
                 yield msg.copy(time=delta)
                 accum = 0
             else:
-                if read_only_promise: # https://github.com/mido/mido/issues/530
+                if readonly_promise: # https://github.com/mido/mido/issues/530
                     yield msg
                 else:
                     yield msg.copy()
@@ -126,4 +126,4 @@ def merge_tracks(tracks):
 
     messages.sort(key=lambda msg: msg.time)
 
-    return MidiTrack(fix_end_of_track(_to_reltime(messages), read_only_promise=False))
+    return MidiTrack(fix_end_of_track(_to_reltime(messages), readonly_promise=False))
