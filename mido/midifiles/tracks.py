@@ -81,10 +81,17 @@ def _to_reltime(messages):
         now = msg.time
 
 
-def fix_end_of_track(messages):
-    """Remove all end_of_track messages and add one at the end.
+def fix_end_of_track(messages, *, safe=True):
+    """Remove all `'end_of_track'` messages and add one at the end.
 
-    This is used by merge_tracks() and MidiFile.save()."""
+    This is used by `merge_tracks()` and `MidiFile.save()`.
+    
+    `safe=False` saves memory but yields a mix of original and copied
+    messages whose modifications will affect the original input in
+    weird ways. `MidiFile.save()` uses `safe=False` because it discards
+    the data without modifying it. If you might modify the outputs of
+    `fix_end_of_track()` or pass them on for modification or are
+    unsure, use `safe=True`."""
     # Accumulated delta time from removed end of track messages.
     # This is added to the next message.
     accum = 0
@@ -98,7 +105,10 @@ def fix_end_of_track(messages):
                 yield msg.copy(time=delta)
                 accum = 0
             else:
-                yield msg
+                if safe: # https://github.com/mido/mido/issues/530
+                    yield msg.copy()
+                else:
+                    yield msg
 
     yield MetaMessage('end_of_track', time=accum)
 
@@ -115,4 +125,4 @@ def merge_tracks(tracks):
 
     messages.sort(key=lambda msg: msg.time)
 
-    return MidiTrack(fix_end_of_track(_to_reltime(messages)))
+    return MidiTrack(fix_end_of_track(_to_reltime(messages), safe=True))
