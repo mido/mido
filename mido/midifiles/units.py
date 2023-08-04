@@ -2,26 +2,49 @@
 #
 # SPDX-License-Identifier: MIT
 
-def tick2second(tick, ticks_per_beat, tempo):
-    """Convert absolute time in ticks to seconds.
+from fractions import Fraction
 
-    Returns absolute time in seconds for a chosen MIDI file time resolution
+
+def tick2second(tick, ticks_per_beat, tempo):
+    """Converts time in MIDI ticks to seconds.
+
+    .. deprecated:: 2.0.0
+
+       Please use :func:`ticks2seconds` instead
+    """
+    return ticks2seconds(tick, ticks_per_beat, tempo)
+
+
+def ticks2seconds(ticks_time, resolution, tempo):
+    """Converts time in MIDI ticks to seconds.
+
+    Returns fractional time in seconds for a chosen MIDI file time resolution
     (ticks/pulses per quarter note, also called PPQN) and tempo (microseconds
     per quarter note).
     """
-    scale = tempo * 1e-6 / ticks_per_beat
-    return tick * scale
+    scale = Fraction(tempo, resolution) * Fraction(1e-6)
+    return ticks_time * scale
 
 
 def second2tick(second, ticks_per_beat, tempo):
-    """Convert absolute time in seconds to ticks.
+    """Converts time in seconds to MIDI ticks.
 
-    Returns absolute time in ticks for a chosen MIDI file time resolution
+    .. deprecated:: 2.0.0
+
+       Please use :func:`seconds2ticks` instead
+    """
+    return seconds2ticks(second, ticks_per_beat, tempo)
+
+
+def seconds2ticks(seconds_time, resolution, tempo):
+    """Converts time in seconds to MIDI ticks.
+
+    Returns time in ticks for a chosen MIDI file time resolution
     (ticks/pulses per quarter note, also called PPQN) and tempo (microseconds
     per quarter note). Normal rounding applies.
     """
-    scale = tempo * 1e-6 / ticks_per_beat
-    return int(round(second / scale))
+    scale = Fraction(tempo, resolution) * Fraction(1e-6)
+    return round(seconds_time / scale, ndigits=None)
 
 
 def bpm2tempo(bpm, time_signature=(4, 4)):

@@ -28,7 +28,7 @@ from numbers import Integral
 from .meta import (MetaMessage, build_meta_message, meta_charset,
                    encode_variable_int)
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
-from .units import tick2second
+from .units import ticks2seconds
 from ..messages import Message, SPEC_BY_STATUS
 
 # The default tempo is 120 BPM.
@@ -387,10 +387,9 @@ class MidiFile:
 
         tempo = DEFAULT_TEMPO
         for msg in self.merged_track:
-            # Convert message time from absolute time
-            # in ticks to relative time in seconds.
+            # Convert message time from MIDI ticks to seconds.
             if msg.time > 0:
-                delta = tick2second(msg.time, self.ticks_per_beat, tempo)
+                delta = ticks2seconds(msg.time, self.ticks_per_beat, tempo)
             else:
                 delta = 0
 

@@ -181,7 +181,11 @@ Standard MIDI Files
 
 .. autofunction:: tick2second
 
+.. autofunction:: ticks2seconds
+
 .. autofunction:: second2tick
+
+.. autofunction:: seconds2ticks
 
 .. autofunction:: bpm2tempo
 

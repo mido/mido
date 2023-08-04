@@ -237,11 +237,13 @@ in number of beats per minute (BPM) or microseconds per quarter note, see
 `MIDI Tempo vs. BPM`_ above) and ticks per per quarter note have to be decided
 upon.
 
-You can use :py:func:`tick2second` and :py:func:`second2tick` to convert to
+You can use :py:func:`ticks2seconds` and :py:func:`seconds2ticks` to convert to
 and from seconds and ticks. Note that integer rounding of the result might be
 necessary because MIDI files require ticks to be integers.
 
-If you have a lot of rounding errors you should increase the time resolution
-with more ticks per quarter note, by setting MidiFile.ticks_per_beat to a
-large number. Typical values range from 96 to 480 but some use even more ticks
-per quarter note.
+.. note::
+
+    If you have a lot of rounding errors you should increase the time
+    resolution with more ticks per quarter note, by setting
+    ``MidiFile.ticks_per_beat`` to a large number. Typical values range from
+    ``96`` to ``480`` but some use even more ticks per quarter note.
