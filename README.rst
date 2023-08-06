@@ -7,7 +7,7 @@ Mido - MIDI Objects for Python
 
 .. image:: https://img.shields.io/badge/License-MIT-blue.svg
    :alt: MIT License
-   :target: https://github.com/mido/mido/LICENSES/MIT.txt
+   :target: https://github.com/mido/mido/blob/main/LICENSES/MIT.txt
 
 .. image:: https://img.shields.io/pypi/v/mido.svg
    :alt: PyPi version
