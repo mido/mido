@@ -55,7 +55,8 @@ def test_sysex_data_accepts_different_types():
 
 
 def test_copy():
-    assert Message('start').copy(delta_ticks=1) == Message('start', delta_ticks=1)
+    assert Message('start').copy(delta_ticks=1) == \
+        Message('start', delta_ticks=1)
 
 
 def test_init_invalid_argument():
