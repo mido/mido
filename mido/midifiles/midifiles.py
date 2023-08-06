@@ -408,14 +408,14 @@ class MidiFile:
                 delta_seconds = 0
 
             if msg.type == 'control_change':
-                if (expected_bendrange_message_number == 1 and
-                    msg.control == 0x65 and msg.value == 0x00) \
-                or (expected_bendrange_message_number == 2 and
-                    msg.control == 0x64 and msg.value == 0x00) \
-                or (expected_bendrange_message_number == 3 and
-                    msg.control == 0x06) \
-                or (expected_bendrange_message_number == 4 and
-                        msg.control == 0x26):
+                if (expected_bendrange_message_number == 1
+                    and msg.control == 0x65 and msg.value == 0x00) \
+                    or (expected_bendrange_message_number == 2
+                    and msg.control == 0x64 and msg.value == 0x00) \
+                    or (expected_bendrange_message_number == 3
+                    and msg.control == 0x06) \
+                    or (expected_bendrange_message_number == 4
+                        and msg.control == 0x26):
                     if expected_bendrange_message_number > 1 \
                     and expected_bendrange_channel != msg.channel:
                         # Error if we expect compliance with General MIDI 1
