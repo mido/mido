@@ -387,8 +387,8 @@ class MidiFile:
 
         tempo = DEFAULT_TEMPO
         # Default initial values based on General MIDI 1
-        gm1_pitchbend_range_semitones = 16*[2]
-        gm1_pitchbend_semitones = 16*[0]
+        gm1_pitchbend_range_semitones = 16 * [2]
+        gm1_pitchbend_semitones = 16 * [0]
         # To set the pitch-bend range, three to four consecutive
         # 'control_change' messages must have consistent contents.
         # The first of these messages can be sent any time, except after
@@ -396,47 +396,54 @@ class MidiFile:
         # message number 2 is required after message number 1,
         # message number 3 is required after message number 2,
         # message number 4 is OPTIONAL after message number 3.
-        gm1_expected_pitchbend_range_message_number = 1
-        gm1_expected_pitchbend_range_channel = None
+        expected_bendrange_message_number = 1
+        expected_bendrange_channel = None
         for msg in self.merged_track:
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
             if msg.delta_ticks > 0:
-                delta_seconds = tick2second(msg.delta_ticks, self.ticks_per_beat, tempo)
+                delta_seconds = tick2second(msg.delta_ticks,
+                    self.ticks_per_beat, tempo)
             else:
                 delta_seconds = 0
 
             if msg.type == 'control_change':
-                if (
-                    (gm1_expected_pitchbend_range_message_number == 1 and msg.control == 0x65 and msg.value == 0x00) or
-                    (gm1_expected_pitchbend_range_message_number == 2 and msg.control == 0x64 and msg.value == 0x00) or
-                    (gm1_expected_pitchbend_range_message_number == 3 and msg.control == 0x06) or
-                    (gm1_expected_pitchbend_range_message_number == 4 and msg.control == 0x26)
-                ):
-                    if gm1_expected_pitchbend_range_message_number > 1 and gm1_expected_pitchbend_range_channel != msg.channel:
+                if (expected_bendrange_message_number == 1 
+                    and msg.control == 0x65 and msg.value == 0x00) \
+                or (expected_bendrange_message_number == 2 
+                    and msg.control == 0x64 and msg.value == 0x00) \
+                or (expected_bendrange_message_number == 3 
+                    and msg.control == 0x06) \
+                or (expected_bendrange_message_number == 4 
+                    and msg.control == 0x26):
+                    if expected_bendrange_message_number > 1 \
+                    and expected_bendrange_channel != msg.channel:
                         # Error if we expect compliance with General MIDI 1
-                        gm1_expected_pitchbend_range_message_number = 1
-                    gm1_expected_pitchbend_range_channel = msg.channel
-                    if gm1_expected_pitchbend_range_message_number == 3:
+                        expected_bendrange_message_number = 1
+                    expected_bendrange_channel = msg.channel
+                    if expected_bendrange_message_number == 3:
                         gm1_pitchbend_range_semitones[msg.channel] = msg.value
                         print(gm1_pitchbend_range_semitones[msg.channel])
-                    if gm1_expected_pitchbend_range_message_number == 4:
+                    if expected_bendrange_message_number == 4:
                         # Convert from cents to semitones and add to
                         # previously set semitones.
-                        gm1_pitchbend_range_semitones[msg.channel] += msg.value / 100
-                    gm1_expected_pitchbend_range_message_number += 1
-                    if gm1_expected_pitchbend_range_message_number == 5:
-                        gm1_expected_pitchbend_range_message_number = 1
+                        gm1_pitchbend_range_semitones[msg.channel] \
+                            += msg.value / 100
+                    expected_bendrange_message_number += 1
+                    if expected_bendrange_message_number == 5:
+                        expected_bendrange_message_number = 1
 
             if msg.type == 'pitchwheel':
-                gm1_pitchbend_semitones[msg.channel] = msg.pitch / 0x2000 * gm1_pitchbend_range_semitones[msg.channel]
+                gm1_pitchbend_semitones[msg.channel] = msg.pitch / 0x2000 \
+                    * gm1_pitchbend_range_semitones[msg.channel]
 
             # Assemble values that depend on earlier MIDI messages.
             inferred = {
                 'delta_seconds': delta_seconds,
                 'tempo': tempo,
                 'general_midi_1': {
-                    'pitchbend_range_semitones': gm1_pitchbend_range_semitones.copy(),
+                    'pitchbend_range_semitones': \
+                        gm1_pitchbend_range_semitones.copy(),
                     'pitchbend_semitones': gm1_pitchbend_semitones.copy()
                 }
             }

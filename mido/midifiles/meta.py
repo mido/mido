@@ -570,7 +570,9 @@ class MetaMessage(BaseMessage):
 
 
 class UnknownMetaMessage(MetaMessage):
-    def __init__(self, type_byte, data=None, delta_ticks=0, type='unknown_meta'):
+    def __init__(self, type_byte, data=None, delta_ticks=0, 
+        type='unknown_meta'
+    ):
         if data is None:
             data = ()
         else:

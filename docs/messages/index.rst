@@ -105,7 +105,7 @@ The ``bytes`` must contain exactly one complete message. If not
 
 
 The delta_ticks Attribute
-------------------
+-------------------------
 
 Each message has a ``delta_ticks`` attribute, which can be set to any value
 of type ``int`` or ``float``.
