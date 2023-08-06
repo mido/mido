@@ -25,7 +25,7 @@ You can open a file with::
     (See :doc:`syx` for more.)
 
 The ``tracks`` attribute is a list of tracks. Each track is a list of
-messages and meta messages, with the ``time`` attribute of each
+messages and meta messages, with the ``delta_ticks`` attribute of each
 messages set to its delta time (in ticks). (See Tempo and Beat
 Resolution below for more on delta times.)
 
@@ -45,7 +45,7 @@ Iterating Over Messages
 -----------------------
 
 Iterating over a ``MidiFile`` object will generate all MIDI messages
-in the file in playback order. The ``time`` attribute of each message
+in the file in playback order. The ``delta_ticks`` attribute of each message
 is the number of seconds since the last message or the start of the
 file.
 
@@ -59,7 +59,7 @@ This makes it easy to play back a MIDI file on a port (though this simple
 implementation is subject to time drift)::
 
     for msg in MidiFile('song.mid'):
-        time.sleep(msg.time)
+        time.sleep(msg.delta_ticks)
         if not msg.is_meta:
             port.send(msg)
 
@@ -86,9 +86,9 @@ argument. The file can then be saved by calling the ``save()`` method::
     track = MidiTrack()
     mid.tracks.append(track)
 
-    track.append(Message('program_change', program=12, time=0))
-    track.append(Message('note_on', note=64, velocity=64, time=32))
-    track.append(Message('note_off', note=64, velocity=127, time=32))
+    track.append(Message('program_change', program=12, delta_ticks=0))
+    track.append(Message('note_on', note=64, velocity=64, delta_ticks=32))
+    track.append(Message('note_off', note=64, velocity=127, delta_ticks=32))
 
     mid.save('new_song.mid')
 

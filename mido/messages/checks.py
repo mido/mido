@@ -81,7 +81,7 @@ _CHECKS = {
     'song': check_data_byte,
     'value': check_data_byte,
     'velocity': check_data_byte,
-    'time': check_time,
+    'delta_ticks': check_time,
 }
 
 

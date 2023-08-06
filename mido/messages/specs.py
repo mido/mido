@@ -31,7 +31,7 @@ def _defmsg(status_byte, type_, value_names, length):
         'status_byte': status_byte,
         'type': type_,
         'value_names': value_names,
-        'attribute_names': set(value_names) | {'type', 'time'},
+        'attribute_names': set(value_names) | {'type', 'delta_ticks'},
         'length': length,
     }
 
@@ -105,7 +105,7 @@ DEFAULT_VALUES = {
     'value': 0,
     'velocity': 64,
 
-    'time': 0,
+    'delta_ticks': 0,
 }
 
 
@@ -126,7 +126,7 @@ def make_msgdict(type_, overrides):
     else:
         raise LookupError(f'Unknown message type {type_!r}')
 
-    msg = {'type': type_, 'time': DEFAULT_VALUES['time']}
+    msg = {'type': type_, 'delta_ticks': DEFAULT_VALUES['delta_ticks']}
 
     for name in spec['value_names']:
         msg[name] = DEFAULT_VALUES[name]

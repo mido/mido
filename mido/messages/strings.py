@@ -19,7 +19,7 @@ def msg2str(msg, include_time=True):
         words.append(f'{name}={value}')
 
     if include_time:
-        words.append('time={}'.format(msg['time']))
+        words.append('delta_ticks={}'.format(msg['delta_ticks']))
 
     return str.join(' ', words)
 
@@ -63,7 +63,7 @@ def str2msg(text):
 
     for arg in args:
         name, value = arg.split('=', 1)
-        if name == 'time':
+        if name == 'delta_ticks':
             value = _parse_time(value)
         elif name == 'data':
             value = _parse_data(value)

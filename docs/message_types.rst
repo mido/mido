@@ -67,7 +67,7 @@ to 64 so that if you don't set it, you will still get a reasonable
 value. (64 is the recommended default for devices that don't support
 it attack or release velocity.)
 
-The ``time`` is used in MIDI files as delta time.
+The ``delta_ticks`` is used in MIDI files as delta time.
 
 The ``data`` parameter accepts any iterable that generates numbers in
 0..127. This includes::

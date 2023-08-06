@@ -21,11 +21,11 @@ Mido comes with a *parser* that turns MIDI bytes into messages. You can create
 a *parser object* or call one of the *utility functions*::
 
     >>> mido.parse([0x92, 0x10, 0x20])
-    Message('note_on', channel=2, note=16, velocity=32, time=0)
+    Message('note_on', channel=2, note=16, velocity=32, delta_ticks=0)
 
     >>> mido.parse_all([0x92, 0x10, 0x20, 0x82, 0x10, 0x20])
-    [Message('note_on', channel=2, note=16, velocity=32, time=0),
-     Message('note_off', channel=2, note=16, velocity=32, time=0)]
+    [Message('note_on', channel=2, note=16, velocity=32, delta_ticks=0),
+     Message('note_off', channel=2, note=16, velocity=32, delta_ticks=0)]
 
 These functions are just shortcuts for the full ``Parser`` class. This
 is the same parser as used inside input ports to parse incoming messages.
@@ -36,7 +36,7 @@ Here are a few examples of how it can be used::
     >>> p.pending()
     1
     >>> p.get_message()
-    Message('note_on', channel=0, note=16, velocity=32, time=0)
+    Message('note_on', channel=0, note=16, velocity=32, delta_ticks=0)
 
     >>> p.feed_byte(0x90)
     >>> p.feed_byte(0x10)
@@ -45,9 +45,9 @@ Here are a few examples of how it can be used::
     >>> p.pending()
     2
     >>> p.get_message()
-    Message('note_on', channel=0, note=16, velocity=32, time=0)
+    Message('note_on', channel=0, note=16, velocity=32, delta_ticks=0)
     >>> p.get_message()
-    Message('note_off', channel=0, note=16, velocity=32, time=0)
+    Message('note_off', channel=0, note=16, velocity=32, delta_ticks=0)
 
 ``feed()`` accepts any iterable that generates integers in 0..255. The
 parser will skip and stray status bytes or data bytes, so you can
@@ -62,7 +62,7 @@ it::
     >>> p.feed([0x92, 0x10, 0x20, 0x82, 0x10, 0x20])
     >>> for message in p:
     ...    print(message)
-    note_on channel=2 note=16 velocity=32 time=0
-    note_off channel=2 note=16 velocity=32 time=0
+    note_on channel=2 note=16 velocity=32 delta_ticks=0
+    note_off channel=2 note=16 velocity=32 delta_ticks=0
 
 The messages are available in ``p.messages`` (a ``collections.deque``).

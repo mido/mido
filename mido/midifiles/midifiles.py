@@ -132,7 +132,7 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
             if byte > 127:
                 raise OSError('data byte must be in range 0..127')
 
-    return Message.from_bytes([status_byte] + data_bytes, time=delta)
+    return Message.from_bytes([status_byte] + data_bytes, delta_ticks=delta)
 
 
 def read_sysex(infile, delta, clip=False):
@@ -149,7 +149,7 @@ def read_sysex(infile, delta, clip=False):
     if clip:
         data = [byte if byte < 127 else 127 for byte in data]
 
-    return Message('sysex', data=data, time=delta)
+    return Message('sysex', data=data, delta_ticks=delta)
 
 
 def read_variable_int(infile):
@@ -242,15 +242,15 @@ def write_track(outfile, track):
 
     running_status_byte = None
     for msg in fix_end_of_track(track):
-        if not isinstance(msg.time, Integral):
+        if not isinstance(msg.delta_ticks, Integral):
             raise ValueError('message time must be int in MIDI file')
-        if msg.time < 0:
+        if msg.delta_ticks < 0:
             raise ValueError('message time must be non-negative in MIDI file')
 
         if msg.is_realtime:
             raise ValueError('realtime messages are not allowed in MIDI files')
 
-        data.extend(encode_variable_int(msg.time))
+        data.extend(encode_variable_int(msg.delta_ticks))
 
         if msg.is_meta:
             data.extend(msg.bytes())
@@ -377,7 +377,7 @@ class MidiFile:
             raise ValueError('impossible to compute length'
                              ' for type 2 (asynchronous) file')
 
-        return sum(msg.time for msg in self)
+        return sum(msg.delta_ticks for msg in self)
 
     def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
@@ -401,8 +401,8 @@ class MidiFile:
         for msg in self.merged_track:
             # Convert message time from absolute time
             # in ticks to relative time in seconds.
-            if msg.time > 0:
-                delta_seconds = tick2second(msg.time, self.ticks_per_beat, tempo)
+            if msg.delta_ticks > 0:
+                delta_seconds = tick2second(msg.delta_ticks, self.ticks_per_beat, tempo)
             else:
                 delta_seconds = 0
 
@@ -430,11 +430,11 @@ class MidiFile:
 
             if msg.type == 'pitchwheel':
                 gm1_pitchbend_semitones[msg.channel] = msg.pitch / 0x2000 * gm1_pitchbend_range_semitones[msg.channel]
-                print(msg, gm1_pitchbend_semitones[msg.channel])
 
             # Assemble values that depend on earlier MIDI messages.
             inferred = {
                 'delta_seconds': delta_seconds,
+                'tempo': tempo,
                 'general_midi_1': {
                     'pitchbend_range_semitones': gm1_pitchbend_range_semitones.copy(),
                     'pitchbend_semitones': gm1_pitchbend_semitones.copy()
@@ -469,7 +469,7 @@ class MidiFile:
         input_time = 0.0
 
         for msg in self:
-            input_time += msg.time
+            input_time += msg.delta_ticks
 
             playback_time = now() - start_time
             duration_to_next_event = input_time - playback_time

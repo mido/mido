@@ -43,7 +43,7 @@ def test_single_message():
     4d 54 72 6b  # MTrk
     00 00 00 04
     20 90 40 40  # note_on
-    """).tracks[0] == [Message('note_on', note=64, velocity=64, time=32)]
+    """).tracks[0] == [Message('note_on', note=64, velocity=64, delta_ticks=32)]
 
 
 def test_too_long_message():
@@ -172,12 +172,12 @@ def test_meta_messages_with_length_0():
 def test_midifile_repr():
     midifile = MidiFile(type=1, ticks_per_beat=123, tracks=[
         MidiTrack([
-            Message('note_on', channel=1, note=2, time=3),
-            Message('note_off', channel=1, note=2, time=3)]),
+            Message('note_on', channel=1, note=2, delta_ticks=3),
+            Message('note_off', channel=1, note=2, delta_ticks=3)]),
         MidiTrack([
             MetaMessage('sequence_number', number=5),
-            Message('note_on', channel=2, note=6, time=9),
-            Message('note_off', channel=2, note=6, time=9)]),
+            Message('note_on', channel=2, note=6, delta_ticks=9),
+            Message('note_off', channel=2, note=6, delta_ticks=9)]),
     ])
     midifile_eval = eval(repr(midifile))
     for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):

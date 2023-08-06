@@ -28,8 +28,8 @@ def test_track_name():
 
 def test_track_repr():
     track = MidiTrack([
-        Message('note_on', channel=1, note=2, time=3),
-        Message('note_off', channel=1, note=2, time=3),
+        Message('note_on', channel=1, note=2, delta_ticks=3),
+        Message('note_off', channel=1, note=2, delta_ticks=3),
     ])
     track_eval = eval(repr(track))
     for m1, m2 in zip(track, track_eval):
