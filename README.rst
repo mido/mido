@@ -8,6 +8,11 @@ Mido - MIDI Objects for Python
 .. image:: https://github.com/mido/mido/workflows/Test/badge.svg
    :target: https://github.com/mido/mido/actions
 
+.. image:: https://api.reuse.software/badge/github.com/mido/mido
+   :alt: REUSE status
+   :target: https://api.reuse.software/info/github.com/mido/mido
+
+
 Mido is a library for working with MIDI messages and ports:
 
 .. code-block:: python
