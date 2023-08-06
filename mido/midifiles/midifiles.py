@@ -408,8 +408,8 @@ class MidiFile:
                 delta_seconds = 0
 
             if msg.type == 'control_change':
-                if (expected_gm1_pitchbend_range_message_number == 1
-                    and msg.control == 0x65 and msg.value == 0x00) \
+                if     (expected_gm1_pitchbend_range_message_number == 1
+                        and msg.control == 0x65 and msg.value == 0x00) \
                     or (expected_gm1_pitchbend_range_message_number == 2
                         and msg.control == 0x64 and msg.value == 0x00) \
                     or (expected_gm1_pitchbend_range_message_number == 3
@@ -417,8 +417,8 @@ class MidiFile:
                     or (expected_gm1_pitchbend_range_message_number == 4
                         and msg.control == 0x26):
                     if expected_gm1_pitchbend_range_message_number > 1 \
-                            and expected_gm1_pitchbend_range_channel != \
-                                msg.channel:
+                        and expected_gm1_pitchbend_range_channel != \
+                            msg.channel:
                         # Error if we expect compliance with General MIDI 1
                         expected_gm1_pitchbend_range_message_number = 1
                     expected_gm1_pitchbend_range_channel = msg.channel
