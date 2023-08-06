@@ -53,7 +53,7 @@ velocity     0..127                  64
 data         (0..127, 0..127, ...)   () (empty tuple)
 pitch        -8192..8191             0
 pos          0..16383                0
-time         any integer or float    0
+delta_ticks  ?                       0
 ===========  ======================  ================
 
 .. note::
