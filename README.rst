@@ -5,8 +5,25 @@
 Mido - MIDI Objects for Python
 ==============================
 
+.. image:: https://img.shields.io/badge/License-MIT-blue.svg
+   :alt: MIT License
+
+.. image:: https://img.shields.io/pypi/v/mido.svg
+   :alt: PyPi version
+
+.. image:: https://img.shields.io/pypi/pyversions/mido.svg
+   :alt: Python version
+
+.. image:: https://pepy.tech/badge/mido
+   :alt: Downloads
+
 .. image:: https://github.com/mido/mido/workflows/Test/badge.svg
+   :alt: Test status
    :target: https://github.com/mido/mido/actions
+
+.. image:: https://readthedocs.org/projects/mido/badge/?version=latest
+   :alt: Docs status
+   :target: https://mido.readthedocs.io/
 
 .. image:: https://api.reuse.software/badge/github.com/mido/mido
    :alt: REUSE status
