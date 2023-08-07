@@ -437,6 +437,9 @@ class MidiFile:
                 gm1_pitchbend_semitones[msg.channel] = msg.pitch / 0x2000 \
                     * gm1_pitchbend_range_semitones[msg.channel]
 
+            if msg.type == 'set_tempo':
+                tempo = msg.tempo
+
             # Assemble values that depend on earlier MIDI messages.
             inferred = {
                 'delta_seconds': delta_seconds,
@@ -449,9 +452,6 @@ class MidiFile:
             }
 
             yield msg, inferred
-
-            if msg.type == 'set_tempo':
-                tempo = msg.tempo
 
     def play(self, meta_messages=False, now=time.time):
         """Play back all tracks.
