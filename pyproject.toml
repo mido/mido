@@ -73,7 +73,7 @@ test-code = ['pytest~=7.4.0',]
 dev = [
     'mido[check-manifest]',
     'mido[lint-code]',
-    'mido[test]',
+    'mido[test-code]',
     'mido[lint-reuse]',
     'mido[build-docs]',
     'mido[release]',
