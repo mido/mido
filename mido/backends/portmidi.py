@@ -262,7 +262,7 @@ class Output(PortCommon, BaseOutput):
     def _send(self, message):
         if message.type == 'sysex':
             # Sysex messages are written as a string.
-            string = pm.c_char_p(bytes(message.bin()))
+            string = ctypes.c_char_p(bytes(message.bin()))
             timestamp = 0  # Ignored when latency = 0
             _check_error(pm.lib.Pm_WriteSysEx(self._stream, timestamp, string))
         else:
