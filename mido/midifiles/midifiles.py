@@ -420,7 +420,7 @@ class MidiFile:
                         and expected_gm1_pitchbend_range_channel != \
                             msg.channel:
                         # Error if we expect compliance with General MIDI 1
-                        expected_gm1_pitchbend_range_message_number = 1
+                        expected_gm1_pitchbend_range_message_number = 0
                     expected_gm1_pitchbend_range_channel = msg.channel
                     if expected_gm1_pitchbend_range_message_number == 3:
                         gm1_pitchbend_range_semitones[msg.channel] = msg.value
