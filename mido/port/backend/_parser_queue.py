@@ -4,7 +4,7 @@
 
 import time
 from .. import ports
-from ..parser import Parser
+from mido.protocol.version1.parser import Parser
 
 from threading import RLock
 

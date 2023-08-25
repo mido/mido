@@ -18,7 +18,7 @@ import os
 import select
 import threading
 import subprocess
-from ..messages import Message
+from mido.protocol.version1.message.messages import Message
 from ._common import PortMethods, InputMethods, OutputMethods
 """
 Dir Device    Name
