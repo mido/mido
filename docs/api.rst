@@ -9,8 +9,14 @@ API Reference
 =============
 
 
-Messages
+Protocol
 --------
+
+Version 1
+^^^^^^^^^
+
+Messages
+""""""""
 
 .. module:: mido
 
@@ -19,15 +25,15 @@ Messages
    :inherited-members:
    :undoc-members:
 
-.. module:: mido.messages
+.. module:: mido.protocol.version1.message
 
 .. todo:: Expose more of the internals? (Checks, decode…)
 
 
 Frozen Messages
-^^^^^^^^^^^^^^^
+"""""""""""""""
 
-.. module:: mido.frozen
+.. module:: mido.protocol.version1.message.frozen
 
 .. autofunction:: freeze_message
 .. autofunction:: thaw_message
@@ -40,9 +46,9 @@ Frozen Messages
 
 
 Parsing
--------
+"""""""
 
-.. module:: mido.parser
+.. module:: mido.protocol.version1.parser
 
 .. autofunction:: parse
 .. autofunction:: parse_all
@@ -53,9 +59,9 @@ Parsing
 
 
 Tokenizing
-----------
+""""""""""
 
-.. module:: mido.tokenizer
+.. module:: mido.protocol.version1.tokenizer
 
 .. autoclass:: Tokenizer
    :members:
@@ -65,8 +71,11 @@ Tokenizing
 .. todo: Add a dedicated section in the documentation.
 
 
+Ports
+-----
+
 Backends
---------
+^^^^^^^^
 
 .. module:: mido
    :noindex:
@@ -78,13 +87,10 @@ Backends
    :inherited-members:
    :undoc-members:
 
-.. module:: mido.backends
+.. module:: mido.port.backend
 
 .. todo:: Expose each built-in backend internal API?
 
-
-Ports
------
 
 
 Management
@@ -105,7 +111,7 @@ Management
 Socket Ports
 ^^^^^^^^^^^^
 
-.. module:: mido.sockets
+.. module:: mido.port.sockets
 
 .. autoclass:: PortServer
    :members:
@@ -123,7 +129,7 @@ Socket Ports
 API
 ^^^
 
-.. module:: mido.ports
+.. module:: mido.port.ports
 
 .. autoclass:: BaseInput
    :members:
@@ -189,7 +195,7 @@ Standard MIDI Files
 
 .. autofunction:: merge_tracks
 
-.. module:: mido.midifiles
+.. module:: mido.file.smf
 
 .. todo: Expose more of the internal API? (meta, tracks, units…)
 
@@ -197,7 +203,7 @@ Standard MIDI Files
 SYX
 ^^^
 
-.. module:: mido.syx
+.. module:: mido.file.syx
 
 .. autofunction:: read_syx_file
 
