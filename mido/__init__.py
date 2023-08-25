@@ -94,18 +94,8 @@ Getting started:
 """
 import os
 
-from . import ports, sockets
-from .backends.backend import Backend
-from .messages import (Message, parse_string, parse_string_stream,
-                       format_as_string, MIN_PITCHWHEEL, MAX_PITCHWHEEL,
-                       MIN_SONGPOS, MAX_SONGPOS)
-from .midifiles import (MidiFile, MidiTrack, merge_tracks,
-                        MetaMessage, UnknownMetaMessage,
-                        bpm2tempo, tempo2bpm, tick2second, second2tick,
-                        KeySignatureError)
-from .parser import Parser, parse, parse_all
-from .syx import read_syx_file, write_syx_file
-from .version import version_info
+from .port.backend.backend import Backend
+from mido.protocol.version1.message import (Message)
 
 # Prevent splat import.
 __all__ = []

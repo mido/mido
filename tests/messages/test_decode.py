@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from pytest import raises
-from mido.messages.decode import decode_message
+from mido.protocol.version1.message.decode import decode_message
 
 
 def sysex(data):

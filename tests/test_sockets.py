@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import pytest
-from mido.sockets import parse_address
+from mido.port.sockets import parse_address
 
 
 class TestParseAddress:

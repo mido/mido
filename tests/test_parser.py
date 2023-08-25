@@ -6,8 +6,9 @@ import random
 
 from pytest import raises
 
-from mido.messages import Message, specs
-from mido.parser import Parser, parse, parse_all
+from mido.protocol.version1.message import Message
+from mido.protocol.version1.message import specs
+from mido.protocol.version1.parser import Parser, parse, parse_all
 
 
 def test_parse():

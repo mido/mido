@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from mido.backends.rtmidi_utils import expand_alsa_port_name
+from mido.port.backend.rtmidi_utils import expand_alsa_port_name
 
 
 def test_expand_alsa_port_name():

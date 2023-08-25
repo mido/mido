@@ -4,7 +4,8 @@
 
 from collections import deque
 from numbers import Integral
-from .messages.specs import SYSEX_START, SYSEX_END, SPEC_BY_STATUS
+from mido.protocol.version1.message.specs import (SYSEX_START, SYSEX_END,
+                                              SPEC_BY_STATUS)
 
 
 class Tokenizer:

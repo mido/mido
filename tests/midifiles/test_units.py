@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from mido.midifiles.units import tempo2bpm, bpm2tempo, tick2second, second2tick
+from mido.file.smf.units import tempo2bpm, bpm2tempo, tick2second, second2tick
 
 
 def test_tempo2bpm():

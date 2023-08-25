@@ -7,8 +7,8 @@ MIDI over TCP/IP.
 """
 import socket
 import select
-from .parser import Parser
-from .ports import MultiPort, BaseIOPort
+from mido.protocol.version1.parser import Parser
+from mido.port.ports import MultiPort, BaseIOPort
 
 
 def _is_readable(socket):

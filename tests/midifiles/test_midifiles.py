@@ -4,9 +4,9 @@
 
 import io
 from pytest import raises
-from mido.messages import Message
-from mido.midifiles.midifiles import MidiFile, MidiTrack
-from mido.midifiles.meta import MetaMessage, KeySignatureError
+from mido.protocol.version1.message import Message
+from mido.file.smf.midifiles import MidiFile, MidiTrack
+from mido.file.smf.meta import (MetaMessage, KeySignatureError)
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # MThd

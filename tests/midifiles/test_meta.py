@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import pytest
-from mido.midifiles.meta import MetaMessage, UnknownMetaMessage, \
+from mido.file.smf.meta import MetaMessage, UnknownMetaMessage, \
     MetaSpec_key_signature, KeySignatureError
 
 

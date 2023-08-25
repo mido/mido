@@ -9,8 +9,8 @@ import random
 import threading
 import time
 
-from .messages import Message
-from .parser import Parser
+from mido.protocol.version1.message import Message
+from mido.protocol.version1.parser import Parser
 
 # How many seconds to sleep before polling again.
 _DEFAULT_SLEEP_TIME = 0.001

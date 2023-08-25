@@ -19,7 +19,7 @@ import struct
 from contextlib import contextmanager
 from numbers import Integral
 
-from ..messages import BaseMessage, check_time
+from mido.protocol.version1.message import BaseMessage, check_time
 
 _charset = 'latin1'
 

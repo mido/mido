@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from mido.tokenizer import Tokenizer
+from mido.protocol.version1.tokenizer import Tokenizer
 
 
 def tokenize(midi_bytes):

@@ -4,7 +4,7 @@
 
 from pytest import raises
 
-from mido.messages import Message
+from mido.protocol.version1.message import Message
 
 
 def test_decode_sysex():

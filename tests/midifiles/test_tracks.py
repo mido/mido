@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: MIT
 
 import itertools
-from mido.messages import Message
-from mido.midifiles.meta import MetaMessage
-from mido.midifiles.tracks import MidiTrack
+from mido.protocol.version1.message import Message
+from mido.file.smf.meta import MetaMessage
+from mido.file.smf.tracks import MidiTrack
 
 zip = getattr(itertools, 'izip', zip)
 

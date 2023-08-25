@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .messages import Message
-from .midifiles import MetaMessage, UnknownMetaMessage
+from mido.protocol.version1.message import Message
+from mido.file.smf import MetaMessage, UnknownMetaMessage
 
 
 class Frozen:

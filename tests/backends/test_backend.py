@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from mido.backends.backend import Backend
+from mido.port.backend.backend import Backend
 
 
 def test_split_api():
