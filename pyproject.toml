@@ -93,9 +93,6 @@ mido-connect = "scripts.mido_connect:main"
 [tool.setuptools]
 packages = [
     "mido",
-    "mido.backends",
-    "mido.messages",
-    "mido.midifiles",
 ]
 include-package-data = true
 
