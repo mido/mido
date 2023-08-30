@@ -3,20 +3,10 @@
 # SPDX-License-Identifier: MIT
 
 """
-MIDI file reading and playback.
+Standard MIDI file reading and playback.
 
 References:
-
-http://home.roadrunner.com/~jgglatt/
-http://home.roadrunner.com/~jgglatt/tech/miditech.htm
-http://home.roadrunner.com/~jgglatt/tech/midifile.htm
-
-http://www.sonicspot.com/guide/midifiles.html
-http://www.ccarh.org/courses/253/assignment/midifile/
-https://code.google.com/p/binasc/wiki/mainpage
-http://stackoverflow.com/questions/2984608/midi-delta-time
-http://www.recordingblogs.com/sa/tabid/82/EntryId/44/MIDI-Part-XIII-Delta-time-a
-http://www.sonicspot.com/guide/midifiles.html
+https://www.midi.org/specifications/file-format-specifications/standard-midi-files
 """
 
 import string
@@ -24,7 +14,7 @@ import struct
 import time
 from numbers import Integral
 
-from .meta import (MetaMessage, build_meta_message, meta_charset,
+from .meta import (MetaEvent, build_meta_event, meta_charset,
                    encode_variable_int)
 from .tracks import MidiTrack, merge_tracks, fix_end_of_track
 from .units import tick2second
@@ -161,11 +151,11 @@ def read_variable_int(infile):
             return delta
 
 
-def read_meta_message(infile, delta):
+def read_meta_event(infile, delta):
     meta_type = read_byte(infile)
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
-    return build_meta_message(meta_type, data, delta)
+    return build_meta_event(meta_type, data, delta)
 
 
 def read_track(infile, debug=False, clip=False):
@@ -205,12 +195,12 @@ def read_track(infile, debug=False, clip=False):
             status_byte = last_status
         else:
             if status_byte != 0xff:
-                # Meta messages don't set running status.
+                # Meta events don't set running status.
                 last_status = status_byte
             peek_data = []
 
         if status_byte == 0xff:
-            msg = read_meta_message(infile, delta)
+            msg = read_meta_event(infile, delta)
         elif status_byte in [0xf0, 0xf7]:
             # TODO: I'm not quite clear on the difference between
             # f0 and f7 events.
@@ -398,7 +388,7 @@ class MidiFile:
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
 
-    def play(self, meta_messages=False, now=time.time):
+    def play(self, meta_events=False, now=time.time):
         """Play back all tracks.
 
         The generator will sleep between each message by
@@ -407,7 +397,7 @@ class MidiFile:
         previous message.
 
         By default you will only get normal MIDI messages. Pass
-        meta_messages=True if you also want meta messages.
+        meta_events=True if you also want meta events.
 
         You will receive copies of the original messages, so you can
         safely modify them without ruining the tracks.
@@ -429,7 +419,7 @@ class MidiFile:
             if duration_to_next_event > 0.0:
                 time.sleep(duration_to_next_event)
 
-            if isinstance(msg, MetaMessage) and not meta_messages:
+            if isinstance(msg, MetaEvent) and not meta_events:
                 continue
             else:
                 yield msg
@@ -468,18 +458,18 @@ class MidiFile:
                 write_track(outfile, track)
 
     def print_tracks(self, meta_only=False):
-        """Prints out all messages in a .midi file.
+        """Prints out all events in a .midi file.
 
-        May take argument meta_only to show only meta messages.
+        May take argument meta_only to show only meta events.
 
         Use:
-        print_tracks() -> will print all messages
-        print_tracks(meta_only=True) -> will print only MetaMessages
+        print_tracks() -> will print all events
+        print_tracks(meta_only=True) -> will print only MetaEvent
         """
         for i, track in enumerate(self.tracks):
             print(f'=== Track {i}')
             for msg in track:
-                if not isinstance(msg, MetaMessage) and meta_only:
+                if not isinstance(msg, MetaEvent) and meta_only:
                     pass
                 else:
                     print(f'{msg!r}')

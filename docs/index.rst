@@ -201,7 +201,7 @@ Everybody is welcome!
 
    about_midi
    message_types
-   meta_message_types
+   meta_event_types
    resources
 
    freezing_exe

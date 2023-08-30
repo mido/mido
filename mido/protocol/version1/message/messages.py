@@ -59,7 +59,7 @@ class BaseMessage:
         return cls(**data)
 
     def _get_value_names(self):
-        # This is overridden by MetaMessage.
+        # This is overridden by MetaEvent.
         return list(SPEC_BY_TYPE[self.type]['value_names']) + ['time']
 
     def __repr__(self):

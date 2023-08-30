@@ -23,8 +23,8 @@ In these situations you can use *frozen messages*:
 *Frozen messages* are used and behave in exactly the same way as normal
 messages with one exception: **attributes are not settable**.
 
-There are also variants for meta messages (``FrozenMetaMessage`` and
-``FrozenUnknownMetaMessage``).
+There are also variants for meta events (``FrozenMetaEvent`` and
+``FrozenUnknownMetaEvent``).
 
 You can *freeze* and *thaw* messages with:
 

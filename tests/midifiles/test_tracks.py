@@ -4,7 +4,7 @@
 
 import itertools
 from mido.protocol.version1.message import Message
-from mido.file.smf.meta import MetaMessage
+from mido.file.smf.meta import MetaEvent
 from mido.file.smf.tracks import MidiTrack
 
 zip = getattr(itertools, 'izip', zip)
@@ -18,8 +18,8 @@ def test_track_slice():
 
 
 def test_track_name():
-    name1 = MetaMessage('track_name', name='name1')
-    name2 = MetaMessage('track_name', name='name2')
+    name1 = MetaEvent('track_name', name='name1')
+    name2 = MetaEvent('track_name', name='name2')
 
     # The track should use the first name it finds.
     track = MidiTrack([name1, name2])

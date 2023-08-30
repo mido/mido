@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from mido.protocol.version1.message import Message
-from mido.file.smf import MetaMessage, UnknownMetaMessage
+from mido.file.smf import MetaEvent, UnknownMetaEvent
 
 
 class Frozen:
@@ -18,13 +18,13 @@ class FrozenMessage(Frozen, Message):
     pass
 
 
-class FrozenMetaMessage(Frozen, MetaMessage):
+class FrozenMetaEvent(Frozen, MetaEvent):
     pass
 
 
-class FrozenUnknownMetaMessage(Frozen, UnknownMetaMessage):
+class FrozenUnknownMetaEvent(Frozen, UnknownMetaEvent):
     def __repr__(self):
-        return 'Frozen' + UnknownMetaMessage.__repr__(self)
+        return 'Frozen' + UnknownMetaEvent.__repr__(self)
 
 
 def is_frozen(msg):
@@ -51,10 +51,10 @@ def freeze_message(msg):
         return msg
     elif isinstance(msg, Message):
         class_ = FrozenMessage
-    elif isinstance(msg, UnknownMetaMessage):
-        class_ = FrozenUnknownMetaMessage
-    elif isinstance(msg, MetaMessage):
-        class_ = FrozenMetaMessage
+    elif isinstance(msg, UnknownMetaEvent):
+        class_ = FrozenUnknownMetaEvent
+    elif isinstance(msg, MetaEvent):
+        class_ = FrozenMetaEvent
     elif msg is None:
         return None
     else:
@@ -77,10 +77,10 @@ def thaw_message(msg):
         return msg.copy()
     elif isinstance(msg, FrozenMessage):
         class_ = Message
-    elif isinstance(msg, FrozenUnknownMetaMessage):
-        class_ = UnknownMetaMessage
-    elif isinstance(msg, FrozenMetaMessage):
-        class_ = MetaMessage
+    elif isinstance(msg, FrozenUnknownMetaEvent):
+        class_ = UnknownMetaEvent
+    elif isinstance(msg, FrozenMetaEvent):
+        class_ = MetaEvent
     elif msg is None:
         return None
     else:

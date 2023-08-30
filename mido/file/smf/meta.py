@@ -1,12 +1,13 @@
 # SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 
 """
-Meta messages for MIDI files.
+Meta Events for MIDI files.
 
 TODO:
-     - what if an unknown meta message is implemented and someone depends on
+     - what if an unknown meta event is implemented and someone depends on
        the 'data' attribute?
      - is 'type_byte' a good name?
      - 'values' is not a good name for a dictionary.
@@ -19,7 +20,9 @@ import struct
 from contextlib import contextmanager
 from numbers import Integral
 
-from mido.protocol.version1.message import BaseMessage, check_time
+from .event import BaseEvent
+
+from mido.protocol.version1.message import check_time
 
 _charset = 'latin1'
 
@@ -108,7 +111,7 @@ def encode_variable_int(value):
     Returns the integer as a list of bytes,
     where the last byte is < 128.
 
-    This is used for delta times and meta message payload
+    This is used for delta times and meta event payload
     length.
     """
     if not isinstance(value, Integral) or value < 0:
@@ -184,16 +187,16 @@ class MetaSpec_sequence_number(MetaSpec):
     attributes = ['number']
     defaults = [0]
 
-    def decode(self, message, data):
+    def decode(self, event, data):
         if len(data) == 0:
-            # Message with length 0 can occur in some files.
+            # Event with length 0 can occur in some files.
             # (See issues 42 and 93.)
-            message.number = 0
+            event.number = 0
         else:
-            message.number = (data[0] << 8) | data[1]
+            event.number = (data[0] << 8) | data[1]
 
-    def encode(self, message):
-        return [message.number >> 8, message.number & 0xff]
+    def encode(self, event):
+        return [event.number >> 8, event.number & 0xff]
 
     def check(self, name, value):
         check_int(value, 0, 0xffff)
@@ -204,11 +207,11 @@ class MetaSpec_text(MetaSpec):
     attributes = ['text']
     defaults = ['']
 
-    def decode(self, message, data):
-        message.text = decode_string(data)
+    def decode(self, event, data):
+        event.text = decode_string(data)
 
-    def encode(self, message):
-        return encode_string(message.text)
+    def encode(self, event):
+        return encode_string(event.text)
 
     def check(self, name, value):
         check_str(value)
@@ -223,11 +226,11 @@ class MetaSpec_track_name(MetaSpec_text):
     attributes = ['name']
     defaults = ['']
 
-    def decode(self, message, data):
-        message.name = decode_string(data)
+    def decode(self, event, data):
+        event.name = decode_string(data)
 
-    def encode(self, message):
-        return encode_string(message.name)
+    def encode(self, event):
+        return encode_string(event.name)
 
 
 class MetaSpec_instrument_name(MetaSpec_track_name):
@@ -255,11 +258,11 @@ class MetaSpec_channel_prefix(MetaSpec):
     attributes = ['channel']
     defaults = [0]
 
-    def decode(self, message, data):
-        message.channel = data[0]
+    def decode(self, event, data):
+        event.channel = data[0]
 
-    def encode(self, message):
-        return [message.channel]
+    def encode(self, event):
+        return [event.channel]
 
     def check(self, name, value):
         check_int(value, 0, 0xff)
@@ -270,16 +273,16 @@ class MetaSpec_midi_port(MetaSpec):
     attributes = ['port']
     defaults = [0]
 
-    def decode(self, message, data):
+    def decode(self, event, data):
         if len(data) == 0:
-            # Message with length 0 can occur in some files.
+            # Event with length 0 can occur in some files.
             # (See issues 42 and 93.)
-            message.port = 0
+            event.port = 0
         else:
-            message.port = data[0]
+            event.port = data[0]
 
-    def encode(self, message):
-        return [message.port]
+    def encode(self, event):
+        return [event.port]
 
     def check(self, name, value):
         check_int(value, 0, 255)
@@ -290,10 +293,10 @@ class MetaSpec_end_of_track(MetaSpec):
     attributes = []
     defaults = []
 
-    def decode(self, message, data):
+    def decode(self, event, data):
         pass
 
-    def encode(self, message):
+    def encode(self, _event):
         return []
 
 
@@ -302,11 +305,11 @@ class MetaSpec_set_tempo(MetaSpec):
     attributes = ['tempo']
     defaults = [500000]
 
-    def decode(self, message, data):
-        message.tempo = (data[0] << 16) | (data[1] << 8) | (data[2])
+    def decode(self, event, data):
+        event.tempo = (data[0] << 16) | (data[1] << 8) | (data[2])
 
-    def encode(self, message):
-        tempo = message.tempo
+    def encode(self, event):
+        tempo = event.tempo
         return [tempo >> 16, tempo >> 8 & 0xff, tempo & 0xff]
 
     def check(self, name, value):
@@ -325,21 +328,21 @@ class MetaSpec_smpte_offset(MetaSpec):
     # TODO: What are some good defaults?
     defaults = [24, 0, 0, 0, 0, 0]
 
-    def decode(self, message, data):
-        message.frame_rate = _smpte_framerate_decode[(data[0] >> 5)]
-        message.hours = (data[0] & 0b0001_1111)
-        message.minutes = data[1]
-        message.seconds = data[2]
-        message.frames = data[3]
-        message.sub_frames = data[4]
+    def decode(self, event, data):
+        event.frame_rate = _smpte_framerate_decode[(data[0] >> 5)]
+        event.hours = (data[0] & 0b0001_1111)
+        event.minutes = data[1]
+        event.seconds = data[2]
+        event.frames = data[3]
+        event.sub_frames = data[4]
 
-    def encode(self, message):
-        frame_rate_lookup = _smpte_framerate_encode[message.frame_rate] << 5
-        return [frame_rate_lookup | message.hours,
-                message.minutes,
-                message.seconds,
-                message.frames,
-                message.sub_frames]
+    def encode(self, event):
+        frame_rate_lookup = _smpte_framerate_encode[event.frame_rate] << 5
+        return [frame_rate_lookup | event.hours,
+                event.minutes,
+                event.seconds,
+                event.frames,
+                event.sub_frames]
 
     def check(self, name, value):
         if name == 'frame_rate':
@@ -365,17 +368,17 @@ class MetaSpec_time_signature(MetaSpec):
                   'notated_32nd_notes_per_beat']
     defaults = [4, 4, 24, 8]
 
-    def decode(self, message, data):
-        message.numerator = data[0]
-        message.denominator = 2 ** data[1]
-        message.clocks_per_click = data[2]
-        message.notated_32nd_notes_per_beat = data[3]
+    def decode(self, event, data):
+        event.numerator = data[0]
+        event.denominator = 2 ** data[1]
+        event.clocks_per_click = data[2]
+        event.notated_32nd_notes_per_beat = data[3]
 
-    def encode(self, message):
-        return [message.numerator,
-                int(math.log(message.denominator, 2)),
-                message.clocks_per_click,
-                message.notated_32nd_notes_per_beat,
+    def encode(self, event):
+        return [event.numerator,
+                int(math.log(event.denominator, 2)),
+                event.clocks_per_click,
+                event.notated_32nd_notes_per_beat,
                 ]
 
     def check(self, name, value):
@@ -397,11 +400,11 @@ class MetaSpec_key_signature(MetaSpec):
     attributes = ['key']
     defaults = ['C']
 
-    def decode(self, message, data):
+    def decode(self, event, data):
         key = signed('byte', data[0])
         mode = data[1]
         try:
-            message.key = _key_signature_decode[(key, mode)]
+            event.key = _key_signature_decode[(key, mode)]
         except KeyError:
             if key < 7:
                 msg = ('Could not decode key with {} '
@@ -411,8 +414,8 @@ class MetaSpec_key_signature(MetaSpec):
                        'sharps and mode {}'.format(key, mode))
             raise KeySignatureError(msg)
 
-    def encode(self, message):
-        key, mode = _key_signature_encode[message.key]
+    def encode(self, event):
+        key, mode = _key_signature_encode[event.key]
         return [unsigned('byte', key), mode]
 
     def check(self, name, value):
@@ -425,11 +428,11 @@ class MetaSpec_sequencer_specific(MetaSpec):
     attributes = ['data']
     defaults = [[]]
 
-    def decode(self, message, data):
-        message.data = tuple(data)
+    def decode(self, event, data):
+        event.data = tuple(data)
 
-    def encode(self, message):
-        return list(message.data)
+    def encode(self, event):
+        return list(event.data)
 
 
 def add_meta_spec(klass):
@@ -458,14 +461,14 @@ def _add_builtin_meta_specs():
 _add_builtin_meta_specs()
 
 
-def build_meta_message(meta_type, data, delta=0):
+def build_meta_event(meta_type, data, delta=0):
     # TODO: handle unknown type.
     try:
         spec = _META_SPECS[meta_type]
     except KeyError:
-        return UnknownMetaMessage(meta_type, data)
+        return UnknownMetaEvent(meta_type, data)
     else:
-        msg = MetaMessage(spec.type, time=delta)
+        msg = MetaEvent(spec.type, time=delta)
 
         # This adds attributes to msg:
         spec.decode(msg, data)
@@ -473,7 +476,7 @@ def build_meta_message(meta_type, data, delta=0):
         return msg
 
 
-class MetaMessage(BaseMessage):
+class MetaEvent(BaseEvent):
     is_meta = True
 
     def __init__(self, type, **kwargs):
@@ -486,7 +489,7 @@ class MetaMessage(BaseMessage):
         for name in kwargs:
             if name not in spec.settable_attributes:
                 raise ValueError(
-                    '{} is not a valid argument for this message type'.format(
+                    '{} is not a valid argument for this event type'.format(
                         name))
 
         for name, value in zip(spec.attributes, spec.defaults):
@@ -498,10 +501,10 @@ class MetaMessage(BaseMessage):
             self._setattr(name, value)
 
     def copy(self, **overrides):
-        """Return a copy of the message
+        """Return a copy of the event
 
         Attributes will be overridden by the passed keyword arguments.
-        Only message specific attributes can be overridden. The message
+        Only event specific attributes can be overridden. The event
         type can not be changed.
         """
         if not overrides:
@@ -511,13 +514,13 @@ class MetaMessage(BaseMessage):
             return msg
 
         if 'type' in overrides and overrides['type'] != self.type:
-            raise ValueError('copy must be same message type')
+            raise ValueError('copy must be same event type')
 
         attrs = vars(self).copy()
         attrs.update(overrides)
         return self.__class__(**attrs)
 
-    # FrozenMetaMessage overrides __setattr__() but we still need to
+    # FrozenMetaEvent overrides __setattr__() but we still need to
     # set attributes in __init__().
     def _setattr(self, name, value):
         spec = _META_SPEC_BY_TYPE[self.type]
@@ -534,7 +537,7 @@ class MetaMessage(BaseMessage):
             raise AttributeError(f'{name} attribute is read only')
         else:
             raise AttributeError(
-                f'{self.type} message has no attribute {name}')
+                f'{self.type} event has no attribute {name}')
 
     __setattr__ = _setattr
 
@@ -547,7 +550,7 @@ class MetaMessage(BaseMessage):
     @classmethod
     def from_bytes(cls, msg_bytes):
         if msg_bytes[0] != 0xff:
-            raise ValueError('bytes does not correspond to a MetaMessage.')
+            raise ValueError('bytes does not correspond to a MetaEvent.')
         scan_end = 2
         data = []
         flag = True
@@ -559,8 +562,8 @@ class MetaMessage(BaseMessage):
             if length == len(data):
                 flag = False
         if flag:
-            raise ValueError('Bad data. Cannot be converted to message.')
-        msg = build_meta_message(msg_bytes[1], data)
+            raise ValueError('Bad data. Cannot be converted to event.')
+        msg = build_meta_event(msg_bytes[1], data)
         return msg
 
     def _get_value_names(self):
@@ -569,7 +572,7 @@ class MetaMessage(BaseMessage):
         return spec.attributes + ['time']
 
 
-class UnknownMetaMessage(MetaMessage):
+class UnknownMetaEvent(MetaEvent):
     def __init__(self, type_byte, data=None, time=0, type='unknown_meta'):
         if data is None:
             data = ()
@@ -583,7 +586,7 @@ class UnknownMetaMessage(MetaMessage):
             'time': time})
 
     def __repr__(self):
-        fmt = 'UnknownMetaMessage(type_byte={}, data={}, time={})'
+        fmt = 'UnknownMetaEvent(type_byte={}, data={}, time={})'
         return fmt.format(self.type_byte, self.data, self.time)
 
     def __setattr__(self, name, value):

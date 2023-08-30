@@ -25,7 +25,7 @@ You can open a file with::
     (See :doc:`syx` for more.)
 
 The ``tracks`` attribute is a list of tracks. Each track is a list of
-messages and meta messages, with the ``time`` attribute of each
+events and meta events, with the ``time`` attribute of each
 messages set to its delta time (in ticks). (See Tempo and Beat
 Resolution below for more on delta times.)
 
@@ -44,12 +44,12 @@ method. (More on this below.)
 Iterating Over Messages
 -----------------------
 
-Iterating over a ``MidiFile`` object will generate all MIDI messages
-in the file in playback order. The ``time`` attribute of each message
-is the number of seconds since the last message or the start of the
+Iterating over a ``MidiFile`` object will generate all MIDI message events
+in the file in playback order. The ``time`` attribute of each event
+is the number of seconds since the last event or the start of the
 file.
 
-Meta messages will also be included. If you want to filter them out,
+Meta events will also be included. If you want to filter them out,
 you can do::
 
     if msg.is_meta:
@@ -69,7 +69,7 @@ This is so useful that there's a method for it::
         port.send(msg)
 
 This does the sleeping and filtering for you (while avoiding drift). If you
-pass ``meta_messages=True`` you will also get meta messages. These **cannot**
+pass ``meta_events=True`` you will also get meta events. These **cannot**
 be sent on ports, which is why they are ``off`` by default.
 
 
@@ -146,32 +146,32 @@ a type 2 file will raise ``ValueError``, since it is impossible to
 compute the playback time of an asynchronous file.
 
 
-Meta Messages
--------------
+Meta Events
+-----------
 
-Meta messages behave like normal messages and can be created in the
+Meta events behave like normal events and can be created in the
 usual way, for example::
 
-    >>> from mido import MetaMessage
-    >>> MetaMessage('key_signature', key='C#', mode='major')
-    MetaMessage('key_signature', key='C#', mode='major', time=0)
+    >>> from mido import MetaEvent
+    >>> MetaEvent('key_signature', key='C#', mode='major')
+    MetaEvent('key_signature', key='C#', mode='major', time=0)
 
-You can tell meta messages apart from normal messages with::
+You can tell meta events apart from normal events with::
 
     if msg.is_meta:
         ...
 
-or if you know the message type you can use the ``type`` attribute::
+or if you know the event type you can use the ``type`` attribute::
 
     if msg.type == 'key_signature':
         ...
     elif msg.type == 'note_on':
         ...
 
-Meta messages **cannot** be sent on ports.
+Meta events **cannot** be sent on ports.
 
-For a list of supported meta messages and their attributes, and also
-how to implement new meta messages, see :doc:`../meta_message_types`.
+For a list of supported meta events and their attributes, and also
+how to implement new meta events, see :doc:`../meta_event_types`.
 
 
 About the Time Attribute
@@ -221,7 +221,7 @@ denominator of the time signature. E.g. in 2/2 time signature a beat has a
 length of a half note, i.e. two quarter notes. Thus the default MIDI tempo of
 500000 corresponds to a beat length of 1 second which is 60 BPM.
 
-The meta messages 'set_tempo' and 'time_signature' can be used to change
+The meta events 'set_tempo' and 'time_signature' can be used to change
 the tempo and time signature during a song, respectively.
 
 You can use :py:func:`bpm2tempo` and :py:func:`tempo2bpm` to convert to and

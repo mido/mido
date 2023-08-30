@@ -87,8 +87,8 @@ Main Features
 * includes a reusable MIDI stream parser.
 
 * full support for MIDI files (read, write, create and play) with
-  complete access to every message in the file, including all common
-  meta messages.
+  complete access to every event in the file, including all common
+  meta events.
 
 * can read and write SYX files (binary and plain text).
 

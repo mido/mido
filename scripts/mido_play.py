@@ -61,7 +61,7 @@ def play_file(output, filename, print_messages):
     for i, track in enumerate(midi_file.tracks):
         print(f'  {i:2d}: {track.name.strip()!r}')
 
-    for message in midi_file.play(meta_messages=True):
+    for message in midi_file.play(meta_events=True):
         if print_messages:
             sys.stdout.write(repr(message) + '\n')
             sys.stdout.flush()

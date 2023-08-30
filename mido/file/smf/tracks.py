@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .meta import MetaMessage
+from .meta import MetaEvent
 
 
 class MidiTrack(list):
@@ -32,7 +32,7 @@ class MidiTrack(list):
                 return
         else:
             # No track name found, add one.
-            self.insert(0, MetaMessage('track_name', name=name, time=0))
+            self.insert(0, MetaEvent('track_name', name=name, time=0))
 
     def copy(self):
         return self.__class__(self)
@@ -100,7 +100,7 @@ def fix_end_of_track(messages):
             else:
                 yield msg
 
-    yield MetaMessage('end_of_track', time=accum)
+    yield MetaEvent('end_of_track', time=accum)
 
 
 def merge_tracks(tracks):

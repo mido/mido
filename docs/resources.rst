@@ -40,6 +40,6 @@ Resources
   assignment in `Music 253 <https://wiki.ccarh.org/wiki/Music_253>`_ at
   Stanford University)
 
-* `Meta Message
+* `Sequencer Specific Meta Event (Logic)
   <https://www.soundonsound.com/techniques/meta-messages-logic>`_
   (Sound On Sound)

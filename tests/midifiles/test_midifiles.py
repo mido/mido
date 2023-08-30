@@ -6,7 +6,7 @@ import io
 from pytest import raises
 from mido.protocol.version1.message import Message
 from mido.file.smf.midifiles import MidiFile, MidiTrack
-from mido.file.smf.meta import (MetaMessage, KeySignatureError)
+from mido.file.smf.meta import (MetaEvent, KeySignatureError)
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # MThd
@@ -98,7 +98,7 @@ def test_invalid_data_byte_with_clipping_high():
     assert midi_file.tracks[0][0].note == 127
 
 
-def test_meta_messages():
+def test_meta_events():
     # TODO: should this raise IOError?
     mid = read_file(HEADER_ONE_TRACK + """
     4d 54 72 6b  # MTrk
@@ -109,11 +109,11 @@ def test_meta_messages():
 
     track = mid.tracks[0]
 
-    assert track[0] == MetaMessage('track_name', name='Test')
-    assert track[1] == MetaMessage('end_of_track')
+    assert track[0] == MetaEvent('track_name', name='Test')
+    assert track[1] == MetaEvent('end_of_track')
 
 
-def test_meta_message_bad_key_sig_throws_key_signature_error_sharps():
+def test_meta_event_bad_key_sig_throws_key_signature_error_sharps():
     with raises(KeySignatureError):
         read_file(HEADER_ONE_TRACK + """
             4d 54 72 6b  # MTrk
@@ -123,7 +123,7 @@ def test_meta_message_bad_key_sig_throws_key_signature_error_sharps():
             """)
 
 
-def test_meta_message_bad_key_sig_throws_key_signature_error_flats():
+def test_meta_event_bad_key_sig_throws_key_signature_error_flats():
     with raises(KeySignatureError):
         read_file(HEADER_ONE_TRACK + """
             4d 54 72 6b  # MTrk
@@ -133,7 +133,7 @@ def test_meta_message_bad_key_sig_throws_key_signature_error_flats():
             """)
 
 
-def test_meta_messages_with_length_0():
+def test_meta_events_with_length_0():
     """sequence_number and midi_port with no data bytes should be accepted.
 
     In rare cases these messages have length 0 and thus no data
@@ -142,7 +142,7 @@ def test_meta_messages_with_length_0():
     that created the files.
 
     So far this has been fixed by adding a test to each of these two
-    meta message classes. If the problem appears with other message
+    meta event classes. If the problem appears with other message
     types it may be worth finding a more general solution.
     """
     mid = read_file(HEADER_ONE_TRACK + """
@@ -159,13 +159,13 @@ def test_meta_messages_with_length_0():
     """)
 
     assert mid.tracks[0] == [
-        MetaMessage('sequence_number', number=0),
-        MetaMessage('midi_port', port=0),
+        MetaEvent('sequence_number', number=0),
+        MetaEvent('midi_port', port=0),
 
-        MetaMessage('sequence_number', number=1),
-        MetaMessage('midi_port', port=1),
+        MetaEvent('sequence_number', number=1),
+        MetaEvent('midi_port', port=1),
 
-        MetaMessage('end_of_track'),
+        MetaEvent('end_of_track'),
     ]
 
 
@@ -175,7 +175,7 @@ def test_midifile_repr():
             Message('note_on', channel=1, note=2, time=3),
             Message('note_off', channel=1, note=2, time=3)]),
         MidiTrack([
-            MetaMessage('sequence_number', number=5),
+            MetaEvent('sequence_number', number=5),
             Message('note_on', channel=2, note=6, time=9),
             Message('note_off', channel=2, note=6, time=9)]),
     ])

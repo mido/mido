@@ -1,12 +1,13 @@
 .. SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
+.. SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 ..
 .. SPDX-License-Identifier: CC-BY-4.0
 
-Meta Message Types
-==================
+Meta Events Types
+=================
 
-Supported Messages
-------------------
+Supported Events
+----------------
 
 sequence_number (0x00)
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -30,7 +31,7 @@ Attribute       Values          Default
 text            string          ''
 ==============  ==============  ========
 
-General "Text" Meta Message. Can be used for any text based data.
+General "Text" Meta Event. Can be used for any text based data.
 
 
 copyright (0x02)
@@ -78,7 +79,7 @@ Attribute       Values          Default
 text            string          ''
 ==============  ==============  ========
 
-Stores the lyrics of a song. Typically one syllable per Meta Message.
+Stores the lyrics of a song. Typically one syllable per Meta Event.
 
 
 marker (0x06)
@@ -151,7 +152,7 @@ Attribute       Values          Default
 n/a             n/a             n/a
 ==============  ==============  ========
 
-An empty Meta Message that marks the end of a track.
+An empty Meta Event that marks the end of a track.
 
 
 set_tempo (0x51)
@@ -198,13 +199,13 @@ notated_32nd_notes_per_beat      0..255           8
 
 Time signature of:
 
-4/4 : MetaMessage('time_signature', numerator=4, denominator=4)
+4/4 : MetaEvent('time_signature', numerator=4, denominator=4)
 
-3/8 : MetaMessage('time_signature', numerator=3, denominator=8)
+3/8 : MetaEvent('time_signature', numerator=3, denominator=8)
 
 .. versionadded:: 1.2.9
 
-    Time signature message have the correct default value of 4/4. In earlier
+    Time signature event have the correct default value of 4/4. In earlier
     versions the default value was 2/4 due to a typo in the code.
 
 
@@ -237,35 +238,35 @@ data            [..]			[]
 An unprocessed sequencer specific message containing raw data.
 
 
-Unknown Meta Messages
----------------------
+Unknown Meta Events
+-------------------
 
-Unknown meta messages will be returned as ``UnknownMetaMessage``
-objects, with ``type`` set to ``unknown_meta``. The messages are saved
+Unknown meta events will be returned as ``UnknownMetaEvent``
+objects, with ``type`` set to ``unknown_meta``. The events are saved
 back to the file exactly as they came out.
 
-Code that depends on ``UnknownMetaMessage`` may break if the message
+Code that depends on ``UnknownMetaEvent`` may break if the event
 in question is ever implemented, so it's best to only use these to
-learn about the format of the new message and then implement it as
+learn about the format of the new event and then implement it as
 described below.
 
-``UnknownMetaMessage`` have two attributes:
+``UnknownMetaEvent`` have two attributes:
 
-* ``type_byte`` - a byte which uniquely identifies this message type
+* ``type_byte`` - a byte which uniquely identifies this event type
 
-* ``data`` - the message data as a list of bytes
+* ``data`` - the event data as a list of bytes
 
 These are also visible in the ``repr()`` string::
 
-    UnknownMetaMessage(type_byte=251, data=(1, 2, 3), time=0)
+    UnknownMetaEvent(type_byte=251, data=(1, 2, 3), time=0)
 
 
-Implementing New or Custom Meta Messages
-----------------------------------------
+Implementing New or Custom Meta Events
+--------------------------------------
 
-If you come across a meta message which is not implemented or you
-want to use a custom meta message, you can add it by writing a new
-meta message spec::
+If you come across a meta event which is not implemented or you
+want to use a custom meta event, you can add it by writing a new
+meta event spec::
 
     from mido.midifiles.meta import MetaSpec, add_meta_spec
 
@@ -305,9 +306,9 @@ Then you can add your new message type with::
 
 and create messages in the usual way::
 
-    >>> from mido import MetaMessage
-    >>> MetaMessage('light_color', r=120, g=60, b=10)
-    MetaMessage('light_color', r=120, g=60, b=10, time=0)
+    >>> from mido import MetaEvent
+    >>> MetaEvent('light_color', r=120, g=60, b=10)
+    MetaEvent('light_color', r=120, g=60, b=10, time=0)
 
 and the new message type will now work when reading and writing MIDI
 files.

@@ -11,8 +11,6 @@ designed to be as straight forward and Pythonic as possible.
 Creating messages:
 
     Message(type, **parameters) -- create a new message
-    MetaMessage(type, **parameters) -- create a new meta message
-    UnknownMetaMessage(type_byte, data=None, time=0)
 
 Ports:
 
@@ -103,7 +101,7 @@ from .protocol.version1.message import (
 from .file.smf import (
     MidiFile, MidiTrack,
     merge_tracks,
-    MetaMessage, UnknownMetaMessage,
+    MetaEvent, UnknownMetaEvent,
     bpm2tempo, tempo2bpm, tick2second, second2tick,
     KeySignatureError)
 from .protocol.version1.parser import Parser, parse, parse_all
