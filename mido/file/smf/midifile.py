@@ -22,6 +22,7 @@ from .event.meta import (
     MetaEvent,
     build_meta_event, meta_charset, encode_variable_int
 )
+from .event.sysex import SysExEvent
 from .track import MidiTrack, merge_tracks, fix_end_of_track
 from .units import tick2second
 
@@ -145,7 +146,7 @@ def read_sysex_event(infile, delta_time, clip=False):
     if clip:
         data = [byte if byte < 127 else 127 for byte in data]
 
-    return MidiEvent(delta_time=delta_time, type='sysex', data=data)
+    return SysExEvent(delta_time=delta_time, data=data)
 
 
 def read_variable_int(infile):
