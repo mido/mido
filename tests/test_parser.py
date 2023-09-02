@@ -95,8 +95,8 @@ def test_one_byte_message():
 
 
 def test_undefined_messages():
-    """The parser should ignore undefined status bytes and sysex_end."""
-    messages = parse_all([0xf4, 0xf5, 0xf7, 0xf9, 0xfd])
+    """The parser should ignore undefined status bytes."""
+    messages = parse_all([0xf4, 0xf5, 0xf9, 0xfd])
     assert messages == []
 
 

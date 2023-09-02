@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
+from warnings import catch_warnings
 
 from pytest import raises
 from mido.protocol.version1.message.decode import decode_message
@@ -22,8 +24,9 @@ def test_channel():
 
 
 def test_sysex_end():
-    with raises(ValueError):
+    with catch_warnings(record=True) as w:
         decode_message(b'\xf0\x00\x12')
+        assert len(w) == 1
 
 
 def test_zero_bytes():
@@ -47,8 +50,10 @@ def test_invalid_status():
 
 
 def test_sysex_without_stop_byte():
-    with raises(ValueError):
+    with catch_warnings(record=True) as w:
         decode_message([0xf0])
+        assert len(w) == 1
 
-    with raises(ValueError):
+    with catch_warnings(record=True) as w:
         decode_message([0xf0, 0])
+        assert len(w) == 1

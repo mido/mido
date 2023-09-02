@@ -1,15 +1,18 @@
 # SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 
 """
 MIDI 1.0 Byte-Stream Tokenizer
 """
-
+import warnings
 from collections import deque
 from numbers import Integral
-from mido.protocol.version1.message.specs import (SYSEX_START, SYSEX_END,
-                                                  SPEC_BY_STATUS)
+from mido.protocol.version1.message.specs import (
+    SPEC_BY_STATUS,
+    SYSEX_END, SYSEX_START,
+    CHANNEL_MESSAGES, REALTIME_MESSAGES)
 
 
 class Tokenizer:
@@ -19,7 +22,8 @@ class Tokenizer:
     def __init__(self, data=None):
         """Create a new decoder."""
 
-        self._status = 0
+        self._current_status = 0
+        self._running_status = 0
         self._bytes = []
         self._messages = deque()
         self._datalen = 0
@@ -27,47 +31,60 @@ class Tokenizer:
         if data is not None:
             self.feed(data)
 
-    def _feed_status_byte(self, status):
-        if status == SYSEX_END:
-            if self._status == SYSEX_START:
-                self._bytes.append(SYSEX_END)
-                self._messages.append(self._bytes)
+    def _feed_status_byte(self, status_byte):
+        # Data validation
+        try:
+            spec = SPEC_BY_STATUS[status_byte]
+        except KeyError:
+            # Invalid status byte: ignore
+            return
 
-            self._status = 0
+        # New message processing
+        if status_byte in REALTIME_MESSAGES:
+            # Directly store message,
+            # do not touch statuses and do not end sysex message
+            self._messages.append([status_byte])
+            return
 
-        elif 0xf8 <= status <= 0xff:
-            if self._status != SYSEX_START:
-                # Realtime messages are only allowed inside sysex
-                # messages. Reset parser.
-                self._status = 0
+        # Any status byte (including EOX) except real time messages
+        # ends a sysex message
+        if self._current_status == SYSEX_START:
+            self._current_status = 0
+            self._messages.append(self._bytes)
+            if status_byte == SYSEX_END:
+                # FIXME: end_of_exclusive should be a separate message
+                # Let's keep compatible behavior for now.
+                self._bytes.append(status_byte)
+                return
 
-            if status in SPEC_BY_STATUS:
-                self._messages.append([status])
-
-        elif status in SPEC_BY_STATUS:
-            # New message.
-            spec = SPEC_BY_STATUS[status]
-
-            if spec['length'] == 1:
-                self._messages.append([status])
-                self._status = 0
-            else:
-                self._status = status
-                self._bytes = [status]
-                self._len = spec['length']
+        # Prepare receiving data bytes if any
+        if spec['length'] == 1:
+            self._current_status = 0
+            self._messages.append([status_byte])
         else:
-            # Undefined message. Reset parser.
-            # (Undefined realtime messages are handled above.)
-            # self._status = 0
-            pass
+            self._current_status = status_byte
+            self._bytes = [status_byte]
+            self._len = spec['length']
+
+        # Set or reset running status
+        if status_byte in CHANNEL_MESSAGES:
+            self._running_status = self._current_status
+        else:  # SYSTEM_COMMON_MESSAGES & SYSTEM_EXCLUSIVE_MESSAGE
+            self._running_status = 0
 
     def _feed_data_byte(self, byte):
-        if self._status:
+        if self._current_status:
             self._bytes.append(byte)
+
             if len(self._bytes) == self._len:
-                # Complete message.
+                # End complete message
                 self._messages.append(self._bytes)
-                self._status = 0
+
+                # Keep current status running if available
+                if self._running_status:
+                    self._bytes = [self._running_status]
+                else:
+                    self._current_status = 0
         else:
             # Ignore stray data byte.
             pass
@@ -81,17 +98,17 @@ class Tokenizer:
             raise TypeError('message byte must be integer')
 
         if 0 <= byte <= 255:
-            if byte <= 127:
-                return self._feed_data_byte(byte)
-            else:
+            if byte > 127:
                 return self._feed_status_byte(byte)
+            else:
+                return self._feed_data_byte(byte)
         else:
             raise ValueError(f'invalid byte value {byte!r}')
 
     def feed(self, data):
         """Feed MIDI bytes to the decoder.
 
-        Takes an iterable of ints in in range [0..255].
+        Takes an iterable of ints in range [0..255].
         """
         for byte in data:
             self.feed_byte(byte)

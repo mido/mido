@@ -39,6 +39,7 @@ def _defmsg(status_byte, type_, value_names, length):
 
 
 SPECS = [
+    # Channel messages.
     _defmsg(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
     _defmsg(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
     _defmsg(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
@@ -54,6 +55,7 @@ SPECS = [
     _defmsg(0xf2, 'songpos', ('pos',), 3),
     _defmsg(0xf3, 'song_select', ('song',), 2),
     _defmsg(0xf6, 'tune_request', (), 1),
+    _defmsg(0xf7, 'end_of_exclusive', (), 1),
 
     # System real time messages.
     # 0xf9 and 0xfd are undefined.

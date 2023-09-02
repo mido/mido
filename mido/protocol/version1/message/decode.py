@@ -1,10 +1,12 @@
 # SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 
 """
 MIDI 1.0 Protocol Decoders
 """
+import warnings
 
 from .specs import (SYSEX_START, SYSEX_END,
                     SPEC_BY_STATUS, CHANNEL_MESSAGES,
@@ -95,12 +97,14 @@ def decode_message(msg_bytes, timestamp=0, delta_time=None, check=True):
     # Sysex.
     if status_byte == SYSEX_START:
         if len(data) < 1:
-            raise ValueError('sysex without end byte')
+            warnings.warn('sysex without end byte')
+            data = list(data)
+            data.append(SYSEX_END)
 
         end = data[-1]
         data = data[:-1]
         if end != SYSEX_END:
-            raise ValueError(f'invalid sysex end byte {end!r}')
+            warnings.warn(f'invalid sysex end byte {end!r}')
 
     if check:
         check_data(data)
