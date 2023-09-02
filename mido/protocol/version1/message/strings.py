@@ -1,11 +1,16 @@
 # SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
+
+"""
+MIDI 1.0 Protocol to String and Back
+"""
 
 from .specs import SPEC_BY_TYPE, make_msgdict
 
 
-def msg2str(msg, include_time=True):
+def msg2str(msg, include_timestamp=False, include_delta_time=False):
     type_ = msg['type']
     spec = SPEC_BY_TYPE[type_]
 
@@ -18,8 +23,11 @@ def msg2str(msg, include_time=True):
             value = '({})'.format(','.join(str(byte) for byte in value))
         words.append(f'{name}={value}')
 
-    if include_time:
-        words.append('time={}'.format(msg['time']))
+    if include_timestamp:
+        words.append('timestamp={}'.format(msg.get('timestamp')))
+
+    if include_delta_time:
+        words.append('delta_time={}'.format(msg.get('delta_time')))
 
     return str.join(' ', words)
 
@@ -63,7 +71,7 @@ def str2msg(text):
 
     for arg in args:
         name, value = arg.split('=', 1)
-        if name == 'time':
+        if name == 'timestamp' or name == 'delta_time':
             value = _parse_time(value)
         elif name == 'data':
             value = _parse_data(value)

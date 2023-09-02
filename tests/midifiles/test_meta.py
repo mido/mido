@@ -3,18 +3,19 @@
 # SPDX-License-Identifier: MIT
 
 import pytest
-from mido.file.smf.meta import (MetaEvent, UnknownMetaEvent,
-                                MetaSpec_key_signature, KeySignatureError)
+from mido.file.smf.event.meta import (MetaEvent, UnknownMetaEvent,
+                                      MetaSpec_key_signature,
+                                      KeySignatureError)
 
 
 def test_copy_invalid_argument():
     with pytest.raises(ValueError):
-        MetaEvent('track_name').copy(a=1)
+        MetaEvent(delta_time=0, type='track_name').copy(a=1)
 
 
 def test_copy_cant_override_type():
     with pytest.raises(ValueError):
-        MetaEvent('track_name').copy(type='end_of_track')
+        MetaEvent(delta_time=0, type='track_name').copy(type='end_of_track')
 
 
 class TestKeySignature:
@@ -22,8 +23,9 @@ class TestKeySignature:
                                              [9, 1], [255 - 7, 0]])
     def test_bad_key_sig_throws_key_signature_error(self, bad_key_sig):
         with pytest.raises(KeySignatureError):
-            MetaSpec_key_signature().decode(MetaEvent('key_signature'),
-                                            bad_key_sig)
+            MetaSpec_key_signature().decode(
+                MetaEvent(delta_time=0, type='key_signature'),
+                bad_key_sig)
 
     @pytest.mark.parametrize('input_bytes,expect_sig', [([0, 0], 'C'),
                                                         ([0, 1], 'Am'),
@@ -32,19 +34,19 @@ class TestKeySignature:
                                                         ([7, 1], 'A#m')
                                                         ])
     def test_key_signature(self, input_bytes, expect_sig):
-        msg = MetaEvent('key_signature')
+        msg = MetaEvent(delta_time=0, type='key_signature')
         MetaSpec_key_signature().decode(msg, input_bytes)
         assert msg.key == expect_sig
 
 
 def test_meta_event_repr():
-    msg = MetaEvent('end_of_track', time=10)
+    msg = MetaEvent(delta_time=10, type='end_of_track')
     msg_eval = eval(repr(msg))
     assert msg == msg_eval
 
 
 def test_unknown_meta_event_repr():
-    msg = UnknownMetaEvent(type_byte=99, data=[1, 2], time=10)
+    msg = UnknownMetaEvent(delta_time=10, type_byte=99, data=[1, 2])
     msg_eval = eval(repr(msg))
     assert msg == msg_eval
 

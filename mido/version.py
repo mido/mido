@@ -1,6 +1,11 @@
 # SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
+
+"""
+MIDO Library Version Management
+"""
 
 import packaging.version
 

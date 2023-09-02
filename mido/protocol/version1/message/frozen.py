@@ -2,8 +2,13 @@
 #
 # SPDX-License-Identifier: MIT
 
-from mido.protocol.version1.message import Message
+"""
+MIDI 1.0 Protocol Messages Frozen (Immutable)
+"""
+
 from mido.file.smf import MetaEvent, UnknownMetaEvent
+
+from .message import Message
 
 
 class Frozen:

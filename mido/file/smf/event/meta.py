@@ -1,10 +1,9 @@
-# SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
-# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
+#  SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 
 """
-Meta Events for MIDI files.
+Standard MIDI File (SMF) Meta Events
 
 TODO:
      - what if an unknown meta event is implemented and someone depends on
@@ -15,16 +14,17 @@ TODO:
      - copy().
      - expose _key_signature_encode/decode?
 """
+
 import math
 import struct
 from contextlib import contextmanager
 from numbers import Integral
 
-from .event import BaseEvent
+from mido.protocol.version1.message.checks import check_time
 
-from mido.protocol.version1.message import check_time
+from .base import MtrkEvent
 
-_charset = 'latin1'
+_charset = 'latin1'  # FIXME: should be ASCII by default
 
 
 class KeySignatureError(Exception):
@@ -407,12 +407,12 @@ class MetaSpec_key_signature(MetaSpec):
             event.key = _key_signature_decode[(key, mode)]
         except KeyError:
             if key < 7:
-                msg = ('Could not decode key with {} '
-                       'flats and mode {}'.format(abs(key), mode))
+                err_msg = ('Could not decode key with {} '
+                           'flats and mode {}'.format(abs(key), mode))
             else:
-                msg = ('Could not decode key with {} '
-                       'sharps and mode {}'.format(key, mode))
-            raise KeySignatureError(msg)
+                err_msg = ('Could not decode key with {} '
+                           'sharps and mode {}'.format(key, mode))
+            raise KeySignatureError(err_msg)
 
     def encode(self, event):
         key, mode = _key_signature_encode[event.key]
@@ -442,7 +442,7 @@ def add_meta_spec(klass):
         spec.type = name
 
     # This is used by copy().
-    spec.settable_attributes = set(spec.attributes) | {'time'}
+    spec.settable_attributes = set(spec.attributes) | {'delta_time'}
     _META_SPECS[spec.type_byte] = spec
     _META_SPECS[spec.type] = spec
     _META_SPEC_BY_TYPE[spec.type] = spec
@@ -461,25 +461,25 @@ def _add_builtin_meta_specs():
 _add_builtin_meta_specs()
 
 
-def build_meta_event(meta_type, data, delta=0):
+def build_meta_event(meta_type, data, delta_time=0):
     # TODO: handle unknown type.
     try:
         spec = _META_SPECS[meta_type]
     except KeyError:
         return UnknownMetaEvent(meta_type, data)
     else:
-        msg = MetaEvent(spec.type, time=delta)
+        event = MetaEvent(delta_time=delta_time, type=spec.type)
 
-        # This adds attributes to msg:
-        spec.decode(msg, data)
+        # This adds attributes to event:
+        spec.decode(event, data)
 
-        return msg
+        return event
 
 
-class MetaEvent(BaseEvent):
+class MetaEvent(MtrkEvent):
     is_meta = True
 
-    def __init__(self, type, **kwargs):
+    def __init__(self, type, delta_time, **kwargs):
         # TODO: handle unknown type?
 
         spec = _META_SPEC_BY_TYPE[type]
@@ -494,7 +494,7 @@ class MetaEvent(BaseEvent):
 
         for name, value in zip(spec.attributes, spec.defaults):
             self_vars[name] = value
-        self_vars['time'] = 0
+        self_vars['delta_time'] = delta_time
 
         for name, value in kwargs.items():
             # Using setattr here because we want type and value checks.
@@ -509,9 +509,9 @@ class MetaEvent(BaseEvent):
         """
         if not overrides:
             # Bypass all checks.
-            msg = self.__class__.__new__(self.__class__)
-            vars(msg).update(vars(self))
-            return msg
+            event = self.__class__.__new__(self.__class__)
+            vars(event).update(vars(self))
+            return event
 
         if 'type' in overrides and overrides['type'] != self.type:
             raise ValueError('copy must be same event type')
@@ -527,7 +527,7 @@ class MetaEvent(BaseEvent):
         self_vars = vars(self)
 
         if name in spec.settable_attributes:
-            if name == 'time':
+            if name == 'delta_time':
                 check_time(value)
             else:
                 spec.check(name, value)
@@ -548,46 +548,46 @@ class MetaEvent(BaseEvent):
         return ([0xff, spec.type_byte] + encode_variable_int(len(data)) + data)
 
     @classmethod
-    def from_bytes(cls, msg_bytes):
-        if msg_bytes[0] != 0xff:
+    def from_bytes(cls, event_bytes):
+        if event_bytes[0] != 0xff:
             raise ValueError('bytes does not correspond to a MetaEvent.')
         scan_end = 2
         data = []
         flag = True
-        while flag and scan_end < len(msg_bytes):
+        while flag and scan_end < len(event_bytes):
             scan_end += 1
-            length_data = msg_bytes[2:scan_end]
+            length_data = event_bytes[2:scan_end]
             length = decode_variable_int(length_data)
-            data = msg_bytes[scan_end:]
+            data = event_bytes[scan_end:]
             if length == len(data):
                 flag = False
         if flag:
             raise ValueError('Bad data. Cannot be converted to event.')
-        msg = build_meta_event(msg_bytes[1], data)
-        return msg
+        event = build_meta_event(event_bytes[1], data)
+        return event
 
     def _get_value_names(self):
         """Used by BaseMessage.__repr__()."""
         spec = _META_SPEC_BY_TYPE[self.type]
-        return spec.attributes + ['time']
+        return spec.attributes + ['delta_time']
 
 
 class UnknownMetaEvent(MetaEvent):
-    def __init__(self, type_byte, data=None, time=0, type='unknown_meta'):
+    def __init__(self, type_byte, delta_time, data=None, type='unknown_meta'):
         if data is None:
             data = ()
         else:
             data = tuple(data)
 
         vars(self).update({
+            'delta_time': delta_time,
             'type': type,
             'type_byte': type_byte,
-            'data': data,
-            'time': time})
+            'data': data})
 
     def __repr__(self):
-        fmt = 'UnknownMetaEvent(type_byte={}, data={}, time={})'
-        return fmt.format(self.type_byte, self.data, self.time)
+        fmt = 'UnknownMetaEvent(delta_time={}, type_byte={}, data={})'
+        return fmt.format(self.delta_time, self.type_byte, self.data)
 
     def __setattr__(self, name, value):
         # This doesn't do any checking.

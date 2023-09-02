@@ -8,7 +8,7 @@
 Receive messages from multiple ports.
 """
 import mido
-from mido.ports import multi_receive
+from mido.port.ports import multi_receive
 
 # Open all available inputs.
 ports = [mido.open_input(name) for name in mido.get_input_names()]

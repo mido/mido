@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -14,19 +15,24 @@ import struct
 import time
 from numbers import Integral
 
-from .meta import (MetaEvent, build_meta_event, meta_charset,
-                   encode_variable_int)
-from .tracks import MidiTrack, merge_tracks, fix_end_of_track
+from mido.protocol.version1.message.specs import SPEC_BY_STATUS
+
+from .event.midi import MidiEvent
+from .event.meta import (
+    MetaEvent,
+    build_meta_event, meta_charset, encode_variable_int
+)
+from .track import MidiTrack, merge_tracks, fix_end_of_track
 from .units import tick2second
-from mido.protocol.version1.message import Message, SPEC_BY_STATUS
+
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
 DEFAULT_TEMPO = 500000
 DEFAULT_TICKS_PER_BEAT = 480
 
-# Maximum message length to attempt to read.
-MAX_MESSAGE_LENGTH = 1000000
+# Maximum event length to attempt to read.
+MAX_EVENT_LENGTH = 1000000
 
 
 def print_byte(byte, pos=0):
@@ -62,9 +68,9 @@ def read_byte(self):
 
 
 def read_bytes(infile, size):
-    if size > MAX_MESSAGE_LENGTH:
-        raise OSError('Message length {} exceeds maximum length {}'.format(
-            size, MAX_MESSAGE_LENGTH))
+    if size > MAX_EVENT_LENGTH:
+        raise OSError('Event length {} exceeds maximum length {}'.format(
+            size, MAX_EVENT_LENGTH))
     return [read_byte(infile) for _ in range(size)]
 
 
@@ -104,7 +110,7 @@ def read_file_header(infile):
         return struct.unpack('>hhh', data[:6])
 
 
-def read_message(infile, status_byte, peek_data, delta, clip=False):
+def read_message_event(infile, status_byte, peek_data, delta_time, clip=False):
     try:
         spec = SPEC_BY_STATUS[status_byte]
     except LookupError:
@@ -121,10 +127,11 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
             if byte > 127:
                 raise OSError('data byte must be in range 0..127')
 
-    return Message.from_bytes([status_byte] + data_bytes, time=delta)
+    return MidiEvent.from_bytes(
+        [status_byte] + data_bytes, delta_time=delta_time)
 
 
-def read_sysex(infile, delta, clip=False):
+def read_sysex_event(infile, delta_time, clip=False):
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
 
@@ -138,7 +145,7 @@ def read_sysex(infile, delta, clip=False):
     if clip:
         data = [byte if byte < 127 else 127 for byte in data]
 
-    return Message('sysex', data=data, time=delta)
+    return MidiEvent(delta_time=delta_time, type='sysex', data=data)
 
 
 def read_variable_int(infile):
@@ -179,12 +186,12 @@ def read_track(infile, debug=False, clip=False):
             break
 
         if debug:
-            _dbg('Message:')
+            _dbg('Event:')
 
-        delta = read_variable_int(infile)
+        delta_time = read_variable_int(infile)
 
         if debug:
-            _dbg(f'-> delta={delta}')
+            _dbg(f'-> delta_time={delta_time}')
 
         status_byte = read_byte(infile)
 
@@ -200,18 +207,19 @@ def read_track(infile, debug=False, clip=False):
             peek_data = []
 
         if status_byte == 0xff:
-            msg = read_meta_event(infile, delta)
+            event = read_meta_event(infile, delta_time)
         elif status_byte in [0xf0, 0xf7]:
             # TODO: I'm not quite clear on the difference between
             # f0 and f7 events.
-            msg = read_sysex(infile, delta, clip)
+            event = read_sysex_event(infile, delta_time, clip)
         else:
-            msg = read_message(infile, status_byte, peek_data, delta, clip)
+            event = read_message_event(
+                infile, status_byte, peek_data, delta_time, clip)
 
-        track.append(msg)
+        track.append(event)
 
         if debug:
-            _dbg(f'-> {msg!r}')
+            _dbg(f'-> {event!r}')
             _dbg()
 
     return track
@@ -230,35 +238,36 @@ def write_track(outfile, track):
     data = bytearray()
 
     running_status_byte = None
-    for msg in fix_end_of_track(track):
-        if not isinstance(msg.time, Integral):
-            raise ValueError('message time must be int in MIDI file')
-        if msg.time < 0:
-            raise ValueError('message time must be non-negative in MIDI file')
+    for event in fix_end_of_track(track):
+        if not isinstance(event.delta_time, Integral):
+            raise ValueError('event delta time must be int in MIDI file')
+        if event.delta_time < 0:
+            raise ValueError('event delta time must be non-negative in MIDI '
+                             'file')
 
-        if msg.is_realtime:
+        if event.is_realtime:
             raise ValueError('realtime messages are not allowed in MIDI files')
 
-        data.extend(encode_variable_int(msg.time))
+        data.extend(encode_variable_int(event.delta_time))
 
-        if msg.is_meta:
-            data.extend(msg.bytes())
+        if event.is_meta:
+            data.extend(event.bytes())
             running_status_byte = None
-        elif msg.type == 'sysex':
+        elif event.type == 'sysex':
             data.append(0xf0)
             # length (+ 1 for end byte (0xf7))
-            data.extend(encode_variable_int(len(msg.data) + 1))
-            data.extend(msg.data)
+            data.extend(encode_variable_int(len(event.data) + 1))
+            data.extend(event.data)
             data.append(0xf7)
             running_status_byte = None
         else:
-            msg_bytes = msg.bytes()
-            status_byte = msg_bytes[0]
+            event_bytes = event.bytes()
+            status_byte = event_bytes[0]
 
             if status_byte == running_status_byte:
-                data.extend(msg_bytes[1:])
+                data.extend(event_bytes[1:])
             else:
-                data.extend(msg_bytes)
+                data.extend(event_bytes)
 
             if status_byte < 0xf0:
                 running_status_byte = status_byte
@@ -359,14 +368,14 @@ class MidiFile:
     def length(self):
         """Playback time in seconds.
 
-        This will be computed by going through every message in every
+        This will be computed by going through every event in every
         track and adding up delta times.
         """
         if self.type == 2:
             raise ValueError('impossible to compute length'
                              ' for type 2 (asynchronous) file')
 
-        return sum(msg.time for msg in self)
+        return sum(event.delta_time for event in self)
 
     def __iter__(self):
         # The tracks of type 2 files are not in sync, so they can
@@ -375,34 +384,36 @@ class MidiFile:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
         tempo = DEFAULT_TEMPO
-        for msg in self.merged_track:
-            # Convert message time from absolute time
+        for event in self.merged_track:
+            # Convert event time from absolute time
             # in ticks to relative time in seconds.
-            if msg.time > 0:
-                delta = tick2second(msg.time, self.ticks_per_beat, tempo)
+            # FIXME: delta_time should not contain time in seconds!
+            if event.delta_time > 0:
+                delta_time = tick2second(event.delta_time, self.ticks_per_beat,
+                                         tempo)
             else:
-                delta = 0
+                delta_time = 0
 
-            yield msg.copy(time=delta)
+            yield event.copy(delta_time=delta_time)
 
-            if msg.type == 'set_tempo':
-                tempo = msg.tempo
+            if event.type == 'set_tempo':
+                tempo = event.tempo
 
     def play(self, meta_events=False, now=time.time):
         """Play back all tracks.
 
-        The generator will sleep between each message by
-        default. Messages are yielded with correct timing. The time
+        The generator will sleep between each event by
+        default. Events are yielded with correct timing. The time
         attribute is set to the number of seconds slept since the
-        previous message.
+        previous event.
 
-        By default you will only get normal MIDI messages. Pass
+        By default, you will only get normal MIDI message events. Pass
         meta_events=True if you also want meta events.
 
-        You will receive copies of the original messages, so you can
+        You will receive copies of the original events, so you can
         safely modify them without ruining the tracks.
 
-        By default the system clock is used for the timing of yielded
+        By default, the system clock is used for the timing of yielded
         MIDI events. To use a different clock (e.g. to synchronize to
         an audio stream), pass now=time_fn where time_fn is a zero
         argument function that yields the current time in seconds.
@@ -410,19 +421,21 @@ class MidiFile:
         start_time = now()
         input_time = 0.0
 
-        for msg in self:
-            input_time += msg.time
+        for event in self:
+            input_time += event.delta_time
 
             playback_time = now() - start_time
             duration_to_next_event = input_time - playback_time
 
             if duration_to_next_event > 0.0:
+                # FIXME: this can be unreliable
                 time.sleep(duration_to_next_event)
+                # TODO: set the time attribute per the docstring
 
-            if isinstance(msg, MetaEvent) and not meta_events:
+            if isinstance(event, MetaEvent) and not meta_events:
                 continue
             else:
-                yield msg
+                yield event
 
     def save(self, filename=None, file=None):
         """Save to a file.
@@ -468,11 +481,11 @@ class MidiFile:
         """
         for i, track in enumerate(self.tracks):
             print(f'=== Track {i}')
-            for msg in track:
-                if not isinstance(msg, MetaEvent) and meta_only:
+            for event in track:
+                if not isinstance(event, MetaEvent) and meta_only:
                     pass
                 else:
-                    print(f'{msg!r}')
+                    print(f'{event!r}')
 
     def __repr__(self):
         if self.tracks:

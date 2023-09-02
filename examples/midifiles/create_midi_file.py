@@ -12,7 +12,7 @@ The file is saved to test.mid.
 import random
 import sys
 
-from mido import Message, MidiFile, MidiTrack, MAX_PITCHWHEEL
+from mido import MidiEvent, MidiFile, MidiTrack, MAX_PITCHWHEEL
 
 notes = [64, 64 + 7, 64 + 12]
 
@@ -21,16 +21,19 @@ outfile = MidiFile()
 track = MidiTrack()
 outfile.tracks.append(track)
 
-track.append(Message('program_change', program=12))
+track.append(MidiEvent(type='program_change', program=12))
 
-delta = 300
+delta_time = 300
 ticks_per_expr = int(sys.argv[1]) if len(sys.argv) > 1 else 20
 for i in range(4):
     note = random.choice(notes)
-    track.append(Message('note_on', note=note, velocity=100, time=delta))
-    for j in range(delta // ticks_per_expr):
-        pitch = MAX_PITCHWHEEL * j * ticks_per_expr // delta
-        track.append(Message('pitchwheel', pitch=pitch, time=ticks_per_expr))
-    track.append(Message('note_off', note=note, velocity=100, time=0))
+    track.append(MidiEvent(delta_time=delta_time,
+                           type='note_on', note=note, velocity=100))
+    for j in range(delta_time // ticks_per_expr):
+        pitch = MAX_PITCHWHEEL * j * ticks_per_expr // delta_time
+        track.append(MidiEvent(delta_time=ticks_per_expr,
+                               type='pitchwheel', pitch=pitch, ))
+    track.append(MidiEvent(delta_time=0,
+                           type='note_off', note=note, velocity=100))
 
 outfile.save('test.mid')

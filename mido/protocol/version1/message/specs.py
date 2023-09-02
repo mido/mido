@@ -1,11 +1,12 @@
 # SPDX-FileCopyrightText: 2016 Ole Martin Bjorndalen <ombdalen@gmail.com>
+# SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 
-"""Definitions and lookup tables for MIDI messages.
+"""
+Definitions and lookup tables for MIDI 1.0 protocol messages.
 
 TODO:
-
     * add lookup functions for messages definitions by type and status
       byte.
 """
@@ -31,7 +32,8 @@ def _defmsg(status_byte, type_, value_names, length):
         'status_byte': status_byte,
         'type': type_,
         'value_names': value_names,
-        'attribute_names': set(value_names) | {'type', 'time'},
+        'attribute_names': set(value_names) | {'type',
+                                               'timestamp', 'delta_time'},
         'length': length,
     }
 
@@ -105,7 +107,8 @@ DEFAULT_VALUES = {
     'value': 0,
     'velocity': 64,
 
-    'time': 0,
+    'timestamp': 0,
+    'delta_time': 0,
 }
 
 
@@ -126,7 +129,8 @@ def make_msgdict(type_, overrides):
     else:
         raise LookupError(f'Unknown message type {type_!r}')
 
-    msg = {'type': type_, 'time': DEFAULT_VALUES['time']}
+    # FIXME: messages shouldn't be timestamped by default.
+    msg = {'type': type_, 'timestamp': DEFAULT_VALUES['timestamp']}
 
     for name in spec['value_names']:
         msg[name] = DEFAULT_VALUES[name]

@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [flake8]
-ignore = F401, C901, F901
+# W503 & W504 are incompatible. We choose to have the modern, math-like
+# presentation with the operator on the new line.
+ignore = F401, C901, F901, W503
 exclude = .git,__pycache__,docs/conf.py,old,build,dist
 max-complexity = 10

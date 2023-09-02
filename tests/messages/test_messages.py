@@ -3,15 +3,17 @@
 # SPDX-License-Identifier: MIT
 
 from pytest import raises
-from mido.protocol.version1.message import (MIN_PITCHWHEEL, MAX_PITCHWHEEL,
-                                            MIN_SONGPOS, MAX_SONGPOS)
-from mido.protocol.version1.message.messages import Message, SysexData
+from mido.protocol.version1.message.specs import (
+    MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS)
+from mido.protocol.version1.message.message import Message, SysexData
 
 
 def test_msg_time_equality():
-    # Since 1.1.18 time is included in comparison.
-    assert Message('clock', time=0) == Message('clock', time=0)
-    assert Message('clock', time=0) != Message('clock', time=1)
+    # Since 1.1.18 timestamp is included in comparison.
+    assert (Message('clock', timestamp=0)
+            == Message('clock', timestamp=0))
+    assert (Message('clock', timestamp=0)
+            != Message('clock', timestamp=1))
 
 
 def test_set_type():
@@ -55,7 +57,8 @@ def test_sysex_data_accepts_different_types():
 
 
 def test_copy():
-    assert Message('start').copy(time=1) == Message('start', time=1)
+    assert (Message('start').copy(timestamp=1)
+            == Message('start', timestamp=1))
 
 
 def test_init_invalid_argument():
@@ -98,7 +101,7 @@ def test_compare_with_nonmessage():
 
 
 def test_from_dict_default_values():
-    msg = Message('note_on', channel=0, note=0, time=0)
+    msg = Message('note_on', channel=0, note=0)
     data = {'type': 'note_on'}
     assert Message.from_dict(data) == msg
 
@@ -106,7 +109,7 @@ def test_from_dict_default_values():
 def test_dict_sysex_data():
     msg = Message('sysex', data=(1, 2, 3))
     data = msg.dict()
-    assert data == {'type': 'sysex', 'data': [1, 2, 3], 'time': 0}
+    assert data == {'type': 'sysex', 'data': [1, 2, 3], 'timestamp': 0}
     assert isinstance(data['data'], list)
 
 
@@ -116,6 +119,6 @@ def test_from_hex_sysex_data_type():
 
 
 def test_repr():
-    msg = Message('note_on', channel=1, note=2, time=3)
+    msg = Message('note_on', channel=1, note=2, timestamp=3)
     msg_eval = eval(repr(msg))
     assert msg == msg_eval

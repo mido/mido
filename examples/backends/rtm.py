@@ -20,9 +20,10 @@ http://github.com/superquadratic/rtmidi-python
 Other than that, it works exactly like the included python-rtmidi
 backend.
 """
+
 import rtmidi_python as rtmidi
 
-from mido.ports import BaseInput, BaseOutput
+from mido.port.ports import BaseInput, BaseOutput
 
 
 def get_devices():

@@ -64,13 +64,13 @@ Getting started:
     >>> import mido
     >>> m = mido.Message('note_on', note=60, velocity=64)
     >>> m
-    <message note_on channel=0, note=60, velocity=64, time=0>
+    <message note_on channel=0, note=60, velocity=64, timestamp=0>
     >>> m.type
     'note_on'
     >>> m.channel = 6
     >>> m.note = 19
     >>> m.copy(velocity=120)
-    <message note_on channel=0, note=60, velocity=64, time=0>
+    <message note_on channel=0, note=60, velocity=64, timestamp=0>
     >>> s = mido.Message('sysex', data=[byte for byte in range(5)])
     >>> s.data
     (0, 1, 2, 3, 4)
@@ -90,26 +90,27 @@ Getting started:
     >>> get_input_names()
     ['MPK mini MIDI 1', 'SH-201']
 """
+
+# Prevent splat import.
+__all__ = []
+
 import os
 
 from .port import ports, sockets
 from .port.backend.backend import Backend
 from .protocol.version1.message import (
     Message,
-    parse_string, parse_string_stream, format_as_string,
-    MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS)
+    MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS,
+    format_as_string, parse_string, parse_string_stream)
+from .file.smf.event import MidiEvent, MetaEvent, UnknownMetaEvent
 from .file.smf import (
     MidiFile, MidiTrack,
     merge_tracks,
-    MetaEvent, UnknownMetaEvent,
     bpm2tempo, tempo2bpm, tick2second, second2tick,
     KeySignatureError)
 from .protocol.version1.parser import Parser, parse, parse_all
 from .file.syx import read_syx_file, write_syx_file
 from .version import version_info
-
-# Prevent splat import.
-__all__ = []
 
 
 def set_backend(name=None, load=False):

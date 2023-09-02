@@ -91,7 +91,7 @@ def read_event(device):
 
     event = {}
 
-    (event['time'],
+    (event['timestamp'],
      event['value'],
      event['type'],
      event['number']) = struct.unpack('IhBB', data)

@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+"""
+MIDI 1.0 Protocol Encoders
+"""
+
 from .specs import CHANNEL_MESSAGES, SPEC_BY_TYPE, MIN_PITCHWHEEL
 
 

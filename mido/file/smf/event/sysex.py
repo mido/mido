@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: MIT
 
 """
-MIDI 2.0 protocol
-
-Provision for the upcoming second revision of MIDI.
+Standard MIDI File (SMF) System Exclusive (SysEx) Events
 """
 
-raise NotImplementedError
+
+class SysExEvent:
+    raise NotImplementedError  # FIXME

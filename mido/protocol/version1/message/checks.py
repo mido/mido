@@ -2,6 +2,11 @@
 #
 # SPDX-License-Identifier: MIT
 
+"""
+MIDI 1.0 Data Checks
+"""
+
+
 from numbers import Integral, Real
 from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
                     MIN_PITCHWHEEL, MAX_PITCHWHEEL)
@@ -81,7 +86,9 @@ _CHECKS = {
     'song': check_data_byte,
     'value': check_data_byte,
     'velocity': check_data_byte,
-    'time': check_time,
+
+    'timestamp': check_time,
+    'delta_time': check_time,
 }
 
 

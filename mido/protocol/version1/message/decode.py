@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+"""
+MIDI 1.0 Protocol Decoders
+"""
+
 from .specs import (SYSEX_START, SYSEX_END,
                     SPEC_BY_STATUS, CHANNEL_MESSAGES,
                     MIN_PITCHWHEEL)
@@ -59,7 +63,7 @@ def _decode_data_bytes(status_byte, data, spec):
     return args
 
 
-def decode_message(msg_bytes, time=0, check=True):
+def decode_message(msg_bytes, timestamp=0, delta_time=None, check=True):
     """Decode message bytes and return messages as a dictionary.
 
     Raises ValueError if the bytes are out of range or the message is
@@ -82,8 +86,11 @@ def decode_message(msg_bytes, time=0, check=True):
 
     msg = {
         'type': spec['type'],
-        'time': time,
+        'timestamp': timestamp,
     }
+
+    if delta_time is not None:
+        msg['delta_time'] = delta_time
 
     # Sysex.
     if status_byte == SYSEX_START:

@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+"""
+MIDI 1.0 Byte-Stream Tokenizer
+"""
+
 from collections import deque
 from numbers import Integral
 from mido.protocol.version1.message.specs import (SYSEX_START, SYSEX_END,

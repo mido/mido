@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: MIT
 
 """
-MIDI Parser
+MIDI 1.0 Byte Stream Parser
 
 There is no need to use this module directly. All you need is
 available in the top level module.
 """
+
 from collections import deque
 
 from mido.protocol.version1.message import Message

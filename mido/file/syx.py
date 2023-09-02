@@ -5,6 +5,7 @@
 """
 Read and write SYX file format
 """
+
 import re
 
 from mido.protocol.version1.parser import Parser
