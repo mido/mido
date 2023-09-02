@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
 #
 # SPDX-License-Identifier: MIT
+import warnings
+from warnings import catch_warnings
 
 from pytest import raises
 from mido.protocol.version1.message.specs import (
@@ -122,3 +124,23 @@ def test_repr():
     msg = Message('note_on', channel=1, note=2, timestamp=3)
     msg_eval = eval(repr(msg))
     assert msg == msg_eval
+
+
+def test_deprecated_time_get():
+    msg = Message('note_off')
+    with catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        assert msg.time == 0
+        assert len(w) == 1
+        assert issubclass(w[-1].category, DeprecationWarning)
+        assert "deprecated" in str(w[-1].message)
+
+
+def test_deprecated_time_set():
+    msg = Message('note_off')
+    with catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        msg.time = 0
+        assert len(w) == 1
+        assert issubclass(w[-1].category, DeprecationWarning)
+        assert "deprecated" in str(w[-1].message)

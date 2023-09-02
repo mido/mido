@@ -7,6 +7,7 @@ MIDI 1.0 Protocol Messages
 """
 
 import re
+import warnings
 
 from .base import BaseMessage
 from .checks import check_msgdict, check_value, check_data
@@ -65,6 +66,14 @@ class Message(BaseMessage):
         """
         return cls(**str2msg(text))
 
+    @property
+    def time(self):
+        warnings.warn("time is deprecated in favor of "
+                      "timestamp or delta_time.",
+                      DeprecationWarning,
+                      stacklevel=2)
+        return self.timestamp
+
     def __init__(self, type, **args):
         msgdict = make_msgdict(type, args)
         if type == 'sysex':
@@ -82,6 +91,16 @@ class Message(BaseMessage):
         return msg2str(vars(self), include_timestamp=True)
 
     def _setattr(self, name, value):
+        if name == 'time':
+            warnings.warn(
+                "time is deprecated in favor of "
+                "timestamp or delta_time.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            check_value('timestamp', value)
+            vars(self)['timestamp'] = value
+            return
         if name == 'type':
             raise AttributeError('type attribute is read only')
         if name == 'timestamp' or name == 'delta_time':
