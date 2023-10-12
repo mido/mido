@@ -23,7 +23,7 @@ if sys.argv[1:]:
 else:
     address = 'localhost:9080'
 
-host, port = mido.sockets.parse_address(address)
+host, port = mido.port.sockets.parse_address(address)
 
 notes = [60, 67, 72, 79, 84, 79, 72, 67, 60]
 on = mido.Message('note_on', velocity=100)
@@ -32,7 +32,7 @@ base = random.randrange(12)
 
 print(f'Connecting to {address}')
 
-with mido.sockets.connect(host, port) as server_port:
+with mido.port.sockets.connect(host, port) as server_port:
     try:
         message = mido.Message('program_change')
         for note in notes:

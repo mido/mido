@@ -32,12 +32,12 @@ def main():
     args = parse_args()
 
     try:
-        hostname, port = mido.sockets.parse_address(args.address)
+        hostname, port = mido.port.sockets.parse_address(args.address)
         ports = [mido.open_input(name) for name in args.ports]
 
-        with mido.sockets.connect(hostname, port) as server_port:
+        with mido.port.sockets.connect(hostname, port) as server_port:
             print('Connected.')
-            for message in mido.ports.multi_receive(ports):
+            for message in mido.port.ports.multi_receive(ports):
                 print(f'Sending {message}')
                 server_port.send(message)
     except KeyboardInterrupt:

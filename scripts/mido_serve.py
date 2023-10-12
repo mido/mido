@@ -12,7 +12,7 @@ import argparse
 
 import mido
 from mido import sockets
-from mido.ports import MultiPort
+from mido.port.ports import MultiPort
 
 
 def parse_args():

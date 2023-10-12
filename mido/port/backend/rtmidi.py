@@ -12,7 +12,7 @@ import rtmidi
 from ._parser_queue import ParserQueue
 from .rtmidi_utils import expand_alsa_port_name
 from .. import ports
-from mido.protocol.version1.message.messages import Message
+from mido.protocol.version1.message.message import Message
 
 
 def _get_api_lookup():

@@ -112,6 +112,14 @@ from .protocol.version1.parser import Parser, parse, parse_all
 from .file.syx import read_syx_file, write_syx_file
 from .version import version_info
 
+# Declared for hinting. Overridden by set_backend.
+backend = Backend()
+get_input_names = backend.get_input_names
+get_output_names = backend.get_output_names
+get_ioport_names = backend.get_ioport_names
+open_input = backend.open_input
+open_output = backend.open_output
+
 
 def set_backend(name=None, load=False):
     """Set current backend.

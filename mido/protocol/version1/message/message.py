@@ -25,6 +25,11 @@ class SysexData(tuple):
 
 
 class Message(BaseMessage):
+    type: str
+    data: list
+    timestamp: int
+    delta_time: int
+
     @classmethod
     def from_bytes(cls, data, timestamp=0):
         """Parse a byte encoded message.

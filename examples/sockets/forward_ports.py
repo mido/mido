@@ -15,11 +15,11 @@ import sys
 
 import mido
 
-host, port = mido.sockets.parse_address(sys.argv[1])
+host, port = mido.port.sockets.parse_address(sys.argv[1])
 ports = [mido.open_input(name) for name in sys.argv[2:]]
 
-with mido.sockets.connect(host, port) as server_port:
+with mido.port.sockets.connect(host, port) as server_port:
     print('Connected.')
-    for message in mido.ports.multi_receive(ports):
+    for message in mido.port.ports.multi_receive(ports):
         print(f'Sending {message}')
         server_port.send(message)

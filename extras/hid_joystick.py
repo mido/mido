@@ -204,7 +204,7 @@ def play_scale(dev, out):
 
         # elif event['type'] == 'axis':
         #     if event['number'] == 0:
-        #         pitch_scale = mido.messages.MAX_PITCHWHEEL
+        #         pitch_scale = mido.protocol.version1.message.MAX_PITCHWHEEL
         #         pitch = int(event['normalized_value'] * pitch_scale)
         #         out.send(mido.Message('pitchwheel', pitch=pitch))
 

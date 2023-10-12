@@ -23,7 +23,7 @@ import sys
 
 import mido
 from mido import sockets
-from mido.ports import MultiPort
+from mido.port.ports import MultiPort
 
 # Todo: do this with a argument parser.
 out = MultiPort([mido.open_output(name) for name in sys.argv[2:]])
