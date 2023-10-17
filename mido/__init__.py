@@ -20,23 +20,23 @@ Ports:
     open_ioport(name=None, virtual=False,        -- open an I/O port (capable
                 callback=None, autoreset=False)     of both input and output)
 
-    get_input_names() -- return a list of names of available input ports
-    get_output_names() -- return a list of names of available output ports
-    get_ioport_names() -- return a list of names of available I/O ports
+    get_input_names() -- return a list of available input ports names
+    get_output_names() -- return a list of available output ports names
+    get_ioport_names() -- return a list of available I/O ports names
 
 MIDI files:
 
     MidiFile(filename, **kwargs) -- open a MIDI file
-    MidiTrack()  -- a MIDI track
-    bpm2tempo()  -- convert beats per minute to MIDI file tempo
-    tempo2bpm()  -- convert MIDI file tempo to beats per minute
-    merge_tracks(tracks)  -- merge tracks into one track
+    MidiTrack() -- a MIDI track
+    bpm2tempo() -- convert beats per minute to MIDI file tempo
+    tempo2bpm() -- convert MIDI file tempo to beats per minute
+    merge_tracks(tracks) -- merge tracks into one track
 
 SYX files:
 
-    read_syx_file(filename)  -- read a SYX file
-    write_syx_file(filename, messages,
-                   plaintext=False)  -- write a SYX file
+    read_syx_file(filename) -- read a SYX file
+    write_syx_file(filename, messages, plaintext=False) -- write a SYX file
+
 Parsing MIDI streams:
 
     parse(bytes) -- parse a single message bytes
@@ -50,7 +50,7 @@ Parsing objects serialized with str(message):
     parse_string_stream(iterable) -- parse strings from an iterable and
                                      generate messages
 
-Sub modules:
+Submodules:
 
     ports -- useful tools for working with ports
 
@@ -122,9 +122,9 @@ open_output = backend.open_output
 
 
 def set_backend(name=None, load=False):
-    """Set current backend.
+    """Set the backend.
 
-    name can be a module name like 'mido.backends.rtmidi' or
+    name can be a module name like 'mido.port.backend.rtmidi' or
     a Backend object.
 
     If no name is passed, the default backend will be used.

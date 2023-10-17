@@ -49,9 +49,8 @@ def reset_messages():
 def panic_messages():
     """Yield "All Sounds Off" for all channels.
 
-    This will mute all sounding notes regardless of
-    envelopes. Useful when notes are hanging and nothing else
-    helps.
+    This will mute all sounding notes regardless of envelopes.
+    Useful when notes are hanging and nothing else helps.
     """
     ALL_SOUNDS_OFF = 120
     for channel in range(16):
@@ -323,9 +322,9 @@ class BaseIOPort(BaseInput, BaseOutput):
 class IOPort(BaseIOPort):
     """Input / output port.
 
-    This is a convenient wrapper around an input port and an output
-    port which provides the functionality of both. Every method call
-    is forwarded to the appropriate port.
+    This is a convenient wrapper around an input port and an output port
+    which provides the functionality of both.
+    Every method call is forwarded to the appropriate port.
     """
 
     _locking = False
@@ -379,14 +378,15 @@ class MultiPort(BaseIOPort):
 def multi_receive(ports, yield_ports=False, block=True):
     """Receive messages from multiple ports.
 
-    Generates messages from ever input port. The ports are polled in
-    random order for fairness, and all messages from each port are
-    yielded before moving on to the next port.
+    Generates messages from every specified input port.
+    The ports are polled in random order for fairness,
+    and all messages from each port are yielded
+    before moving on to the next port.
 
-    If yield_ports=True, (port, message) is yielded instead of just
-    the message.
+    If yield_ports=True, (port, message) is yielded
+    instead of just the message.
 
-    If block=False only pending messages will be yielded.
+    If block=False, only pending messages will be yielded.
     """
     ports = list(ports)
     while True:
@@ -411,12 +411,12 @@ def multi_iter_pending(ports, yield_ports=False):
     """Iterate through all pending messages in ports.
 
     This is the same as calling multi_receive(ports, block=False).
-    The function is kept around for backwards compatability.
+    The function is kept around for backwards compatibility.
     """
     return multi_receive(ports, yield_ports=yield_ports, block=False)
 
 
 def multi_send(ports, msg):
-    """Send message on all ports."""
+    """Send a message on all ports."""
     for port in ports:
         port.send(msg)
