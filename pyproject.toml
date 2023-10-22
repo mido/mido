@@ -59,7 +59,7 @@ source = "https://github.com/mido/mido"
 # Separated by tasks for automation efficiency
 build-docs = [
     'sphinx~=4.3.2',
-    'sphinx-rtd-theme~=1.2.2',
+    'sphinx-rtd-theme>=1.2.2,<1.4.0',
 ]
 check-manifest = ['check-manifest>=0.49',]
 lint-code = ['flake8~=5.0.4',]
