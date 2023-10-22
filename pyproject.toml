@@ -58,7 +58,7 @@ source = "https://github.com/mido/mido"
 [project.optional-dependencies]
 # Separated by tasks for automation efficiency
 build-docs = [
-    'sphinx~=4.3.2',
+    'sphinx>=4.3.2,<7.3.0',
     'sphinx-rtd-theme~=1.2.2',
 ]
 check-manifest = ['check-manifest>=0.49',]
