@@ -1,3 +1,6 @@
+<!-- SPDX-FileCopyrightText: 2023 Raphaël Doursenaud <rdoursenaud@gmail.com> -->
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+
 # Security Policy
 
 ## Supported Versions
