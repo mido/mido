@@ -2,23 +2,23 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+exclude SECURITY.md
+prune docs/_build
+prune logo
 include README.rst LICENSE .readthedocs.yaml .flake8 .reuse/dep5
-recursive-include LICENSES *.txt
-recursive-include tests *.py
-recursive-include examples *.py
-recursive-include extras *.py
 include docs/_static/.gitkeep
 recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs Makefile
-recursive-include examples *.py
-recursive-include examples *.sh
-recursive-include extras *.rst
-recursive-include mido *.py
-recursive-include scripts *.py
 recursive-include docs/images *.svg
 recursive-include docs/images *.license
-prune docs/_build
-prune logo
-prune SECURITY.md
+recursive-include examples *.py
+recursive-include examples *.py
+recursive-include examples *.sh
+recursive-include extras *.py
+recursive-include extras *.rst
+recursive-include LICENSES *.txt
+recursive-include mido *.py
+recursive-include scripts *.py
+recursive-include tests *.py
