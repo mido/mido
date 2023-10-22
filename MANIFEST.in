@@ -21,3 +21,4 @@ recursive-include docs/images *.svg
 recursive-include docs/images *.license
 prune docs/_build
 prune logo
+prune SECURITY.md
