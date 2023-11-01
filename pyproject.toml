@@ -48,6 +48,7 @@ classifiers = [
 dependencies = [
     "importlib_metadata; python_version<'3.8'",  # For version introspection
     "packaging~=23.1",  # To provide a nice version_info opbject
+    "StrEnum; python_version<'3.11'",
 ]
 dynamic = ["version"]
 

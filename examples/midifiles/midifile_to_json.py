@@ -4,16 +4,21 @@
 
 import sys
 import json
+import warnings
+
 import mido
 
 
-def midifile_to_dict(mid):
+def midifile_to_dict(midi_file):
     tracks = []
-    for track in mid.tracks:
+    for track in midi_file.tracks:
         tracks.append([vars(msg).copy() for msg in track])
 
+    warnings.warn("ticks_per_beat has been replaced by division",
+                  UserWarning)
+
     return {
-        'ticks_per_beat': mid.ticks_per_beat,
+        'division': midi_file.division,
         'tracks': tracks,
     }
 

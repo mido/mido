@@ -202,10 +202,19 @@ a delta time, which tells how many ticks have passed since the last message.
 A tick is the smallest unit of time in MIDI and remains fixed throughout the
 song. Each quarter notes is divided into a certain number of ticks, often
 referred as the resolution of the file or pulses per quarter note (PPQN). This
-resolution is stored as ``ticks_per_beat`` in MidiFile objects.
+resolution is stored as ``division`` in MidiFile objects.
 
-The meaning of this ``ticks_per_beat`` in terms of absolute timing depends on
+The meaning of this ``division`` in terms of absolute timing depends on
 the tempo and time signature of the file.
+
+.. note::
+    ``division`` was called ``ticks_per_beat`` in previous versions.
+    The naming was confusing and has been replaced by the name used in the
+    specification.
+    For now, we have deprecated the use of ``ticks_per_beat`` but it's still
+    available.
+    Please update your code if you're still using ``ticks_per_beat`` as we
+    will remove it entirely in a future release.
 
 
 MIDI Tempo vs. BPM
@@ -242,6 +251,6 @@ and from seconds and ticks. Note that integer rounding of the result might be
 necessary because MIDI files require ticks to be integers.
 
 If you have a lot of rounding errors you should increase the time resolution
-with more ticks per quarter note, by setting MidiFile.ticks_per_beat to a
+with more ticks per quarter note, by setting MidiFile.division to a
 large number. Typical values range from 96 to 480 but some use even more ticks
 per quarter note.
