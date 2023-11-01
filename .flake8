@@ -3,6 +3,6 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [flake8]
-ignore = F401, C901, F901
+ignore = F401, C901, F901, W503
 exclude = .git,__pycache__,docs/conf.py,old,build,dist
 max-complexity = 10

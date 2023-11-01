@@ -17,7 +17,7 @@ create a new message::
     >>> from mido import Message
     >>> msg = Message('note_on', note=60)
     >>> msg
-    Message('note_on', channel=0, note=60, velocity=64, time=0)
+    Message('note_on', channel=0, note=60, velocity=64, delta_ticks=0)
 
 .. note::
 
@@ -41,7 +41,7 @@ Attributes are also settable but this should be avoided. It's better
 to use ``msg.copy()``::
 
     >>> msg.copy(note=100, velocity=127)
-    Message('note_on', channel=0, note=100, velocity=127, time=0)
+    Message('note_on', channel=0, note=100, velocity=127, delta_ticks=0)
 
 Type and value checks are done when you pass parameters or assign to
 attributes, and the appropriate exceptions are raised. This ensures
@@ -177,7 +177,7 @@ You can then fetch messages out of the parser::
     >>> for message in p:
     ...    print(message)
     ...
-    note_on channel=0 note=64 velocity=96 time=0
+    note_on channel=0 note=64 velocity=96 delta_ticks=0
 
 For more on parsers and parsing see :doc:`messages/parsing`.
 

@@ -53,7 +53,7 @@ Mido is a :term:`Python` library for working with
    >>> msg.bytes()
    [144, 60, 64]
    >>> msg.copy(channel=2)
-   Message('note_on', channel=2, note=60, velocity=64, time=0)
+   Message('note_on', channel=2, note=60, velocity=64, delta_ticks=0)
 
 .. code-block:: python
 

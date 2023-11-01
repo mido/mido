@@ -15,21 +15,21 @@ them in JSON, among other things.
 
 To *encode* a message, simply call ``str()`` on it::
 
-    >>> cc = control_change(channel=9, control=1, value=122, time=60)
+    >>> cc = control_change(channel=9, control=1, value=122, delta_ticks=60)
     >>> str(cc)
-    'control_change channel=9 control=1 value=122 time=60'
+    'control_change channel=9 control=1 value=122 delta_ticks=60'
 
 To convert the other way (new method in 1.2)::
 
     >>> mido.Message.from_str('control_change control=1 value=122')
-    Message('control_change', channel=0, control=1, value=122, time=0)
+    Message('control_change', channel=0, control=1, value=122, delta_ticks=0)
 
 Alternatively, you can call the ``format_as_string`` function directly:
 
     >>> mido.format_as_string(cc)
-    'control_change channel=9 control=1 value=122 time=60'
+    'control_change channel=9 control=1 value=122 delta_ticks=60'
 
-If you don't need the time attribute or you want to store it elsewhere, you
+If you don't need the delta_ticks attribute or you want to store it elsewhere, you
 can pass ``include_time=False``::
 
     >>> mido.format_as_string(cc)
@@ -65,15 +65,15 @@ Parsing
 
 To *parse* a message, you can use ``mido.parse_string()``::
 
-    >>> parse_string('control_change control=1 value=122 time=0.5')
-    Message('control_change', channel=0, control=1, value=122, time=0.5)
+    >>> parse_string('control_change control=1 value=122 delta_ticks=0.5')
+    Message('control_change', channel=0, control=1, value=122, delta_ticks=0.5)
 
 Parameters that are left out are set to their default
 values. ``ValueError`` is raised if the message could not be
 parsed. *Extra whitespace is ignored*::
 
     >>> parse_string('  control_change   control=1  value=122')
-    Message('control_change', channel=0, control=1, value=122, time=0)
+    Message('control_change', channel=0, control=1, value=122, delta_ticks=0)
 
 To parse messages from a stream, you can use
 ``mido.messages.parse_string_stream()``::
@@ -97,13 +97,13 @@ start with a ``#`` and go to the end of the line). An example of valid
 input::
 
     # A very short song with an embedded sysex message.
-    note_on channel=9 note=60 velocity=120 time=0
+    note_on channel=9 note=60 velocity=120 delta_ticks=0
     # Send some data
 
-    sysex data=(1,2,3) time=0.5
+    sysex data=(1,2,3) delta_ticks=0.5
 
-    pitchwheel pitch=4000  # bend the not a little time=0.7
-    note_off channel=9 note=60 velocity=60 time=1.0
+    pitchwheel pitch=4000  # bend the not a little delta_ticks=0.7
+    note_off channel=9 note=60 velocity=60 delta_ticks=1.0
 
 
 Examples

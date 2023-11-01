@@ -439,7 +439,7 @@ def add_meta_spec(klass):
         spec.type = name
 
     # This is used by copy().
-    spec.settable_attributes = set(spec.attributes) | {'time'}
+    spec.settable_attributes = set(spec.attributes) | {'delta_ticks'}
     _META_SPECS[spec.type_byte] = spec
     _META_SPECS[spec.type] = spec
     _META_SPEC_BY_TYPE[spec.type] = spec
@@ -465,7 +465,7 @@ def build_meta_message(meta_type, data, delta=0):
     except KeyError:
         return UnknownMetaMessage(meta_type, data)
     else:
-        msg = MetaMessage(spec.type, time=delta)
+        msg = MetaMessage(spec.type, delta_ticks=delta)
 
         # This adds attributes to msg:
         spec.decode(msg, data)
@@ -491,7 +491,7 @@ class MetaMessage(BaseMessage):
 
         for name, value in zip(spec.attributes, spec.defaults):
             self_vars[name] = value
-        self_vars['time'] = 0
+        self_vars['delta_ticks'] = 0
 
         for name, value in kwargs.items():
             # Using setattr here because we want type and value checks.
@@ -524,7 +524,7 @@ class MetaMessage(BaseMessage):
         self_vars = vars(self)
 
         if name in spec.settable_attributes:
-            if name == 'time':
+            if name == 'delta_ticks':
                 check_time(value)
             else:
                 spec.check(name, value)
@@ -566,11 +566,12 @@ class MetaMessage(BaseMessage):
     def _get_value_names(self):
         """Used by BaseMessage.__repr__()."""
         spec = _META_SPEC_BY_TYPE[self.type]
-        return spec.attributes + ['time']
+        return spec.attributes + ['delta_ticks']
 
 
 class UnknownMetaMessage(MetaMessage):
-    def __init__(self, type_byte, data=None, time=0, type='unknown_meta'):
+    def __init__(self, type_byte, data=None, delta_ticks=0,
+                 type='unknown_meta'):
         if data is None:
             data = ()
         else:
@@ -580,11 +581,11 @@ class UnknownMetaMessage(MetaMessage):
             'type': type,
             'type_byte': type_byte,
             'data': data,
-            'time': time})
+            'delta_ticks': delta_ticks})
 
     def __repr__(self):
-        fmt = 'UnknownMetaMessage(type_byte={}, data={}, time={})'
-        return fmt.format(self.type_byte, self.data, self.time)
+        fmt = 'UnknownMetaMessage(type_byte={}, data={}, delta_ticks={})'
+        return fmt.format(self.type_byte, self.data, self.delta_ticks)
 
     def __setattr__(self, name, value):
         # This doesn't do any checking.

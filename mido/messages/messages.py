@@ -38,7 +38,7 @@ class BaseMessage:
     def dict(self):
         """Returns a dictionary containing the attributes of the message.
 
-        Example: {'type': 'sysex', 'data': [1, 2], 'time': 0}
+        Example: {'type': 'sysex', 'data': [1, 2], 'delta_ticks': 0}
 
         Sysex data will be returned as a list.
         """
@@ -60,7 +60,7 @@ class BaseMessage:
 
     def _get_value_names(self):
         # This is overridden by MetaMessage.
-        return list(SPEC_BY_TYPE[self.type]['value_names']) + ['time']
+        return list(SPEC_BY_TYPE[self.type]['value_names']) + ['delta_ticks']
 
     def __repr__(self):
         items = [repr(self.type)]
@@ -143,7 +143,7 @@ class Message(BaseMessage):
         return self.__class__(**msgdict)
 
     @classmethod
-    def from_bytes(cl, data, time=0):
+    def from_bytes(cl, data, delta_ticks=0):
         """Parse a byte encoded message.
 
         Accepts a byte string or any iterable of integers.
@@ -151,14 +151,14 @@ class Message(BaseMessage):
         This is the reverse of msg.bytes() or msg.bin().
         """
         msg = cl.__new__(cl)
-        msgdict = decode_message(data, time=time)
+        msgdict = decode_message(data, delta_ticks=delta_ticks)
         if 'data' in msgdict:
             msgdict['data'] = SysexData(msgdict['data'])
         vars(msg).update(msgdict)
         return msg
 
     @classmethod
-    def from_hex(cl, text, time=0, sep=None):
+    def from_hex(cl, text, delta_ticks=0, sep=None):
         """Parse a hex encoded message.
 
         This is the reverse of msg.hex().
@@ -173,7 +173,7 @@ class Message(BaseMessage):
             # be correct in bytearray.fromhex() error messages.
             text = text.replace(sep, ' ' * len(sep))
 
-        return cl.from_bytes(bytearray.fromhex(text), time=time)
+        return cl.from_bytes(bytearray.fromhex(text), delta_ticks=delta_ticks)
 
     @classmethod
     def from_str(cl, text):
@@ -253,6 +253,6 @@ def format_as_string(msg, include_time=True):
 
     This is equivalent to str(message).
 
-    To leave out the time attribute, pass include_time=False.
+    To leave out the delta_ticks attribute, pass include_time=False.
     """
     return msg2str(vars(msg), include_time=include_time)

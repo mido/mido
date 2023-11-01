@@ -13,7 +13,7 @@ def sysex(data):
 
 def test_sysex():
     data = b'\xf0\x01\x02\x03\xf7'
-    msg = {'type': 'sysex', 'data': (1, 2, 3), 'time': 0}
+    msg = {'type': 'sysex', 'data': (1, 2, 3), 'delta_ticks': 0}
     assert decode_message(data) == msg
 
 

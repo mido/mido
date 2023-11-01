@@ -19,7 +19,7 @@ and overriding one or more methods. Here's an example::
 
     >>> port = PrintPort()
     >>> port.send(msg)
-    note_on channel=0 note=0 velocity=64 time=0
+    note_on channel=0 note=0 velocity=64 delta_ticks=0
 
 ``_send()`` will be called by ``send()``, and is responsible for
 actually sending the message somewhere (or in this case print it out).

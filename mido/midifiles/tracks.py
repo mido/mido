@@ -32,7 +32,7 @@ class MidiTrack(list):
                 return
         else:
             # No track name found, add one.
-            self.insert(0, MetaMessage('track_name', name=name, time=0))
+            self.insert(0, MetaMessage('track_name', name=name, delta_ticks=0))
 
     def copy(self):
         return self.__class__(self)
@@ -68,17 +68,17 @@ def _to_abstime(messages):
     """Convert messages to absolute time."""
     now = 0
     for msg in messages:
-        now += msg.time
-        yield msg.copy(time=now)
+        now += msg.delta_ticks
+        yield msg.copy(delta_ticks=now)
 
 
 def _to_reltime(messages):
     """Convert messages to relative time."""
     now = 0
     for msg in messages:
-        delta = msg.time - now
-        yield msg.copy(time=delta)
-        now = msg.time
+        delta = msg.delta_ticks - now
+        yield msg.copy(delta_ticks=delta)
+        now = msg.delta_ticks
 
 
 def fix_end_of_track(messages):
@@ -91,16 +91,16 @@ def fix_end_of_track(messages):
 
     for msg in messages:
         if msg.type == 'end_of_track':
-            accum += msg.time
+            accum += msg.delta_ticks
         else:
             if accum:
-                delta = accum + msg.time
-                yield msg.copy(time=delta)
+                delta = accum + msg.delta_ticks
+                yield msg.copy(delta_ticks=delta)
                 accum = 0
             else:
                 yield msg
 
-    yield MetaMessage('end_of_track', time=accum)
+    yield MetaMessage('end_of_track', delta_ticks=accum)
 
 
 def merge_tracks(tracks):
@@ -113,6 +113,6 @@ def merge_tracks(tracks):
     for track in tracks:
         messages.extend(_to_abstime(track))
 
-    messages.sort(key=lambda msg: msg.time)
+    messages.sort(key=lambda msg: msg.delta_ticks)
 
     return MidiTrack(fix_end_of_track(_to_reltime(messages)))

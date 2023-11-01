@@ -59,7 +59,7 @@ def _decode_data_bytes(status_byte, data, spec):
     return args
 
 
-def decode_message(msg_bytes, time=0, check=True):
+def decode_message(msg_bytes, delta_ticks=0, check=True):
     """Decode message bytes and return messages as a dictionary.
 
     Raises ValueError if the bytes are out of range or the message is
@@ -82,7 +82,7 @@ def decode_message(msg_bytes, time=0, check=True):
 
     msg = {
         'type': spec['type'],
-        'time': time,
+        'delta_ticks': delta_ticks,
     }
 
     # Sysex.

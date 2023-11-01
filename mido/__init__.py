@@ -12,7 +12,7 @@ Creating messages:
 
     Message(type, **parameters) -- create a new message
     MetaMessage(type, **parameters) -- create a new meta message
-    UnknownMetaMessage(type_byte, data=None, time=0)
+    UnknownMetaMessage(type_byte, data=None, delta_ticks=0)
 
 Ports:
 
@@ -66,13 +66,13 @@ Getting started:
     >>> import mido
     >>> m = mido.Message('note_on', note=60, velocity=64)
     >>> m
-    <message note_on channel=0, note=60, velocity=64, time=0>
+    <message note_on channel=0, note=60, velocity=64, delta_ticks=0>
     >>> m.type
     'note_on'
     >>> m.channel = 6
     >>> m.note = 19
     >>> m.copy(velocity=120)
-    <message note_on channel=0, note=60, velocity=64, time=0>
+    <message note_on channel=0, note=60, velocity=64, delta_ticks=0>
     >>> s = mido.Message('sysex', data=[byte for byte in range(5)])
     >>> s.data
     (0, 1, 2, 3, 4)

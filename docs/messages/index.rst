@@ -11,12 +11,12 @@ attributes will vary depending on message type.
 To create a new message::
 
     >>> mido.Message('note_on')
-    Message('note_on', channel=0, note=0, velocity=64, time=0)
+    Message('note_on', channel=0, note=0, velocity=64, delta_ticks=0)
 
 You can pass attributes as keyword arguments::
 
-    >>> mido.Message('note_on', note=100, velocity=3, time=6.2)
-    Message('note_on', channel=0, note=100, velocity=3, time=6.2)
+    >>> mido.Message('note_on', note=100, velocity=3, delta_ticks=6.2)
+    Message('note_on', channel=0, note=100, velocity=3, delta_ticks=6.2)
 
 All attributes will default to ``0``.
 The exceptions are ``velocity``, which defaults to ``64`` (middle velocity)
@@ -36,8 +36,8 @@ The ``type`` attribute can be used to determine message type::
 Attributes are also settable but it's always better to use
 ``msg.copy()``::
 
-    >>> msg.copy(note=99, time=100.0)
-    Message('note_on', channel=0, note=99, velocity=64, time=100.0)
+    >>> msg.copy(note=99, delta_ticks=100.0)
+    Message('note_on', channel=0, note=99, velocity=64, delta_ticks=100.0)
 
 .. note:: Mido always makes a copy of messages instead of modifying
           them so if you do the same you have immutable messages in
@@ -76,7 +76,7 @@ You can convert a message to :term:`MIDI` ``bytes`` with one of these methods:
 
     >>> msg = mido.Message('note_on')
     >>> msg
-    Message('note_on', channel=0, note=0, velocity=64, time=0)
+    Message('note_on', channel=0, note=0, velocity=64, delta_ticks=0)
     >>> msg.bytes()
     [144, 0, 64]
     >>> msg.bin()
@@ -104,33 +104,33 @@ The ``bytes`` must contain exactly one complete message. If not
 
 
 
-The Time Attribute
-------------------
+The delta_ticks Attribute
+-------------------------
 
-Each message has a ``time`` attribute, which can be set to any value
+Each message has a ``delta_ticks`` attribute, which can be set to any value
 of type ``int`` or ``float``.
 
 Some parts of Mido use the attribute for special purposes. In ``MIDI file``
-tracks, it is used as delta time (in :term:`ticks`), and it must be a
+tracks, it is used as delta delta_ticks (in :term:`ticks`), and it must be a
 non-negative integer.
 
 In other parts of Mido, this value is ignored.
 
 .. versionchanged:: 1.1.18
 
-    In earlier versions, the ``time`` attribute was not included in
+    In earlier versions, the ``delta_ticks`` attribute was not included in
     comparisons. If you want the old behavior the easiest way is
     ``msg1.bytes() == msg2.bytes()``.
 
-To sort messages on time you can do::
+To sort messages on delta_ticks you can do::
 
-    messages.sort(key=lambda message: message.time)
+    messages.sort(key=lambda message: message.delta_ticks)
 
 or::
 
     import operator
 
-    messages.sort(key=operator.attrgetter('time'))
+    messages.sort(key=operator.attrgetter('delta_ticks'))
 
 
 System Exclusive Messages
@@ -142,7 +142,7 @@ the payload of the message::
 
     >>> msg = Message('sysex', data=[1, 2, 3])
     >>> msg
-    Message('sysex', data=(1, 2, 3), time=0)
+    Message('sysex', data=(1, 2, 3), delta_ticks=0)
     >>> msg.hex()
     'F0 01 02 03 F7'
 
@@ -152,7 +152,7 @@ You can also extend the existing data::
    >>> msg.data += [4, 5]
    >>> msg.data += [6, 7, 8]
    >>> msg
-   Message('sysex', data=(1, 2, 3, 4, 5, 6, 7, 8), time=0)
+   Message('sysex', data=(1, 2, 3, 4, 5, 6, 7, 8), delta_ticks=0)
 
 Any sequence of integers between `0` and `127` is allowed, and type and range
 checking is applied to each data byte.
@@ -171,7 +171,7 @@ For example::
     >>> msg = Message('sysex', data=bytearray(b'ABC'))
     >>> msg.data += bytearray(b'DEF')
     >>> msg
-    Message('sysex', data=(65, 66, 67, 68, 69, 70), time=0)
+    Message('sysex', data=(65, 66, 67, 68, 69, 70), delta_ticks=0)
 
 
 .. include:: frozen.rst
