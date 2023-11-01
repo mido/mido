@@ -324,6 +324,29 @@ class MidiFile:
         if self.type != 2:
             self.merged_track = merge_tracks(self.tracks)
 
+    def __eq__(self, other):
+
+        if not isinstance(other, self.__class__):
+            return False
+
+        if len(self.tracks) != len(other.tracks):
+            return False
+
+        for this_track, that_track in zip(self.tracks, other.tracks):
+            if this_track != that_track:
+                return False
+
+        if self.filename != other.filename:
+            return False
+
+        if self.ticks_per_beat != other.ticks_per_beat:
+            return False
+
+        if self.type != other.type:
+            return False
+
+        return True
+
     def add_track(self, name=None):
         """Add a new track to the file.
 
