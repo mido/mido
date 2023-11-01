@@ -101,7 +101,9 @@ from .messages import (Message, parse_string, parse_string_stream,
                        MIN_SONGPOS, MAX_SONGPOS)
 from .midifiles import (MidiFile, MidiTrack, merge_tracks,
                         MetaMessage, UnknownMetaMessage,
-                        bpm2tempo, tempo2bpm, tick2second, second2tick,
+                        bpm2tempo, tempo2bpm,
+                        tick2second, second2tick,  # Deprecated
+                        ticks2seconds, seconds2ticks,
                         KeySignatureError)
 from .parser import Parser, parse, parse_all
 from .syx import read_syx_file, write_syx_file
