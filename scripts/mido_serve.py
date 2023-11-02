@@ -11,7 +11,7 @@ connected sockets will be sent to every output port.
 import argparse
 
 import mido
-from mido import sockets
+from mido.port import sockets
 from mido.port.ports import MultiPort
 
 

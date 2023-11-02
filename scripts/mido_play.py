@@ -19,7 +19,9 @@ import argparse
 import sys
 
 import mido
-from mido import MidiFile, Message, tempo2bpm
+from mido.protocol.version1 import Message
+from mido.file.smf import MidiFile
+from mido.file.smf.units import tempo2bpm
 
 
 def parse_args():
