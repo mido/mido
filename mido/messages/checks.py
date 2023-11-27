@@ -3,8 +3,14 @@
 # SPDX-License-Identifier: MIT
 
 from numbers import Integral, Real
-from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
-                    MIN_PITCHWHEEL, MAX_PITCHWHEEL)
+
+from .specs import (
+    MAX_PITCHWHEEL,
+    MAX_SONGPOS,
+    MIN_PITCHWHEEL,
+    MIN_SONGPOS,
+    SPEC_BY_TYPE,
+)
 
 
 def check_type(type_):

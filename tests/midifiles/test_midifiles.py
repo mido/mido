@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: MIT
 
 import io
+
 from pytest import raises
+
 from mido.messages import Message
+from mido.midifiles.meta import KeySignatureError, MetaMessage
 from mido.midifiles.midifiles import MidiFile, MidiTrack
-from mido.midifiles.meta import MetaMessage, KeySignatureError
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # MThd

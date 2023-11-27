@@ -2,11 +2,16 @@
 #
 # SPDX-License-Identifier: MIT
 
+from mido.frozen import (
+    FrozenMessage,
+    FrozenMetaMessage,
+    FrozenUnknownMetaMessage,
+    freeze_message,
+    is_frozen,
+    thaw_message,
+)
 from mido.messages import Message
 from mido.midifiles.meta import UnknownMetaMessage
-from mido.frozen import (is_frozen, freeze_message, thaw_message,
-                         FrozenMessage, FrozenMetaMessage,
-                         FrozenUnknownMetaMessage)
 
 
 def test_hashability():

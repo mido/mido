@@ -9,10 +9,11 @@ http://pypi.python.org/pypi/python-rtmidi/
 import threading
 
 import rtmidi
-from ._parser_queue import ParserQueue
-from .rtmidi_utils import expand_alsa_port_name
+
 from .. import ports
 from ..messages import Message
+from ._parser_queue import ParserQueue
+from .rtmidi_utils import expand_alsa_port_name
 
 
 def _get_api_lookup():

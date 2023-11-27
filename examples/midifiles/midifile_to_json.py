@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-import sys
 import json
+import sys
+
 import mido
 
 

@@ -3,8 +3,13 @@
 # SPDX-License-Identifier: MIT
 
 import pytest
-from mido.midifiles.meta import MetaMessage, UnknownMetaMessage, \
-    MetaSpec_key_signature, KeySignatureError
+
+from mido.midifiles.meta import (
+    KeySignatureError,
+    MetaMessage,
+    MetaSpec_key_signature,
+    UnknownMetaMessage,
+)
 
 
 def test_copy_invalid_argument():
