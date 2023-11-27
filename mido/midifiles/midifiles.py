@@ -19,7 +19,6 @@ http://www.recordingblogs.com/sa/tabid/82/EntryId/44/MIDI-Part-XIII-Delta-time-a
 http://www.sonicspot.com/guide/midifiles.html
 """
 
-import io
 import string
 import struct
 import time
