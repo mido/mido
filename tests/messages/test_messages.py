@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: MIT
 
 from pytest import raises
-from mido.messages.specs import MIN_PITCHWHEEL, MAX_PITCHWHEEL, \
-    MIN_SONGPOS, MAX_SONGPOS
+
 from mido.messages.messages import Message, SysexData
+from mido.messages.specs import MAX_PITCHWHEEL, MAX_SONGPOS, MIN_PITCHWHEEL, MIN_SONGPOS
 
 
 def test_msg_time_equality():

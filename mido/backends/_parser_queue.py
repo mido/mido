@@ -2,11 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
-from ..parser import Parser
-
+import queue
 from threading import RLock
 
-import queue
+from ..parser import Parser
 
 
 class ParserQueue:

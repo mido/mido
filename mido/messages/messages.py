@@ -4,10 +4,10 @@
 
 import re
 
-from .checks import check_msgdict, check_value, check_data
+from .checks import check_data, check_msgdict, check_value
 from .decode import decode_message
 from .encode import encode_message
-from .specs import make_msgdict, SPEC_BY_TYPE, REALTIME_TYPES
+from .specs import REALTIME_TYPES, SPEC_BY_TYPE, make_msgdict
 from .strings import msg2str, str2msg
 
 

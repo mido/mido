@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import itertools
+
 from mido.messages import Message
 from mido.midifiles.meta import MetaMessage
 from mido.midifiles.tracks import MidiTrack

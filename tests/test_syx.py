@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from pytest import raises
+
 from mido.messages import Message
 from mido.syx import read_syx_file, write_syx_file
 

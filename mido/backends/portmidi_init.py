@@ -8,9 +8,9 @@ Low-level wrapper for PortMidi library
 Copied straight from Grant Yoshida's portmidizero, with slight
 modifications.
 """
-import sys
 import ctypes
 import ctypes.util
+import sys
 
 dll_name = ''
 if sys.platform == 'darwin':
