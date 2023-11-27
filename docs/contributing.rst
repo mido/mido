@@ -119,12 +119,12 @@ It's good practice to check your changes *locally* before submitting.
 Linting
 ^^^^^^^
 
-Linting is done with `flake8 <https://flake8.pycqa.org/en/latest/>`_.
-Its configuration can be found in `.flake8`.
+Linting is done with `ruff <https://docs.astral.sh/ruff>`_.
+Its configuration can be found in `pyproject.toml`.
 
 You can lint your code using::
 
-    flake8
+    ruff check .
 
 
 Copyright and REUSE Compliance

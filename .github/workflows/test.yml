@@ -29,8 +29,10 @@ jobs:
         run: python3 -m pip install --upgrade pip setuptools wheel
       - name: Install mido in dev mode
         run: python3 -m pip install --quiet .[lint-code]
-      - name: Lint code with flake
-        run: flake8
+      - name: Lint code with ruff
+        run: ruff check .
+        env:
+          RUFF_OUTPUT_FORMAT: github
 
   reuse:
     runs-on: ubuntu-latest
