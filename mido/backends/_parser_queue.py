@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-import time
-from .. import ports
 from ..parser import Parser
 
 from threading import RLock
