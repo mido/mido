@@ -327,7 +327,7 @@ class MidiFile:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
         if self._merged_track is None:
-            self._merged_track = merge_tracks(self.tracks)
+            self._merged_track = merge_tracks(self.tracks, skip_checks=True)
         return self._merged_track
 
     @merged_track.deleter
