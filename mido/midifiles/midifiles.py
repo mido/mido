@@ -43,7 +43,7 @@ def print_byte(byte, pos=0):
     if char.isspace() or char not in string.printable:
         char = '.'
 
-    print(f'  {pos:06x}: {byte:02x}  {char}')
+    print(f'  {pos:06x}: {byte:02x}  {char}')  # noqa: T201
 
 
 class DebugFileWrapper:
@@ -78,7 +78,7 @@ def read_bytes(infile, size):
 
 
 def _dbg(text=''):
-    print(text)
+    print(text)  # noqa: T201
 
 
 # We can't use the chunk module for two reasons:
@@ -480,12 +480,10 @@ class MidiFile:
         print_tracks(meta_only=True) -> will print only MetaMessages
         """
         for i, track in enumerate(self.tracks):
-            print(f'=== Track {i}')
+            print(f'=== Track {i}')  # noqa: T201
             for msg in track:
-                if not isinstance(msg, MetaMessage) and meta_only:
-                    pass
-                else:
-                    print(f'{msg!r}')
+                if isinstance(msg, MetaMessage) or not meta_only:
+                    print(f'{msg!r}')  # noqa: T201
 
     def __repr__(self):
         if self.tracks:
