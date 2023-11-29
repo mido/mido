@@ -62,7 +62,7 @@ build-docs = [
     'sphinx-rtd-theme~=1.2.2',
 ]
 check-manifest = ['check-manifest>=0.49',]
-lint-code = ['flake8~=5.0.4',]
+lint-code = ['ruff~=0.1.6',]
 lint-reuse = ['reuse~=1.1.2',]
 ports-pygame = ['PyGame~=2.5',]
 ports-rtmidi = ['python-rtmidi~=1.5.4',]
@@ -126,4 +126,16 @@ norecursedirs = [
     "build",
     "dist",
     "examples",
+]
+
+[tool.ruff]
+ignore = [
+    "F401",  # TODO: Enable
+]
+
+extend-select = [
+    "E",
+    "F",
+    "I",
+    "W",
 ]

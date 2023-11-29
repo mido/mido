@@ -16,10 +16,12 @@ TODO:
 """
 import os
 import select
-import threading
 import subprocess
+import threading
+
 from ..messages import Message
-from ._common import PortMethods, InputMethods, OutputMethods
+from ._common import InputMethods, OutputMethods, PortMethods
+
 """
 Dir Device    Name
 IO  hw:1,0,0  UM-1 MIDI 1

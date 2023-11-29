@@ -19,17 +19,15 @@ http://www.recordingblogs.com/sa/tabid/82/EntryId/44/MIDI-Part-XIII-Delta-time-a
 http://www.sonicspot.com/guide/midifiles.html
 """
 
-import io
 import string
 import struct
 import time
 from numbers import Integral
 
-from .meta import (MetaMessage, build_meta_message, meta_charset,
-                   encode_variable_int)
-from .tracks import MidiTrack, merge_tracks, fix_end_of_track
+from ..messages import SPEC_BY_STATUS, Message
+from .meta import MetaMessage, build_meta_message, encode_variable_int, meta_charset
+from .tracks import MidiTrack, fix_end_of_track, merge_tracks
 from .units import tick2second
-from ..messages import Message, SPEC_BY_STATUS
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)

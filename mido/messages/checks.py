@@ -3,8 +3,14 @@
 # SPDX-License-Identifier: MIT
 
 from numbers import Integral, Real
-from .specs import (SPEC_BY_TYPE, MIN_SONGPOS, MAX_SONGPOS,
-                    MIN_PITCHWHEEL, MAX_PITCHWHEEL)
+
+from .specs import (
+    MAX_PITCHWHEEL,
+    MAX_SONGPOS,
+    MIN_PITCHWHEEL,
+    MIN_SONGPOS,
+    SPEC_BY_TYPE,
+)
 
 
 def check_type(type_):
@@ -67,8 +73,6 @@ def check_time(time):
 
 
 _CHECKS = {
-    'type': check_type,
-    'data': check_data,
     'channel': check_channel,
     'control': check_data_byte,
     'data': check_data,
@@ -79,9 +83,10 @@ _CHECKS = {
     'pos': check_pos,
     'program': check_data_byte,
     'song': check_data_byte,
+    'time': check_time,
+    'type': check_type,
     'value': check_data_byte,
     'velocity': check_data_byte,
-    'time': check_time,
 }
 
 

@@ -2,7 +2,20 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .meta import MetaMessage, UnknownMetaMessage, KeySignatureError
-from .units import tick2second, second2tick, bpm2tempo, tempo2bpm
-from .tracks import MidiTrack, merge_tracks
+from .meta import KeySignatureError, MetaMessage, UnknownMetaMessage
 from .midifiles import MidiFile
+from .tracks import MidiTrack, merge_tracks
+from .units import bpm2tempo, second2tick, tempo2bpm, tick2second
+
+__all__ = [
+    "KeySignatureError",
+    "MetaMessage",
+    "MidiFile",
+    "MidiTrack",
+    "UnknownMetaMessage",
+    "bpm2tempo",
+    "merge_tracks",
+    "second2tick",
+    "tempo2bpm",
+    "tick2second",
+]

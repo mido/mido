@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .specs import CHANNEL_MESSAGES, SPEC_BY_TYPE, MIN_PITCHWHEEL
+from .specs import CHANNEL_MESSAGES, MIN_PITCHWHEEL, SPEC_BY_TYPE
 
 
 def _encode_pitchwheel(msg):

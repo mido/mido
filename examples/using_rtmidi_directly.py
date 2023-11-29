@@ -8,8 +8,10 @@ First example from here modified to use Mido messages:
     http://pypi.python.org/pypi/python-rtmidi/
 """
 import time
-import mido
+
 import rtmidi
+
+import mido
 
 midiout = rtmidi.MidiOut()
 available_ports = midiout.get_ports()

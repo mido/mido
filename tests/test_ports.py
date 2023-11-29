@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import pytest
+
 from mido.messages import Message
 from mido.ports import BaseIOPort
 

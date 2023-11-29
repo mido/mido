@@ -92,23 +92,63 @@ Getting started:
     >>> get_input_names()
     ['MPK mini MIDI 1', 'SH-201']
 """
-import os
 
 from . import ports, sockets
 from .backends.backend import Backend
-from .messages import (Message, parse_string, parse_string_stream,
-                       format_as_string, MIN_PITCHWHEEL, MAX_PITCHWHEEL,
-                       MIN_SONGPOS, MAX_SONGPOS)
-from .midifiles import (MidiFile, MidiTrack, merge_tracks,
-                        MetaMessage, UnknownMetaMessage,
-                        bpm2tempo, tempo2bpm, tick2second, second2tick,
-                        KeySignatureError)
+from .messages import (
+    MAX_PITCHWHEEL,
+    MAX_SONGPOS,
+    MIN_PITCHWHEEL,
+    MIN_SONGPOS,
+    Message,
+    format_as_string,
+    parse_string,
+    parse_string_stream,
+)
+from .midifiles import (
+    KeySignatureError,
+    MetaMessage,
+    MidiFile,
+    MidiTrack,
+    UnknownMetaMessage,
+    bpm2tempo,
+    merge_tracks,
+    second2tick,
+    tempo2bpm,
+    tick2second,
+)
 from .parser import Parser, parse, parse_all
 from .syx import read_syx_file, write_syx_file
 from .version import version_info
 
-# Prevent splat import.
-__all__ = []
+__all__ = [
+    "KeySignatureError",
+    "MAX_PITCHWHEEL",
+    "MAX_SONGPOS",
+    "MIN_PITCHWHEEL",
+    "MIN_SONGPOS",
+    "Message",
+    "MetaMessage",
+    "MidiFile",
+    "MidiTrack",
+    "Parser",
+    "UnknownMetaMessage",
+    "bpm2tempo",
+    "format_as_string",
+    "merge_tracks",
+    "parse",
+    "parse_all",
+    "parse_string",
+    "parse_string_stream",
+    "ports",
+    "read_syx_file",
+    "second2tick",
+    "sockets",
+    "tempo2bpm",
+    "tick2second",
+    "version_info",
+    "write_syx_file",
+]
 
 
 def set_backend(name=None, load=False):
@@ -137,5 +177,3 @@ def set_backend(name=None, load=False):
 
 
 set_backend()
-
-del os

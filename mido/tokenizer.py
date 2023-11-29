@@ -4,7 +4,8 @@
 
 from collections import deque
 from numbers import Integral
-from .messages.specs import SYSEX_START, SYSEX_END, SPEC_BY_STATUS
+
+from .messages.specs import SPEC_BY_STATUS, SYSEX_END, SYSEX_START
 
 
 class Tokenizer:

@@ -5,7 +5,7 @@
 exclude SECURITY.md
 prune docs/_build
 prune logo
-include README.rst LICENSE .readthedocs.yaml .flake8 .reuse/dep5
+include README.rst LICENSE .readthedocs.yaml .reuse/dep5
 include docs/_static/.gitkeep
 recursive-include docs *.bat
 recursive-include docs *.py

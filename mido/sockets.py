@@ -5,10 +5,11 @@
 """
 MIDI over TCP/IP.
 """
-import socket
 import select
+import socket
+
 from .parser import Parser
-from .ports import MultiPort, BaseIOPort
+from .ports import BaseIOPort, MultiPort
 
 
 def _is_readable(socket):

@@ -11,6 +11,7 @@ http://www.pygame.org/docs/ref/midi.html
 """
 
 from pygame import midi
+
 from ..ports import BaseInput, BaseOutput
 
 

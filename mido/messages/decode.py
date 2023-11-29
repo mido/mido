@@ -2,10 +2,14 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .specs import (SYSEX_START, SYSEX_END,
-                    SPEC_BY_STATUS, CHANNEL_MESSAGES,
-                    MIN_PITCHWHEEL)
 from .checks import check_data
+from .specs import (
+    CHANNEL_MESSAGES,
+    MIN_PITCHWHEEL,
+    SPEC_BY_STATUS,
+    SYSEX_END,
+    SYSEX_START,
+)
 
 
 def _decode_sysex_data(data):

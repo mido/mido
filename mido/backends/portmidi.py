@@ -13,6 +13,7 @@ http://portmedia.sourceforge.net/portmidi/doxygen/
 """
 import ctypes
 import threading
+
 from ..ports import BaseInput, BaseOutput, sleep
 from . import portmidi_init as pm
 

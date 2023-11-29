@@ -24,6 +24,7 @@ TODO:
 import queue
 
 import rtmidi_python as rtmidi
+
 # TODO: change this to a relative import if the backend is included in
 # the package.
 from ..ports import BaseInput, BaseOutput

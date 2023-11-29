@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-from mido.messages.specs import SPEC_BY_STATUS
-from mido.messages.encode import encode_message
 from mido.messages.decode import decode_message
+from mido.messages.encode import encode_message
+from mido.messages.specs import SPEC_BY_STATUS
 
 
 def test_encode_decode_all():
