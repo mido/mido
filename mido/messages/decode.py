@@ -81,8 +81,8 @@ def decode_message(msg_bytes, time=0, check=True):
 
     try:
         spec = SPEC_BY_STATUS[status_byte]
-    except KeyError:
-        raise ValueError(f'invalid status byte {status_byte!r}')
+    except KeyError as ke:
+        raise ValueError(f'invalid status byte {status_byte!r}') from ke
 
     msg = {
         'type': spec['type'],

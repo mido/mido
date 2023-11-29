@@ -39,8 +39,8 @@ def _get_api_id(name=None):
 
     try:
         api = _name_to_api[name]
-    except KeyError:
-        raise ValueError(f'unknown API {name}')
+    except KeyError as ke:
+        raise ValueError(f'unknown API {name}') from ke
 
     if name in get_api_names():
         return api
@@ -104,7 +104,7 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
     try:
         rt.open_port(port_id)
     except RuntimeError as err:
-        raise OSError(*err.args)
+        raise OSError(*err.args) from err
 
     return name
 
