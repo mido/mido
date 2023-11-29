@@ -124,7 +124,7 @@ def test_encode_and_parse_all():
     for type_ in sorted(specs.SPEC_BY_TYPE.keys()):
         msg = Message(type_)
         parser.feed(msg.bytes())
-        parser.get_message() == msg
+        assert parser.get_message() == msg
 
     assert parser.get_message() is None
 

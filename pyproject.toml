@@ -134,6 +134,7 @@ ignore = [
 ]
 
 extend-select = [
+    "B",
     "E",
     "F",
     "I",
@@ -146,6 +147,7 @@ extend-select = [
     "S101",  # allow assertions in tests
 ]
 "examples/**" = [
+    "B007",  # allow slightly sloppy loop variables in examples
     "S311",  # allow RNGs that are not cryptographically secure
 ]
 "mido/backends/amidi.py" = [

@@ -94,7 +94,7 @@ def test_copy_handles_data_generator():
 
 def test_compare_with_nonmessage():
     with raises(TypeError):
-        Message('clock') == 'not a message'
+        assert Message('clock') == 'not a message'
 
 
 def test_from_dict_default_values():
