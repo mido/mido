@@ -34,7 +34,7 @@ def test_track_repr():
         Message('note_on', channel=1, note=2, time=3),
         Message('note_off', channel=1, note=2, time=3),
     ])
-    track_eval = eval(repr(track))
+    track_eval = eval(repr(track))  # noqa: S307
     for m1, m2 in zip(track, track_eval):
         assert m1 == m2
 

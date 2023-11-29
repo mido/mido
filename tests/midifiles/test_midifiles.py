@@ -181,7 +181,7 @@ def test_midifile_repr():
             Message('note_on', channel=2, note=6, time=9),
             Message('note_off', channel=2, note=6, time=9)]),
     ])
-    midifile_eval = eval(repr(midifile))
+    midifile_eval = eval(repr(midifile))  # noqa: S307
     for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
         for m1, m2 in zip(track, track_eval):
             assert m1 == m2

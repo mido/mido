@@ -41,20 +41,20 @@ def test_is_frozen():
 
 def test_frozen_repr():
     msg = FrozenMessage('note_on', channel=1, note=2, time=3)
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert isinstance(msg_eval, FrozenMessage)
     assert msg == msg_eval
 
 
 def test_frozen_meta_repr():
     msg = FrozenMetaMessage('end_of_track', time=10)
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert isinstance(msg_eval, FrozenMetaMessage)
     assert msg == msg_eval
 
 
 def test_frozen_unknown_meta_repr():
     msg = FrozenUnknownMetaMessage(type_byte=99, data=[1, 2], time=10)
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert isinstance(msg_eval, UnknownMetaMessage)
     assert msg == msg_eval
