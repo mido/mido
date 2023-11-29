@@ -88,14 +88,14 @@ def signed(to_type, n):
 
     try:
         pack_format, unpack_format = formats[to_type]
-    except KeyError:
-        raise ValueError(f'invalid integer type {to_type}')
+    except KeyError as ke:
+        raise ValueError(f'invalid integer type {to_type}') from ke
 
     try:
         packed = struct.pack(pack_format, n)
         return struct.unpack(unpack_format, packed)[0]
     except struct.error as err:
-        raise ValueError(*err.args)
+        raise ValueError(*err.args) from err
 
 
 def unsigned(to_type, n):
@@ -402,14 +402,14 @@ class MetaSpec_key_signature(MetaSpec):
         mode = data[1]
         try:
             message.key = _key_signature_decode[(key, mode)]
-        except KeyError:
+        except KeyError as ke:
             if key < 7:
                 msg = ('Could not decode key with {} '
                        'flats and mode {}'.format(abs(key), mode))
             else:
                 msg = ('Could not decode key with {} '
                        'sharps and mode {}'.format(key, mode))
-            raise KeySignatureError(msg)
+            raise KeySignatureError(msg) from ke
 
     def encode(self, message):
         key, mode = _key_signature_encode[message.key]

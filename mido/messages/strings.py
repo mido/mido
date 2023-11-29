@@ -45,8 +45,8 @@ def _parse_data(value):
 
     try:
         return [int(byte) for byte in value[1:-1].split(',')]
-    except ValueError:
-        raise ValueError('unable to parse data bytes')
+    except ValueError as ve:
+        raise ValueError('unable to parse data bytes') from ve
 
 
 def str2msg(text):
