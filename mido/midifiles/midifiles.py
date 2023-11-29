@@ -307,6 +307,7 @@ class MidiFile:
         self.clip = clip
 
         self.tracks = []
+        self._merged_track = None
 
         if type not in range(3):
             raise ValueError(
@@ -319,10 +320,21 @@ class MidiFile:
         elif self.filename is not None:
             with open(filename, 'rb') as file:
                 self._load(file)
-        # merge tracks at load time to prevent timing error on
-        # first call to __iter__()
-        if self.type != 2:
-            self.merged_track = merge_tracks(self.tracks)
+
+    @property
+    def merged_track(self):
+        # The tracks of type 2 files are not in sync, so they can
+        # not be played back like this.
+        if self.type == 2:
+            raise TypeError("can't merge tracks in type 2 (asynchronous) file")
+
+        if self._merged_track is None:
+            self._merged_track = merge_tracks(self.tracks)
+        return self._merged_track
+
+    @merged_track.deleter
+    def merged_track(self):
+        self._merged_track = None
 
     def add_track(self, name=None):
         """Add a new track to the file.
@@ -334,10 +346,7 @@ class MidiFile:
         if name is not None:
             track.name = name
         self.tracks.append(track)
-        # merge new track immediately to prevent timing error on
-        # first call to __iter__()
-        if self.type != 2:
-            self.merged_track = merge_tracks(self.tracks)
+        del self.merged_track  # uncache merged track
         return track
 
     def _load(self, infile):
@@ -380,11 +389,6 @@ class MidiFile:
         return sum(msg.time for msg in self)
 
     def __iter__(self):
-        # The tracks of type 2 files are not in sync, so they can
-        # not be played back like this.
-        if self.type == 2:
-            raise TypeError("can't merge tracks in type 2 (asynchronous) file")
-
         tempo = DEFAULT_TEMPO
         for msg in self.merged_track:
             # Convert message time from absolute time
