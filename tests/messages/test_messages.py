@@ -94,7 +94,7 @@ def test_copy_handles_data_generator():
 
 def test_compare_with_nonmessage():
     with raises(TypeError):
-        Message('clock') == 'not a message'
+        assert Message('clock') == 'not a message'
 
 
 def test_from_dict_default_values():
@@ -117,5 +117,5 @@ def test_from_hex_sysex_data_type():
 
 def test_repr():
     msg = Message('note_on', channel=1, note=2, time=3)
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert msg == msg_eval

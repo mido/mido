@@ -14,7 +14,6 @@ TODO:
 * do sysex messages work?
 * starting amidi for every message sent is costly
 """
-import os
 import select
 import subprocess
 import threading
@@ -33,7 +32,10 @@ IO  hw:2,0,0  MPK mini MIDI 1
 def get_devices():
     devices = []
 
-    lines = os.popen('amidi -l').read().splitlines()
+    lines = subprocess.check_output(
+        ["amidi", "-l"],
+        encoding="utf-8",
+    ).splitlines()
     for line in lines[1:]:
         mode, device, name = line.strip().split(None, 2)
 

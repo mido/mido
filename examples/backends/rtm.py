@@ -74,13 +74,13 @@ class PortCommon:
                 # In RtMidi, the default port is the first port.
                 try:
                     self.name = ports[0]
-                except IndexError:
-                    raise OSError('no ports available')
+                except IndexError as ie:
+                    raise OSError('no ports available') from ie
 
             try:
                 port_id = ports.index(self.name)
-            except ValueError:
-                raise OSError(f'unknown port {self.name!r}')
+            except ValueError as ve:
+                raise OSError(f'unknown port {self.name!r}') from ve
 
             self._rt.open_port(port_id)
 
