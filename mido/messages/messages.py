@@ -111,19 +111,25 @@ class SysexData(tuple):
 
 
 class Message(BaseMessage):
-    def __init__(self, type, **args):
+    def __init__(self, type, skip_checks=False, **args):
         msgdict = make_msgdict(type, args)
         if type == 'sysex':
             msgdict['data'] = SysexData(msgdict['data'])
-        check_msgdict(msgdict)
+
+        if not skip_checks:
+            check_msgdict(msgdict)
+
         vars(self).update(msgdict)
 
-    def copy(self, **overrides):
+    def copy(self, skip_checks=False, **overrides):
         """Return a copy of the message.
 
         Attributes will be overridden by the passed keyword arguments.
         Only message specific attributes can be overridden. The message
         type can not be changed.
+
+        The skip_checks arg can be used to bypass validation of message
+        attributes and should be used cautiously.
         """
         if not overrides:
             # Bypass all checks.
@@ -139,8 +145,11 @@ class Message(BaseMessage):
 
         msgdict = vars(self).copy()
         msgdict.update(overrides)
-        check_msgdict(msgdict)
-        return self.__class__(**msgdict)
+
+        if not skip_checks:
+            check_msgdict(msgdict)
+
+        return self.__class__(skip_checks=skip_checks, **msgdict)
 
     @classmethod
     def from_bytes(cl, data, time=0):

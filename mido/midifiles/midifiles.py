@@ -327,7 +327,7 @@ class MidiFile:
             raise TypeError("can't merge tracks in type 2 (asynchronous) file")
 
         if self._merged_track is None:
-            self._merged_track = merge_tracks(self.tracks)
+            self._merged_track = merge_tracks(self.tracks, skip_checks=True)
         return self._merged_track
 
     @merged_track.deleter
@@ -396,7 +396,7 @@ class MidiFile:
             else:
                 delta = 0
 
-            yield msg.copy(time=delta)
+            yield msg.copy(skip_checks=True, time=delta)
 
             if msg.type == 'set_tempo':
                 tempo = msg.tempo

@@ -64,24 +64,24 @@ class MidiTrack(list):
         return f'{self.__class__.__name__}({messages})'
 
 
-def _to_abstime(messages):
+def _to_abstime(messages, skip_checks=False):
     """Convert messages to absolute time."""
     now = 0
     for msg in messages:
         now += msg.time
-        yield msg.copy(time=now)
+        yield msg.copy(skip_checks=skip_checks, time=now)
 
 
-def _to_reltime(messages):
+def _to_reltime(messages, skip_checks=False):
     """Convert messages to relative time."""
     now = 0
     for msg in messages:
         delta = msg.time - now
-        yield msg.copy(time=delta)
+        yield msg.copy(skip_checks=skip_checks, time=delta)
         now = msg.time
 
 
-def fix_end_of_track(messages):
+def fix_end_of_track(messages, skip_checks=False):
     """Remove all end_of_track messages and add one at the end.
 
     This is used by merge_tracks() and MidiFile.save()."""
@@ -95,7 +95,7 @@ def fix_end_of_track(messages):
         else:
             if accum:
                 delta = accum + msg.time
-                yield msg.copy(time=delta)
+                yield msg.copy(skip_checks=skip_checks, time=delta)
                 accum = 0
             else:
                 yield msg
@@ -103,16 +103,25 @@ def fix_end_of_track(messages):
     yield MetaMessage('end_of_track', time=accum)
 
 
-def merge_tracks(tracks):
+def merge_tracks(tracks, skip_checks=False):
     """Returns a MidiTrack object with all messages from all tracks.
 
     The messages are returned in playback order with delta times
     as if they were all in one track.
+
+    Pass skip_checks=True to skip validation of messages before merging.
+    This should ONLY be used when the messages in tracks have already
+    been validated by mido.checks.
     """
     messages = []
     for track in tracks:
-        messages.extend(_to_abstime(track))
+        messages.extend(_to_abstime(track, skip_checks=skip_checks))
 
     messages.sort(key=lambda msg: msg.time)
 
-    return MidiTrack(fix_end_of_track(_to_reltime(messages)))
+    return MidiTrack(
+        fix_end_of_track(
+            _to_reltime(messages, skip_checks=skip_checks),
+            skip_checks=skip_checks,
+        )
+    )
