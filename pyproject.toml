@@ -151,7 +151,7 @@ extend-select = [
 "extras/**" = [
     "T201",  # print allowed
 ]
-"scripts/**" = [
+"scripts/scripts/**" = [
     "T201",  # print allowed
 ]
 
