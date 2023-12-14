@@ -62,7 +62,7 @@ jobs:
       - name: Install twine
         run: python3 -m pip install --upgrade twine
       - name: Check distribution name
-        run: twine check dist
+        run: twine check dist/*
       - name: Publish to test.pypi.org
         run: twine upload --repository testpypi dist
         env:
@@ -88,7 +88,7 @@ jobs:
       - name: Install twine
         run: python3 -m pip install --upgrade twine
       - name: Publish to pypi.org
-        run: twine upload dist
+        run: twine upload dist/*
         env:
           TWINE_NON_INTERACTIVE: 1
           TWINE_USERNAME: __token__
