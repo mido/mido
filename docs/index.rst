@@ -81,7 +81,7 @@ About this document
 
 .. version is automatically generated.
 
-This document refers to Mido version |version|.
+This document refers to Mido version |release|.
 
 .. note::
 
@@ -98,7 +98,7 @@ This documentation (Except our code of conduct) is licensed under the
 `Creative Commons Attribution 4.0 International
 License <https://creativecommons.org/licenses/by/4.0/>`__.
 
-|Creative Commons BY-4.0 License|  .. From included shared/licenses_logos.rst
+|Creative Commons BY-4.0 License|
 
 .. seealso::
 
