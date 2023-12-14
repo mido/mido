@@ -20,5 +20,4 @@ recursive-include extras *.py
 recursive-include extras *.rst
 recursive-include LICENSES *.txt
 recursive-include mido *.py
-recursive-include scripts *.py
 recursive-include tests *.py

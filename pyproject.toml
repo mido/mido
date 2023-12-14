@@ -86,10 +86,10 @@ ports-all = [
 ]
 
 [project.scripts]
-mido-play = "scripts.mido_play:main"
-mido-ports = "scripts.mido_ports:main"
-mido-serve = "scripts.mido_serve:main"
-mido-connect = "scripts.mido_connect:main"
+mido-play = "mido.scripts.mido_play:main"
+mido-ports = "mido.scripts.mido_ports:main"
+mido-serve = "mido.scripts.mido_serve:main"
+mido-connect = "mido.scripts.mido_connect:main"
 
 [tool.setuptools]
 packages = [
@@ -97,6 +97,7 @@ packages = [
     "mido.backends",
     "mido.messages",
     "mido.midifiles",
+    "mido.scripts",
 ]
 include-package-data = true
 
