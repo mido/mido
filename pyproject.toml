@@ -151,10 +151,6 @@ extend-select = [
 "extras/**" = [
     "T201",  # print allowed
 ]
-"scripts/scripts/**" = [
-    "T201",  # print allowed
-]
-
 "examples/**" = [
     "B007",  # allow slightly sloppy loop variables in examples
     "S311",  # allow RNGs that are not cryptographically secure
@@ -163,4 +159,7 @@ extend-select = [
 "mido/backends/amidi.py" = [
     "S603",  # allow subprocesses with possibly untrusted input
     "S607",  # allow `amidi` as a partial path
+]
+"mido/scripts/**" = [
+    "T201",  # print allowed
 ]
