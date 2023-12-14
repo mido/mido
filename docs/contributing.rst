@@ -238,7 +238,7 @@ services for GitHub. Every time a new commit is pushed or merged onto our
 ``main`` development branch on GitHub, the ``latest`` version of the
 documentation is updated by Read the Docs. Each time a new version is tagged,
 the new  documentation version is created, built, published and eventually
-promoted to``stable`` following Semantic Versioning.
+promoted to ``stable`` following Semantic Versioning.
 The ``stable`` version of the documentation is the one served by default if
 no specific version is chosen.
 
@@ -260,8 +260,6 @@ Preparation
 
 Make sure all the tests pass, documentation has been updated and everything
 is in good order before proceeding.
-
-Update the Changelog and Bump Version number.
 
 .. note::
 
