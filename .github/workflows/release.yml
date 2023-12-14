@@ -64,7 +64,7 @@ jobs:
       - name: Check distribution name
         run: twine check dist/*
       - name: Publish to test.pypi.org
-        run: twine upload --repository testpypi dist
+        run: twine upload --repository testpypi dist/*
         env:
           TWINE_NON_INTERACTIVE: 1
           TWINE_USERNAME: __token__
