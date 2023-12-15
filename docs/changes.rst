@@ -16,6 +16,15 @@ This project uses `Semantic Versioning <https://semver.org>`_.
 Release History
 ---------------
 
+1.3.2 (2023-12-15)
+^^^^^^^^^^^^^^^^^^
+
+* Bugfix Midifile: skip_checks were missing on MetaMessage (@almostimplemented)
+
+* Bugfix Scripts/mido-play: UnboundLocalError (@rdoursenaud)
+
+* Minor documentation cleanup (@rdoursenaud)
+
 1.3.1 (2023-12-14)
 ^^^^^^^^^^^^^^^^^^
 
