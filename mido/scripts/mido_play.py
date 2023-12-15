@@ -79,6 +79,7 @@ def main():
     args = parse_args()
 
     if args.quiet:
+        global print
         def print(*args):
             pass
 
