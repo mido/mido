@@ -51,7 +51,11 @@ def test_merge_large_midifile():
     # Add meta messages for testing.
     meta1 = mido.MetaMessage('track_name', name='Test Track 1')
     meta2 = mido.MetaMessage('track_name', name='Test Track 2')
-    meta3 = mido.MetaMessage('time_signature', numerator=4, denominator=4, clocks_per_click=24, notated_32nd_notes_per_beat=8)
+    meta3 = mido.MetaMessage('time_signature',
+                             numerator=4,
+                             denominator=4,
+                             clocks_per_click=24,
+                             notated_32nd_notes_per_beat=8)
     unknown_meta = mido.UnknownMetaMessage(0x50, b'\x01\x02\x03')
 
     mid.tracks[0].insert(0, meta1)
