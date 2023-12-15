@@ -476,18 +476,19 @@ def build_meta_message(meta_type, data, delta=0):
 class MetaMessage(BaseMessage):
     is_meta = True
 
-    def __init__(self, type, **kwargs):
+    def __init__(self, type, skip_checks=False, **kwargs):
         # TODO: handle unknown type?
 
         spec = _META_SPEC_BY_TYPE[type]
         self_vars = vars(self)
         self_vars['type'] = type
 
-        for name in kwargs:
-            if name not in spec.settable_attributes:
-                raise ValueError(
-                    '{} is not a valid argument for this message type'.format(
-                        name))
+        if not skip_checks:
+            for name in kwargs:
+                if name not in spec.settable_attributes:
+                    raise ValueError(
+                        '{} is not a valid argument for this message type'.format(
+                            name))
 
         for name, value in zip(spec.attributes, spec.defaults):
             self_vars[name] = value
@@ -570,7 +571,7 @@ class MetaMessage(BaseMessage):
 
 
 class UnknownMetaMessage(MetaMessage):
-    def __init__(self, type_byte, data=None, time=0, type='unknown_meta'):
+    def __init__(self, type_byte, data=None, time=0, type='unknown_meta', **kwargs):
         if data is None:
             data = ()
         else:

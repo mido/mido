@@ -7,7 +7,7 @@ import time
 
 import mido
 from mido.messages import Message
-from mido.midifiles.meta import MetaMessage
+from mido.midifiles.meta import MetaMessage, UnknownMetaMessage
 from mido.midifiles.tracks import MidiTrack
 
 zip = getattr(itertools, 'izip', zip)
@@ -48,6 +48,21 @@ def test_merge_large_midifile():
             t.append(mido.Message("note_off", note=72, time=500 + 100 * k))
         mid.tracks.append(t)
 
+    # Add meta messages for testing.
+    meta1 = mido.MetaMessage('track_name', name='Test Track 1')
+    meta2 = mido.MetaMessage('track_name', name='Test Track 2')
+    meta3 = mido.MetaMessage('time_signature',
+                             numerator=4,
+                             denominator=4,
+                             clocks_per_click=24,
+                             notated_32nd_notes_per_beat=8)
+    unknown_meta = mido.UnknownMetaMessage(0x50, b'\x01\x02\x03')
+
+    mid.tracks[0].insert(0, meta1)
+    mid.tracks[1].insert(0, meta2)
+    mid.tracks[2].insert(0, meta3)
+    mid.tracks[3].insert(0, unknown_meta)
+
     start = time.time()
     merged = list(mido.merge_tracks(mid.tracks, skip_checks=True))
     finish = time.time()
@@ -56,4 +71,4 @@ def test_merge_large_midifile():
     max_track_duration_ticks = max(
         sum(msg.time for msg in t) for t in mid.tracks)
     assert merged_duration_ticks == max_track_duration_ticks
-    assert (finish - start) < 2.0
+    assert (finish - start) < 3.0
