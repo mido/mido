@@ -5,9 +5,14 @@ import warnings
 from warnings import catch_warnings
 
 from pytest import raises
-from mido.protocol.version1.message.specs import (
-    MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS)
+
 from mido.protocol.version1.message.message import Message, SysexData
+from mido.protocol.version1.message.specs import (
+    MAX_PITCHWHEEL,
+    MAX_SONGPOS,
+    MIN_PITCHWHEEL,
+    MIN_SONGPOS,
+)
 
 
 def test_msg_time_equality():
@@ -99,7 +104,7 @@ def test_copy_handles_data_generator():
 
 def test_compare_with_nonmessage():
     with raises(TypeError):
-        Message('clock') == 'not a message'
+        assert Message('clock') == 'not a message'
 
 
 def test_from_dict_default_values():
@@ -122,7 +127,7 @@ def test_from_hex_sysex_data_type():
 
 def test_repr():
     msg = Message('note_on', channel=1, note=2, timestamp=3)
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert msg == msg_eval
 
 

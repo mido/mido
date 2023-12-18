@@ -6,8 +6,8 @@
 Standard MIDI File (SMF) Events
 """
 
-from .midi import MidiEvent
 from .meta import MetaEvent, UnknownMetaEvent
+from .midi import MidiEvent
 
 __all__ = [
     'MidiEvent',

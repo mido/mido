@@ -10,10 +10,10 @@ import re
 import warnings
 
 from .base import BaseMessage
-from .checks import check_msgdict, check_value, check_data
+from .checks import check_data, check_msgdict, check_value
 from .decode import decode_message
 from .encode import encode_message
-from .specs import make_msgdict, SPEC_BY_TYPE
+from .specs import SPEC_BY_TYPE, make_msgdict
 from .strings import msg2str, str2msg
 
 
@@ -79,11 +79,14 @@ class Message(BaseMessage):
                       stacklevel=2)
         return self.timestamp
 
-    def __init__(self, type, **args):
+    def __init__(self, type, skip_checks=False, **args):
         msgdict = make_msgdict(type, args)
         if type == 'sysex':
             msgdict['data'] = SysexData(msgdict['data'])
-        check_msgdict(msgdict)
+
+        if not skip_checks:
+            check_msgdict(msgdict)
+
         vars(self).update(msgdict)
 
     def __len__(self):
@@ -128,12 +131,15 @@ class Message(BaseMessage):
         """Encode message and return as a list of integers."""
         return encode_message(vars(self))
 
-    def copy(self, **overrides):
+    def copy(self, skip_checks=False, **overrides):
         """Return a copy of the message.
 
         Attributes will be overridden by the passed keyword arguments.
         Only message specific attributes can be overridden. The message
         type can not be changed.
+
+        The skip_checks arg can be used to bypass validation of message
+        attributes and should be used cautiously.
         """
         if not overrides:
             # Bypass all checks.
@@ -149,8 +155,11 @@ class Message(BaseMessage):
 
         msgdict = vars(self).copy()
         msgdict.update(overrides)
-        check_msgdict(msgdict)
-        return self.__class__(**msgdict)
+
+        if not skip_checks:
+            check_msgdict(msgdict)
+
+        return self.__class__(skip_checks=skip_checks, **msgdict)
 
 
 def parse_string(text):

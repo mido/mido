@@ -90,27 +90,66 @@ Getting started:
     >>> get_input_names()
     ['MPK mini MIDI 1', 'SH-201']
 """
-
-# Prevent splat import.
-__all__ = []
-
-import os
-
+from .file.smf import (
+    KeySignatureError,
+    MidiFile,
+    MidiTrack,
+    bpm2tempo,
+    merge_tracks,
+    second2tick,
+    tempo2bpm,
+    tick2second,
+)
+from .file.smf.event import (
+    MetaEvent,
+    MidiEvent,
+    UnknownMetaEvent,
+)
+from .file.syx import read_syx_file, write_syx_file
 from .port import ports, sockets
 from .port.backend.backend import Backend
 from .protocol.version1.message import (
+    MAX_PITCHWHEEL,
+    MAX_SONGPOS,
+    MIN_PITCHWHEEL,
+    MIN_SONGPOS,
     Message,
-    MIN_PITCHWHEEL, MAX_PITCHWHEEL, MIN_SONGPOS, MAX_SONGPOS,
-    format_as_string, parse_string, parse_string_stream)
-from .file.smf.event import MidiEvent, MetaEvent, UnknownMetaEvent
-from .file.smf import (
-    MidiFile, MidiTrack,
-    merge_tracks,
-    bpm2tempo, tempo2bpm, tick2second, second2tick,
-    KeySignatureError)
+    format_as_string,
+    parse_string,
+    parse_string_stream,
+)
 from .protocol.version1.parser import Parser, parse, parse_all
-from .file.syx import read_syx_file, write_syx_file
 from .version import version_info
+
+__all__ = [
+    "KeySignatureError",
+    "MAX_PITCHWHEEL",
+    "MAX_SONGPOS",
+    "MIN_PITCHWHEEL",
+    "MIN_SONGPOS",
+    "Message",
+    "MetaEvent",
+    "MidiEvent",
+    "MidiFile",
+    "MidiTrack",
+    "Parser",
+    "UnknownMetaEvent",
+    "bpm2tempo",
+    "format_as_string",
+    "merge_tracks",
+    "parse",
+    "parse_all",
+    "parse_string",
+    "parse_string_stream",
+    "ports",
+    "read_syx_file",
+    "second2tick",
+    "sockets",
+    "tempo2bpm",
+    "tick2second",
+    "version_info",
+    "write_syx_file",
+]
 
 # Declared for hinting. Overridden by set_backend.
 backend = Backend()
@@ -147,5 +186,3 @@ def set_backend(name=None, load=False):
 
 
 set_backend()
-
-del os

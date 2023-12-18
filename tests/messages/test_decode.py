@@ -5,6 +5,7 @@
 from warnings import catch_warnings
 
 from pytest import raises
+
 from mido.protocol.version1.message.decode import decode_message
 
 

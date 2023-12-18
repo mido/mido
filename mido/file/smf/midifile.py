@@ -17,15 +17,16 @@ from numbers import Integral
 
 from mido.protocol.version1.message.specs import SPEC_BY_STATUS
 
-from .event.midi import MidiEvent
 from .event.meta import (
     MetaEvent,
-    build_meta_event, meta_charset, encode_variable_int
+    build_meta_event,
+    encode_variable_int,
+    meta_charset,
 )
+from .event.midi import MidiEvent
 from .event.sysex import SysExEvent
-from .track import MidiTrack, merge_tracks, fix_end_of_track
+from .track import MidiTrack, fix_end_of_track, merge_tracks
 from .units import tick2second
-
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -41,7 +42,7 @@ def print_byte(byte, pos=0):
     if char.isspace() or char not in string.printable:
         char = '.'
 
-    print(f'  {pos:06x}: {byte:02x}  {char}')
+    print(f'  {pos:06x}: {byte:02x}  {char}')  # noqa: T201
 
 
 class DebugFileWrapper:
@@ -76,7 +77,7 @@ def read_bytes(infile, size):
 
 
 def _dbg(text=''):
-    print(text)
+    print(text)  # noqa: T201
 
 
 # We can't use the chunk module for two reasons:
@@ -114,8 +115,8 @@ def read_file_header(infile):
 def read_message_event(infile, status_byte, peek_data, delta_time, clip=False):
     try:
         spec = SPEC_BY_STATUS[status_byte]
-    except LookupError:
-        raise OSError(f'undefined status byte 0x{status_byte:02x}')
+    except LookupError as le:
+        raise OSError(f'undefined status byte 0x{status_byte:02x}') from le
 
     # Subtract 1 for status byte.
     size = spec['length'] - 1 - len(peek_data)
@@ -306,6 +307,7 @@ class MidiFile:
         self.clip = clip
 
         self.tracks = []
+        self._merged_track = None
 
         if type not in range(3):
             raise ValueError(
@@ -318,10 +320,21 @@ class MidiFile:
         elif self.filename is not None:
             with open(filename, 'rb') as file:
                 self._load(file)
-        # merge tracks at load time to prevent timing error on
-        # first call to __iter__()
-        if self.type != 2:
-            self.merged_track = merge_tracks(self.tracks)
+
+    @property
+    def merged_track(self):
+        # The tracks of type 2 files are not in sync, so they can
+        # not be played back like this.
+        if self.type == 2:
+            raise TypeError("can't merge tracks in type 2 (asynchronous) file")
+
+        if self._merged_track is None:
+            self._merged_track = merge_tracks(self.tracks, skip_checks=True)
+        return self._merged_track
+
+    @merged_track.deleter
+    def merged_track(self):
+        self._merged_track = None
 
     def add_track(self, name=None):
         """Add a new track to the file.
@@ -333,10 +346,7 @@ class MidiFile:
         if name is not None:
             track.name = name
         self.tracks.append(track)
-        # merge new track immediately to prevent timing error on
-        # first call to __iter__()
-        if self.type != 2:
-            self.merged_track = merge_tracks(self.tracks)
+        del self.merged_track  # uncache merged track
         return track
 
     def _load(self, infile):
@@ -395,7 +405,7 @@ class MidiFile:
             else:
                 delta_time = 0
 
-            yield event.copy(delta_time=delta_time)
+            yield event.copy(delta_time=delta_time, skip_checks=True)
 
             if event.type == 'set_tempo':
                 tempo = event.tempo
@@ -481,12 +491,12 @@ class MidiFile:
         print_tracks(meta_only=True) -> will print only MetaEvent
         """
         for i, track in enumerate(self.tracks):
-            print(f'=== Track {i}')
+            print(f'=== Track {i}')  # noqa: T201
             for event in track:
                 if not isinstance(event, MetaEvent) and meta_only:
                     pass
                 else:
-                    print(f'{event!r}')
+                    print(f'{event!r}')  # noqa: T201
 
     def __repr__(self):
         if self.tracks:

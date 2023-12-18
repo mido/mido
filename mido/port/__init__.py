@@ -10,5 +10,5 @@ __all__ = [
 
 ]
 
-from .ports import BaseIOPort, BaseInput, BaseOutput, BasePort, MultiPort
+from .ports import BaseInput, BaseIOPort, BaseOutput, BasePort, MultiPort
 from .sockets import PortServer, SocketPort

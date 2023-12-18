@@ -3,9 +3,13 @@
 # SPDX-License-Identifier: MIT
 
 import pytest
-from mido.file.smf.event.meta import (MetaEvent, UnknownMetaEvent,
-                                      MetaSpec_key_signature,
-                                      KeySignatureError)
+
+from mido.file.smf.event.meta import (
+    KeySignatureError,
+    MetaEvent,
+    MetaSpec_key_signature,
+    UnknownMetaEvent,
+)
 
 
 def test_copy_invalid_argument():
@@ -41,13 +45,13 @@ class TestKeySignature:
 
 def test_meta_event_repr():
     msg = MetaEvent(delta_time=10, type='end_of_track')
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert msg == msg_eval
 
 
 def test_unknown_meta_event_repr():
     msg = UnknownMetaEvent(delta_time=10, type_byte=99, data=[1, 2])
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert msg == msg_eval
 
 

@@ -2,11 +2,16 @@
 #
 # SPDX-License-Identifier: MIT
 
-from mido.protocol.version1.message import Message
 from mido.file.smf.event import UnknownMetaEvent
+from mido.protocol.version1.message import Message
 from mido.protocol.version1.message.frozen import (
-    is_frozen, freeze_message, thaw_message,
-    FrozenMessage, FrozenMetaEvent, FrozenUnknownMetaEvent)
+    FrozenMessage,
+    FrozenMetaEvent,
+    FrozenUnknownMetaEvent,
+    freeze_message,
+    is_frozen,
+    thaw_message,
+)
 
 
 def test_hashability():
@@ -36,20 +41,20 @@ def test_is_frozen():
 
 def test_frozen_repr():
     msg = FrozenMessage('note_on', channel=1, note=2, timestamp=3)
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert isinstance(msg_eval, FrozenMessage)
     assert msg == msg_eval
 
 
 def test_frozen_meta_repr():
     msg = FrozenMetaEvent(delta_time=10, type='end_of_track')
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert isinstance(msg_eval, FrozenMetaEvent)
     assert msg == msg_eval
 
 
 def test_frozen_unknown_meta_repr():
     msg = FrozenUnknownMetaEvent(delta_time=10, type_byte=99, data=[1, 2])
-    msg_eval = eval(repr(msg))
+    msg_eval = eval(repr(msg))  # noqa: S307
     assert isinstance(msg_eval, UnknownMetaEvent)
     assert msg == msg_eval

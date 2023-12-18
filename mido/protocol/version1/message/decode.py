@@ -8,10 +8,14 @@ MIDI 1.0 Protocol Decoders
 """
 import warnings
 
-from .specs import (SYSEX_START, SYSEX_END,
-                    SPEC_BY_STATUS, CHANNEL_MESSAGES,
-                    MIN_PITCHWHEEL)
 from .checks import check_data
+from .specs import (
+    CHANNEL_MESSAGES,
+    MIN_PITCHWHEEL,
+    SPEC_BY_STATUS,
+    SYSEX_END,
+    SYSEX_START,
+)
 
 
 def _decode_sysex_data(data):
@@ -83,8 +87,8 @@ def decode_message(msg_bytes, timestamp=0, delta_time=None, check=True):
 
     try:
         spec = SPEC_BY_STATUS[status_byte]
-    except KeyError:
-        raise ValueError(f'invalid status byte {status_byte!r}')
+    except KeyError as ke:
+        raise ValueError(f'invalid status byte {status_byte!r}') from ke
 
     msg = {
         'type': spec['type'],
@@ -97,14 +101,14 @@ def decode_message(msg_bytes, timestamp=0, delta_time=None, check=True):
     # Sysex.
     if status_byte == SYSEX_START:
         if len(data) < 1:
-            warnings.warn('sysex without end byte')
+            warnings.warn('sysex without end byte', stacklevel=2)
             data = list(data)
             data.append(SYSEX_END)
 
         end = data[-1]
         data = data[:-1]
         if end != SYSEX_END:
-            warnings.warn(f'invalid sysex end byte {end!r}')
+            warnings.warn(f'invalid sysex end byte {end!r}', stacklevel=2)
 
     if check:
         check_data(data)

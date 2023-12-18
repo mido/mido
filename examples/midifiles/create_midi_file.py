@@ -12,7 +12,7 @@ The file is saved to test.mid.
 import random
 import sys
 
-from mido import MidiEvent, MidiFile, MidiTrack, MAX_PITCHWHEEL
+from mido import MAX_PITCHWHEEL, MidiEvent, MidiFile, MidiTrack
 
 notes = [64, 64 + 7, 64 + 12]
 

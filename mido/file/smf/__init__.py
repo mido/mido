@@ -7,12 +7,11 @@
 Standard MIDI File (SMF)
 """
 
+from .event.meta import KeySignatureError, MetaEvent, UnknownMetaEvent
 from .event.midi import MidiEvent
-from .event.meta import MetaEvent, UnknownMetaEvent, KeySignatureError
 from .midifile import MidiFile
 from .track import MidiTrack, merge_tracks
-from .units import tick2second, second2tick, bpm2tempo, tempo2bpm
-
+from .units import bpm2tempo, second2tick, tempo2bpm, tick2second
 
 __all__ = [
     'MidiFile',

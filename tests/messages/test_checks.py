@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from pytest import raises
+
 from mido.protocol.version1.message.checks import check_time
 
 

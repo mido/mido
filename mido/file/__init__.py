@@ -6,8 +6,8 @@
 File formats
 """
 
-from .smf.event.midi import MidiEvent
 from .smf.event.meta import MetaEvent, UnknownMetaEvent
+from .smf.event.midi import MidiEvent
 from .smf.midifile import MidiFile
 from .smf.track import MidiTrack
 

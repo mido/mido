@@ -13,6 +13,7 @@ http://portmedia.sourceforge.net/portmidi/doxygen/
 """
 import ctypes
 import threading
+
 from ..ports import BaseInput, BaseOutput, sleep
 from . import portmidi_init as pm
 
@@ -195,7 +196,7 @@ class Input(PortCommon, BaseInput):
             # (TODO: not sure if this is correct.)
             packed_message = event.message & 0xffffffff
 
-            for i in range(4):
+            for _i in range(4):
                 byte = packed_message & 0xff
                 self._parser.feed_byte(byte)
                 packed_message >>= 8

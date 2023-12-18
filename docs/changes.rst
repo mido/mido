@@ -16,6 +16,31 @@ This project uses `Semantic Versioning <https://semver.org>`_.
 Release History
 ---------------
 
+1.3.2 (2023-12-15)
+^^^^^^^^^^^^^^^^^^
+
+* Bugfix Midifile: skip_checks were missing on MetaMessage (@almostimplemented)
+
+* Bugfix Scripts/mido-play: UnboundLocalError (@rdoursenaud)
+
+* Minor documentation cleanup (@rdoursenaud)
+
+1.3.1 (2023-12-14)
+^^^^^^^^^^^^^^^^^^
+
+* New Python 3.12 support
+
+* Improved merged_tracks performance (@almostimplemented, pull request #474)
+
+* Bugfix Backends/portmidi: SysEx messages were generating an error (@tweakoz, pull request #523)
+
+* Bugfix Midifile: Defer computing merged_track (@akx, pull request #565)
+
+* Bugfix pip release: Scripts can now be executed properly (@rdoursenaud)
+
+* Tooling: Linting now uses ruff (@akx, pull requests #564, #566)
+
+* Minor documentation improvements (@rdoursenaud)
 
 1.3.0 (2023-07-21)
 ^^^^^^^^^^^^^^^^^^

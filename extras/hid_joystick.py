@@ -79,7 +79,6 @@ Other axis have values from -32767 to 32767 as well.
 
 """
 import struct
-import select
 
 JS_EVENT_BUTTON = 0x1
 JS_EVENT_AXIS = 0x2
@@ -251,7 +250,6 @@ def play_drums(dev, out):
 
 
 if __name__ == '__main__':
-    import sys
     import mido
 
     with open('/dev/input/js0') as dev:

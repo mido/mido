@@ -9,10 +9,12 @@ http://pypi.python.org/pypi/python-rtmidi/
 import threading
 
 import rtmidi
+
+from mido.protocol.version1.message.message import Message
+
+from .. import ports
 from ._parser_queue import ParserQueue
 from .rtmidi_utils import expand_alsa_port_name
-from .. import ports
-from mido.protocol.version1.message.message import Message
 
 
 def _get_api_lookup():
@@ -38,8 +40,8 @@ def _get_api_id(name=None):
 
     try:
         api = _name_to_api[name]
-    except KeyError:
-        raise ValueError(f'unknown API {name}')
+    except KeyError as ke:
+        raise ValueError(f'unknown API {name}') from ke
 
     if name in get_api_names():
         return api
@@ -103,7 +105,7 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
     try:
         rt.open_port(port_id)
     except RuntimeError as err:
-        raise OSError(*err.args)
+        raise OSError(*err.args) from err
 
     return name
 

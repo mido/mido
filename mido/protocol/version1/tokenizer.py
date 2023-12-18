@@ -9,10 +9,14 @@ MIDI 1.0 Byte-Stream Tokenizer
 import warnings
 from collections import deque
 from numbers import Integral
+
 from mido.protocol.version1.message.specs import (
+    CHANNEL_MESSAGES,
+    REALTIME_MESSAGES,
     SPEC_BY_STATUS,
-    SYSEX_END, SYSEX_START,
-    CHANNEL_MESSAGES, REALTIME_MESSAGES)
+    SYSEX_END,
+    SYSEX_START,
+)
 
 
 class Tokenizer:

@@ -58,6 +58,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: mido-build
+          path: dist/
       - name: Install twine
         run: python3 -m pip install --upgrade twine
       - name: Check distribution name
@@ -83,6 +84,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: mido-build
+          path: dist/
       - name: Install twine
         run: python3 -m pip install --upgrade twine
       - name: Publish to pypi.org

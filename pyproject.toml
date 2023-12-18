@@ -37,6 +37,7 @@ classifiers = [
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
     'Topic :: Multimedia :: Sound/Audio :: MIDI',
     'Topic :: Software Development',
     'Topic :: Software Development :: Libraries',
@@ -61,7 +62,7 @@ build-docs = [
     'sphinx-rtd-theme~=1.2.2',
 ]
 check-manifest = ['check-manifest>=0.49',]
-lint-code = ['flake8~=5.0.4',]
+lint-code = ['ruff~=0.1.6',]
 lint-reuse = ['reuse~=1.1.2',]
 ports-pygame = ['PyGame~=2.5',]
 ports-rtmidi = ['python-rtmidi~=1.5.4',]
@@ -81,14 +82,13 @@ dev = [
 ports-all = [
     'mido[ports-pygame]',
     'mido[ports-rtmidi]',
-    'mido[ports-rtmidi-python]',
 ]
 
 [project.scripts]
-mido-play = "scripts.mido_play:main"
-mido-ports = "scripts.mido_ports:main"
-mido-serve = "scripts.mido_serve:main"
-mido-connect = "scripts.mido_connect:main"
+mido-play = "mido.scripts.mido_play:main"
+mido-ports = "mido.scripts.mido_ports:main"
+mido-serve = "mido.scripts.mido_serve:main"
+mido-connect = "mido.scripts.mido_connect:main"
 
 [tool.setuptools]
 packages = [
@@ -122,4 +122,39 @@ norecursedirs = [
     "build",
     "dist",
     "examples",
+]
+
+[tool.ruff]
+ignore = [
+    "F401",  # TODO: Enable
+]
+
+extend-select = [
+    "B",
+    "E",
+    "F",
+    "I",
+    "S",  # security lints
+    "W",
+    "T",
+]
+
+[tool.ruff.per-file-ignores]
+"tests/**" = [
+    "S101",  # allow assertions in tests
+]
+"extras/**" = [
+    "T201",  # print allowed
+]
+"examples/**" = [
+    "B007",  # allow slightly sloppy loop variables in examples
+    "S311",  # allow RNGs that are not cryptographically secure
+    "T201",  # print allowed
+]
+"mido/port/backend/amidi.py" = [
+    "S603",  # allow subprocesses with possibly untrusted input
+    "S607",  # allow `amidi` as a partial path
+]
+"mido/scripts/**" = [
+    "T201",  # print allowed
 ]

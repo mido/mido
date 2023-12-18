@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: MIT
 
 import io
+
 from pytest import raises
-from mido.file.smf.event import MidiEvent, MetaEvent
-from mido.file.smf.midifile import MidiFile, MidiTrack
+
+from mido.file.smf.event import MetaEvent, MidiEvent
 from mido.file.smf.event.meta import KeySignatureError
+from mido.file.smf.midifile import MidiFile, MidiTrack
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # Chunk type: MThd (Header)
@@ -201,7 +203,7 @@ def test_midifile_repr():
             MidiEvent(delta_time=9, type='note_on', channel=2, note=6),
             MidiEvent(delta_time=9, type='note_off', channel=2, note=6)]),
     ])
-    midifile_eval = eval(repr(midifile))
+    midifile_eval = eval(repr(midifile))  # noqa: S307
     for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
         for m1, m2 in zip(track, track_eval):
             assert m1 == m2

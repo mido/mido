@@ -12,6 +12,7 @@ available in the top level module.
 from collections import deque
 
 from mido.protocol.version1.message import Message
+
 from .tokenizer import Tokenizer
 
 

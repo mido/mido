@@ -65,25 +65,25 @@ class MidiTrack(list):
         return f'{self.__class__.__name__}({events})'
 
 
-def _to_abstime(events):
+def _to_abstime(events, skip_checks=False):
     """Convert events to absolute time."""
     now = 0
     for event in events:
         now += event.delta_time
         # FIXME: absolute time should not be in delta_time
-        yield event.copy(delta_time=now)
+        yield event.copy(delta_time=now, skip_checks=skip_checks)
 
 
-def _to_reltime(events):
+def _to_reltime(events, skip_checks=False):
     """Convert events to relative time."""
     now = 0
     for event in events:
         delta_time = event.delta_time - now
-        yield event.copy(delta_time=delta_time)
+        yield event.copy(delta_time=delta_time, skip_checks=skip_checks)
         now = event.delta_time
 
 
-def fix_end_of_track(events):
+def fix_end_of_track(events, skip_checks=False):
     """Remove all end_of_track events and add one at the end.
 
     This is used by merge_tracks() and MidiFile.save()."""
@@ -97,7 +97,7 @@ def fix_end_of_track(events):
         else:
             if accum:
                 delta_time = accum + event.delta_time
-                yield event.copy(delta_time=delta_time)
+                yield event.copy(delta_time=delta_time, skip_checks=skip_checks)
                 accum = 0
             else:
                 yield event
@@ -105,16 +105,24 @@ def fix_end_of_track(events):
     yield MetaEvent(delta_time=accum, type='end_of_track')
 
 
-def merge_tracks(tracks):
+def merge_tracks(tracks, skip_checks=False):
     """Returns a MidiTrack object with all events from all tracks.
 
     The events are returned in playback order with delta times
     as if they were all in one track.
+
+    Pass skip_checks=True to skip validation of messages before merging.
+    This should ONLY be used when the messages in tracks have already
+    been validated by mido.checks.
     """
     events = []
     for track in tracks:
-        events.extend(_to_abstime(track))
+        events.extend(_to_abstime(track, skip_checks=skip_checks))
 
     events.sort(key=lambda event: event.delta_time)
 
-    return MidiTrack(fix_end_of_track(_to_reltime(events)))
+    return MidiTrack(
+        fix_end_of_track(
+            _to_reltime(events,
+                        skip_checks=skip_checks),
+            skip_checks=skip_checks))

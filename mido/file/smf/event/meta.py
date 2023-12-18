@@ -91,14 +91,14 @@ def signed(to_type, n):
 
     try:
         pack_format, unpack_format = formats[to_type]
-    except KeyError:
-        raise ValueError(f'invalid integer type {to_type}')
+    except KeyError as ke:
+        raise ValueError(f'invalid integer type {to_type}') from ke
 
     try:
         packed = struct.pack(pack_format, n)
         return struct.unpack(unpack_format, packed)[0]
     except struct.error as err:
-        raise ValueError(*err.args)
+        raise ValueError(*err.args) from err
 
 
 def unsigned(to_type, n):
@@ -405,14 +405,14 @@ class MetaSpec_key_signature(MetaSpec):
         mode = data[1]
         try:
             event.key = _key_signature_decode[(key, mode)]
-        except KeyError:
+        except KeyError as ke:
             if key < 7:
                 err_msg = ('Could not decode key with {} '
                            'flats and mode {}'.format(abs(key), mode))
             else:
                 err_msg = ('Could not decode key with {} '
                            'sharps and mode {}'.format(key, mode))
-            raise KeySignatureError(err_msg)
+            raise KeySignatureError(err_msg) from ke
 
     def encode(self, event):
         key, mode = _key_signature_encode[event.key]
@@ -479,18 +479,19 @@ def build_meta_event(meta_type, data, delta_time=0):
 class MetaEvent(MtrkEvent):
     is_meta = True
 
-    def __init__(self, type, delta_time, **kwargs):
+    def __init__(self, type, delta_time, skip_checks=False, **kwargs):
         # TODO: handle unknown type?
 
         spec = _META_SPEC_BY_TYPE[type]
         self_vars = vars(self)
         self_vars['type'] = type
 
-        for name in kwargs:
-            if name not in spec.settable_attributes:
-                raise ValueError(
-                    '{} is not a valid argument for this event type'.format(
-                        name))
+        if not skip_checks:
+            for name in kwargs:
+                if name not in spec.settable_attributes:
+                    raise ValueError(
+                        '{} is not a valid argument for this event type'.format(
+                            name))
 
         for name, value in zip(spec.attributes, spec.defaults):
             self_vars[name] = value
@@ -573,7 +574,7 @@ class MetaEvent(MtrkEvent):
 
 
 class UnknownMetaEvent(MetaEvent):
-    def __init__(self, type_byte, delta_time, data=None, type='unknown_meta'):
+    def __init__(self, type_byte, delta_time, data=None, type='unknown_meta', **kwargs):
         if data is None:
             data = ()
         else:

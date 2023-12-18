@@ -5,10 +5,11 @@
 """
 MIDI over TCP/IP.
 """
-import socket
 import select
+import socket
+
+from mido.port.ports import BaseIOPort, MultiPort
 from mido.protocol.version1.parser import Parser
-from mido.port.ports import MultiPort, BaseIOPort
 
 
 def _is_readable(socket):
@@ -103,7 +104,7 @@ class SocketPort(BaseIOPort):
             try:
                 byte = self._rfile.read(1)
             except OSError as err:
-                raise OSError(err.args[1])
+                raise OSError(err.args[1]) from err
             if len(byte) == 0:
                 # The other end has disconnected.
                 self.close()
@@ -120,7 +121,7 @@ class SocketPort(BaseIOPort):
                 # Broken pipe. The other end has disconnected.
                 self.close()
 
-            raise OSError(err.args[1])
+            raise OSError(err.args[1]) from err
 
     def _close(self):
         self._socket.close()
@@ -148,8 +149,8 @@ def parse_address(address):
     host, port = words
     try:
         port = int(port)
-    except ValueError:
-        raise ValueError('port number must be an integer')
+    except ValueError as ve:
+        raise ValueError('port number must be an integer') from ve
 
     # Note: port 0 is not allowed.
     if not 0 < port < (2**16):

@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-import os
 import importlib
+import os
+
 from .. import ports
 
 DEFAULT_BACKEND = 'mido.port.backend.rtmidi'

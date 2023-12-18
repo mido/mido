@@ -13,9 +13,18 @@ __all__ = [
 
 from .checks import check_time
 from .message import (
-    BaseMessage, Message, format_as_string, parse_string, parse_string_stream
+    BaseMessage,
+    Message,
+    format_as_string,
+    parse_string,
+    parse_string_stream,
 )
 from .specs import (
-    MAX_PITCHWHEEL, MAX_SONGPOS, MIN_PITCHWHEEL, MIN_SONGPOS, SPEC_BY_STATUS,
-    SPEC_BY_TYPE, SPEC_LOOKUP
+    MAX_PITCHWHEEL,
+    MAX_SONGPOS,
+    MIN_PITCHWHEEL,
+    MIN_SONGPOS,
+    SPEC_BY_STATUS,
+    SPEC_BY_TYPE,
+    SPEC_LOOKUP,
 )

@@ -13,6 +13,7 @@ from mido.protocol.version1.message.decode import decode_message
 from mido.protocol.version1.message.message import Message, SysexData
 from mido.protocol.version1.message.specs import SPEC_BY_TYPE
 from mido.protocol.version1.message.strings import msg2str
+
 from .base import MtrkEvent
 
 

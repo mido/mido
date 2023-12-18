@@ -2,13 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-import time
-from .. import ports
-from mido.protocol.version1.parser import Parser
-
+import queue
 from threading import RLock
 
-import queue
+from mido.protocol.version1.parser import Parser
+
+from .. import ports
 
 
 class ParserQueue:
