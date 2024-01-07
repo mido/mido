@@ -14,15 +14,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import importlib.metadata
 import os
 import sys
-
-try:
-    # Python 3.8+
-    import importlib.metadata as importlib_metadata
-except ImportError:
-    # <Python 3.7 and lower
-    import importlib_metadata
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -67,7 +61,7 @@ copyright = 'Ole Martin Bjørndalen\nRaphaël Doursenaud'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = importlib_metadata.version('mido')
+release = importlib.metadata.version('mido')
 # The short X.Y version.
 version = '.'.join(release.split('.')[:2])
 

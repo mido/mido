@@ -16,6 +16,13 @@ This project uses `Semantic Versioning <https://semver.org>`_.
 Release History
 ---------------
 
+2.0.0 (TBD)
+^^^^^^^^^^^
+
+.. warning::
+
+    This release drops support for Python 3.7.
+
 1.3.2 (2023-12-15)
 ^^^^^^^^^^^^^^^^^^
 

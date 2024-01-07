@@ -7,21 +7,18 @@
 MIDO Library Version Management
 """
 
-import packaging.version
+import importlib.metadata
+import warnings
 
-try:
-    # Python 3.8+
-    import importlib.metadata as importlib_metadata
-except ImportError:
-    # Python 3.7 and lower
-    import importlib_metadata
+import packaging.version
 
 __version__ = "0.0.0.dev0"
 
 try:
-    __version__ = importlib_metadata.version("mido")
-except importlib_metadata.PackageNotFoundError:
+    __version__ = importlib.metadata.version("mido")
+except importlib.metadata.PackageNotFoundError:
     # Package is not installed
+    warnings.warn("mido is not installed, can't determine its version.")
     pass
 
 version_info = packaging.version.Version(__version__)

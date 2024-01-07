@@ -106,7 +106,10 @@ Main Features
 Status
 ------
 
-1.3 is the fourth stable release.
+Alpha.
+
+2.0 will be the fifth stable release.
+Please use 1.3.x unless you want to contribute.
 
 This project uses `Semantic Versioning <https://semver.org>`_.
 
@@ -114,7 +117,7 @@ This project uses `Semantic Versioning <https://semver.org>`_.
 Requirements
 ------------
 
-Mido requires Python 3.7 or higher.
+Mido requires Python 3.8 or higher.
 
 
 Installing

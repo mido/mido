@@ -10,13 +10,11 @@ Installing
 Requirements
 ------------
 
-Mido requires :term:`Python` version 3.7 or higher.
+Mido requires :term:`Python` version 3.8 or higher.
 
-A few dependencies are also required in order to allow Mido to introspect its
-own version:
+A single dependency is required in order to allow Mido to introspect its own version:
 
 * `packaging`
-* `importlib_metadata` for :term:`Python` < 3.8
 
 .. note::
 

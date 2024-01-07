@@ -15,7 +15,7 @@ name = "mido"
 # version is dynamic
 description = "MIDI Objects for Python"
 readme = "README.rst"
-requires-python = "~=3.7"
+requires-python = "~=3.8"
 license = { text = "MIT" }
 authors = [
     { name = "Ole Martin Bjorndalen", email = "ombdalen@gmail.com" },
@@ -32,7 +32,6 @@ classifiers = [
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3 :: Only',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
@@ -46,8 +45,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "importlib_metadata; python_version<'3.8'",  # For version introspection
-    "packaging~=23.1",  # To provide a nice version_info opbject
+    "packaging~=23.1",  # Provides version introspection for automatic versionning
 ]
 dynamic = ["version"]
 
