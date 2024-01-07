@@ -56,16 +56,16 @@ source = "https://github.com/mido/mido"
 [project.optional-dependencies]
 # Separated by tasks for automation efficiency
 build-docs = [
-    'sphinx~=4.3.2',
-    'sphinx-rtd-theme~=1.2.2',
+    'sphinx~=7.1.2',
+    'sphinx-rtd-theme~=2.0.0',
 ]
 check-manifest = ['check-manifest>=0.49',]
 lint-code = ['ruff~=0.1.6',]
-lint-reuse = ['reuse~=1.1.2',]
+lint-reuse = ['reuse~=2.1.0',]
 ports-pygame = ['PyGame~=2.5',]
-ports-rtmidi = ['python-rtmidi~=1.5.4',]
+ports-rtmidi = ['python-rtmidi~=1.5.8',]
 release = ['twine~=4.0.2',]
-test-code = ['pytest~=7.4.0',]
+test-code = ['pytest~=7.4.4',]
 
 # Convenience groups for human interaction
 dev = [
@@ -110,7 +110,7 @@ mido = [
 # ```
 
 [tool.pytest.ini_options]
-minversion = "6.0"
+minversion = "7.0"
 addopts = "-rs --quiet"
 testpaths = [
     "tests",
