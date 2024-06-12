@@ -160,8 +160,16 @@ class Backend:
 
             kwargs = self._add_api(kwargs)
 
-            return ports.IOPort(self.module.Input(input_name, **kwargs),
-                                self.module.Output(output_name, **kwargs))
+            kwargs_in = kwargs.copy()
+            kwargs_out = kwargs.copy()
+
+            if 'client_name' in kwargs and 'input_client_name' in kwargs:
+                kwargs_in.update(client_name=kwargs['input_client_name'])
+            if 'client_name' in kwargs and 'output_client_name' in kwargs:
+                kwargs_out.update(client_name=kwargs['output_client_name'])
+
+            return ports.IOPort(self.module.Input(input_name, **kwargs_in),
+                                self.module.Output(output_name, **kwargs_out))
 
     def _get_devices(self, **kwargs):
         if hasattr(self.module, 'get_devices'):
