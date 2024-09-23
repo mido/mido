@@ -16,10 +16,19 @@ Todo:
   - add option for printing messages
 """
 import argparse
+import re
 import sys
 
 import mido
 from mido import Message, MidiFile, tempo2bpm
+
+
+def program_override(value):
+    """Parse a CHANNEL=PROGRAM format commandline option."""
+    match = re.match(r"(?P<channel>\d+)=(?P<program>\d+)", value)
+    if match:
+        return int(match["channel"]), int(match["program"])
+    raise ValueError
 
 
 def parse_args():
@@ -41,6 +50,15 @@ def parse_args():
         default=False,
         help='print nothing')
 
+    arg("-f", "--force-program",
+        type=program_override,
+        action="append",
+        default=[],
+        help="Override the program for program_change messages on the given channel. "
+             "Can be passed multiple times.",
+        metavar="CHANNEL=PROGRAM",
+    )
+
     arg('files',
         metavar='FILE',
         nargs='+',
@@ -49,7 +67,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def play_file(output, filename, print_messages):
+def play_file(output, filename, print_messages, program_overrides):
     midi_file = MidiFile(filename)
 
     print(f'Playing {midi_file.filename}.')
@@ -67,6 +85,8 @@ def play_file(output, filename, print_messages):
             sys.stdout.flush()
 
         if isinstance(message, Message):
+            if message.type == "program_change" and message.channel in program_overrides:
+                message.program = program_overrides[message.channel]
             output.send(message)
         elif message.type == 'set_tempo':
             print('Tempo changed to {:.1f} BPM.'.format(
@@ -89,7 +109,11 @@ def main():
             output.reset()
             try:
                 for filename in args.files:
-                    play_file(output, filename, args.print_messages)
+                    play_file(output=output,
+                              filename=filename,
+                              print_messages=args.print_messages,
+                              program_overrides=dict(args.force_program),
+                              )
             finally:
                 print()
                 output.reset()
