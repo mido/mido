@@ -300,4 +300,5 @@ linkcheck_ignore = [
     r'https://wiki.ccarh.org',  # Has aggressive anti-DDoS and will fail often
     r'https://www.ccarh.org',  # Has aggressive anti-DDoS and will fail often
     r'https://www.sweetwater.com',  # Issues 403 for robots
+    r'https://alsa.opensrc.org',  # Issues 401 for robots
 ]
