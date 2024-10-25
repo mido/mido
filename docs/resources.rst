@@ -12,15 +12,13 @@ Resources
     <https://www.midi.org/articles/an-intro-to-midi>`_
 
   * `Official MIDI 1.0 detail specification
-    <https://www.midi.org/specifications/midi1-specifications/midi-1-0-core-specifications/midi-1-0-detailed-specification-2>`_
-    *Free registration required*.
+    <https://midi.org/midi-1-0-detailed-specification>`_
 
   * `Standard MIDI Files Specification
-    <https://www.midi.org/specifications/file-format-specifications/standard-midi-files/rp-001-v1-0-standard-midi-files-specification-96-1-4-pdf>`_
-    *Free registration required*.
+    <https://midi.org/standard-midi-files-specification>`_
 
   * `MIDI Reference Tables
-    <https://www.midi.org/specifications-old/category/reference-tables>`_
+    <https://midi.org/spec-detail>`_
 
 * `MIDI <https://en.wikipedia.org/wiki/MIDI>`_ (Wikipedia)
 
