@@ -37,6 +37,7 @@ classifiers = [
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Topic :: Multimedia :: Sound/Audio :: MIDI',
     'Topic :: Software Development',
     'Topic :: Software Development :: Libraries',
@@ -45,7 +46,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "packaging~=23.1",  # Provides version introspection for automatic versionning
+    "packaging",  # To provide a nice version_info opbject
 ]
 dynamic = ["version"]
 

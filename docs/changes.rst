@@ -23,6 +23,15 @@ Release History
 
     This release drops support for Python 3.7.
 
+1.3.3 (2024-10-25)
+^^^^^^^^^^^^^^^^^^
+
+* New Python 3.13 support
+
+* Bugfix Unpinned hard dependencies to avoid conflicts
+
+* Documentation Fixed broken external links
+
 1.3.2 (2023-12-15)
 ^^^^^^^^^^^^^^^^^^
 
