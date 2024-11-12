@@ -34,8 +34,8 @@ Mido - MIDI Objects for Python
    :target: https://api.reuse.software/info/github.com/mido/mido
 
 .. image:: https://www.bestpractices.dev/projects/7987/badge
-           :alt: OpenSSF Best Practices
-           :target: https://www.bestpractices.dev/projects/7987
+   :alt: OpenSSF Best Practices
+   :target: https://www.bestpractices.dev/projects/7987
 
 Mido is a library for working with MIDI messages and ports:
 
