@@ -18,7 +18,8 @@ try:
     __version__ = importlib.metadata.version("mido")
 except importlib.metadata.PackageNotFoundError:
     # Package is not installed
-    warnings.warn("mido is not installed, can't determine its version.")
+    warnings.warn("mido is not installed, can't determine its version.",
+                  stacklevel=2)
     pass
 
 version_info = packaging.version.Version(__version__)
