@@ -1,153 +1,54 @@
-.. SPDX-FileCopyrightText: 2013 Ole Martin Bjorndalen <ombdalen@gmail.com>
-..
-.. SPDX-License-Identifier: CC-BY-4.0
+import mido
+from mido import Message, MidiFile, MidiTrack, MetaMessage
 
-Mido - MIDI Objects for Python
-==============================
+# Create a new MIDI file and track
+mid = MidiFile()
+track = MidiTrack()
+mid.tracks.append(track)
 
-.. image:: https://img.shields.io/badge/License-MIT-blue.svg
-   :alt: MIT License
-   :target: https://github.com/mido/mido/blob/main/LICENSES/MIT.txt
+# Set tempo (for example, 120 BPM). The tempo here is given in microseconds per beat.
+# 120 BPM corresponds to 500000 microseconds per beat.
+track.append(MetaMessage('set_tempo', tempo=500000, time=0))
 
-.. image:: https://img.shields.io/pypi/v/mido.svg
-   :alt: PyPi version
-   :target: https://pypi.org/project/mido
+# Define a simple function to add a chord (all notes at the same time) to the track.
+def add_chord(track, notes, start_time, duration, velocity=64, channel=0):
+    """Adds a chord (list of MIDI note numbers) starting at start_time with given duration."""
+    for note in notes:
+        track.append(Message('note_on', note=note, velocity=velocity, time=start_time, channel=channel))
+        # time for subsequent notes in the chord should be 0 so they play simultaneously.
+        start_time = 0  
+    for note in notes:
+        track.append(Message('note_off', note=note, velocity=velocity, time=duration, channel=channel))
 
-.. image:: https://img.shields.io/pypi/pyversions/mido.svg
-   :alt: Python version
-   :target: https://python.org
+# MIDI note numbers for chords in a rough approximation (these may need adjustments to sound musical)
+# Example chord voicings (in the appropriate octave):
+#   Am: A3, C4, E4  -> MIDI notes: 57, 60, 64
+#   Em: E3, G3, B3  -> MIDI notes: 52, 55, 59
+#   Cmaj7: C4, E4, G4, B4  -> MIDI notes: 60, 64, 67, 71
+#   B: B3, D#4, F#4  -> MIDI notes: 59, 63, 66
 
-.. image:: https://pepy.tech/badge/mido
-   :alt: Downloads
-   :target: https://pepy.tech/project/mido
+# Define the chords and timing (time in ticks; mido default ticks per beat = 480)
+chords = [
+    {'notes': [57, 60, 64], 'duration': 480},    # Am (1 beat)
+    {'notes': [52, 55, 59], 'duration': 480},    # Em (1 beat)
+    {'notes': [60, 64, 67, 71], 'duration': 480}, # Cmaj7 (1 beat)
+    {'notes': [59, 63, 66], 'duration': 480},    # B (1 beat)
+]
 
-.. image:: https://github.com/mido/mido/workflows/Test/badge.svg
-   :alt: Test status
-   :target: https://github.com/mido/mido/actions
+# For the intro, we loop the progression twice (customize as needed)
+time_between_chords = 0  # We start chords immediately one after another
+current_time = 0
 
-.. image:: https://readthedocs.org/projects/mido/badge/?version=latest
-   :alt: Docs status
-   :target: https://mido.readthedocs.io/
+for _ in range(2):  # Repeat the progression twice
+    for chord in chords:
+        add_chord(track, chord['notes'], current_time, chord['duration'])
+        # After adding a chord, set time to 0 because the chord already indicates its duration.
+        current_time = 0  # subsequent chords start after the previous one finishes
 
-.. image:: https://api.reuse.software/badge/github.com/mido/mido
-   :alt: REUSE status
-   :target: https://api.reuse.software/info/github.com/mido/mido
+# Optionally add a small rest at the end
+track.append(Message('note_off', note=0, velocity=0, time=480))
 
-.. image:: https://www.bestpractices.dev/projects/7987/badge
-   :alt: OpenSSF Best Practices
-   :target: https://www.bestpractices.dev/projects/7987
+# Save the MIDI file
+mid.save('veins_are_still_blue_intro.mid')
 
-Mido is a library for working with MIDI messages and ports:
-
-.. code-block:: python
-
-   >>> import mido
-   >>> msg = mido.Message('note_on', note=60)
-   >>> msg.type
-   'note_on'
-   >>> msg.note
-   60
-   >>> msg.bytes()
-   [144, 60, 64]
-   >>> msg.copy(channel=2)
-   Message('note_on', channel=2, note=60, velocity=64, time=0)
-
-.. code-block:: python
-
-   port = mido.open_output('Port Name')
-   port.send(msg)
-
-.. code-block:: python
-
-    with mido.open_input() as inport:
-        for msg in inport:
-            print(msg)
-
-.. code-block:: python
-
-    mid = mido.MidiFile('song.mid')
-    for msg in mid.play():
-        port.send(msg)
-
-
-Full documentation at https://mido.readthedocs.io/
-
-
-Main Features
--------------
-
-* convenient message objects.
-
-* supports RtMidi, PortMidi and Pygame. New backends are easy to
-  write.
-
-* full support for all 18 messages defined by the MIDI standard.
-
-* standard port API allows all kinds of input and output ports to be
-  used interchangeably. New port types can be written by subclassing
-  and overriding a few methods.
-
-* includes a reusable MIDI stream parser.
-
-* full support for MIDI files (read, write, create and play) with
-  complete access to every message in the file, including all common
-  meta messages.
-
-* can read and write SYX files (binary and plain text).
-
-* implements (somewhat experimental) MIDI over TCP/IP with socket
-  ports. This allows for example wireless MIDI between two
-  computers.
-
-* includes programs for playing MIDI files, listing ports and
-  serving and forwarding ports over a network.
-
-
-Status
-------
-
-1.3 is the fourth stable release.
-
-This project uses `Semantic Versioning <https://semver.org>`_.
-
-
-Requirements
-------------
-
-Mido requires Python 3.7 or higher.
-
-
-Installing
-----------
-
-::
-
-    python3 -m pip install mido
-
-Or, alternatively, if you want to use ports with the default backend::
-
-   python3 -m pip install mido[ports-rtmidi]
-
-See ``docs/backends/`` for other backends.
-
-
-
-Source Code
------------
-
-https://github.com/mido/mido/
-
-
-License
--------
-
-Mido is released under the terms of the `MIT license
-<http://en.wikipedia.org/wiki/MIT_License>`_.
-
-
-Questions and suggestions
--------------------------
-
-For questions and proposals which may not fit into issues or pull requests,
-we recommend to ask and discuss in the `Discussions
-<https://github.com/mido/mido/discussions>`_ section.
+print("MIDI file 'veins_are_still_blue_intro.mid' created successfully.")
