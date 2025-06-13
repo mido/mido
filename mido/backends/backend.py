@@ -4,6 +4,7 @@
 
 import importlib
 import os
+from typing import TYPE_CHECKING, List
 
 from .. import ports
 
@@ -169,19 +170,19 @@ class Backend:
         else:
             return []
 
-    def get_input_names(self, **kwargs):
+    def get_input_names(self, **kwargs) -> List[str]:
         """Return a list of all input port names."""
         devices = self._get_devices(**self._add_api(kwargs))
         names = [device['name'] for device in devices if device['is_input']]
         return names
 
-    def get_output_names(self, **kwargs):
+    def get_output_names(self, **kwargs) -> List[str]:
         """Return a list of all output port names."""
         devices = self._get_devices(**self._add_api(kwargs))
         names = [device['name'] for device in devices if device['is_output']]
         return names
 
-    def get_ioport_names(self, **kwargs):
+    def get_ioport_names(self, **kwargs) -> List[str]:
         """Return a list of all I/O port names."""
         devices = self._get_devices(**self._add_api(kwargs))
         inputs = [device['name'] for device in devices if device['is_input']]
@@ -201,3 +202,10 @@ class Backend:
             name = self.name
 
         return f'<backend {name} ({status})>'
+
+if TYPE_CHECKING:
+    _backend = Backend()
+    get_input_names = _backend.get_input_names
+    get_output_names = _backend.get_output_names
+    get_ioport_names = _backend.get_ioport_names
+    open_input = _backend.open_input
