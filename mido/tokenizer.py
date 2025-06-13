@@ -44,13 +44,13 @@ class Tokenizer:
             # New message.
             spec = SPEC_BY_STATUS[status]
 
-            if spec['length'] == 1:
+            if spec.length == 1:
                 self._messages.append([status])
                 self._status = 0
             else:
                 self._status = status
                 self._bytes = [status]
-                self._len = spec['length']
+                self._len = spec.length
         else:
             # Undefined message. Reset parser.
             # (Undefined realtime messages are handled above.)

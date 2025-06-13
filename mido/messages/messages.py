@@ -60,7 +60,7 @@ class BaseMessage:
 
     def _get_value_names(self):
         # This is overridden by MetaMessage.
-        return list(SPEC_BY_TYPE[self.type]['value_names']) + ['time']
+        return list(SPEC_BY_TYPE[self.type].value_names) + ['time']
 
     def __repr__(self):
         items = [repr(self.type)]
@@ -196,7 +196,7 @@ class Message(BaseMessage):
         if self.type == 'sysex':
             return 2 + len(self.data)
         else:
-            return SPEC_BY_TYPE[self.type]['length']
+            return SPEC_BY_TYPE[self.type].length
 
     def __str__(self):
         return msg2str(vars(self))
