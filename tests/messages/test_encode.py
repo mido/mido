@@ -20,6 +20,6 @@ def test_encode_decode_all():
         if status_byte == 0xf0:
             msg_bytes = [0xf0] + data_bytes + [0xf7]
         else:
-            msg_bytes = [status_byte] + data_bytes[:spec['length'] - 1]
+            msg_bytes = [status_byte] + data_bytes[:spec.length - 1]
 
         assert encode_message(decode_message(msg_bytes)) == msg_bytes
