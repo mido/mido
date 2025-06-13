@@ -93,6 +93,7 @@ Getting started:
     ['MPK mini MIDI 1', 'SH-201']
 """
 
+import typing
 from . import ports, sockets
 from .backends.backend import Backend
 from .messages import (
@@ -120,6 +121,13 @@ from .midifiles import (
 from .parser import Parser, parse, parse_all
 from .syx import read_syx_file, write_syx_file
 from .version import version_info
+
+if typing.TYPE_CHECKING:
+    from .backends.backend import (
+        get_input_names,
+        get_output_names,
+        get_ioport_names
+    )
 
 __all__ = [
     "KeySignatureError",
