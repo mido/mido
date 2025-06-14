@@ -106,12 +106,20 @@ jobs:
             - '3.11'
             - '3.12'
             - '3.13'
-        exclude:  # Python < v3.8 does not support Apple Silicon ARM64.
+        exclude:
+          # Python < v3.8 does not support Apple Silicon ARM64.
           - python-version: "3.7"
             os: macOS-latest
-        include: # So run those legacy versions on Intel CPUs.
+          # Python 3.7 has been removed from the latest Ubuntu images.
+          - python-version: "3.7"
+            os: ubuntu-latest
+        include:
+          # Run legacy versions on Intel CPUs.
           - python-version: "3.7"
             os: macOS-13
+          # Use the latest Ubuntu which still has Python 3.7
+          - python-version: "3.7"
+            os: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
