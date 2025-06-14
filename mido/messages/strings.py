@@ -11,7 +11,7 @@ def msg2str(msg, include_time=True):
 
     words = [type_]
 
-    for name in spec['value_names']:
+    for name in spec.value_names:
         value = msg[name]
 
         if name == 'data':
