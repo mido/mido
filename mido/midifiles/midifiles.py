@@ -120,7 +120,7 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
         raise OSError(f'undefined status byte 0x{status_byte:02x}') from le
 
     # Subtract 1 for status byte.
-    size = spec['length'] - 1 - len(peek_data)
+    size = spec.length - 1 - len(peek_data)
     data_bytes = peek_data + read_bytes(infile, size)
 
     if clip:

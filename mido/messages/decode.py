@@ -9,6 +9,7 @@ from .specs import (
     SPEC_BY_STATUS,
     SYSEX_END,
     SYSEX_START,
+    Spec,
 )
 
 
@@ -46,14 +47,14 @@ def _make_special_cases():
 _SPECIAL_CASES = _make_special_cases()
 
 
-def _decode_data_bytes(status_byte, data, spec):
+def _decode_data_bytes(status_byte, data, spec: Spec):
     # Subtract 1 for status byte.
-    if len(data) != (spec['length'] - 1):
+    if len(data) != (spec.length - 1):
         raise ValueError(
-            'wrong number of bytes for {} message'.format(spec['type']))
+            'wrong number of bytes for {} message'.format(spec.type))
 
     # TODO: better name than args?
-    names = [name for name in spec['value_names'] if name != 'channel']
+    names = [name for name in spec.value_names if name != 'channel']
     args = {name: value for name, value in zip(names, data)}
 
     if status_byte in CHANNEL_MESSAGES:
@@ -85,7 +86,7 @@ def decode_message(msg_bytes, time=0, check=True):
         raise ValueError(f'invalid status byte {status_byte!r}') from ke
 
     msg = {
-        'type': spec['type'],
+        'type': spec.type,
         'time': time,
     }
 
