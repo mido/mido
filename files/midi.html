@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Standard MIDI Files &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SYX Files" href="syx.html" />
+    <link rel="prev" title="Files" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Mido
+              <img src="../_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backends/index.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ports/index.html">Ports</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Files</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Standard MIDI Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#opening">Opening</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#iterating-over-messages">Iterating Over Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-new-file">Creating a New File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-types">File Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#playback-length">Playback Length</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#meta-messages">Meta Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#about-the-time-attribute">About the Time Attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tempo-and-time-resolution">Tempo and Time Resolution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syx.html">SYX Files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Files</a></li>
+      <li class="breadcrumb-item active">Standard MIDI Files</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/files/midi.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="index.html" class="btn btn-neutral float-left" title="Files" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="syx.html" class="btn btn-neutral float-right" title="SYX Files" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="standard-midi-files">
+<h1>Standard MIDI Files<a class="headerlink" href="#standard-midi-files" title="Permalink to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">MidiFile</span></code> objects can be used to <em>read</em>, <em>write</em> and <em>play back</em> MIDI files.</p>
+<section id="opening">
+<h2>Opening<a class="headerlink" href="#opening" title="Permalink to this heading"></a></h2>
+<p>You can open a file with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido</span> <span class="kn">import</span> <span class="n">MidiFile</span>
+
+<span class="n">mid</span> <span class="o">=</span> <span class="n">MidiFile</span><span class="p">(</span><span class="s1">&#39;song.mid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="../glossary.html#term-sysex"><span class="xref std std-term">SysEx</span></a> dumps such as patch data are often stored in <code class="docutils literal notranslate"><span class="pre">SYX</span></code>
+files rather than MIDI files. If you get “MThd not found. Probably not a
+MIDI file” try <code class="docutils literal notranslate"><span class="pre">mido.read_syx_file()</span></code>.
+(See <a class="reference internal" href="syx.html"><span class="doc">SYX Files</span></a> for more.)</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">tracks</span></code> attribute is a list of tracks. Each track is a list of
+messages and meta messages, with the <code class="docutils literal notranslate"><span class="pre">time</span></code> attribute of each
+messages set to its delta time (in ticks). (See Tempo and Beat
+Resolution below for more on delta times.)</p>
+<p>To print out all messages in the file, you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">track</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mid</span><span class="o">.</span><span class="n">tracks</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Track </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">track</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">track</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The entire file is read into memory. Thus you can freely modify tracks
+and messages and save the file back by calling the <code class="docutils literal notranslate"><span class="pre">save()</span></code>
+method. (More on this below.)</p>
+</section>
+<section id="iterating-over-messages">
+<h2>Iterating Over Messages<a class="headerlink" href="#iterating-over-messages" title="Permalink to this heading"></a></h2>
+<p>Iterating over a <code class="docutils literal notranslate"><span class="pre">MidiFile</span></code> object will generate all MIDI messages
+in the file in playback order. The <code class="docutils literal notranslate"><span class="pre">time</span></code> attribute of each message
+is the number of seconds since the last message or the start of the
+file.</p>
+<p>Meta messages will also be included. If you want to filter them out,
+you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">is_meta</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>This makes it easy to play back a MIDI file on a port (though this simple
+implementation is subject to time drift):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">MidiFile</span><span class="p">(</span><span class="s1">&#39;song.mid&#39;</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="o">.</span><span class="n">is_meta</span><span class="p">:</span>
+        <span class="n">port</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is so useful that there’s a method for it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">MidiFile</span><span class="p">(</span><span class="s1">&#39;song.mid&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">():</span>
+    <span class="n">port</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This does the sleeping and filtering for you (while avoiding drift). If you
+pass <code class="docutils literal notranslate"><span class="pre">meta_messages=True</span></code> you will also get meta messages. These <strong>cannot</strong>
+be sent on ports, which is why they are <code class="docutils literal notranslate"><span class="pre">off</span></code> by default.</p>
+</section>
+<section id="creating-a-new-file">
+<h2>Creating a New File<a class="headerlink" href="#creating-a-new-file" title="Permalink to this heading"></a></h2>
+<p>You can create a new file by calling <code class="docutils literal notranslate"><span class="pre">MidiFile</span></code> without the <code class="docutils literal notranslate"><span class="pre">filename</span></code>
+argument. The file can then be saved by calling the <code class="docutils literal notranslate"><span class="pre">save()</span></code> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido</span> <span class="kn">import</span> <span class="n">Message</span><span class="p">,</span> <span class="n">MidiFile</span><span class="p">,</span> <span class="n">MidiTrack</span>
+
+<span class="n">mid</span> <span class="o">=</span> <span class="n">MidiFile</span><span class="p">()</span>
+<span class="n">track</span> <span class="o">=</span> <span class="n">MidiTrack</span><span class="p">()</span>
+<span class="n">mid</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+
+<span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;program_change&#39;</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;note_on&#39;</span><span class="p">,</span> <span class="n">note</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">32</span><span class="p">))</span>
+<span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;note_off&#39;</span><span class="p">,</span> <span class="n">note</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">127</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">32</span><span class="p">))</span>
+
+<span class="n">mid</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;new_song.mid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">MidiTrack</span></code> class is a subclass of list, so you can use all the
+usual methods.</p>
+<p>All messages must be tagged with delta time (in ticks). (A delta time
+is how long to wait before the next message.)</p>
+<p>If there is no <code class="docutils literal notranslate"><span class="pre">end_of_track</span></code> message at the end of a track, one will
+be written anyway.</p>
+<p>A complete example can be found in <code class="docutils literal notranslate"><span class="pre">examples/midifiles/</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">save</span></code> method takes either a filename (<code class="docutils literal notranslate"><span class="pre">str</span></code>) or, using the <code class="docutils literal notranslate"><span class="pre">file</span></code>
+keyword parameter, a file-like object such as an in-memory binary file (an
+<code class="docutils literal notranslate"><span class="pre">io.BytesIO</span></code>). If you pass a file object, <code class="docutils literal notranslate"><span class="pre">save</span></code> does not close it.
+Similarly, the <code class="docutils literal notranslate"><span class="pre">MidiFile</span></code> constructor can take either a filename, or
+a file object by using the <code class="docutils literal notranslate"><span class="pre">file</span></code> keyword parameter. if you pass a file
+object to <code class="docutils literal notranslate"><span class="pre">MidiFile</span></code> as a context manager, the file is not closed when
+the context manager exits.
+Examples can be found in <code class="docutils literal notranslate"><span class="pre">test_midifiles2.py</span></code>.</p>
+</section>
+<section id="file-types">
+<h2>File Types<a class="headerlink" href="#file-types" title="Permalink to this heading"></a></h2>
+<p>There are three types of MIDI files:</p>
+<ul class="simple">
+<li><p>type 0 (single track): all messages are saved in one track</p></li>
+<li><p>type 1 (synchronous): all tracks start at the same time</p></li>
+<li><p>type 2 (asynchronous): each track is independent of the others</p></li>
+</ul>
+<p>When creating a new file, you can select type by passing the <code class="docutils literal notranslate"><span class="pre">type</span></code>
+keyword argument or by setting the <code class="docutils literal notranslate"><span class="pre">type</span></code> attribute:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mid</span> <span class="o">=</span> <span class="n">MidiFile</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">mid</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Type 0 files must have exactly one track. A <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> is raised
+if you attempt to save a file with no tracks or with more than one
+track.</p>
+</section>
+<section id="playback-length">
+<h2>Playback Length<a class="headerlink" href="#playback-length" title="Permalink to this heading"></a></h2>
+<p>You can get the total playback time in seconds by accessing the
+<code class="docutils literal notranslate"><span class="pre">length</span></code> property:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mid</span><span class="o">.</span><span class="n">length</span>
+</pre></div>
+</div>
+<p>This is only supported for type 0 and 1 files. Accessing <code class="docutils literal notranslate"><span class="pre">length</span></code> on
+a type 2 file will raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, since it is impossible to
+compute the playback time of an asynchronous file.</p>
+</section>
+<section id="meta-messages">
+<h2>Meta Messages<a class="headerlink" href="#meta-messages" title="Permalink to this heading"></a></h2>
+<p>Meta messages behave like normal messages and can be created in the
+usual way, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mido</span> <span class="kn">import</span> <span class="n">MetaMessage</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MetaMessage</span><span class="p">(</span><span class="s1">&#39;key_signature&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;C#&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">)</span>
+<span class="go">MetaMessage(&#39;key_signature&#39;, key=&#39;C#&#39;, mode=&#39;major&#39;, time=0)</span>
+</pre></div>
+</div>
+<p>You can tell meta messages apart from normal messages with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">is_meta</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>or if you know the message type you can use the <code class="docutils literal notranslate"><span class="pre">type</span></code> attribute:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;key_signature&#39;</span><span class="p">:</span>
+    <span class="o">...</span>
+<span class="k">elif</span> <span class="n">msg</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;note_on&#39;</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Meta messages <strong>cannot</strong> be sent on ports.</p>
+<p>For a list of supported meta messages and their attributes, and also
+how to implement new meta messages, see <a class="reference internal" href="../meta_message_types.html"><span class="doc">Meta Message Types</span></a>.</p>
+</section>
+<section id="about-the-time-attribute">
+<h2>About the Time Attribute<a class="headerlink" href="#about-the-time-attribute" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">time</span></code> attribute is used in several different ways:</p>
+<ul class="simple">
+<li><p>inside a track, it is delta time in ticks. This must be an integer.</p></li>
+<li><p>in messages yielded from <code class="docutils literal notranslate"><span class="pre">play()</span></code>, it is delta time in seconds
+(time elapsed since the last yielded message)</p></li>
+<li><p>(only important to implementers) inside certain methods it is
+used for absolute time in ticks or seconds</p></li>
+</ul>
+</section>
+<section id="tempo-and-time-resolution">
+<h2>Tempo and Time Resolution<a class="headerlink" href="#tempo-and-time-resolution" title="Permalink to this heading"></a></h2>
+<img alt="../_images/midi_time.svg" src="../_images/midi_time.svg" /><p>Timing in MIDI files is centered around ticks. Each message in a MIDI file has
+a delta time, which tells how many ticks have passed since the last message.</p>
+<p>A tick is the smallest unit of time in MIDI and remains fixed throughout the
+song. Each quarter notes is divided into a certain number of ticks, often
+referred as the resolution of the file or pulses per quarter note (PPQN). This
+resolution is stored as <code class="docutils literal notranslate"><span class="pre">ticks_per_beat</span></code> in MidiFile objects.</p>
+<p>The meaning of this <code class="docutils literal notranslate"><span class="pre">ticks_per_beat</span></code> in terms of absolute timing depends on
+the tempo and time signature of the file.</p>
+<section id="midi-tempo-vs-bpm">
+<h3>MIDI Tempo vs. BPM<a class="headerlink" href="#midi-tempo-vs-bpm" title="Permalink to this heading"></a></h3>
+<p>Unlike music, tempo in MIDI is not given as beats per minute (BPM), but rather
+in microseconds per quarter note, with a default tempo of 500000 microseconds
+per quarter note. Given a default 4/4 time signature where a beat is exactly a
+quarter note, this corresponds to 120 beats per minute.</p>
+<p>In case of different time signatures, the length of a beat depends on the
+denominator of the time signature. E.g. in 2/2 time signature a beat has a
+length of a half note, i.e. two quarter notes. Thus the default MIDI tempo of
+500000 corresponds to a beat length of 1 second which is 60 BPM.</p>
+<p>The meta messages ‘set_tempo’ and ‘time_signature’ can be used to change
+the tempo and time signature during a song, respectively.</p>
+<p>You can use <code class="xref py py-func docutils literal notranslate"><span class="pre">bpm2tempo()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">tempo2bpm()</span></code> to convert to and
+from beats per minute. Note that <code class="xref py py-func docutils literal notranslate"><span class="pre">tempo2bpm()</span></code> may return a floating
+point number.</p>
+</section>
+<section id="converting-between-ticks-and-seconds">
+<h3>Converting Between Ticks and Seconds<a class="headerlink" href="#converting-between-ticks-and-seconds" title="Permalink to this heading"></a></h3>
+<p>To convert from MIDI time to absolute time in seconds, the tempo (either
+in number of beats per minute (BPM) or microseconds per quarter note, see
+<a class="reference internal" href="#midi-tempo-vs-bpm">MIDI Tempo vs. BPM</a> above) and ticks per per quarter note have to be decided
+upon.</p>
+<p>You can use <code class="xref py py-func docutils literal notranslate"><span class="pre">tick2second()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">second2tick()</span></code> to convert to
+and from seconds and ticks. Note that integer rounding of the result might be
+necessary because MIDI files require ticks to be integers.</p>
+<p>If you have a lot of rounding errors you should increase the time resolution
+with more ticks per quarter note, by setting MidiFile.ticks_per_beat to a
+large number. Typical values range from 96 to 480 but some use even more ticks
+per quarter note.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="syx.html" class="btn btn-neutral float-right" title="SYX Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

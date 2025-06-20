@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code of Conduct" href="CODE_OF_CONDUCT.html" />
+    <link rel="prev" title="Included Programs" href="binaries.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Mido
+              <img src="_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/index.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ports/index.html">Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files/index.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-mido">Messages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mido.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-mido.frozen">Frozen Messages</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mido.parser">Parsing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mido.parser.parse"><code class="docutils literal notranslate"><span class="pre">parse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mido.parser.parse_all"><code class="docutils literal notranslate"><span class="pre">parse_all()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mido.parser.Parser"><code class="docutils literal notranslate"><span class="pre">Parser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mido.tokenizer">Tokenizing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mido.tokenizer.Tokenizer"><code class="docutils literal notranslate"><span class="pre">Tokenizer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backends">Backends</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mido.set_backend"><code class="docutils literal notranslate"><span class="pre">set_backend()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mido.Backend"><code class="docutils literal notranslate"><span class="pre">Backend</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ports">Ports</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#management">Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-mido.sockets">Socket Ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#files">Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#standard-midi-files">Standard MIDI Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-mido.syx">SYX</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/api.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="binaries.html" class="btn btn-neutral float-left" title="Included Programs" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="CODE_OF_CONDUCT.html" class="btn btn-neutral float-right" title="Code of Conduct" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<span id="api"></span><h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h1>
+<section id="module-mido">
+<span id="messages"></span><h2>Messages<a class="headerlink" href="#module-mido" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.Message">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">Message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_checks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.bin">
+<span class="sig-name descname"><span class="pre">bin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.bin" title="Permalink to this definition"></a></dt>
+<dd><p>Encode message and return as a bytearray.</p>
+<p>This can be used to write the message to a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.bytes">
+<span class="sig-name descname"><span class="pre">bytes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.bytes" title="Permalink to this definition"></a></dt>
+<dd><p>Encode message and return as a list of integers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip_checks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">overrides</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.copy" title="Permalink to this definition"></a></dt>
+<dd><p>Return a copy of the message.</p>
+<p>Attributes will be overridden by the passed keyword arguments.
+Only message specific attributes can be overridden. The message
+type can not be changed.</p>
+<p>The skip_checks arg can be used to bypass validation of message
+attributes and should be used cautiously.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.dict">
+<span class="sig-name descname"><span class="pre">dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.dict" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary containing the attributes of the message.</p>
+<p>Example: {‘type’: ‘sysex’, ‘data’: [1, 2], ‘time’: 0}</p>
+<p>Sysex data will be returned as a list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.from_bytes">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.from_bytes" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a byte encoded message.</p>
+<p>Accepts a byte string or any iterable of integers.</p>
+<p>This is the reverse of msg.bytes() or msg.bin().</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.from_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Create a message from a dictionary.</p>
+<p>Only “type” is required. The other will be set to default
+values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.from_hex">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.from_hex" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a hex encoded message.</p>
+<p>This is the reverse of msg.hex().</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.from_str">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.from_str" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a string encoded message.</p>
+<p>This is the reverse of str(msg).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.hex">
+<span class="sig-name descname"><span class="pre">hex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.hex" title="Permalink to this definition"></a></dt>
+<dd><p>Encode message and return as a string of hex numbers,</p>
+<p>Each number is separated by the string sep.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Message.is_cc">
+<span class="sig-name descname"><span class="pre">is_cc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Message.is_cc" title="Permalink to this definition"></a></dt>
+<dd><p>Return True if the message is of type ‘control_change’.</p>
+<p>The optional control argument can be used to test for a specific
+control number, for example:</p>
+<dl class="simple">
+<dt>if msg.is_cc(7):</dt><dd><p># Message is control change 7 (channel volume).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.Message.is_meta">
+<span class="sig-name descname"><span class="pre">is_meta</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#mido.Message.is_meta" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mido.Message.is_realtime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_realtime</span></span><a class="headerlink" href="#mido.Message.is_realtime" title="Permalink to this definition"></a></dt>
+<dd><p>True if the message is a system realtime message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-mido.messages"></span><div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Expose more of the internals? (Checks, decode…)</p>
+</div>
+<section id="module-mido.frozen">
+<span id="frozen-messages"></span><h3>Frozen Messages<a class="headerlink" href="#module-mido.frozen" title="Permalink to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.frozen.freeze_message">
+<span class="sig-prename descclassname"><span class="pre">mido.frozen.</span></span><span class="sig-name descname"><span class="pre">freeze_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.frozen.freeze_message" title="Permalink to this definition"></a></dt>
+<dd><p>Freeze message.</p>
+<p>Returns a frozen version of the message. Frozen messages are
+immutable, hashable and can be used as dictionary keys.</p>
+<p>Will return None if called with None. This allows you to do things
+like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="n">freeze_message</span><span class="p">(</span><span class="n">port</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.frozen.thaw_message">
+<span class="sig-prename descclassname"><span class="pre">mido.frozen.</span></span><span class="sig-name descname"><span class="pre">thaw_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.frozen.thaw_message" title="Permalink to this definition"></a></dt>
+<dd><p>Thaw message.</p>
+<p>Returns a mutable version of a frozen message.</p>
+<p>Will return None if called with None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.frozen.is_frozen">
+<span class="sig-prename descclassname"><span class="pre">mido.frozen.</span></span><span class="sig-name descname"><span class="pre">is_frozen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.frozen.is_frozen" title="Permalink to this definition"></a></dt>
+<dd><p>Return True if message is frozen, otherwise False.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.frozen.Frozen">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.frozen.</span></span><span class="sig-name descname"><span class="pre">Frozen</span></span><a class="headerlink" href="#mido.frozen.Frozen" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.frozen.FrozenMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.frozen.</span></span><span class="sig-name descname"><span class="pre">FrozenMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_checks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.frozen.FrozenMessage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.frozen.FrozenMetaMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.frozen.</span></span><span class="sig-name descname"><span class="pre">FrozenMetaMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_checks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.frozen.FrozenMetaMessage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.frozen.FrozenUnknownMetaMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.frozen.</span></span><span class="sig-name descname"><span class="pre">FrozenUnknownMetaMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_byte</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'unknown_meta'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.frozen.FrozenUnknownMetaMessage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+<section id="module-mido.parser">
+<span id="parsing"></span><h2>Parsing<a class="headerlink" href="#module-mido.parser" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.parser.parse">
+<span class="sig-prename descclassname"><span class="pre">mido.parser.</span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.parser.parse" title="Permalink to this definition"></a></dt>
+<dd><p>Parse MIDI data and return the first message found.</p>
+<p>Data after the first message is ignored. Use parse_all()
+to parse more than one message.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.parser.parse_all">
+<span class="sig-prename descclassname"><span class="pre">mido.parser.</span></span><span class="sig-name descname"><span class="pre">parse_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.parser.parse_all" title="Permalink to this definition"></a></dt>
+<dd><p>Parse MIDI data and return a list of all messages found.</p>
+<p>This is typically used to parse a little bit of data with a few
+messages in it. It’s best to use a Parser object for larger
+amounts of data. Also, tt’s often easier to use parse() if you
+know there is only one message in the data.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.parser.Parser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.parser.</span></span><span class="sig-name descname"><span class="pre">Parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.parser.Parser" title="Permalink to this definition"></a></dt>
+<dd><p>MIDI byte stream parser</p>
+<p>Parses a stream of MIDI bytes and produces messages.</p>
+<p>Data can be put into the parser in the form of
+integers, byte arrays or byte strings.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.parser.Parser.feed">
+<span class="sig-name descname"><span class="pre">feed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.parser.Parser.feed" title="Permalink to this definition"></a></dt>
+<dd><p>Feed MIDI data to the parser.</p>
+<p>Accepts any object that produces a sequence of integers in
+range 0..255, such as:</p>
+<blockquote>
+<div><p>[0, 1, 2]
+(0, 1, 2)
+[for i in range(256)]
+(for i in range(256)]
+bytearray()</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.parser.Parser.feed_byte">
+<span class="sig-name descname"><span class="pre">feed_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">byte</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.parser.Parser.feed_byte" title="Permalink to this definition"></a></dt>
+<dd><p>Feed one MIDI byte into the parser.</p>
+<p>The byte must be an integer in range 0..255.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.parser.Parser.get_message">
+<span class="sig-name descname"><span class="pre">get_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.parser.Parser.get_message" title="Permalink to this definition"></a></dt>
+<dd><p>Get the first parsed message.</p>
+<p>Returns None if there is no message yet. If you don’t want to
+deal with None, you can use pending() to see how many messages
+you can get before you get None, or just iterate over the
+parser.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.parser.Parser.pending">
+<span class="sig-name descname"><span class="pre">pending</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.parser.Parser.pending" title="Permalink to this definition"></a></dt>
+<dd><p>Return the number of pending messages.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mido.tokenizer">
+<span id="tokenizing"></span><h2>Tokenizing<a class="headerlink" href="#module-mido.tokenizer" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.tokenizer.Tokenizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.tokenizer.</span></span><span class="sig-name descname"><span class="pre">Tokenizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.tokenizer.Tokenizer" title="Permalink to this definition"></a></dt>
+<dd><p>Splits a MIDI byte stream into messages.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.tokenizer.Tokenizer.feed">
+<span class="sig-name descname"><span class="pre">feed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.tokenizer.Tokenizer.feed" title="Permalink to this definition"></a></dt>
+<dd><p>Feed MIDI bytes to the decoder.</p>
+<p>Takes an iterable of ints in in range [0..255].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.tokenizer.Tokenizer.feed_byte">
+<span class="sig-name descname"><span class="pre">feed_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">byte</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.tokenizer.Tokenizer.feed_byte" title="Permalink to this definition"></a></dt>
+<dd><p>Feed MIDI byte to the decoder.</p>
+<p>Takes an int in range [0..255].</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.set_backend">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">set_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.set_backend" title="Permalink to this definition"></a></dt>
+<dd><p>Set current backend.</p>
+<p>name can be a module name like ‘mido.backends.rtmidi’ or
+a Backend object.</p>
+<p>If no name is passed, the default backend will be used.</p>
+<p>This will replace all the open_*() and get_*_name() functions
+in top level mido module. The module will be loaded the first
+time one of those functions is called.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.Backend">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">Backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_environ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Backend" title="Permalink to this definition"></a></dt>
+<dd><p>Wrapper for backend module.</p>
+<p>A backend module implements classes for input and output ports for
+a specific MIDI library. The Backend object wraps around the
+object and provides convenient ‘open_*()’ and ‘get_*_names()’
+functions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Backend.get_input_names">
+<span class="sig-name descname"><span class="pre">get_input_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mido.Backend.get_input_names" title="Permalink to this definition"></a></dt>
+<dd><p>Return a list of all input port names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Backend.get_ioport_names">
+<span class="sig-name descname"><span class="pre">get_ioport_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mido.Backend.get_ioport_names" title="Permalink to this definition"></a></dt>
+<dd><p>Return a list of all I/O port names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Backend.get_output_names">
+<span class="sig-name descname"><span class="pre">get_output_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mido.Backend.get_output_names" title="Permalink to this definition"></a></dt>
+<dd><p>Return a list of all output port names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Backend.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.Backend.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load the module.</p>
+<p>Does nothing if the module is already loaded.</p>
+<p>This function will be called if you access the ‘module’
+property.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mido.Backend.loaded">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loaded</span></span><a class="headerlink" href="#mido.Backend.loaded" title="Permalink to this definition"></a></dt>
+<dd><p>Return True if the module is loaded.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mido.Backend.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><a class="headerlink" href="#mido.Backend.module" title="Permalink to this definition"></a></dt>
+<dd><p>A reference module implementing the backend.</p>
+<p>This will always be a valid reference to a module. Accessing
+this property will load the module. Use .loaded to check if
+the module is loaded.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Backend.open_input">
+<span class="sig-name descname"><span class="pre">open_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Backend.open_input" title="Permalink to this definition"></a></dt>
+<dd><p>Open an input port.</p>
+<p>If the environment variable MIDO_DEFAULT_INPUT is set,
+it will override the default port.</p>
+<dl class="simple">
+<dt>virtual=False</dt><dd><p>Passing True opens a new port that other applications can
+connect to. Raises IOError if not supported by the backend.</p>
+</dd>
+<dt>callback=None</dt><dd><p>A callback function to be called when a new message arrives.
+The function should take one argument (the message).
+Raises IOError if not supported by the backend.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Backend.open_ioport">
+<span class="sig-name descname"><span class="pre">open_ioport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Backend.open_ioport" title="Permalink to this definition"></a></dt>
+<dd><p>Open a port for input and output.</p>
+<p>If the environment variable MIDO_DEFAULT_IOPORT is set,
+it will override the default port.</p>
+<dl class="simple">
+<dt>virtual=False</dt><dd><p>Passing True opens a new port that other applications can
+connect to. Raises IOError if not supported by the backend.</p>
+</dd>
+<dt>callback=None</dt><dd><p>A callback function to be called when a new message arrives.
+The function should take one argument (the message).
+Raises IOError if not supported by the backend.</p>
+</dd>
+<dt>autoreset=False</dt><dd><p>Automatically send all_notes_off and reset_all_controllers
+on all channels. This is the same as calling <cite>port.reset()</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.Backend.open_output">
+<span class="sig-name descname"><span class="pre">open_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.Backend.open_output" title="Permalink to this definition"></a></dt>
+<dd><p>Open an output port.</p>
+<p>If the environment variable MIDO_DEFAULT_OUTPUT is set,
+it will override the default port.</p>
+<dl class="simple">
+<dt>virtual=False</dt><dd><p>Passing True opens a new port that other applications can
+connect to. Raises IOError if not supported by the backend.</p>
+</dd>
+<dt>autoreset=False</dt><dd><p>Automatically send all_notes_off and reset_all_controllers
+on all channels. This is the same as calling <cite>port.reset()</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-mido.backends"></span><div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Expose each built-in backend internal API?</p>
+</div>
+</section>
+<section id="ports">
+<h2>Ports<a class="headerlink" href="#ports" title="Permalink to this heading"></a></h2>
+<section id="management">
+<h3>Management<a class="headerlink" href="#management" title="Permalink to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.open_input">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">open_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.open_input" title="Permalink to this definition"></a></dt>
+<dd><p>Open an input port.</p>
+<p>If the environment variable MIDO_DEFAULT_INPUT is set,
+it will override the default port.</p>
+<dl class="simple">
+<dt>virtual=False</dt><dd><p>Passing True opens a new port that other applications can
+connect to. Raises IOError if not supported by the backend.</p>
+</dd>
+<dt>callback=None</dt><dd><p>A callback function to be called when a new message arrives.
+The function should take one argument (the message).
+Raises IOError if not supported by the backend.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.open_output">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">open_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.open_output" title="Permalink to this definition"></a></dt>
+<dd><p>Open an output port.</p>
+<p>If the environment variable MIDO_DEFAULT_OUTPUT is set,
+it will override the default port.</p>
+<dl class="simple">
+<dt>virtual=False</dt><dd><p>Passing True opens a new port that other applications can
+connect to. Raises IOError if not supported by the backend.</p>
+</dd>
+<dt>autoreset=False</dt><dd><p>Automatically send all_notes_off and reset_all_controllers
+on all channels. This is the same as calling <cite>port.reset()</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.open_ioport">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">open_ioport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.open_ioport" title="Permalink to this definition"></a></dt>
+<dd><p>Open a port for input and output.</p>
+<p>If the environment variable MIDO_DEFAULT_IOPORT is set,
+it will override the default port.</p>
+<dl class="simple">
+<dt>virtual=False</dt><dd><p>Passing True opens a new port that other applications can
+connect to. Raises IOError if not supported by the backend.</p>
+</dd>
+<dt>callback=None</dt><dd><p>A callback function to be called when a new message arrives.
+The function should take one argument (the message).
+Raises IOError if not supported by the backend.</p>
+</dd>
+<dt>autoreset=False</dt><dd><p>Automatically send all_notes_off and reset_all_controllers
+on all channels. This is the same as calling <cite>port.reset()</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.get_input_names">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">get_input_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mido.get_input_names" title="Permalink to this definition"></a></dt>
+<dd><p>Return a list of all input port names.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.get_output_names">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">get_output_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mido.get_output_names" title="Permalink to this definition"></a></dt>
+<dd><p>Return a list of all output port names.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.get_ioport_names">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">get_ioport_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mido.get_ioport_names" title="Permalink to this definition"></a></dt>
+<dd><p>Return a list of all I/O port names.</p>
+</dd></dl>
+
+</section>
+<section id="module-mido.sockets">
+<span id="socket-ports"></span><h3>Socket Ports<a class="headerlink" href="#module-mido.sockets" title="Permalink to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.sockets.PortServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.sockets.</span></span><span class="sig-name descname"><span class="pre">PortServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backlog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer.accept" title="Permalink to this definition"></a></dt>
+<dd><p>Accept a connection from a client.</p>
+<p>Will block until there is a new connection, and then return a
+SocketPort object.</p>
+<p>If block=False, None will be returned if there is no
+new connection waiting.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the port.</p>
+<p>If the port is already closed, nothing will happen.  The port
+is automatically closed when the object goes out of scope or
+is garbage collected.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.is_input">
+<span class="sig-name descname"><span class="pre">is_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.sockets.PortServer.is_input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.is_output">
+<span class="sig-name descname"><span class="pre">is_output</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.sockets.PortServer.is_output" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.iter_pending">
+<span class="sig-name descname"><span class="pre">iter_pending</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer.iter_pending" title="Permalink to this definition"></a></dt>
+<dd><p>Iterate through pending messages.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.panic">
+<span class="sig-name descname"><span class="pre">panic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer.panic" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Sounds Off” on all channels.</p>
+<p>This will mute all sounding notes regardless of
+envelopes. Useful when notes are hanging and nothing else
+helps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.poll">
+<span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer.poll" title="Permalink to this definition"></a></dt>
+<dd><p>Receive the next pending message or None</p>
+<p>This is the same as calling <cite>receive(block=False)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.receive">
+<span class="sig-name descname"><span class="pre">receive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer.receive" title="Permalink to this definition"></a></dt>
+<dd><p>Return the next message.</p>
+<p>This will block until a message arrives.</p>
+<p>If you pass block=False it will not block and instead return
+None if there is no available message.</p>
+<p>If the port is closed and there are no pending messages IOError
+will be raised. If the port closes while waiting inside receive(),
+IOError will be raised. TODO: this seems a bit inconsistent. Should
+different errors be raised? What’s most useful here?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Notes Off” and “Reset All Controllers” on all channels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.PortServer.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.PortServer.send" title="Permalink to this definition"></a></dt>
+<dd><p>Send a message on the port.</p>
+<p>A copy of the message will be sent, so you can safely modify
+the original message without any unexpected consequences.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.sockets.</span></span><span class="sig-name descname"><span class="pre">SocketPort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.SocketPort" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.SocketPort.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the port.</p>
+<p>If the port is already closed, nothing will happen.  The port
+is automatically closed when the object goes out of scope or
+is garbage collected.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.is_input">
+<span class="sig-name descname"><span class="pre">is_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.sockets.SocketPort.is_input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.is_output">
+<span class="sig-name descname"><span class="pre">is_output</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.sockets.SocketPort.is_output" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.iter_pending">
+<span class="sig-name descname"><span class="pre">iter_pending</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.SocketPort.iter_pending" title="Permalink to this definition"></a></dt>
+<dd><p>Iterate through pending messages.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.panic">
+<span class="sig-name descname"><span class="pre">panic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.SocketPort.panic" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Sounds Off” on all channels.</p>
+<p>This will mute all sounding notes regardless of
+envelopes. Useful when notes are hanging and nothing else
+helps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.poll">
+<span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.SocketPort.poll" title="Permalink to this definition"></a></dt>
+<dd><p>Receive the next pending message or None</p>
+<p>This is the same as calling <cite>receive(block=False)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.receive">
+<span class="sig-name descname"><span class="pre">receive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.SocketPort.receive" title="Permalink to this definition"></a></dt>
+<dd><p>Return the next message.</p>
+<p>This will block until a message arrives.</p>
+<p>If you pass block=False it will not block and instead return
+None if there is no available message.</p>
+<p>If the port is closed and there are no pending messages IOError
+will be raised. If the port closes while waiting inside receive(),
+IOError will be raised. TODO: this seems a bit inconsistent. Should
+different errors be raised? What’s most useful here?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.SocketPort.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Notes Off” and “Reset All Controllers” on all channels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.sockets.SocketPort.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.SocketPort.send" title="Permalink to this definition"></a></dt>
+<dd><p>Send a message on the port.</p>
+<p>A copy of the message will be sent, so you can safely modify
+the original message without any unexpected consequences.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.sockets.parse_address">
+<span class="sig-prename descclassname"><span class="pre">mido.sockets.</span></span><span class="sig-name descname"><span class="pre">parse_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.sockets.parse_address" title="Permalink to this definition"></a></dt>
+<dd><p>Parse and address on the format host:port.</p>
+<p>Returns a tuple (host, port). Raises ValueError if format is
+invalid or port is not an integer or out of range.</p>
+</dd></dl>
+
+</section>
+<section id="id3">
+<h3>API<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<span class="target" id="module-mido.ports"></span><dl class="py class">
+<dt class="sig sig-object py" id="mido.ports.BaseInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">BaseInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseInput" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for input port.</p>
+<p>Subclass and override _receive() to create a new input port type.
+(See portmidi.py for an example of how to do this.)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.BaseInput.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseInput.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the port.</p>
+<p>If the port is already closed, nothing will happen.  The port
+is automatically closed when the object goes out of scope or
+is garbage collected.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.ports.BaseInput.is_input">
+<span class="sig-name descname"><span class="pre">is_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.ports.BaseInput.is_input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.ports.BaseInput.is_output">
+<span class="sig-name descname"><span class="pre">is_output</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#mido.ports.BaseInput.is_output" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.BaseInput.iter_pending">
+<span class="sig-name descname"><span class="pre">iter_pending</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseInput.iter_pending" title="Permalink to this definition"></a></dt>
+<dd><p>Iterate through pending messages.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.BaseInput.poll">
+<span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseInput.poll" title="Permalink to this definition"></a></dt>
+<dd><p>Receive the next pending message or None</p>
+<p>This is the same as calling <cite>receive(block=False)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.BaseInput.receive">
+<span class="sig-name descname"><span class="pre">receive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseInput.receive" title="Permalink to this definition"></a></dt>
+<dd><p>Return the next message.</p>
+<p>This will block until a message arrives.</p>
+<p>If you pass block=False it will not block and instead return
+None if there is no available message.</p>
+<p>If the port is closed and there are no pending messages IOError
+will be raised. If the port closes while waiting inside receive(),
+IOError will be raised. TODO: this seems a bit inconsistent. Should
+different errors be raised? What’s most useful here?</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.ports.BaseOutput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">BaseOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseOutput" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for output port.</p>
+<p>Subclass and override _send() to create a new port type.  (See
+portmidi.py for how to do this.)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.BaseOutput.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseOutput.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the port.</p>
+<p>If the port is already closed, nothing will happen.  The port
+is automatically closed when the object goes out of scope or
+is garbage collected.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.ports.BaseOutput.is_input">
+<span class="sig-name descname"><span class="pre">is_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#mido.ports.BaseOutput.is_input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.ports.BaseOutput.is_output">
+<span class="sig-name descname"><span class="pre">is_output</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.ports.BaseOutput.is_output" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.BaseOutput.panic">
+<span class="sig-name descname"><span class="pre">panic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseOutput.panic" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Sounds Off” on all channels.</p>
+<p>This will mute all sounding notes regardless of
+envelopes. Useful when notes are hanging and nothing else
+helps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.BaseOutput.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseOutput.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Notes Off” and “Reset All Controllers” on all channels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.BaseOutput.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.BaseOutput.send" title="Permalink to this definition"></a></dt>
+<dd><p>Send a message on the port.</p>
+<p>A copy of the message will be sent, so you can safely modify
+the original message without any unexpected consequences.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.ports.IOPort">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">IOPort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.IOPort" title="Permalink to this definition"></a></dt>
+<dd><p>Input / output port.</p>
+<p>This is a convenient wrapper around an input port and an output
+port which provides the functionality of both. Every method call
+is forwarded to the appropriate port.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.IOPort.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.IOPort.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the port.</p>
+<p>If the port is already closed, nothing will happen.  The port
+is automatically closed when the object goes out of scope or
+is garbage collected.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.ports.IOPort.is_input">
+<span class="sig-name descname"><span class="pre">is_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.ports.IOPort.is_input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.ports.IOPort.is_output">
+<span class="sig-name descname"><span class="pre">is_output</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.ports.IOPort.is_output" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.IOPort.iter_pending">
+<span class="sig-name descname"><span class="pre">iter_pending</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.IOPort.iter_pending" title="Permalink to this definition"></a></dt>
+<dd><p>Iterate through pending messages.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.IOPort.panic">
+<span class="sig-name descname"><span class="pre">panic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.IOPort.panic" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Sounds Off” on all channels.</p>
+<p>This will mute all sounding notes regardless of
+envelopes. Useful when notes are hanging and nothing else
+helps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.IOPort.poll">
+<span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.IOPort.poll" title="Permalink to this definition"></a></dt>
+<dd><p>Receive the next pending message or None</p>
+<p>This is the same as calling <cite>receive(block=False)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.IOPort.receive">
+<span class="sig-name descname"><span class="pre">receive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.IOPort.receive" title="Permalink to this definition"></a></dt>
+<dd><p>Return the next message.</p>
+<p>This will block until a message arrives.</p>
+<p>If you pass block=False it will not block and instead return
+None if there is no available message.</p>
+<p>If the port is closed and there are no pending messages IOError
+will be raised. If the port closes while waiting inside receive(),
+IOError will be raised. TODO: this seems a bit inconsistent. Should
+different errors be raised? What’s most useful here?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.IOPort.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.IOPort.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Notes Off” and “Reset All Controllers” on all channels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.IOPort.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.IOPort.send" title="Permalink to this definition"></a></dt>
+<dd><p>Send a message on the port.</p>
+<p>A copy of the message will be sent, so you can safely modify
+the original message without any unexpected consequences.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.ports.MultiPort">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">MultiPort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ports</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_ports</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.MultiPort" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.MultiPort.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the port.</p>
+<p>If the port is already closed, nothing will happen.  The port
+is automatically closed when the object goes out of scope or
+is garbage collected.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.is_input">
+<span class="sig-name descname"><span class="pre">is_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.ports.MultiPort.is_input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.is_output">
+<span class="sig-name descname"><span class="pre">is_output</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.ports.MultiPort.is_output" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.iter_pending">
+<span class="sig-name descname"><span class="pre">iter_pending</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.MultiPort.iter_pending" title="Permalink to this definition"></a></dt>
+<dd><p>Iterate through pending messages.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.panic">
+<span class="sig-name descname"><span class="pre">panic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.MultiPort.panic" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Sounds Off” on all channels.</p>
+<p>This will mute all sounding notes regardless of
+envelopes. Useful when notes are hanging and nothing else
+helps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.poll">
+<span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.MultiPort.poll" title="Permalink to this definition"></a></dt>
+<dd><p>Receive the next pending message or None</p>
+<p>This is the same as calling <cite>receive(block=False)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.receive">
+<span class="sig-name descname"><span class="pre">receive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.MultiPort.receive" title="Permalink to this definition"></a></dt>
+<dd><p>Return the next message.</p>
+<p>This will block until a message arrives.</p>
+<p>If you pass block=False it will not block and instead return
+None if there is no available message.</p>
+<p>If the port is closed and there are no pending messages IOError
+will be raised. If the port closes while waiting inside receive(),
+IOError will be raised. TODO: this seems a bit inconsistent. Should
+different errors be raised? What’s most useful here?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.MultiPort.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Send “All Notes Off” and “Reset All Controllers” on all channels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.ports.MultiPort.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.MultiPort.send" title="Permalink to this definition"></a></dt>
+<dd><p>Send a message on the port.</p>
+<p>A copy of the message will be sent, so you can safely modify
+the original message without any unexpected consequences.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.ports.multi_receive">
+<span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">multi_receive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ports</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_ports</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.multi_receive" title="Permalink to this definition"></a></dt>
+<dd><p>Receive messages from multiple ports.</p>
+<p>Generates messages from ever input port. The ports are polled in
+random order for fairness, and all messages from each port are
+yielded before moving on to the next port.</p>
+<p>If yield_ports=True, (port, message) is yielded instead of just
+the message.</p>
+<p>If block=False only pending messages will be yielded.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.ports.multi_iter_pending">
+<span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">multi_iter_pending</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ports</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_ports</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.multi_iter_pending" title="Permalink to this definition"></a></dt>
+<dd><p>Iterate through all pending messages in ports.</p>
+<p>This is the same as calling multi_receive(ports, block=False).
+The function is kept around for backwards compatability.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.ports.multi_send">
+<span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">multi_send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ports</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.multi_send" title="Permalink to this definition"></a></dt>
+<dd><p>Send message on all ports.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.ports.sleep">
+<span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">sleep</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.sleep" title="Permalink to this definition"></a></dt>
+<dd><p>Sleep for N seconds.</p>
+<p>This is used in ports when polling and waiting for messages. N can
+be set with set_sleep_time().</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.ports.set_sleep_time">
+<span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">set_sleep_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.set_sleep_time" title="Permalink to this definition"></a></dt>
+<dd><p>Set the number of seconds sleep() will sleep.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.ports.get_sleep_time">
+<span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">get_sleep_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.get_sleep_time" title="Permalink to this definition"></a></dt>
+<dd><p>Get number of seconds sleep() will sleep.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.ports.panic_messages">
+<span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">panic_messages</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.panic_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Yield “All Sounds Off” for all channels.</p>
+<p>This will mute all sounding notes regardless of
+envelopes. Useful when notes are hanging and nothing else
+helps.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.ports.reset_messages">
+<span class="sig-prename descclassname"><span class="pre">mido.ports.</span></span><span class="sig-name descname"><span class="pre">reset_messages</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.ports.reset_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Yield “All Notes Off” and “Reset All Controllers” for all channels</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="files">
+<h2>Files<a class="headerlink" href="#files" title="Permalink to this heading"></a></h2>
+<section id="standard-midi-files">
+<h3>Standard MIDI Files<a class="headerlink" href="#standard-midi-files" title="Permalink to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.MidiFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">MidiFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks_per_beat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">480</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latin1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiFile" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiFile.add_track">
+<span class="sig-name descname"><span class="pre">add_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiFile.add_track" title="Permalink to this definition"></a></dt>
+<dd><p>Add a new track to the file.</p>
+<p>This will create a new MidiTrack object and append it to the
+track list.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mido.MidiFile.length">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">length</span></span><a class="headerlink" href="#mido.MidiFile.length" title="Permalink to this definition"></a></dt>
+<dd><p>Playback time in seconds.</p>
+<p>This will be computed by going through every message in every
+track and adding up delta times.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mido.MidiFile.merged_track">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merged_track</span></span><a class="headerlink" href="#mido.MidiFile.merged_track" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiFile.play">
+<span class="sig-name descname"><span class="pre">play</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_messages=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">now=&lt;built-in</span> <span class="pre">function</span> <span class="pre">time&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiFile.play" title="Permalink to this definition"></a></dt>
+<dd><p>Play back all tracks.</p>
+<p>The generator will sleep between each message by
+default. Messages are yielded with correct timing. The time
+attribute is set to the number of seconds slept since the
+previous message.</p>
+<p>By default you will only get normal MIDI messages. Pass
+meta_messages=True if you also want meta messages.</p>
+<p>You will receive copies of the original messages, so you can
+safely modify them without ruining the tracks.</p>
+<p>By default the system clock is used for the timing of yielded
+MIDI events. To use a different clock (e.g. to synchronize to
+an audio stream), pass now=time_fn where time_fn is a zero
+argument function that yields the current time in seconds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiFile.print_tracks">
+<span class="sig-name descname"><span class="pre">print_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiFile.print_tracks" title="Permalink to this definition"></a></dt>
+<dd><p>Prints out all messages in a .midi file.</p>
+<p>May take argument meta_only to show only meta messages.</p>
+<p>Use:
+print_tracks() -&gt; will print all messages
+print_tracks(meta_only=True) -&gt; will print only MetaMessages</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiFile.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiFile.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save to a file.</p>
+<p>If file is passed the data will be saved to that file. This is
+typically an in-memory file or and already open file like sys.stdout.</p>
+<p>If filename is passed the data will be saved to that file.</p>
+<p>Raises ValueError if both file and filename are None,
+or if a type 0 file has != one track.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.MidiTrack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">MidiTrack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable=()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.append" title="Permalink to this definition"></a></dt>
+<dd><p>Append object to the end of the list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Remove all items from list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.copy" title="Permalink to this definition"></a></dt>
+<dd><p>Return a shallow copy of the list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.count">
+<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.count" title="Permalink to this definition"></a></dt>
+<dd><p>Return number of occurrences of value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.extend">
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.extend" title="Permalink to this definition"></a></dt>
+<dd><p>Extend list by appending elements from the iterable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop=9223372036854775807</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.index" title="Permalink to this definition"></a></dt>
+<dd><p>Return first index of value.</p>
+<p>Raises ValueError if the value is not present.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.insert" title="Permalink to this definition"></a></dt>
+<dd><p>Insert object before index.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mido.MidiTrack.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#mido.MidiTrack.name" title="Permalink to this definition"></a></dt>
+<dd><p>Name of the track.</p>
+<p>This will return the name from the first track_name meta
+message in the track, or ‘’ if there is no such message.</p>
+<p>Setting this property will update the name field of the first
+track_name message in the track. If no such message is found,
+one will be added to the beginning of the track with a delta
+time of 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index=-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.pop" title="Permalink to this definition"></a></dt>
+<dd><p>Remove and return item at index (default last).</p>
+<p>Raises IndexError if list is empty or index is out of range.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.remove" title="Permalink to this definition"></a></dt>
+<dd><p>Remove first occurrence of value.</p>
+<p>Raises ValueError if the value is not present.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.reverse">
+<span class="sig-name descname"><span class="pre">reverse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.reverse" title="Permalink to this definition"></a></dt>
+<dd><p>Reverse <em>IN PLACE</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MidiTrack.sort">
+<span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MidiTrack.sort" title="Permalink to this definition"></a></dt>
+<dd><p>Stable sort <em>IN PLACE</em>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mido.MetaMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">MetaMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_checks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mido.MetaMessage.bin">
+<span class="sig-name descname"><span class="pre">bin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage.bin" title="Permalink to this definition"></a></dt>
+<dd><p>Encode message and return as a bytearray.</p>
+<p>This can be used to write the message to a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MetaMessage.bytes">
+<span class="sig-name descname"><span class="pre">bytes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage.bytes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MetaMessage.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">overrides</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage.copy" title="Permalink to this definition"></a></dt>
+<dd><p>Return a copy of the message</p>
+<p>Attributes will be overridden by the passed keyword arguments.
+Only message specific attributes can be overridden. The message
+type can not be changed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MetaMessage.dict">
+<span class="sig-name descname"><span class="pre">dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage.dict" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary containing the attributes of the message.</p>
+<p>Example: {‘type’: ‘sysex’, ‘data’: [1, 2], ‘time’: 0}</p>
+<p>Sysex data will be returned as a list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MetaMessage.from_bytes">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_bytes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage.from_bytes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MetaMessage.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage.from_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Create a message from a dictionary.</p>
+<p>Only “type” is required. The other will be set to default
+values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MetaMessage.hex">
+<span class="sig-name descname"><span class="pre">hex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage.hex" title="Permalink to this definition"></a></dt>
+<dd><p>Encode message and return as a string of hex numbers,</p>
+<p>Each number is separated by the string sep.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mido.MetaMessage.is_cc">
+<span class="sig-name descname"><span class="pre">is_cc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.MetaMessage.is_cc" title="Permalink to this definition"></a></dt>
+<dd><p>Return True if the message is of type ‘control_change’.</p>
+<p>The optional control argument can be used to test for a specific
+control number, for example:</p>
+<dl class="simple">
+<dt>if msg.is_cc(7):</dt><dd><p># Message is control change 7 (channel volume).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mido.MetaMessage.is_meta">
+<span class="sig-name descname"><span class="pre">is_meta</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mido.MetaMessage.is_meta" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mido.MetaMessage.is_realtime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_realtime</span></span><a class="headerlink" href="#mido.MetaMessage.is_realtime" title="Permalink to this definition"></a></dt>
+<dd><p>True if the message is a system realtime message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.tick2second">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">tick2second</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tick</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks_per_beat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.tick2second" title="Permalink to this definition"></a></dt>
+<dd><p>Convert absolute time in ticks to seconds.</p>
+<p>Returns absolute time in seconds for a chosen MIDI file time resolution
+(ticks/pulses per quarter note, also called PPQN) and tempo (microseconds
+per quarter note).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.second2tick">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">second2tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">second</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks_per_beat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.second2tick" title="Permalink to this definition"></a></dt>
+<dd><p>Convert absolute time in seconds to ticks.</p>
+<p>Returns absolute time in ticks for a chosen MIDI file time resolution
+(ticks/pulses per quarter note, also called PPQN) and tempo (microseconds
+per quarter note). Normal rounding applies.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.bpm2tempo">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">bpm2tempo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_signature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(4,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.bpm2tempo" title="Permalink to this definition"></a></dt>
+<dd><p>Convert BPM (beats per minute) to MIDI file tempo (microseconds per
+quarter note).</p>
+<p>Depending on the chosen time signature a bar contains a different number of
+beats. These beats are multiples/fractions of a quarter note, thus the
+returned BPM depend on the time signature. Normal rounding applies.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.tempo2bpm">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">tempo2bpm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tempo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_signature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(4,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.tempo2bpm" title="Permalink to this definition"></a></dt>
+<dd><p>Convert MIDI file tempo (microseconds per quarter note) to BPM (beats
+per minute).</p>
+<p>Depending on the chosen time signature a bar contains a different number of
+beats. The beats are multiples/fractions of a quarter note, thus the
+returned tempo depends on the time signature denominator.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.merge_tracks">
+<span class="sig-prename descclassname"><span class="pre">mido.</span></span><span class="sig-name descname"><span class="pre">merge_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_checks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.merge_tracks" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a MidiTrack object with all messages from all tracks.</p>
+<p>The messages are returned in playback order with delta times
+as if they were all in one track.</p>
+<p>Pass skip_checks=True to skip validation of messages before merging.
+This should ONLY be used when the messages in tracks have already
+been validated by mido.checks.</p>
+</dd></dl>
+
+<span class="target" id="module-mido.midifiles"></span></section>
+<section id="module-mido.syx">
+<span id="syx"></span><h3>SYX<a class="headerlink" href="#module-mido.syx" title="Permalink to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.syx.read_syx_file">
+<span class="sig-prename descclassname"><span class="pre">mido.syx.</span></span><span class="sig-name descname"><span class="pre">read_syx_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.syx.read_syx_file" title="Permalink to this definition"></a></dt>
+<dd><p>Read sysex messages from SYX file.</p>
+<p>Returns a list of sysex messages.</p>
+<p>This handles both the text (hexadecimal) and binary
+formats. Messages other than sysex will be ignored. Raises
+ValueError if file is plain text and byte is not a 2-digit hex
+number.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mido.syx.write_syx_file">
+<span class="sig-prename descclassname"><span class="pre">mido.syx.</span></span><span class="sig-name descname"><span class="pre">write_syx_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plaintext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mido.syx.write_syx_file" title="Permalink to this definition"></a></dt>
+<dd><p>Write sysex messages to a SYX file.</p>
+<p>Messages other than sysex will be skipped.</p>
+<p>By default this will write the binary format.  Pass
+<code class="docutils literal notranslate"><span class="pre">plaintext=True</span></code> to write the plain text format (hex encoded
+ASCII text).</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="binaries.html" class="btn btn-neutral float-left" title="Included Programs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="CODE_OF_CONDUCT.html" class="btn btn-neutral float-right" title="Code of Conduct" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

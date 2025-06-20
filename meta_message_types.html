@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meta Message Types &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Resources" href="resources.html" />
+    <link rel="prev" title="Message Types" href="message_types.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Mido
+              <img src="_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/index.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ports/index.html">Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files/index.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message_types.html">Message Types</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Meta Message Types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#supported-messages">Supported Messages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sequence-number-0x00">sequence_number (0x00)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#text-0x01">text (0x01)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#copyright-0x02">copyright (0x02)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#track-name-0x03">track_name (0x03)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instrument-name-0x04">instrument_name (0x04)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lyrics-0x05">lyrics (0x05)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#marker-0x06">marker (0x06)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cue-marker-0x07">cue_marker (0x07)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#device-name-0x09">device_name (0x09)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#channel-prefix-0x20">channel_prefix (0x20)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#midi-port-0x21">midi_port (0x21)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#end-of-track-0x2f">end_of_track (0x2f)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-tempo-0x51">set_tempo (0x51)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#smpte-offset-0x54">smpte_offset (0x54)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-signature-0x58">time_signature (0x58)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key-signature-0x59">key_signature (0x59)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sequencer-specific-0x7f">sequencer_specific (0x7f)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#unknown-meta-messages">Unknown Meta Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementing-new-or-custom-meta-messages">Implementing New or Custom Meta Messages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Meta Message Types</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/meta_message_types.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="message_types.html" class="btn btn-neutral float-left" title="Message Types" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="resources.html" class="btn btn-neutral float-right" title="Resources" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="meta-message-types">
+<h1>Meta Message Types<a class="headerlink" href="#meta-message-types" title="Permalink to this heading"></a></h1>
+<section id="supported-messages">
+<h2>Supported Messages<a class="headerlink" href="#supported-messages" title="Permalink to this heading"></a></h2>
+<section id="sequence-number-0x00">
+<h3>sequence_number (0x00)<a class="headerlink" href="#sequence-number-0x00" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>number</p></td>
+<td><p>0..65535</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+<p>Sequence number in type 0 and 1 MIDI files;
+pattern number in type 2 MIDI files.</p>
+</section>
+<section id="text-0x01">
+<h3>text (0x01)<a class="headerlink" href="#text-0x01" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>text</p></td>
+<td><p>string</p></td>
+<td><p>‘’</p></td>
+</tr>
+</tbody>
+</table>
+<p>General “Text” Meta Message. Can be used for any text based data.</p>
+</section>
+<section id="copyright-0x02">
+<h3>copyright (0x02)<a class="headerlink" href="#copyright-0x02" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>text</p></td>
+<td><p>string</p></td>
+<td><p>‘’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Provides information about a MIDI file’s copyright.</p>
+</section>
+<section id="track-name-0x03">
+<h3>track_name (0x03)<a class="headerlink" href="#track-name-0x03" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>string</p></td>
+<td><p>‘’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Stores a MIDI track’s name.</p>
+</section>
+<section id="instrument-name-0x04">
+<h3>instrument_name (0x04)<a class="headerlink" href="#instrument-name-0x04" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>string</p></td>
+<td><p>‘’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Stores an instrument’s name.</p>
+</section>
+<section id="lyrics-0x05">
+<h3>lyrics (0x05)<a class="headerlink" href="#lyrics-0x05" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>text</p></td>
+<td><p>string</p></td>
+<td><p>‘’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Stores the lyrics of a song. Typically one syllable per Meta Message.</p>
+</section>
+<section id="marker-0x06">
+<h3>marker (0x06)<a class="headerlink" href="#marker-0x06" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>text</p></td>
+<td><p>string</p></td>
+<td><p>‘’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Marks a point of interest in a MIDI file.
+Can be used as the marker for the beginning of a verse, solo, etc.</p>
+</section>
+<section id="cue-marker-0x07">
+<h3>cue_marker (0x07)<a class="headerlink" href="#cue-marker-0x07" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>text</p></td>
+<td><p>string</p></td>
+<td><p>‘’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Marks a cue. IE: ‘Cue performer 1’, etc</p>
+</section>
+<section id="device-name-0x09">
+<h3>device_name (0x09)<a class="headerlink" href="#device-name-0x09" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>string</p></td>
+<td><p>‘’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Gives the name of the device.</p>
+</section>
+<section id="channel-prefix-0x20">
+<h3>channel_prefix (0x20)<a class="headerlink" href="#channel-prefix-0x20" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>channel</p></td>
+<td><p>0..255</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+<p>Gives the prefix for the channel on which events are played.</p>
+</section>
+<section id="midi-port-0x21">
+<h3>midi_port (0x21)<a class="headerlink" href="#midi-port-0x21" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>port</p></td>
+<td><p>0..255</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+<p>Gives the MIDI Port on which events are played.</p>
+</section>
+<section id="end-of-track-0x2f">
+<h3>end_of_track (0x2f)<a class="headerlink" href="#end-of-track-0x2f" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>n/a</p></td>
+<td><p>n/a</p></td>
+<td><p>n/a</p></td>
+</tr>
+</tbody>
+</table>
+<p>An empty Meta Message that marks the end of a track.</p>
+</section>
+<section id="set-tempo-0x51">
+<h3>set_tempo (0x51)<a class="headerlink" href="#set-tempo-0x51" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tempo</p></td>
+<td><p>0..16777215</p></td>
+<td><p>500000</p></td>
+</tr>
+</tbody>
+</table>
+<p>Tempo is in microseconds per beat (quarter note). You can use
+<code class="xref py py-func docutils literal notranslate"><span class="pre">bpm2tempo()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">tempo2bpm()</span></code> to convert to and from
+beats per minute. Note that <code class="xref py py-func docutils literal notranslate"><span class="pre">tempo2bpm()</span></code> may return a floating
+point number.</p>
+</section>
+<section id="smpte-offset-0x54">
+<h3>smpte_offset (0x54)<a class="headerlink" href="#smpte-offset-0x54" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>frame_rate</p></td>
+<td><p>24, 25, 29.97, 30</p></td>
+<td><p>24</p></td>
+</tr>
+<tr class="row-odd"><td><p>hours</p></td>
+<td><p>0..255</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>minutes</p></td>
+<td><p>0..59</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>seconds</p></td>
+<td><p>0..59</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>frames</p></td>
+<td><p>0..255</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>sub_frames</p></td>
+<td><p>0..99</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="time-signature-0x58">
+<h3>time_signature (0x58)<a class="headerlink" href="#time-signature-0x58" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>numerator</p></td>
+<td><p>0..255</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>denominator</p></td>
+<td><p>1..2**255</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-even"><td><p>clocks_per_click</p></td>
+<td><p>0..255</p></td>
+<td><p>24</p></td>
+</tr>
+<tr class="row-odd"><td><p>notated_32nd_notes_per_beat</p></td>
+<td><p>0..255</p></td>
+<td><p>8</p></td>
+</tr>
+</tbody>
+</table>
+<p>Time signature of:</p>
+<p>4/4 : MetaMessage(‘time_signature’, numerator=4, denominator=4)</p>
+<p>3/8 : MetaMessage(‘time_signature’, numerator=3, denominator=8)</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.2.9: </span>Time signature message have the correct default value of 4/4. In earlier
+versions the default value was 2/4 due to a typo in the code.</p>
+</div>
+</section>
+<section id="key-signature-0x59">
+<h3>key_signature (0x59)<a class="headerlink" href="#key-signature-0x59" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>key</p></td>
+<td><p>‘C’, ‘F#m’, …</p></td>
+<td><p>‘C’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Valid values: A A#m Ab Abm Am B Bb Bbm Bm C C# C#m Cb Cm D D#m Db Dm E
+Eb Ebm Em F F# F#m Fm G G#m Gb Gm</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.1.5: </span>The mode attribute was removed. Instead, an ‘m’ is appended to minor keys.</p>
+</div>
+</section>
+<section id="sequencer-specific-0x7f">
+<h3>sequencer_specific (0x7f)<a class="headerlink" href="#sequencer-specific-0x7f" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Values</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>[..]</p></td>
+<td><p>[]</p></td>
+</tr>
+</tbody>
+</table>
+<p>An unprocessed sequencer specific message containing raw data.</p>
+</section>
+</section>
+<section id="unknown-meta-messages">
+<h2>Unknown Meta Messages<a class="headerlink" href="#unknown-meta-messages" title="Permalink to this heading"></a></h2>
+<p>Unknown meta messages will be returned as <code class="docutils literal notranslate"><span class="pre">UnknownMetaMessage</span></code>
+objects, with <code class="docutils literal notranslate"><span class="pre">type</span></code> set to <code class="docutils literal notranslate"><span class="pre">unknown_meta</span></code>. The messages are saved
+back to the file exactly as they came out.</p>
+<p>Code that depends on <code class="docutils literal notranslate"><span class="pre">UnknownMetaMessage</span></code> may break if the message
+in question is ever implemented, so it’s best to only use these to
+learn about the format of the new message and then implement it as
+described below.</p>
+<p><code class="docutils literal notranslate"><span class="pre">UnknownMetaMessage</span></code> have two attributes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">type_byte</span></code> - a byte which uniquely identifies this message type</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> - the message data as a list of bytes</p></li>
+</ul>
+<p>These are also visible in the <code class="docutils literal notranslate"><span class="pre">repr()</span></code> string:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">UnknownMetaMessage</span><span class="p">(</span><span class="n">type_byte</span><span class="o">=</span><span class="mi">251</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="implementing-new-or-custom-meta-messages">
+<h2>Implementing New or Custom Meta Messages<a class="headerlink" href="#implementing-new-or-custom-meta-messages" title="Permalink to this heading"></a></h2>
+<p>If you come across a meta message which is not implemented or you
+want to use a custom meta message, you can add it by writing a new
+meta message spec:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido.midifiles.meta</span> <span class="kn">import</span> <span class="n">MetaSpec</span><span class="p">,</span> <span class="n">add_meta_spec</span>
+
+<span class="k">class</span> <span class="nc">MetaSpec_light_color</span><span class="p">(</span><span class="n">MetaSpec</span><span class="p">):</span>
+    <span class="n">type_byte</span> <span class="o">=</span> <span class="mh">0xf0</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="c1"># Interpret the data bytes and assign them to attributes.</span>
+        <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">b</span><span class="p">)</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="c1"># Encode attributes to data bytes and</span>
+        <span class="c1"># return them as a list of ints.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">message</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">b</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># (Optional)</span>
+        <span class="c1"># This is called when the user assigns</span>
+        <span class="c1"># to an attribute. You can use this for</span>
+        <span class="c1"># type and value checking. (Name checking</span>
+        <span class="c1"># is already done.</span>
+        <span class="c1">#</span>
+        <span class="c1"># If this method is left out, no type and</span>
+        <span class="c1"># value checking will be done.</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> must be an integer&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">255</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> must be in range 0..255&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Then you can add your new message type with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">add_meta_spec</span><span class="p">(</span><span class="n">MetaSpec_light_color</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and create messages in the usual way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mido</span> <span class="kn">import</span> <span class="n">MetaMessage</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MetaMessage</span><span class="p">(</span><span class="s1">&#39;light_color&#39;</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">MetaMessage(&#39;light_color&#39;, r=120, g=60, b=10, time=0)</span>
+</pre></div>
+</div>
+<p>and the new message type will now work when reading and writing MIDI
+files.</p>
+<p>Some additional functions are available:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">encode_string</span><span class="p">(</span><span class="n">unicode_string</span><span class="p">)</span>
+<span class="n">decode_string</span><span class="p">(</span><span class="n">byte_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These convert between a Unicode string and a list of bytes using the
+current character set in the file.</p>
+<p>If your message contains only one string with the attribute name
+<code class="docutils literal notranslate"><span class="pre">text</span></code> or <code class="docutils literal notranslate"><span class="pre">name</span></code>, you can subclass from one of the existing
+messages with these attributes, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MetaSpec_copyright</span><span class="p">(</span><span class="n">MetaSpec_text</span><span class="p">):</span>
+    <span class="n">type_byte</span> <span class="o">=</span> <span class="mh">0x02</span>
+
+<span class="k">class</span> <span class="nc">MetaSpec_instrument_name</span><span class="p">(</span><span class="n">MetaSpec_track_name</span><span class="p">):</span>
+    <span class="n">type_byte</span> <span class="o">=</span> <span class="mh">0x04</span>
+</pre></div>
+</div>
+<p>This allows you to skip everything but <code class="docutils literal notranslate"><span class="pre">type_byte</span></code>, since the rest
+is inherited.</p>
+<p>See the existing <code class="docutils literal notranslate"><span class="pre">MetaSpec</span></code> classes for further examples.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="message_types.html" class="btn btn-neutral float-left" title="Message Types" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="resources.html" class="btn btn-neutral float-right" title="Resources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

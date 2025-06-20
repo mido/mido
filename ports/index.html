@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ports &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Files" href="../files/index.html" />
+    <link rel="prev" title="amidi (Experimental)" href="../backends/amidi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Mido
+              <img src="../_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backends/index.html">Backends</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#common">Common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output">Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input">Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#common-methods-and-attributes">Common Methods and Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-port-methods">Output Port Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input-port-methods">Input Port Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#socket-ports-midi-over-tcp-ip">Socket Ports - MIDI over TCP/IP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#about">About</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#caveats">Caveats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sending-messages-to-a-server">Sending Messages to a Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#turning-things-on-their-head">Turning Things on their Head</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#under-the-hood">Under the Hood</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#possible-future-additions">Possible Future Additions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-a-new-or-custom-port">Writing a New or Custom Port</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overridable-methods">Overridable Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#locking">Locking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../files/index.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ports</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/ports/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="../backends/amidi.html" class="btn btn-neutral float-left" title="amidi (Experimental)" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../files/index.html" class="btn btn-neutral float-right" title="Files" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ports">
+<h1>Ports<a class="headerlink" href="#ports" title="Permalink to this heading"></a></h1>
+<p>A Mido <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a> is an <em>object</em> that can <em>send</em> and/or <em>receive</em> messages.</p>
+<p>You can open a <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a> by calling one of the <em>open methods</em>, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inport</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_input</span><span class="p">(</span><span class="s1">&#39;SH-201&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">outport</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_output</span><span class="p">(</span><span class="s1">&#39;Integra-7&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now you can <em>receive</em> messages on the <em>input port</em> and <em>send</em> messages on
+the <em>output port</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="n">inport</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">outport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The message is copied by <code class="docutils literal notranslate"><span class="pre">send()</span></code>, so you can safely modify your
+original message without causing breakage in other parts of the
+system.</p>
+<p>In this case, the ports are device ports, and are connected to some
+sort of (physical or virtual) MIDI device, but a port can be
+anything. For example, you can use a <code class="docutils literal notranslate"><span class="pre">MultiPort</span></code> to receive messages
+from multiple ports as if they were one:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido.ports</span> <span class="kn">import</span> <span class="n">MultiPort</span>
+
+<span class="o">...</span>
+<span class="n">multi</span> <span class="o">=</span> <span class="n">MultiPort</span><span class="p">([</span><span class="n">inport1</span><span class="p">,</span> <span class="n">inport2</span><span class="p">,</span> <span class="n">inport3</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">multi</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will receive messages from all ports and print them out. Another
+example is a socket port, which is a wrapper around a TCP/IP socket.</p>
+<p>No matter how the port is implemented internally or what it does, it
+will look and behave like any other Mido port, so all kinds of ports
+can be used interchangeably.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Sending and receiving messages is thread safe. Opening and
+closing ports and listing port names are not.</p>
+</div>
+<section id="common">
+<h2>Common<a class="headerlink" href="#common" title="Permalink to this heading"></a></h2>
+<p>How to open a <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a> depends on the port type. Device ports (PortMidi,
+RtMidi and others defined in backends) are opened with the open
+functions, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">port</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_output</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Input and I/O ports (which support both input and output) are opened
+with <code class="docutils literal notranslate"><span class="pre">open_input()</span></code> and <code class="docutils literal notranslate"><span class="pre">open_ioport()</span></code> respectively. If you call
+these without a port name like above, you will get the - system
+specific - default port. You can override this by setting the
+<code class="docutils literal notranslate"><span class="pre">MIDO_DEFAULT_OUTPUT</span></code> etc. environment variables.</p>
+<p>To get a <em>list</em> of available ports, you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mido</span><span class="o">.</span><span class="n">get_output_names</span><span class="p">()</span>
+<span class="go">[&#39;SH-201&#39;, &#39;Integra-7&#39;]</span>
+</pre></div>
+</div>
+<p>and then:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">port</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_output</span><span class="p">(</span><span class="s1">&#39;Integra-7&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There are corresponding functions for input and I/O ports.</p>
+<p>To learn how to open other kinds of ports, see documentation of
+the relevant port type.</p>
+<p>The <em>port name</em> is available in <code class="docutils literal notranslate"><span class="pre">port.name</span></code>.</p>
+<p>To <em>close</em> a port, call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">port</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>or use the <code class="docutils literal notranslate"><span class="pre">with</span></code> statement to have the port closed automatically:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_input</span><span class="p">()</span> <span class="k">as</span> <span class="n">port</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">port</span><span class="p">:</span>
+        <span class="n">do_something_with</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can check if the <em>port is closed</em> with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Yup, it&#39;s closed.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the port is already closed, calling <code class="docutils literal notranslate"><span class="pre">close()</span></code> will simply do nothing.</p>
+</section>
+<section id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this heading"></a></h2>
+<p>Output <a class="reference internal" href="../glossary.html#term-ports"><span class="xref std std-term">ports</span></a> basically only have one method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">outport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will <em>send</em> the message immediately. (Well, the port can choose to
+do whatever it wants with the message, but at least it’s sent from Mido’s
+point of view.)</p>
+<p>There are also a couple of utility methods:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">outport</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will send “all notes off” and “reset all controllers” on every
+channel. This is used to reset everything to the default state, for
+example after playing back a song or messing around with controllers.</p>
+<p>If you pass <code class="docutils literal notranslate"><span class="pre">autoreset=True</span></code> to the constructor, <code class="docutils literal notranslate"><span class="pre">reset()</span></code> will be
+called when the port closes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_output</span><span class="p">(</span><span class="s1">&#39;Integra-7&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outport</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inport</span><span class="p">:</span>
+        <span class="n">outport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="c1"># reset() is called here</span>
+
+<span class="n">outport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># or here</span>
+</pre></div>
+</div>
+<p>Sometimes notes hang because a <code class="docutils literal notranslate"><span class="pre">note_off</span></code> has not been sent. To
+(abruptly) stop all sounding notes, you can call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">outport</span><span class="o">.</span><span class="n">panic</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will not reset controllers. Unlike <code class="docutils literal notranslate"><span class="pre">reset()</span></code>, the notes will
+not be turned off gracefully, but will stop immediately with no regard
+to decay time.</p>
+</section>
+<section id="input">
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this heading"></a></h2>
+<p>To <em>iterate</em> over <em>incoming messages</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">port</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will iterate over messages as they arrive on the port until the
+port closes. (So far only socket ports actually close by
+themselves. This happens if the other end disconnects.)</p>
+<p>You can also do <em>non-blocking iteration</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">iter_pending</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will iterate over all messages that have already arrived. It is
+typically used in main loops where you want to do something else while
+you wait for messages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">iter_pending</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">do_other_stuff</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In an <em>event based system</em> like a GUI where you don’t write the main
+loop you can install a <em>handler</em> that’s called periodically. Here’s an
+example for GTK:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inport</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="n">gobject</span><span class="o">.</span><span class="n">timeout_add_seconds</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To get a bit more control you can receive messages <em>one at a time</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will <em>block</em> until a message arrives. To get a message only if one
+is available, you can use <cite>poll()</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will return <code class="docutils literal notranslate"><span class="pre">None</span></code> immediately if <em>no message is available</em>.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.2: </span>There used to be a <code class="docutils literal notranslate"><span class="pre">pending()</span></code> method which returned the number of
+pending messages.</p>
+<p>It was removed for three reasons:</p>
+<ul class="simple">
+<li><p>with <code class="docutils literal notranslate"><span class="pre">poll()</span></code> and <code class="docutils literal notranslate"><span class="pre">iter_pending()</span></code> it is no longer
+necessary</p></li>
+<li><p>it was unreliable when multithreading and for some ports
+it doesn’t even make sense</p></li>
+<li><p>it made the internal method API confusing. <cite>_send()</cite> sends
+a message so <cite>_receive()</cite> should receive a message.</p></li>
+</ul>
+</div>
+</section>
+<section id="callbacks">
+<h2>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this heading"></a></h2>
+<p>Instead of manually reading from the <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a> you can install a
+<a class="reference internal" href="../glossary.html#term-callback"><span class="xref std std-term">callback</span></a> function which will be called for every message that arrives.</p>
+<p>Here’s a simple callback function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">print_message</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To <em>install</em> the callback you can either pass it when you create the
+port or later by setting the <code class="docutils literal notranslate"><span class="pre">callback</span></code> attribute:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">port</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_input</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="n">print_message</span><span class="p">)</span>
+<span class="n">port</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">print_message</span>
+<span class="o">...</span>
+<span class="n">port</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">another_function</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the <a class="reference internal" href="../glossary.html#term-callback"><span class="xref std std-term">callback</span></a> runs in a different thread you may need to use
+locks or other synchronization mechanisms to keep your main program and
+the callback from stepping on each other’s toes.</p>
+</div>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">receive()</span></code>, <code class="docutils literal notranslate"><span class="pre">__iter__()</span></code>, or <code class="docutils literal notranslate"><span class="pre">iter_pending()</span></code> on a <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a>
+with a <a class="reference internal" href="../glossary.html#term-callback"><span class="xref std std-term">callback</span></a> will raise an exception:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">ValueError</span><span class="p">:</span> <span class="n">a</span> <span class="n">callback</span> <span class="ow">is</span> <span class="nb">set</span> <span class="k">for</span> <span class="n">this</span> <span class="n">port</span>
+</pre></div>
+</div>
+<p>To <em>clear</em> the <a class="reference internal" href="../glossary.html#term-callback"><span class="xref std std-term">callback</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">port</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>This will return the <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a> to normal.</p>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this heading"></a></h2>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Add abstract code to describe these interfaces.</p>
+</div>
+<section id="common-methods-and-attributes">
+<h3>Common Methods and Attributes<a class="headerlink" href="#common-methods-and-attributes" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">close()</span></code></p>
+<p>Closes the <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a>. If the <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a> is already closed this will
+simply do nothing.</p>
+<p><code class="docutils literal notranslate"><span class="pre">name</span></code></p>
+<p>Name of the port or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">closed</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the port is closed.</p>
+</section>
+<section id="output-port-methods">
+<h3>Output Port Methods<a class="headerlink" href="#output-port-methods" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">send(message)</span></code></p>
+<p>Sends a message.</p>
+<p><code class="docutils literal notranslate"><span class="pre">reset()</span></code></p>
+<p>Sends “all notes off” and “reset all controllers” on all channels.</p>
+<p><code class="docutils literal notranslate"><span class="pre">panic()</span></code></p>
+<p>Sends “all sounds off” on all channels. This will abruptly end all
+sounding notes.</p>
+</section>
+<section id="input-port-methods">
+<h3>Input Port Methods<a class="headerlink" href="#input-port-methods" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">receive(block=True)</span></code></p>
+<p>Receives a message. This will block until it returns a message. If
+<code class="docutils literal notranslate"><span class="pre">block=False</span></code> is passed it will instead return <code class="docutils literal notranslate"><span class="pre">None</span></code> if there is
+no message.</p>
+<p><code class="docutils literal notranslate"><span class="pre">poll()</span></code></p>
+<p>Returns a message, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if there are no pending messages.</p>
+<p><code class="docutils literal notranslate"><span class="pre">iter_pending()</span></code></p>
+<p>Iterates through pending messages.</p>
+<p><code class="docutils literal notranslate"><span class="pre">__iter__()</span></code></p>
+<p>Iterates through messages as they arrive on the <a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a> until the
+<a class="reference internal" href="../glossary.html#term-port"><span class="xref std std-term">port</span></a> closes.</p>
+</section>
+</section>
+<section id="socket-ports-midi-over-tcp-ip">
+<h2>Socket Ports - MIDI over TCP/IP<a class="headerlink" href="#socket-ports-midi-over-tcp-ip" title="Permalink to this heading"></a></h2>
+<section id="about">
+<h3>About<a class="headerlink" href="#about" title="Permalink to this heading"></a></h3>
+<p>Socket <a class="reference internal" href="../glossary.html#term-ports"><span class="xref std std-term">ports</span></a> allows you to send <a class="reference internal" href="../glossary.html#term-midi"><span class="xref std std-term">MIDI</span></a> messages over a computer
+network.</p>
+<p>The protocol is a simple MIDI bytes stream over <a class="reference internal" href="../glossary.html#term-tcp"><span class="xref std std-term">TCP</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It is <strong>not</strong> <a class="reference internal" href="../glossary.html#term-rtpmidi"><span class="xref std std-term">rtpmidi</span></a>!</p>
+</div>
+</section>
+<section id="caveats">
+<h3>Caveats<a class="headerlink" href="#caveats" title="Permalink to this heading"></a></h3>
+<p>The data is sent over an <em>unencrypted channel</em>. Also, the default server
+allows connections from any host and also accepts arbitrary <a class="reference internal" href="../glossary.html#term-sysex"><span class="xref std std-term">sysex</span></a>
+messages, which could allow anyone to for example overwrite patches on
+your synths (or <strong>worse</strong>). Use <strong>only</strong> on <em>trusted networks</em>.</p>
+<p>If you need more security, you can build a <em>custom server</em> with a whitelist
+of clients allowed to connect.</p>
+<p>If <em>timing</em> is critical, <em>latency</em> and <em>jitter</em> (especially on <em>wireless
+networks</em>) may make socket ports <em>unusable</em>.</p>
+</section>
+<section id="sending-messages-to-a-server">
+<h3>Sending Messages to a Server<a class="headerlink" href="#sending-messages-to-a-server" title="Permalink to this heading"></a></h3>
+<p>First, let’s import some things:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido.sockets</span> <span class="kn">import</span> <span class="n">PortServer</span><span class="p">,</span> <span class="n">connect</span>
+</pre></div>
+</div>
+<p>After that, a simple server is only two lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">PortServer</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can then connect to the server and send it messages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">):</span>
+<span class="n">output</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each end of the connection behaves like a normal Mido I/O port, with
+all the usual methods.</p>
+<p>The host may be an host name or IP address (as a string). It may also be ‘’,
+in which case connections are accepted from any IP address on the computer.</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Test and clarify “Any IP address on the computer”.
+Does this mean only local adresses can connect or that any connection
+from any network is allowed?</p>
+</div>
+</section>
+<section id="turning-things-on-their-head">
+<h3>Turning Things on their Head<a class="headerlink" href="#turning-things-on-their-head" title="Permalink to this heading"></a></h3>
+<p>If you want the server to send messages the client, you can instead
+do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="o">=</span> <span class="n">PortServer</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">):</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>and then on the client side:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The client will now print any message that the server sends. Each
+message that the server sends will be received by all connected
+clients.</p>
+</section>
+<section id="under-the-hood">
+<h3>Under the Hood<a class="headerlink" href="#under-the-hood" title="Permalink to this heading"></a></h3>
+<p>The examples above use the server and client ports as normal Mido I/O
+ports. This makes it easy to write simple servers, but you don’t have
+any control on connections and the way messages are sent and received.</p>
+<p>To get more control,you can ignore all the other methods of the
+<code class="docutils literal notranslate"><span class="pre">PortServer</span></code> object and use only <code class="docutils literal notranslate"><span class="pre">accept()</span></code>. Here’s a simple
+server implemented this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">PortServer</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">)</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">client</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">accept()</span></code> waits for a client to connect, and returns a <code class="docutils literal notranslate"><span class="pre">SocketPort</span></code>
+object which is connected to the <code class="docutils literal notranslate"><span class="pre">SocketPort</span></code> object returned by
+<code class="docutils literal notranslate"><span class="pre">connect()</span></code> on the other end.</p>
+<p>The server above has one weakness: it only allows one connection at a
+time. You can get around this by using <code class="docutils literal notranslate"><span class="pre">accept(block=False)</span></code>. This
+will return a <code class="docutils literal notranslate"><span class="pre">SocketPort</span></code> if there’s a connection waiting and <code class="docutils literal notranslate"><span class="pre">None</span></code> if
+there is connection yet.</p>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Clarify “Connection waiting” vs “There is a connection yet”.</p>
+</div>
+<p>Using this you can write the server any way you like, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">PortServer</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">)</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
+    <span class="n">clients</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Handle connections.</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">client</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Connection from </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">clients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">client</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">clients</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">client</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> disconnected&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="k">del</span> <span class="n">clients</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Receive messages.</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="n">clients</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_pending</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Received </span><span class="si">{}</span><span class="s1"> from </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">client</span><span class="p">))</span>
+
+        <span class="c1"># Do other things</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="possible-future-additions">
+<h3>Possible Future Additions<a class="headerlink" href="#possible-future-additions" title="Permalink to this heading"></a></h3>
+<p>Optional HTTP-style headers could be added. As long as these are 7-bit
+<a class="reference internal" href="../glossary.html#term-ascii"><span class="xref std std-term">ASCII</span></a>, they will be counted as data bytes and ignored by clients or
+servers who don’t expect them.</p>
+</section>
+</section>
+<section id="writing-a-new-or-custom-port">
+<h2>Writing a New or Custom Port<a class="headerlink" href="#writing-a-new-or-custom-port" title="Permalink to this heading"></a></h2>
+<p>The Mido port API allows you to write new ports to do practically
+anything.</p>
+<p>A new port type can be defined by subclassing one of the base classes
+and overriding one or more methods. Here’s an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido.ports</span> <span class="kn">import</span> <span class="n">BaseOutput</span>
+
+<span class="k">class</span> <span class="nc">PrintPort</span><span class="p">(</span><span class="n">BaseOutput</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_send</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">port</span> <span class="o">=</span> <span class="n">PrintPort</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">port</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="n">note_on</span> <span class="n">channel</span><span class="o">=</span><span class="mi">0</span> <span class="n">note</span><span class="o">=</span><span class="mi">0</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">64</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">_send()</span></code> will be called by <code class="docutils literal notranslate"><span class="pre">send()</span></code>, and is responsible for
+actually sending the message somewhere (or in this case print it out).</p>
+<section id="overridable-methods">
+<h3>Overridable Methods<a class="headerlink" href="#overridable-methods" title="Permalink to this heading"></a></h3>
+<p>There are four overridable methods (all of them default to doing
+nothing):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>``_open(self, **kwargs)``
+</pre></div>
+</div>
+<blockquote>
+<div><p>Should do whatever is necessary to initialize the port (for
+example opening a MIDI device.)</p>
+<p>Called by <code class="docutils literal notranslate"><span class="pre">__init__()</span></code>. The <code class="docutils literal notranslate"><span class="pre">name</span></code> attribute is already
+set when <code class="docutils literal notranslate"><span class="pre">_open()</span></code> is called, but you will get the rest of
+the keyword arguments.</p>
+<p>If your port takes a different set of arguments or has other
+special needs, you can override <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> instead.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_close(self)</span></code></p>
+<blockquote>
+<div><p>Should clean up whatever resources the port has allocated (such as
+closing a MIDI device).</p>
+<p>Called by <code class="docutils literal notranslate"><span class="pre">close()</span></code> if the port is not already closed.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_send(self,</span> <span class="pre">message)</span></code></p>
+<blockquote>
+<div><p>(Output ports only.)</p>
+<p>Should send the message (or do whatever else that makes sense).</p>
+<p>Called by <code class="docutils literal notranslate"><span class="pre">send()</span></code> if the port is open and the message is a Mido
+message. (You don’t need any type checking here.)</p>
+<p>Raise IOError if something goes wrong.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_receive(self,</span> <span class="pre">block=True)</span></code></p>
+<blockquote>
+<div><p>(Input ports only.)</p>
+<p>Should return a message if there is one available.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">block=True</span></code> it should block until a message is available and
+then return it.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">block=False</span></code> it should return a message or <code class="docutils literal notranslate"><span class="pre">None</span></code> if there
+is no message yet. If you return <code class="docutils literal notranslate"><span class="pre">None</span></code> the enclosing
+<code class="docutils literal notranslate"><span class="pre">pending()</span></code> method will check <code class="docutils literal notranslate"><span class="pre">self._messages</span></code> and return one
+from there.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">Prior</span> <span class="pre">to</span> <span class="pre">1.2.0</span> <span class="pre">``_receive()</span></code> would put messages in
+<code class="docutils literal notranslate"><span class="pre">self._messages</span></code> (usually via the parser) and rely on
+<code class="docutils literal notranslate"><span class="pre">receive()</span></code> to return them to the user.</p>
+<p>Since this was not thread safe the API was changed in
+1.2.0 to allow the <code class="docutils literal notranslate"><span class="pre">_receive()</span></code> to return a
+message. The old behavior is still supported, so old
+code will work as before.</p>
+</div>
+<p>Raise IOError if something goes wrong.</p>
+</div></blockquote>
+<p>Each method corresponds to the public method of the same name, and
+will be called by that method. The outer method will take care of many
+things, so the inner method only needs to do the very minimum. The
+outer method also provides the doc string, so you don’t have to worry
+about that.</p>
+<p>The base classes are <code class="docutils literal notranslate"><span class="pre">BaseInput</span></code>, <code class="docutils literal notranslate"><span class="pre">BaseOutput</span></code> and <code class="docutils literal notranslate"><span class="pre">BaseIOPort</span></code>
+(which is a subclass of the other two.)</p>
+</section>
+<section id="locking">
+<h3>Locking<a class="headerlink" href="#locking" title="Permalink to this heading"></a></h3>
+<p>The calls to <code class="docutils literal notranslate"><span class="pre">_receive()</span></code> and <code class="docutils literal notranslate"><span class="pre">_send()</span></code> will are protected by a
+lock, <code class="docutils literal notranslate"><span class="pre">left.lock</span></code>. As a result all send and receive will be thread
+safe.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If your <code class="docutils literal notranslate"><span class="pre">_receive()</span></code> function actually blocks instead of
+letting the parent class handle it <code class="docutils literal notranslate"><span class="pre">poll()</span></code> will not
+work. The two functions are protected by the same lock, so
+when <code class="docutils literal notranslate"><span class="pre">receive()</span></code> blocks it will also block other threads
+calling <code class="docutils literal notranslate"><span class="pre">poll()</span></code>. In this case you need to implement your
+own locking.</p>
+</div>
+<p>If you want to implement your own thread safety you can set the
+<code class="docutils literal notranslate"><span class="pre">_locking</span></code> attribute in your class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyInput</span><span class="p">(</span><span class="n">ports</span><span class="o">.</span><span class="n">BaseInput</span><span class="p">):</span>
+    <span class="n">_locking</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>An example of this is <code class="docutils literal notranslate"><span class="pre">mido.backends.rtmidi</span></code> where the callback is
+used to feed an internal queue that <code class="docutils literal notranslate"><span class="pre">receive()</span></code> reads from.</p>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h3>
+<p>An full example of a device port for the imaginary MIDI library
+<code class="docutils literal notranslate"><span class="pre">fjopp</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">fjopp</span>
+<span class="kn">from</span> <span class="nn">mido.ports</span> <span class="kn">import</span> <span class="n">BaseIOPort</span>
+
+<span class="c1"># This defines an I/O port.</span>
+<span class="k">class</span> <span class="nc">FjoppPort</span><span class="p">(</span><span class="n">BaseIOPort</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">fjopp</span><span class="o">.</span><span class="n">open_device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">bytes</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">fjopp</span></code> supports blocking read, you can do this to actually block
+on the device instead of letting <code class="docutils literal notranslate"><span class="pre">receive()</span></code> and friends poll and
+wait for you:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>def _receive(self, block=True):
+    if block:
+        # Actually block on the device.
+    # (``read_blocking()`` will always return some data.)
+    while not ``self._messages``:
+        data = self._device.read_blocking()
+    self._parser.feed(data)
+    else:
+    # Non-blocking read like above.
+        while True:
+        data = self.device.read()
+    if data:
+         self._parser.feed(data)
+</pre></div>
+</div>
+<p>This can be used for any kind of port that wants to block on a pipe,
+an socket or another input source. Note that Mido will still use
+polling and waiting when receiving from multiple ports (for example in
+a <code class="docutils literal notranslate"><span class="pre">MultiPort</span></code>).</p>
+<p>If you want separate input and output classes, but the <code class="docutils literal notranslate"><span class="pre">_open()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">_close()</span></code> methods have a lot in common, you can implement this
+using a mix-in.</p>
+<p>Sometimes it’s useful to know inside the methods whether the port
+supports input or output. The way to do this is to check for the
+methods <code class="docutils literal notranslate"><span class="pre">`send()</span></code> and <code class="docutils literal notranslate"><span class="pre">receive()</span></code>, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;send&#39;</span><span class="p">):</span>
+    <span class="c1"># This is an output port.</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;receive&#39;</span><span class="p">):</span>
+        <span class="c1"># This is an input port.</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;send&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;receive&#39;</span><span class="p">):</span>
+        <span class="c1"># This is an I/O port.</span>
+</pre></div>
+</div>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<p>A port has some attributes that can be useful inside your methods.</p>
+<p><code class="docutils literal notranslate"><span class="pre">name</span></code></p>
+<blockquote>
+<div><p>The name of the port. The value is device specific and does not
+have to be unique. It can have any value, but must be a string or
+<code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>This is set by <code class="docutils literal notranslate"><span class="pre">__init__()</span></code>.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">closed</span></code></p>
+<blockquote>
+<div><p>True if the port is closed. You don’t have to worry about this
+inside your methods.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_messages</span></code></p>
+<blockquote>
+<div><p>This is a <code class="docutils literal notranslate"><span class="pre">collections.deque</span></code> of messages that have been read
+and are ready to be received. This is a shortcut to
+<code class="docutils literal notranslate"><span class="pre">_parser.messages</span></code>.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_device_type</span></code> (Optional.)</p>
+<blockquote>
+<div><p>If this attribute exists, it’s a string which will be used in
+<code class="docutils literal notranslate"><span class="pre">__repr__()</span></code>. If it doesn’t exist, the class name will be used
+instead.</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../backends/amidi.html" class="btn btn-neutral float-left" title="amidi (Experimental)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../files/index.html" class="btn btn-neutral float-right" title="Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

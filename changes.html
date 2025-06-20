@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version Changes &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Authors" href="authors.html" />
+    <link rel="prev" title="Freezing to EXE File" href="freezing_exe.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Mido
+              <img src="_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/index.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ports/index.html">Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files/index.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Version Changes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#release-history">Release History</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">1.3.3 (2024-10-25)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">1.3.2 (2023-12-15)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">1.3.1 (2023-12-14)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">1.3.0 (2023-07-21)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">1.2.10 (2021-05-10)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">1.2.9 (2018-10-05)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">1.2.8 (2017-06-30)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">1.2.7 (2017-05-31)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">1.2.6 (2017-05-04)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">1.2.5 (2017-04-28)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">1.2.4 (2017-03-19)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">1.2.3 (2017-03-14)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">1.2.2 (2017-03-14)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">1.2.1 (2017-03-10)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">1.2.0 (2017-03-07)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">1.1.24 (2017-02-16)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">1.1.23 (2017-01-31)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">1.1.22 (2017-01-27)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">1.1.21 (2017-01-26)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">1.1.20 (2017-01-26)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">1.1.19 (2017-01-25)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22">1.1.18 (2016-10-22)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">1.1.17 (2016-10-06)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">1.1.16 (2016-09-27)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">1.1.15 (2016-08-24)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">1.1.14 (2015-06-09)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">1.1.13 (2015-02-07)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">1.1.12 (2014-12-02)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id29">1.1.11 (2014-10-15)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30">1.1.10 (2014-10-09)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31">1.1.9 (2014-10-06)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id32">1.1.8 (2014-09-29)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id33">1.1.7 (2014-08-12)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34">1.1.6 (2014-06-21)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id35">1.1.5 (2014-04-18)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id36">1.1.4 (2014-10-04)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id37">1.1.3 (2013-10-14)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id38">1.1.2 (2013-10-05)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id39">1.1.1 (2013-10-04)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id40">1.1.0 (2013-10-01)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id41">1.0.4 (2013-08-15)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id42">1.0.3 (2013-07-12)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id43">1.0.2 (2013-07-31)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id44">1.0.1 (2013-07-31)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id45">1.0.0 (2013-07-20)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Version Changes</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/changes.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="freezing_exe.html" class="btn btn-neutral float-left" title="Freezing to EXE File" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="authors.html" class="btn btn-neutral float-right" title="Authors" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-changes">
+<h1>Version Changes<a class="headerlink" href="#version-changes" title="Permalink to this heading"></a></h1>
+<p>This project uses <a class="reference external" href="https://semver.org">Semantic Versioning</a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The <a class="reference external" href="https://github.com/mido/mido/milestone/2">Future</a> milestone on
+Github for future plans.</p>
+</div>
+<section id="release-history">
+<h2>Release History<a class="headerlink" href="#release-history" title="Permalink to this heading"></a></h2>
+<section id="id1">
+<h3>1.3.3 (2024-10-25)<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>New Python 3.13 support</p></li>
+<li><p>Bugfix Unpinned hard dependencies to avoid conflicts</p></li>
+<li><p>Documentation Fixed broken external links</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>1.3.2 (2023-12-15)<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Bugfix Midifile: skip_checks were missing on MetaMessage (&#64;almostimplemented)</p></li>
+<li><p>Bugfix Scripts/mido-play: UnboundLocalError (&#64;rdoursenaud)</p></li>
+<li><p>Minor documentation cleanup (&#64;rdoursenaud)</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>1.3.1 (2023-12-14)<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>New Python 3.12 support</p></li>
+<li><p>Improved merged_tracks performance (&#64;almostimplemented, pull request #474)</p></li>
+<li><p>Bugfix Backends/portmidi: SysEx messages were generating an error (&#64;tweakoz, pull request #523)</p></li>
+<li><p>Bugfix Midifile: Defer computing merged_track (&#64;akx, pull request #565)</p></li>
+<li><p>Bugfix pip release: Scripts can now be executed properly (&#64;rdoursenaud)</p></li>
+<li><p>Tooling: Linting now uses ruff (&#64;akx, pull requests #564, #566)</p></li>
+<li><p>Minor documentation improvements (&#64;rdoursenaud)</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>1.3.0 (2023-07-21)<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This release drops support for Python 2 and is only compatible with 3.7
+onwards.</p>
+</div>
+<ul class="simple">
+<li><p>Bugfix Backends/rtmidi: Prevent virtual port name mangling (&#64;rdoursenaud,
+thanks to &#64;digitalsignalperson for reporting)</p></li>
+<li><p>Bugfix Backends/rtmidi: Remove callback before closing the port to avoid a
+race condition (&#64;rdoursenaud)</p></li>
+<li><p>Bugfix MidiFile: Properly decode/encode SMPTE hours in the SMPTE offset Meta
+(Thanks to &#64;laori93 for reporting and &#64;heilei for investigating. Issue #156)</p></li>
+<li><p>Installation: support the “extras” syntax to install optional dependencies
+(&#64;rdoursenaud)</p></li>
+<li><p>Documentation: updated, overhauled and proofread (&#64;rdoursenaud, nomadbyte,
+&#64;superbock)</p></li>
+<li><p>Bugfix: Backends/Portmidi (&#64;akx, pull request #483)</p></li>
+<li><p>MidiFile: Move merging track out of <code class="docutils literal notranslate"><span class="pre">__iter__()</span></code> to prevent hanging on
+first call (&#64;Frnot, pull request #470)</p></li>
+<li><p>MidiFile: <code class="docutils literal notranslate"><span class="pre">play()</span></code> can now use an optional custom clock source
+(&#64;almostimplemented, pull request #153)</p></li>
+<li><p>The project is now REUSE compliant. See <a class="reference external" href="https://reuse.software/">https://reuse.software/</a> for details
+(&#64;rdoursenaud)</p></li>
+<li><p>Packaging is now PEP-518 compliant (&#64;rdoursenaud)</p></li>
+<li><p>Backends/Socket: Disable buffering (&#64;m-vo, pull request #342)</p></li>
+<li><p>Removed support for Python 2.7. * Mido now requires Python 3.7 or
+higher. (Ole Martin Bjørndalen, pull request #408, with additional cleanup
+from &#64;rdoursenaud)</p></li>
+<li><p>Backends: The <code class="docutils literal notranslate"><span class="pre">rtmidi</span></code> and <code class="docutils literal notranslate"><span class="pre">python-rtmidi</span></code> 1.2.10 sometimes returned
+duplicate port names. (Bug introduced in 1.2.10. Fix by Maciej
+Sokołowski, pull request #321)</p></li>
+<li><p>Bugfix Backends/Socket: In Python 3, PortServer used to crashe when a socket
+client disconnects. (issue #290) (&#64;kyleclaassen, pull request #291)</p></li>
+<li><p>MidiFile: Make <code class="docutils literal notranslate"><span class="pre">UnknownMetaMessage</span></code> robust to faulty MIDI files (&#64;sonovice,
+pull request #286)</p></li>
+<li><p>Bugfix MIDIFile: BPM &lt;-&gt; MIDI tempo conversions (&#64;superbock, pull request
+#114)</p></li>
+<li><p>MidiFile: Added <code class="docutils literal notranslate"><span class="pre">from_bytes()</span></code> to <code class="docutils literal notranslate"><span class="pre">MetaMessage</span></code> (&#64;gulaki, pull request
+#149)</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>1.2.10 (2021-05-10)<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>New <code class="docutils literal notranslate"><span class="pre">repr()</span></code> format for messages, tracks and MIDI file
+objects. (Implemented by John Belmonte, pull request #164.)</p></li>
+<li><p>added new example <code class="docutils literal notranslate"><span class="pre">midifiles/show_midifile.py</span></code> based on the
+new <code class="docutils literal notranslate"><span class="pre">repr()</span></code> format.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">msg.is_cc()</span></code> method. Checks if message is a control change.
+Can also be used to check for a specific control change number, for
+example <code class="docutils literal notranslate"><span class="pre">msg.is_cc(7)</span></code>.</p></li>
+<li><p>Fixed memory leaks in RtMidi backend (issue #256, fix by The Other Days,
+pull request #264.)</p></li>
+<li><p>clip now works with sysex messages (Fix by  Avatar Timo Stüber, pull request
+#229.)</p></li>
+<li><p>Improved docs and error message for time attribute in a message.
+(tomerv, pull request #249.)</p></li>
+<li><p>Improved MidiFile.play to avoid time drift. (Implemented by John
+Belmonte, pull request #161.)</p></li>
+<li><p>bugfix: MIDO_DEFAULT_INPUT was misspelled in mido-ports causing it
+to be show as ‘not set’ even though it was set. (Fix by Bernhard
+Wagner, pull request #192.)</p></li>
+<li><p>Now only copies ports once in ports.multi_receive() (Tom Ritchford, pull
+request #191.)</p></li>
+<li><p>Ports lists returned from <code class="docutils literal notranslate"><span class="pre">get_input_names()</span></code> and friends are no
+longer sorted. (Suggested and implemented by Ryan McCampbell, issue
+#298.)</p></li>
+<li><p>Updated linke in docs to point to the new home github.com/mido/
+(Fixed by Joshua Mayers, pull request #177.)</p></li>
+<li><p>thanks to Christopher Arndt, Kathryn DiPippo and Timo Stüber for fixing
+flake8 issues.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>1.2.9 (2018-10-05)<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>rewrote <code class="docutils literal notranslate"><span class="pre">Parser</span></code> class around a MIDI tokenizer. Should lead to
+slight speedup and much cleaner code.</p></li>
+<li><p>bugfix: <cite>data</cite> attribute was missing for <cite>UnknownMetaMessage</cite>
+objects. This caused <cite>AttributeError</cite> when the messages were printed
+or saved to a file. Also, the documentation incorrectly listed the
+attribute as <cite>_data</cite> instead of <cite>data</cite>. (Reported by Groowy.)</p></li>
+<li><p>bugfix: UnknownMetaMessage encoding was broken causing crashes when
+saving a file with unknown meta messages. (Reported by exeex, issue
+#159.)</p></li>
+<li><p>bugfix: inputs and outputs were switched around when opening named
+ports with PortMidi backend. (Reproduced by Predrag Radovic, issue
+#108, fix by Juan Antonio Aldea, pull request #109.)</p></li>
+<li><p>bugfix: time signature meta messages had wrong default value of
+2/4. The default value is now 4/4. (Fix by Sebastian Böck, pull
+request #104.)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">msg.copy()</span></code> didn’t handle generators for sysex
+data. <code class="docutils literal notranslate"><span class="pre">msg.copy(data=(i</span> <span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(3)))</span></code> would give
+<code class="docutils literal notranslate"><span class="pre">data=()</span></code> instead of <code class="docutils literal notranslate"><span class="pre">data=(0,1,2)</span></code>.</p>
+<p>(The code should be refactored so this is handled by the same
+function everywhere, such as in <code class="docutils literal notranslate"><span class="pre">__init__()</span></code>, in <code class="docutils literal notranslate"><span class="pre">copy()</span></code> and in
+<code class="docutils literal notranslate"><span class="pre">parser.feed()</span></code>.)</p>
+</li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">MultiPort._receive()</span></code> ignored the <code class="docutils literal notranslate"><span class="pre">block</span></code>
+parameter. (Fix by Tom Swirly, pull request #135.)</p></li>
+<li><p>bugfix: sequencer number meta message was incorrectly limited to
+range 0..255 instead of 0..65335. (Reported by muranyia, issue
+#144.)</p></li>
+<li><p>now using Tox for testing. (Implemented by Chris Apple, pull request
+#123.)</p></li>
+<li><p>Travis integration up by Carl Thomé and Chris Apple.</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>1.2.8 (2017-06-30)<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: nonblocking receive was broken for RtMidi IO
+ports. (Reported by Chris Apple, issue #99.)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">IOPort.poll()</span></code> would block if another thread was waiting
+for <code class="docutils literal notranslate"><span class="pre">receive()</span></code>.  Fixed the problem by removing the lock, which
+was never needed in the first place as the embedded input port does
+its own locking.</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>1.2.7 (2017-05-31)<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>added max length when reading message from a MIDI file. This
+prevents Python from running out of memory when reading a corrupt
+file. Instead it will now raise an <code class="docutils literal notranslate"><span class="pre">IOError</span></code> with a descriptive
+error message. (Implemented by Curtis Hawthorne, pull request #95.)</p></li>
+<li><p>removed dependency on <code class="docutils literal notranslate"><span class="pre">python-rtmidi</span></code> from tests. (Reported by
+Josue Ortega, issue #96.)</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3>1.2.6 (2017-05-04)<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: Sending sysex with Pygame in Python 3 failed with
+<code class="docutils literal notranslate"><span class="pre">&quot;TypeError:</span> <span class="pre">array()</span> <span class="pre">argument</span> <span class="pre">1</span> <span class="pre">must</span> <span class="pre">be</span> <span class="pre">a</span> <span class="pre">unicode</span> <span class="pre">character,</span> <span class="pre">not</span>
+<span class="pre">byte&quot;</span></code>.  (Reported by Harry Williamson.)</p></li>
+<li><p>now handles <code class="docutils literal notranslate"><span class="pre">sequence_number</span></code> and <code class="docutils literal notranslate"><span class="pre">midi_port</span></code> messages with 0
+data bytes. These are incorrect but can occur in rare cases. See
+<code class="docutils literal notranslate"><span class="pre">mido/midifiles/test_midifiles.py</span></code> for more. (Reported by Gilthans
+(issue #42) and hyst329 (issue #93)).</p></li>
+</ul>
+</section>
+<section id="id10">
+<h3>1.2.5 (2017-04-28)<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: RtMidi backend ignored <code class="docutils literal notranslate"><span class="pre">api</span></code> argument. (Fix by Tom Feist,
+pull request #91.)</p></li>
+</ul>
+</section>
+<section id="id11">
+<h3>1.2.4 (2017-03-19)<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>fixed outdated python-rtmidi install instructions. (Reported by
+Christopher Arndt, issue #87.)</p></li>
+</ul>
+</section>
+<section id="id12">
+<h3>1.2.3 (2017-03-14)<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>typo and incorrect links in docs fixed by Michael (miketwo) (pull requests
+#84 and #85).</p></li>
+</ul>
+</section>
+<section id="id13">
+<h3>1.2.2 (2017-03-14)<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: sysex data was broken in string format encoding and decoding.
+The data was encoded with spaces (‘data=(1, 2, 3)’) instead of as one word
+(‘data=(1,2,3)’).</p></li>
+<li><p>added some tests for string format.</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">BaseOutput.send()</span></code> raised string instead of <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p></li>
+</ul>
+</section>
+<section id="id14">
+<h3>1.2.1 (2017-03-10)<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>bugfix: IO port never received anything when used with RtMidi
+backend. (Reported by dagargo, issue #83.)</p>
+<p>This was caused by a very old bug introduced in 1.0.3. IOPort
+mistakenly called the inner method <code class="docutils literal notranslate"><span class="pre">self.input._receive()</span></code> instead
+of <code class="docutils literal notranslate"><span class="pre">self.input.receive()</span></code>. This happens to work for ports that
+override <code class="docutils literal notranslate"><span class="pre">_receive()</span></code> but not for the new RtMidi backend which
+overrides <code class="docutils literal notranslate"><span class="pre">receive()</span></code>. (The default implementation of
+<code class="docutils literal notranslate"><span class="pre">_receive()</span></code> just drops the message on the floor.)</p>
+</li>
+<li><p>bugfix: PortMidi backend was broken due to missing import
+(<code class="docutils literal notranslate"><span class="pre">ctypes.byref</span></code>). (Introduced in 1.2.0.)</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>1.2.0 (2017-03-07)<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<p>New implementation of messages and parser:</p>
+<ul class="simple">
+<li><p>completely reimplemented messages. The code is now much simpler,
+clearer and easier to work with.</p></li>
+<li><p>new contructors <code class="docutils literal notranslate"><span class="pre">Message.from_bytes()</span></code>, <code class="docutils literal notranslate"><span class="pre">Message.from_hex()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Message.from_str()</span></code>.</p></li>
+<li><p>new message attributes <code class="docutils literal notranslate"><span class="pre">is_meta</span></code> and <code class="docutils literal notranslate"><span class="pre">is_realtime</span></code>.</p></li>
+</ul>
+<p>Frozen (immutable) messages:</p>
+<ul class="simple">
+<li><p>added <code class="docutils literal notranslate"><span class="pre">FrozenMessage</span></code> and <code class="docutils literal notranslate"><span class="pre">FrozenMetaMessage</span></code>. These are
+immutable versions of <code class="docutils literal notranslate"><span class="pre">Message</span></code> and <code class="docutils literal notranslate"><span class="pre">MetaMessage</span></code> that are
+hashable and thus can be used as dictionary keys. These are
+available in <code class="docutils literal notranslate"><span class="pre">mido.frozen</span></code>. (Requested by Jasper Lyons, issue
+#36.)</p></li>
+</ul>
+<p>RtMidi is now the default backend:</p>
+<ul>
+<li><p>switched default backend from PortMidi to RtMidi. RtMidi is easier
+to install on most systems and better in every way.</p>
+<p>If you want to stick to PortMidi you can either set the environment
+variable <code class="docutils literal notranslate"><span class="pre">$MIDO_BACKEND=mido.backends.portmidi</span></code> or call
+<code class="docutils literal notranslate"><span class="pre">mido.set_backend('mido.backends.portmidi')</span></code> in your program.</p>
+</li>
+<li><p>refactored the RtMidi backend to have a single <code class="docutils literal notranslate"><span class="pre">Port</span></code> class
+instead of inheriting from base ports. It was getting hard to keep
+track of it all. The code is now a lot easier to reason about.</p></li>
+<li><p>you can now pass <code class="docutils literal notranslate"><span class="pre">client_name</span></code> when opening RtMidi ports:
+<code class="docutils literal notranslate"><span class="pre">open_output('Test',</span> <span class="pre">client_name='My</span> <span class="pre">Client')</span></code>. When
+<code class="docutils literal notranslate"><span class="pre">client_name</span></code> is passed the port will automatically be a virtual
+port.</p></li>
+<li><p>with <code class="docutils literal notranslate"><span class="pre">LINUX_ALSA</span></code> you can now omit client name and ALSA
+client/port number when opening ports, allowing you to do
+<code class="docutils literal notranslate"><span class="pre">mido.open_output('TiMidity</span> <span class="pre">port</span> <span class="pre">0')</span></code> instead of
+<code class="docutils literal notranslate"><span class="pre">mido.open_output('TiMidity:TiMidity</span> <span class="pre">port</span> <span class="pre">0</span> <span class="pre">128:0')</span></code>. (See RtMidi
+backend docs for more.)</p></li>
+</ul>
+<p>Changes to the port API:</p>
+<ul class="simple">
+<li><p>ports now have <code class="docutils literal notranslate"><span class="pre">is_input</span></code> and <code class="docutils literal notranslate"><span class="pre">is_output</span></code> attributes.</p></li>
+<li><p>new functions <code class="docutils literal notranslate"><span class="pre">tick2second()</span></code> and <code class="docutils literal notranslate"><span class="pre">second2tick()</span></code>. (By Carl
+Thomé, pull request #71.)</p></li>
+<li><p>added <code class="docutils literal notranslate"><span class="pre">_locking</span></code> attribute to <code class="docutils literal notranslate"><span class="pre">BasePort</span></code>. You can set this to
+<code class="docutils literal notranslate"><span class="pre">False</span></code> in a subclass to do your own locking.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_receive()</span></code> is now allowed to return a messages. This makes the
+API more consistent and makes it easier to implement thread safe
+ports.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pending()</span></code> is gone. This had to be done to allow for the new
+<code class="docutils literal notranslate"><span class="pre">_receive()</span></code> behavior.</p></li>
+<li><p>improved MIDI file documentation. (Written by Carl Thomé.)</p></li>
+</ul>
+<p>Other changes:</p>
+<ul class="simple">
+<li><p>bugfix: if a port inherited from both <code class="docutils literal notranslate"><span class="pre">BaseInput</span></code> and
+<code class="docutils literal notranslate"><span class="pre">BaseOutput</span></code> this would cause <code class="docutils literal notranslate"><span class="pre">BasePort.__init__()</span></code> to be called
+twice, which means <code class="docutils literal notranslate"><span class="pre">self._open()</span></code> was also called twice. As a
+workaround <code class="docutils literal notranslate"><span class="pre">BasePort.__init__()</span></code> will check if <code class="docutils literal notranslate"><span class="pre">self.closed</span></code>
+exists.</p></li>
+<li><p>added <code class="docutils literal notranslate"><span class="pre">mido.version_info</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mido.set_backend()</span></code> can now be called with <code class="docutils literal notranslate"><span class="pre">load=True</span></code>.</p></li>
+<li><p>added <code class="docutils literal notranslate"><span class="pre">multi_send()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MIN_PITCHWHEEL</span></code>, <code class="docutils literal notranslate"><span class="pre">MAX_PITCHWHEEL</span></code>, <code class="docutils literal notranslate"><span class="pre">MIN_SONGPOS</span></code> and
+<code class="docutils literal notranslate"><span class="pre">MAX_SONGPOS</span></code> are now available in the top level module (for
+example <code class="docutils literal notranslate"><span class="pre">mido.MIN_PITCHWHEEL</span></code>).</p></li>
+<li><p>added experimental new backend <code class="docutils literal notranslate"><span class="pre">mido.backends.amidi</span></code>. This uses
+the ALSA <code class="docutils literal notranslate"><span class="pre">amidi</span></code> command to send and receive messages, which makes
+it very inefficient but possibly useful for sysex transfer.</p></li>
+<li><p>added new backend <code class="docutils literal notranslate"><span class="pre">mido.backends.rtmidi_python</span></code> (previously
+available in the examples folder.) This uses the <code class="docutils literal notranslate"><span class="pre">rtmidi-python</span></code>
+package instead of <code class="docutils literal notranslate"><span class="pre">python-rtmidi</span></code>. For now it lacks some of
+features of the <code class="docutils literal notranslate"><span class="pre">rtmidi</span></code> backend, but can still be useful on
+systems where <code class="docutils literal notranslate"><span class="pre">python-rtmidi</span></code> is not available. (Requested by
+netchose, issue #55.)</p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>1.1.24 (2017-02-16)<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: PortMidi backend was broken on macOS due to a typo. (Fix by
+Sylvain Le Groux, pull request #81.)</p></li>
+</ul>
+</section>
+<section id="id17">
+<h3>1.1.23 (2017-01-31)<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">read_syx_file()</span></code> didn’t handle ‘n’ in text format file
+causing it to crash. (Reported by Paul Forgey, issue #80.)</p></li>
+</ul>
+</section>
+<section id="id18">
+<h3>1.1.22 (2017-01-27)<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>the bugfix in 1.1.20 broke blocking receive() for RtMidi. Reverting
+the changes. This will need some more investigation.</p></li>
+</ul>
+</section>
+<section id="id19">
+<h3>1.1.21 (2017-01-26)<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: MidiFile save was broken in 1.1.20 due to a missing import.</p></li>
+</ul>
+</section>
+<section id="id20">
+<h3>1.1.20 (2017-01-26)<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>bugfix: close() would sometimes hang for RtMidi input ports. (The
+bug was introduced in 1.1.18 when the backend was rewritten to
+support true blocking.)</p></li>
+<li><p>Numpy numbers can now be used for all message attributes. (Based on
+implementation by Henry Mao, pull request #78.)</p>
+<p>The code checks against numbers.Integral and numbers.Real (for the
+time attribute) so values can be any subclass of these.</p>
+</li>
+</ul>
+</section>
+<section id="id21">
+<h3>1.1.19 (2017-01-25)<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Pygame backend can now receive sysex messages. (Fix by Box of Stops.)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">libportmidi.dylib</span></code> was not found when using
+MacPorts. (Fix by yam655, issue #77.)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">SocketPort.__init()</span></code> was not calling
+<code class="docutils literal notranslate"><span class="pre">IOPort.__init__()</span></code> which means it didn’t get a
+<code class="docutils literal notranslate"><span class="pre">self._lock</span></code>. (Fixed by K Lars Lohn, pull request #72. Also
+reported by John J. Foerch, issue #79.)</p></li>
+<li><p>fixed typo in intro example (README and index.rst). Fix by Antonio
+Ospite (pull request #70), James McDermott (pull request #73) and
+Zdravko Bozakov (pull request #74).</p></li>
+<li><p>fixed typo in virtual ports example (Zdravko Bozakov, pull request #75.)</p></li>
+</ul>
+</section>
+<section id="id22">
+<h3>1.1.18 (2016-10-22)<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span></code> is included in message comparison. <code class="docutils literal notranslate"><span class="pre">msg1</span> <span class="pre">==</span> <span class="pre">msg2</span></code> will
+now give the same result as <code class="docutils literal notranslate"><span class="pre">str(msg1)</span> <span class="pre">==</span> <span class="pre">str(msg2)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">repr(msg1)</span></code> == <code class="docutils literal notranslate"><span class="pre">repr(msg2)</span></code>.</p>
+<p>This means you can now compare tracks wihout any trickery, for
+example: <code class="docutils literal notranslate"><span class="pre">mid1.tracks</span> <span class="pre">==</span> <span class="pre">mid2.tracks</span></code>.</p>
+<p>If you need to leave out time the easiest was is <code class="docutils literal notranslate"><span class="pre">msg1.bytes()</span> <span class="pre">==</span>
+<span class="pre">msg2.bytes()</span></code>.</p>
+<p>This may in rare cases break code.</p>
+</li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">end_of_track</span></code> messages in MIDI files were not handled correctly.
+(Reported by Colin Raffel, issue #62).</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">merge_tracks()</span></code> dropped messages after the first
+<code class="docutils literal notranslate"><span class="pre">end_of_track</span></code> message. The new implementation removes all
+<code class="docutils literal notranslate"><span class="pre">end_of_track</span></code> messages and adds one at the end, making sure to
+adjust the delta times of the remaining messages.</p></li>
+<li><p>refactored MIDI file code.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mido-play</span></code> now has a new option <code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">/</span> <span class="pre">--print-messages</span></code> which
+prints messages as they are played back.</p></li>
+<li><p>renamed <code class="docutils literal notranslate"><span class="pre">parser._parsed_messages</span></code> to
+<code class="docutils literal notranslate"><span class="pre">parser.messages</span></code>. <code class="docutils literal notranslate"><span class="pre">BaseInput</span></code> and <code class="docutils literal notranslate"><span class="pre">SocketPort</span></code> use it so it
+should be public.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Parser()</span></code> now takes an option argument <code class="docutils literal notranslate"><span class="pre">data</span></code> which is passed
+to <code class="docutils literal notranslate"><span class="pre">feed()</span></code>.</p></li>
+</ul>
+</section>
+<section id="id23">
+<h3>1.1.17 (2016-10-06)<a class="headerlink" href="#id23" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>RtMidi now supports true blocking <code class="docutils literal notranslate"><span class="pre">receive()</span></code> in Python 3. This
+should result in better performance and lower latency. (Thanks to
+Adam Roberts for helping research queue behavior. See issue #49 for
+more.)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">MidiTrack.copy()</span></code> (Python 3 only) returned <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p></li>
+<li><p>fixed example <code class="docutils literal notranslate"><span class="pre">queue_port.py</span></code> which broke when locks where added.</p></li>
+</ul>
+</section>
+<section id="id24">
+<h3>1.1.16 (2016-09-27)<a class="headerlink" href="#id24" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">MidiTrack</span></code> crashed instead of returning a message on
+<code class="docutils literal notranslate"><span class="pre">track[index]</span></code>. Fix by Colin Raffel (pull request #61).</p></li>
+<li><p>added <code class="docutils literal notranslate"><span class="pre">__add__()</span></code> and <code class="docutils literal notranslate"><span class="pre">__mul__()</span></code> to <code class="docutils literal notranslate"><span class="pre">MidiTrack</span></code> so <code class="docutils literal notranslate"><span class="pre">+</span></code> and
+<code class="docutils literal notranslate"><span class="pre">*</span></code> will return tracks instead of lists.</p></li>
+<li><p>added <code class="docutils literal notranslate"><span class="pre">poll()</span></code> method to input ports as a shortcut for
+<code class="docutils literal notranslate"><span class="pre">receive(block=False)</span></code>.</p></li>
+<li><p>added example <code class="docutils literal notranslate"><span class="pre">rtmidi_python_backend.py</span></code>, a backend for the
+rtmidi-python package (which is different from the python-rtmidi
+backend that Mido currently uses.) This may at some point be added
+to the package but for now it’s in the examples folder. (Requested
+by netchose, issue #55.)</p></li>
+<li><p>removed custom <code class="docutils literal notranslate"><span class="pre">_import_module()</span></code>. Its only function was to make
+import errors more informative by showing the full module path, such
+as <code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">mido.backends.rtmidi</span></code> instead of just <code class="docutils literal notranslate"><span class="pre">ImportError:</span>
+<span class="pre">rtmidi</span></code>. Unfortunately it ended up masking import errors in the
+backend module, causing confusion.</p>
+<p>It turns <code class="docutils literal notranslate"><span class="pre">importlib.import_module()</span></code> can be called with the full
+path, and on Python 3 it will also display the full path in the
+<code class="docutils literal notranslate"><span class="pre">ImportError</span></code> message.</p>
+</li>
+</ul>
+</section>
+<section id="id25">
+<h3>1.1.15 (2016-08-24)<a class="headerlink" href="#id25" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>Sending and receiving messages is now thread safe. (Initial
+implementation by Adam Roberts.)</p></li>
+<li><p>Bugfix: <code class="docutils literal notranslate"><span class="pre">PortServer</span></code> called <code class="docutils literal notranslate"><span class="pre">__init__</span></code> from the wrong
+class. (Fix by Nathan Hurst.)</p></li>
+<li><p>Changes to <code class="docutils literal notranslate"><span class="pre">MidiTrack</span></code>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MidiTrack()</span></code> now takes a as a parameter an iterable of
+messages. Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MidiTrack</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+<span class="n">MidiTrack</span><span class="p">(</span><span class="n">port</span><span class="o">.</span><span class="n">iter_pending</span><span class="p">())</span>
+<span class="n">MidiTrack</span><span class="p">(</span><span class="n">msg</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">some_generator</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Slicing a <code class="docutils literal notranslate"><span class="pre">MidiTrack</span></code> returns a <code class="docutils literal notranslate"><span class="pre">MidiTrack</span></code>. (It used to
+return a <code class="docutils literal notranslate"><span class="pre">list</span></code>.) Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">track</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>Added the ability to use file objects as well as filenames when reading,
+writing and saving MIDI files. This allows you to create a MIDI file
+dynamically, possibly <em>not</em> using mido, save it to an io.BytesIO, and
+then play that in-memory file, without having to create an intermediate
+external file. Of course the memory file (and/or the MidiFile) can still
+be saved to an external file.
+(Implemented by Brian O’Neill.)</p></li>
+<li><p>PortMidi backend now uses pm.lib.Pm_GetHostErrorText() to get host
+error messages instead of just the generic “PortMidi: `Host error'”.
+(Implemented by Tom Manderson.)</p></li>
+</ul>
+<p>Thanks to Richard Vogl and Tim Cook for reporting errors in the docs.</p>
+</section>
+<section id="id26">
+<h3>1.1.14 (2015-06-09)<a class="headerlink" href="#id26" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>bugfix: merge_tracks() concatenated the tracks instead of merging
+them.  This caused tracks to be played back one by one. (Issue #28,
+reported by Charles Gillingham.)</p></li>
+<li><p>added support for running status when writing MIDI files.
+(Implemented by John Benediktsson.)</p></li>
+<li><p>rewrote the callback system in response to issues #23 and #25.</p></li>
+<li><p>there was no way to set a callback function if the port was opened
+without one. (Issue#25, reported by Nils Werner.)</p>
+<p>Callbacks can now be set and cleared at any time by either passing
+one to <code class="docutils literal notranslate"><span class="pre">open_input()</span></code> or updating the <code class="docutils literal notranslate"><span class="pre">callback</span></code> attribute.</p>
+<p>This causes some slight changes to the behavior of the port when
+using callbacks. Previously if you opened the port with a callback
+and then set <code class="docutils literal notranslate"><span class="pre">port.callback</span> <span class="pre">=</span> <span class="pre">None</span></code> the callback thread would keep
+running but drop any incoming messages. If you do the same now the
+callback thread will stop and the port will return normal
+non-callback behavior. If you want the callback thread to drop
+messages you can set <code class="docutils literal notranslate"><span class="pre">port.callback</span> <span class="pre">=</span> <span class="pre">lambda</span> <span class="pre">message:</span> <span class="pre">None</span></code>.</p>
+<p>Also, <code class="docutils literal notranslate"><span class="pre">receive()</span></code> no longer checks <code class="docutils literal notranslate"><span class="pre">self.callback</span></code>. This was
+inconsistent as it was the only method to do so. It also allows
+ports that don’t support callbacks to omit the <code class="docutils literal notranslate"><span class="pre">callback</span></code>
+attribute.</p>
+</li>
+<li><p>bugfix: closing a port would sometimes cause a segfault when using
+callbacks. (Issue #24, reported by Francesco Ceruti.)</p></li>
+<li><p>bugfix: Pygame ports were broken due to a faulty check for <code class="docutils literal notranslate"><span class="pre">virtual=True</span></code>.</p></li>
+<li><p>now raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> instead of <code class="docutils literal notranslate"><span class="pre">IOError</span></code> if you pass
+<code class="docutils literal notranslate"><span class="pre">virtual</span></code> or <code class="docutils literal notranslate"><span class="pre">callback</span></code> while opening a port and the backend
+doesn’t support them. (An unsupported argument is not an IO error.)</p></li>
+<li><p>fixed some errors in backend documentation. (Pull request #23 by
+velolala.)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MultiPort</span></code> now has a <code class="docutils literal notranslate"><span class="pre">yield_port</span></code> argument just like
+<code class="docutils literal notranslate"><span class="pre">multi_receive()</span></code>.</p></li>
+</ul>
+</section>
+<section id="id27">
+<h3>1.1.13 (2015-02-07)<a class="headerlink" href="#id27" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>the PortMidi backend will now return refresh the port list when you
+ask for port names are open a new port, which means you will see
+devices that you plug in after loading the backend. (Due to
+limitations in PortMidi the list will only be refreshed if there are
+no open ports.)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">tempo2bpm()</span></code> was broken and returned the wrong value for
+anything but 500000 microseconds per beat (120 BPM). (Reported and
+fixed by Jorge Herrera, issue #21)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">merge_tracks()</span></code> didn’t work with empty list of tracks.</p></li>
+<li><p>added proper keyword arguments and doc strings to open functions.</p></li>
+</ul>
+</section>
+<section id="id28">
+<h3>1.1.12 (2014-12-02)<a class="headerlink" href="#id28" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>raises IOError if you try to open a virtual port with PortMidi or
+Pygame. (They are not supported by these backends.)</p></li>
+<li><p>added <code class="docutils literal notranslate"><span class="pre">merge_tracks()</span></code>.</p></li>
+<li><p>removed  undocumented method <code class="docutils literal notranslate"><span class="pre">MidiFile.get_messages()</span></code>.
+(Replaced by <code class="docutils literal notranslate"><span class="pre">merge_tracks(mid.tracks)</span></code>.)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">receive()</span></code> checked <code class="docutils literal notranslate"><span class="pre">self.callback</span></code> which didn’t exist
+for all ports, causing an <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code>.</p></li>
+</ul>
+</section>
+<section id="id29">
+<h3>1.1.11 (2014-10-15)<a class="headerlink" href="#id29" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>added <code class="docutils literal notranslate"><span class="pre">bpm2tempo()</span></code> and <code class="docutils literal notranslate"><span class="pre">tempo2bpm()</span></code>.</p></li>
+<li><p>fixed error in documentation (patch by Michael Silver).</p></li>
+<li><p>added notes about channel numbers to documentation (reported by
+ludwig404 / leonh, issue #18).</p></li>
+</ul>
+</section>
+<section id="id30">
+<h3>1.1.10 (2014-10-09)<a class="headerlink" href="#id30" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: MidiFile.length was computer incorrectly.</p></li>
+<li><p>bugfix: tempo changes caused timing problems in MIDI file playback.
+(Reported by Michelle Thompson.)</p></li>
+<li><p>mido-ports now prints port names in single ticks.</p></li>
+<li><p>MidiFile.__iter__() now yields end_of_track. This means playback
+will end there instead of at the preceding message.</p></li>
+</ul>
+</section>
+<section id="id31">
+<h3>1.1.9 (2014-10-06)<a class="headerlink" href="#id31" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: _compute_tick_time() was not renamed to
+_compute_seconds_per_tick() everywhere.</p></li>
+<li><p>bugfix: sleep time in play() was sometimes negative.</p></li>
+</ul>
+</section>
+<section id="id32">
+<h3>1.1.8 (2014-09-29)<a class="headerlink" href="#id32" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: timing in MIDI playback was broken from 1.1.7 on.  Current
+time was subtracted before time stamps were converted from ticks to
+seconds, leading to absurdly large delta times. (Reported by Michelle
+Thompson.)</p></li>
+<li><p>bugfix: <code class="docutils literal notranslate"><span class="pre">read_syx_file()</span></code> didn’t handle empty file.</p></li>
+</ul>
+</section>
+<section id="id33">
+<h3>1.1.7 (2014-08-12)<a class="headerlink" href="#id33" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>some classes and functions have been moved to more accessible locations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido</span> <span class="kn">import</span> <span class="n">MidiFile</span><span class="p">,</span> <span class="n">MidiTrack</span><span class="p">,</span> <span class="n">MetaMessage</span>
+<span class="kn">from</span> <span class="nn">mido.midifiles</span> <span class="kn">import</span> <span class="n">MetaSpec</span><span class="p">,</span> <span class="n">add_meta_spec</span>
+</pre></div>
+</div>
+</li>
+<li><p>you can now iterate over a MIDI file. This will generate all MIDI
+messages in playback order. The <code class="docutils literal notranslate"><span class="pre">time</span></code> attribute of each message
+is the number of seconds since the last message or the start of the
+file. (Based on suggestion by trushkin in issue #16.)</p></li>
+<li><p>added get_sleep_time() to complement set_sleep_time().</p></li>
+<li><p>the Backend object no longer looks for the backend module exists on
+startup, but will instead just import the module when you call one
+of the <code class="docutils literal notranslate"><span class="pre">open_*()</span></code> or <code class="docutils literal notranslate"><span class="pre">get_*()</span></code> functions. This test didn’t work
+when the library was packaged in a zip file or executable.</p>
+<p>This means that Mido can now be installed as Python egg and frozen
+with tools like PyInstaller and py2exe. See “Freezing Mido Programs”
+for more on this.</p>
+<p>(Issue #17 reported by edauenhauer and issue #14 reported by
+netchose.)</p>
+</li>
+<li><p>switched to pytest for unit tests.</p></li>
+</ul>
+</section>
+<section id="id34">
+<h3>1.1.6 (2014-06-21)<a class="headerlink" href="#id34" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: package didn’t work with easy_install.
+(Issue #14, reported by netchose.)</p></li>
+<li><p>bugfix: 100% memory consumption when calling blocking receive()
+on a PortMidi input. (Issue #15, reported by Francesco Ceruti.)</p></li>
+<li><p>added wheel support: <a class="reference external" href="https://pythonwheels.com/">https://pythonwheels.com/</a></p></li>
+</ul>
+</section>
+<section id="id35">
+<h3>1.1.5 (2014-04-18)<a class="headerlink" href="#id35" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>removed the ‘mode’ attribute from key_signature messages. Minor keys
+now have an ‘m’ appended, for example ‘Cm’.</p></li>
+<li><p>bugfix: sysex was broken in MIDI files.</p></li>
+<li><p>bugfix: didn’t handle MIDI files without track headers.</p></li>
+<li><p>bugfix: MIDI files didn’t handle channel prefix &gt; 15</p></li>
+<li><p>bugfix: MIDI files didn’t handle SMPTE offset with frames &gt; 29</p></li>
+</ul>
+</section>
+<section id="id36">
+<h3>1.1.4 (2014-10-04)<a class="headerlink" href="#id36" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: files with key signatures Cb, Db and Gb failed due to faulty
+error handling.</p></li>
+<li><p>bugfix: when reading some MIDI files Mido crashed with the message
+“ValueError: attribute must be in range 0..255”. The reason was that
+Meta messages set running status, which caused the next statusless
+message to be falsely interpreted as a meta message. (Reported by
+Domino Marama).</p></li>
+<li><p>fixed a typo in MidiFile._read_track(). Sysex continuation should
+work now.</p></li>
+<li><p>rewrote tests to make them more readable.</p></li>
+</ul>
+</section>
+<section id="id37">
+<h3>1.1.3 (2013-10-14)<a class="headerlink" href="#id37" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>messages are now copied on send. This allows the sender to modify the
+message and send it to another port while the two ports receive their
+own personal copies that they can modify without any side effects.</p></li>
+</ul>
+</section>
+<section id="id38">
+<h3>1.1.2 (2013-10-05)<a class="headerlink" href="#id38" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: non-ASCII character caused trouble with installation when LC_ALL=C.
+(Reported by Gene De Lisa)</p></li>
+<li><p>bugfix: used old exception handling syntax in rtmidi backend which
+broke in 3.3</p></li>
+<li><p>fixed broken link in</p></li>
+</ul>
+</section>
+<section id="id39">
+<h3>1.1.1 (2013-10-04)<a class="headerlink" href="#id39" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: mido.backends package was not included in distribution.</p></li>
+</ul>
+</section>
+<section id="id40">
+<h3>1.1.0 (2013-10-01)<a class="headerlink" href="#id40" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>added support for selectable backends (with MIDO_BACKEND) and
+included python-rtmidi and pygame backends in the official library
+(as mido.backend.rtmidi and mido.backend.pygame).</p></li>
+<li><p>added full support for MIDI files (read, write playback)</p></li>
+<li><p>added MIDI over TCP/IP (socket ports)</p></li>
+<li><p>added utility programs mido-play, mido-ports, mido-serve and mido-forward.</p></li>
+<li><p>added support for SMPTE time code quarter frames.</p></li>
+<li><p>port constructors and <code class="docutils literal notranslate"><span class="pre">open_*()</span></code> functions can now take keyword
+arguments.</p></li>
+<li><p>output ports now have reset() and panic() methods.</p></li>
+<li><p>new environment variables MIDO_DEFAULT_INPUT, MIDO_DEFAULT_OUTPUT
+and MIDO_DEFAULT_IOPORT. If these are set, the open_*() functions
+will use them instead of the backend’s default ports.</p></li>
+<li><p>added new meta ports MultiPort and EchoPort.</p></li>
+<li><p>added new examples and updated the old ones.</p></li>
+<li><p>format_as_string() now takes an include_time argument (defaults to True)
+so you can leave out the time attribute.</p></li>
+<li><p>sleep time inside sockets can now be changed.</p></li>
+<li><p>Message() no longer accepts a status byte as its first argument. (This was
+only meant to be used internally.)</p></li>
+<li><p>added callbacks for input ports (PortMidi and python-rtmidi)</p></li>
+<li><p>PortMidi and pygame input ports now actually block on the device
+instead of polling and waiting.</p></li>
+<li><p>removed commas from repr() format of Message and MetaMessage to make
+them more consistent with other classes.</p></li>
+</ul>
+</section>
+<section id="id41">
+<h3>1.0.4 (2013-08-15)<a class="headerlink" href="#id41" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>rewrote parser</p></li>
+</ul>
+</section>
+<section id="id42">
+<h3>1.0.3 (2013-07-12)<a class="headerlink" href="#id42" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>bugfix: __exit__() didn’t close port.</p></li>
+<li><p>changed repr format of message to start with “message”.</p></li>
+<li><p>removed support for undefined messages. (0xf4, 0xf5, 0xf7, 0xf9 and 0xfd.)</p></li>
+<li><p>default value of velocity is now 64 (0x40).
+(This is the recommended default for devices that don’t support velocity.)</p></li>
+</ul>
+</section>
+<section id="id43">
+<h3>1.0.2 (2013-07-31)<a class="headerlink" href="#id43" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>fixed some errors in the documentation.</p></li>
+</ul>
+</section>
+<section id="id44">
+<h3>1.0.1 (2013-07-31)<a class="headerlink" href="#id44" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>multi_receive() and multi_iter_pending() had wrong implementation.
+They were supposed to yield only messages by default.</p></li>
+</ul>
+</section>
+<section id="id45">
+<h3>1.0.0 (2013-07-20)<a class="headerlink" href="#id45" title="Permalink to this heading"></a></h3>
+<p>Initial release.</p>
+<p>Basic functionality: messages, ports and parser.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="freezing_exe.html" class="btn btn-neutral float-left" title="Freezing to EXE File" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="authors.html" class="btn btn-neutral float-right" title="Authors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

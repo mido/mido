@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing a New or Custom Port &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Mido
+              <img src="../_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backends/index.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../files/index.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Writing a New or Custom Port</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/ports/custom.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="writing-a-new-or-custom-port">
+<h1>Writing a New or Custom Port<a class="headerlink" href="#writing-a-new-or-custom-port" title="Permalink to this heading"></a></h1>
+<p>The Mido port API allows you to write new ports to do practically
+anything.</p>
+<p>A new port type can be defined by subclassing one of the base classes
+and overriding one or more methods. Here’s an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido.ports</span> <span class="kn">import</span> <span class="n">BaseOutput</span>
+
+<span class="k">class</span> <span class="nc">PrintPort</span><span class="p">(</span><span class="n">BaseOutput</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_send</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">port</span> <span class="o">=</span> <span class="n">PrintPort</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">port</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="n">note_on</span> <span class="n">channel</span><span class="o">=</span><span class="mi">0</span> <span class="n">note</span><span class="o">=</span><span class="mi">0</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">64</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">_send()</span></code> will be called by <code class="docutils literal notranslate"><span class="pre">send()</span></code>, and is responsible for
+actually sending the message somewhere (or in this case print it out).</p>
+<section id="overridable-methods">
+<h2>Overridable Methods<a class="headerlink" href="#overridable-methods" title="Permalink to this heading"></a></h2>
+<p>There are four overridable methods (all of them default to doing
+nothing):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>``_open(self, **kwargs)``
+</pre></div>
+</div>
+<blockquote>
+<div><p>Should do whatever is necessary to initialize the port (for
+example opening a MIDI device.)</p>
+<p>Called by <code class="docutils literal notranslate"><span class="pre">__init__()</span></code>. The <code class="docutils literal notranslate"><span class="pre">name</span></code> attribute is already
+set when <code class="docutils literal notranslate"><span class="pre">_open()</span></code> is called, but you will get the rest of
+the keyword arguments.</p>
+<p>If your port takes a different set of arguments or has other
+special needs, you can override <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> instead.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_close(self)</span></code></p>
+<blockquote>
+<div><p>Should clean up whatever resources the port has allocated (such as
+closing a MIDI device).</p>
+<p>Called by <code class="docutils literal notranslate"><span class="pre">close()</span></code> if the port is not already closed.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_send(self,</span> <span class="pre">message)</span></code></p>
+<blockquote>
+<div><p>(Output ports only.)</p>
+<p>Should send the message (or do whatever else that makes sense).</p>
+<p>Called by <code class="docutils literal notranslate"><span class="pre">send()</span></code> if the port is open and the message is a Mido
+message. (You don’t need any type checking here.)</p>
+<p>Raise IOError if something goes wrong.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_receive(self,</span> <span class="pre">block=True)</span></code></p>
+<blockquote>
+<div><p>(Input ports only.)</p>
+<p>Should return a message if there is one available.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">block=True</span></code> it should block until a message is available and
+then return it.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">block=False</span></code> it should return a message or <code class="docutils literal notranslate"><span class="pre">None</span></code> if there
+is no message yet. If you return <code class="docutils literal notranslate"><span class="pre">None</span></code> the enclosing
+<code class="docutils literal notranslate"><span class="pre">pending()</span></code> method will check <code class="docutils literal notranslate"><span class="pre">self._messages</span></code> and return one
+from there.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">Prior</span> <span class="pre">to</span> <span class="pre">1.2.0</span> <span class="pre">``_receive()</span></code> would put messages in
+<code class="docutils literal notranslate"><span class="pre">self._messages</span></code> (usually via the parser) and rely on
+<code class="docutils literal notranslate"><span class="pre">receive()</span></code> to return them to the user.</p>
+<p>Since this was not thread safe the API was changed in
+1.2.0 to allow the <code class="docutils literal notranslate"><span class="pre">_receive()</span></code> to return a
+message. The old behavior is still supported, so old
+code will work as before.</p>
+</div>
+<p>Raise IOError if something goes wrong.</p>
+</div></blockquote>
+<p>Each method corresponds to the public method of the same name, and
+will be called by that method. The outer method will take care of many
+things, so the inner method only needs to do the very minimum. The
+outer method also provides the doc string, so you don’t have to worry
+about that.</p>
+<p>The base classes are <code class="docutils literal notranslate"><span class="pre">BaseInput</span></code>, <code class="docutils literal notranslate"><span class="pre">BaseOutput</span></code> and <code class="docutils literal notranslate"><span class="pre">BaseIOPort</span></code>
+(which is a subclass of the other two.)</p>
+</section>
+<section id="locking">
+<h2>Locking<a class="headerlink" href="#locking" title="Permalink to this heading"></a></h2>
+<p>The calls to <code class="docutils literal notranslate"><span class="pre">_receive()</span></code> and <code class="docutils literal notranslate"><span class="pre">_send()</span></code> will are protected by a
+lock, <code class="docutils literal notranslate"><span class="pre">left.lock</span></code>. As a result all send and receive will be thread
+safe.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If your <code class="docutils literal notranslate"><span class="pre">_receive()</span></code> function actually blocks instead of
+letting the parent class handle it <code class="docutils literal notranslate"><span class="pre">poll()</span></code> will not
+work. The two functions are protected by the same lock, so
+when <code class="docutils literal notranslate"><span class="pre">receive()</span></code> blocks it will also block other threads
+calling <code class="docutils literal notranslate"><span class="pre">poll()</span></code>. In this case you need to implement your
+own locking.</p>
+</div>
+<p>If you want to implement your own thread safety you can set the
+<code class="docutils literal notranslate"><span class="pre">_locking</span></code> attribute in your class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyInput</span><span class="p">(</span><span class="n">ports</span><span class="o">.</span><span class="n">BaseInput</span><span class="p">):</span>
+    <span class="n">_locking</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>An example of this is <code class="docutils literal notranslate"><span class="pre">mido.backends.rtmidi</span></code> where the callback is
+used to feed an internal queue that <code class="docutils literal notranslate"><span class="pre">receive()</span></code> reads from.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<p>An full example of a device port for the imaginary MIDI library
+<code class="docutils literal notranslate"><span class="pre">fjopp</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">fjopp</span>
+<span class="kn">from</span> <span class="nn">mido.ports</span> <span class="kn">import</span> <span class="n">BaseIOPort</span>
+
+<span class="c1"># This defines an I/O port.</span>
+<span class="k">class</span> <span class="nc">FjoppPort</span><span class="p">(</span><span class="n">BaseIOPort</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">fjopp</span><span class="o">.</span><span class="n">open_device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">bytes</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">fjopp</span></code> supports blocking read, you can do this to actually block
+on the device instead of letting <code class="docutils literal notranslate"><span class="pre">receive()</span></code> and friends poll and
+wait for you:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>def _receive(self, block=True):
+    if block:
+        # Actually block on the device.
+    # (``read_blocking()`` will always return some data.)
+    while not ``self._messages``:
+        data = self._device.read_blocking()
+    self._parser.feed(data)
+    else:
+    # Non-blocking read like above.
+        while True:
+        data = self.device.read()
+    if data:
+         self._parser.feed(data)
+</pre></div>
+</div>
+<p>This can be used for any kind of port that wants to block on a pipe,
+an socket or another input source. Note that Mido will still use
+polling and waiting when receiving from multiple ports (for example in
+a <code class="docutils literal notranslate"><span class="pre">MultiPort</span></code>).</p>
+<p>If you want separate input and output classes, but the <code class="docutils literal notranslate"><span class="pre">_open()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">_close()</span></code> methods have a lot in common, you can implement this
+using a mix-in.</p>
+<p>Sometimes it’s useful to know inside the methods whether the port
+supports input or output. The way to do this is to check for the
+methods <code class="docutils literal notranslate"><span class="pre">`send()</span></code> and <code class="docutils literal notranslate"><span class="pre">receive()</span></code>, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;send&#39;</span><span class="p">):</span>
+    <span class="c1"># This is an output port.</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;receive&#39;</span><span class="p">):</span>
+        <span class="c1"># This is an input port.</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;send&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;receive&#39;</span><span class="p">):</span>
+        <span class="c1"># This is an I/O port.</span>
+</pre></div>
+</div>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h2>
+<p>A port has some attributes that can be useful inside your methods.</p>
+<p><code class="docutils literal notranslate"><span class="pre">name</span></code></p>
+<blockquote>
+<div><p>The name of the port. The value is device specific and does not
+have to be unique. It can have any value, but must be a string or
+<code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>This is set by <code class="docutils literal notranslate"><span class="pre">__init__()</span></code>.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">closed</span></code></p>
+<blockquote>
+<div><p>True if the port is closed. You don’t have to worry about this
+inside your methods.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_messages</span></code></p>
+<blockquote>
+<div><p>This is a <code class="docutils literal notranslate"><span class="pre">collections.deque</span></code> of messages that have been read
+and are ready to be received. This is a shortcut to
+<code class="docutils literal notranslate"><span class="pre">_parser.messages</span></code>.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">_device_type</span></code> (Optional.)</p>
+<blockquote>
+<div><p>If this attribute exists, it’s a string which will be used in
+<code class="docutils literal notranslate"><span class="pre">__repr__()</span></code>. If it doesn’t exist, the class name will be used
+instead.</p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

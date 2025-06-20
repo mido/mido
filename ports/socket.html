@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Socket Ports - MIDI over TCP/IP &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Mido
+              <img src="../_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backends/index.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../files/index.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Socket Ports - MIDI over TCP/IP</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/ports/socket.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="socket-ports-midi-over-tcp-ip">
+<h1>Socket Ports - MIDI over TCP/IP<a class="headerlink" href="#socket-ports-midi-over-tcp-ip" title="Permalink to this heading"></a></h1>
+<section id="about">
+<h2>About<a class="headerlink" href="#about" title="Permalink to this heading"></a></h2>
+<p>Socket <a class="reference internal" href="../glossary.html#term-ports"><span class="xref std std-term">ports</span></a> allows you to send <a class="reference internal" href="../glossary.html#term-midi"><span class="xref std std-term">MIDI</span></a> messages over a computer
+network.</p>
+<p>The protocol is a simple MIDI bytes stream over <a class="reference internal" href="../glossary.html#term-tcp"><span class="xref std std-term">TCP</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It is <strong>not</strong> <a class="reference internal" href="../glossary.html#term-rtpmidi"><span class="xref std std-term">rtpmidi</span></a>!</p>
+</div>
+</section>
+<section id="caveats">
+<h2>Caveats<a class="headerlink" href="#caveats" title="Permalink to this heading"></a></h2>
+<p>The data is sent over an <em>unencrypted channel</em>. Also, the default server
+allows connections from any host and also accepts arbitrary <a class="reference internal" href="../glossary.html#term-sysex"><span class="xref std std-term">sysex</span></a>
+messages, which could allow anyone to for example overwrite patches on
+your synths (or <strong>worse</strong>). Use <strong>only</strong> on <em>trusted networks</em>.</p>
+<p>If you need more security, you can build a <em>custom server</em> with a whitelist
+of clients allowed to connect.</p>
+<p>If <em>timing</em> is critical, <em>latency</em> and <em>jitter</em> (especially on <em>wireless
+networks</em>) may make socket ports <em>unusable</em>.</p>
+</section>
+<section id="sending-messages-to-a-server">
+<h2>Sending Messages to a Server<a class="headerlink" href="#sending-messages-to-a-server" title="Permalink to this heading"></a></h2>
+<p>First, let’s import some things:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mido.sockets</span> <span class="kn">import</span> <span class="n">PortServer</span><span class="p">,</span> <span class="n">connect</span>
+</pre></div>
+</div>
+<p>After that, a simple server is only two lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">PortServer</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can then connect to the server and send it messages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">):</span>
+<span class="n">output</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each end of the connection behaves like a normal Mido I/O port, with
+all the usual methods.</p>
+<p>The host may be an host name or IP address (as a string). It may also be ‘’,
+in which case connections are accepted from any IP address on the computer.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Test and clarify “Any IP address on the computer”.
+Does this mean only local adresses can connect or that any connection
+from any network is allowed?</p>
+</div>
+</section>
+<section id="turning-things-on-their-head">
+<h2>Turning Things on their Head<a class="headerlink" href="#turning-things-on-their-head" title="Permalink to this heading"></a></h2>
+<p>If you want the server to send messages the client, you can instead
+do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="o">=</span> <span class="n">PortServer</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">):</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>and then on the client side:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The client will now print any message that the server sends. Each
+message that the server sends will be received by all connected
+clients.</p>
+</section>
+<section id="under-the-hood">
+<h2>Under the Hood<a class="headerlink" href="#under-the-hood" title="Permalink to this heading"></a></h2>
+<p>The examples above use the server and client ports as normal Mido I/O
+ports. This makes it easy to write simple servers, but you don’t have
+any control on connections and the way messages are sent and received.</p>
+<p>To get more control,you can ignore all the other methods of the
+<code class="docutils literal notranslate"><span class="pre">PortServer</span></code> object and use only <code class="docutils literal notranslate"><span class="pre">accept()</span></code>. Here’s a simple
+server implemented this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">PortServer</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">)</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">client</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">accept()</span></code> waits for a client to connect, and returns a <code class="docutils literal notranslate"><span class="pre">SocketPort</span></code>
+object which is connected to the <code class="docutils literal notranslate"><span class="pre">SocketPort</span></code> object returned by
+<code class="docutils literal notranslate"><span class="pre">connect()</span></code> on the other end.</p>
+<p>The server above has one weakness: it only allows one connection at a
+time. You can get around this by using <code class="docutils literal notranslate"><span class="pre">accept(block=False)</span></code>. This
+will return a <code class="docutils literal notranslate"><span class="pre">SocketPort</span></code> if there’s a connection waiting and <code class="docutils literal notranslate"><span class="pre">None</span></code> if
+there is connection yet.</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Clarify “Connection waiting” vs “There is a connection yet”.</p>
+</div>
+<p>Using this you can write the server any way you like, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">PortServer</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">)</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
+    <span class="n">clients</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Handle connections.</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">client</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Connection from </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">clients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">client</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">clients</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">client</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> disconnected&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="k">del</span> <span class="n">clients</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Receive messages.</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="n">clients</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_pending</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Received </span><span class="si">{}</span><span class="s1"> from </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">client</span><span class="p">))</span>
+
+        <span class="c1"># Do other things</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="possible-future-additions">
+<h2>Possible Future Additions<a class="headerlink" href="#possible-future-additions" title="Permalink to this heading"></a></h2>
+<p>Optional HTTP-style headers could be added. As long as these are 7-bit
+<a class="reference internal" href="../glossary.html#term-ascii"><span class="xref std std-term">ASCII</span></a>, they will be counted as data bytes and ignored by clients or
+servers who don’t expect them.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

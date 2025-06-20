@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backends &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RtMidi (Default, Recommended)" href="rtmidi.html" />
+    <link rel="prev" title="Messages" href="../messages/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Mido
+              <img src="../_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../messages/index.html">Messages</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Backends</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#choice">Choice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment Variables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select-backend">Select Backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-default-ports">Set Default ports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#available-backends">Available Backends</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rtmidi.html">RtMidi (Default, Recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="portmidi.html">PortMidi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pygame.html">Pygame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rtmidi_python.html">rtmidi_python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="amidi.html">amidi (Experimental)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-a-new-or-custom-backend">Writing a New or Custom Backend</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ports/index.html">Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../files/index.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Backends</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/backends/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="../messages/index.html" class="btn btn-neutral float-left" title="Messages" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rtmidi.html" class="btn btn-neutral float-right" title="RtMidi (Default, Recommended)" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="backends">
+<h1>Backends<a class="headerlink" href="#backends" title="Permalink to this heading"></a></h1>
+<p>A backend provides the interface between Mido and the operating system level
+MIDI stack.</p>
+<p>Some Mido features are only available with select backends.</p>
+<p>Mido’s backend subsystem has been designed to be extensible so you can add
+your own backends if required. See <a class="reference internal" href="custom.html"><span class="doc">Writing a New or Custom Backend</span></a>.</p>
+<p>Providing platform specific Python-native backends is currently evaluated.
+See: <a class="reference external" href="https://github.com/mido/mido/issues/506">https://github.com/mido/mido/issues/506</a></p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Insert a stack diagram to clear things up.</p>
+</div>
+<section id="choice">
+<h2>Choice<a class="headerlink" href="#choice" title="Permalink to this heading"></a></h2>
+<p>Mido comes with five backends:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="rtmidi.html"><span class="doc">RtMidi</span></a> is the <em>default</em> and <em>recommended</em> backend. It has all
+the features of the other ones and more plus it is usually easier to install.</p></li>
+<li><p><a class="reference internal" href="portmidi.html"><span class="doc">PortMidi</span></a> was the default backend up until version 1.2. It
+uses the <code class="docutils literal notranslate"><span class="pre">portmidi</span></code> shared library and can be difficult to install on some
+systems.</p></li>
+<li><p><a class="reference internal" href="pygame.html"><span class="doc">Pygame</span></a> uses the <code class="docutils literal notranslate"><span class="pre">pygame.midi</span></code> module.</p></li>
+<li><p><a class="reference internal" href="rtmidi_python.html"><span class="doc">rtmidi-python</span></a> uses the <code class="docutils literal notranslate"><span class="pre">rtmidi_python</span></code> package, an
+alternative wrapper for PortMidi. It is currently very basic but
+easier to install on some Windows systems.</p></li>
+<li><p><a class="reference internal" href="amidi.html"><span class="doc">Amidi</span></a> is an experimental backend for Linux/ALSA
+that uses the command <code class="docutils literal notranslate"><span class="pre">amidi</span></code> to send and receive messages.</p></li>
+</ul>
+<p>You can set the backend using an environment variable: See <a class="reference internal" href="#env-vars"><span class="std std-ref">Environment Variables</span></a>.</p>
+<p>Alternatively, you can set the backend from within your program:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mido</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s1">&#39;mido.backends.portmidi&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mido</span><span class="o">.</span><span class="n">backend</span>
+<span class="go">&lt;backend mido.backends.portmidi (not loaded)&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This will override the environment variable.</p>
+</div>
+<p>If you want to use more than one backend at a time, you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rtmidi</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">Backend</span><span class="p">(</span><span class="s1">&#39;mido.backends.rtmidi&#39;</span><span class="p">)</span>
+<span class="n">portmidi</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">Backend</span><span class="p">(</span><span class="s1">&#39;mido.backends.portmidi&#39;</span><span class="p">)</span>
+
+<span class="nb">input</span> <span class="o">=</span> <span class="n">rtmidi</span><span class="o">.</span><span class="n">open_input</span><span class="p">()</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">portmidi</span><span class="o">.</span><span class="n">open_output</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">:</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The backend will not be loaded until you call one of the <code class="docutils literal notranslate"><span class="pre">open_</span></code> or
+<code class="docutils literal notranslate"><span class="pre">get_</span></code> methods. You can pass <code class="docutils literal notranslate"><span class="pre">load=True</span></code> to have it loaded right
+away.</p>
+<p>If you pass <code class="docutils literal notranslate"><span class="pre">use_environ=True</span></code>, the module will use the environment
+variables <code class="docutils literal notranslate"><span class="pre">MIDO_DEFAULT_INPUT</span></code> etc. for default ports.</p>
+</section>
+<section id="environment-variables">
+<span id="env-vars"></span><h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this heading"></a></h2>
+<section id="select-backend">
+<h3>Select Backend<a class="headerlink" href="#select-backend" title="Permalink to this heading"></a></h3>
+<p>If you want to use a backend other than RtMidi you can override this with
+the <code class="docutils literal notranslate"><span class="pre">MIDO_BACKEND</span></code> environment variable, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ MIDO_BACKEND=mido.backends.portmidi ./program.py
+</pre></div>
+</div>
+</section>
+<section id="set-default-ports">
+<h3>Set Default ports<a class="headerlink" href="#set-default-ports" title="Permalink to this heading"></a></h3>
+<p>You can override the backend’s choice of default ports with these
+three environment variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MIDO_DEFAULT_INPUT</span>
+<span class="n">MIDO_DEFAULT_OUTPUT</span>
+<span class="n">MIDO_DEFAULT_IOPORT</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ MIDO_DEFAULT_INPUT=&#39;SH-201&#39; python3 program.py
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export MIDO_DEFAULT_OUTPUT=&#39;Integra-7&#39;
+$ python3 program1.py
+$ python3 program2.py
+</pre></div>
+</div>
+</section>
+</section>
+<section id="available-backends">
+<h2>Available Backends<a class="headerlink" href="#available-backends" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rtmidi.html">RtMidi (Default, Recommended)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rtmidi.html#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rtmidi.html#port-names-linux-alsa">Port Names (Linux/ALSA)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rtmidi.html#virtual-ports">Virtual Ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rtmidi.html#client-name">Client Name</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rtmidi.html#choosing-an-api">Choosing an API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="portmidi.html">PortMidi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="portmidi.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portmidi.html#features">Features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pygame.html">Pygame</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pygame.html#features">Features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rtmidi_python.html">rtmidi_python</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rtmidi_python.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rtmidi_python.html#features">Features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="amidi.html">amidi (Experimental)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="amidi.html#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amidi.html#operation">Operation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="writing-a-new-or-custom-backend">
+<h2>Writing a New or Custom Backend<a class="headerlink" href="#writing-a-new-or-custom-backend" title="Permalink to this heading"></a></h2>
+<p>A backend is a Python module with one or more of these:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Input</span> <span class="o">--</span> <span class="n">an</span> <span class="nb">input</span> <span class="n">port</span> <span class="k">class</span>
+<span class="nc">Output</span> <span class="o">--</span> <span class="n">an</span> <span class="n">output</span> <span class="n">port</span> <span class="k">class</span>
+<span class="nc">IOPort</span> <span class="o">--</span> <span class="n">an</span> <span class="n">I</span><span class="o">/</span><span class="n">O</span> <span class="n">port</span> <span class="k">class</span>
+<span class="nc">get_devices</span><span class="p">()</span> <span class="o">--</span> <span class="n">returns</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">devices</span>
+</pre></div>
+</div>
+<p>Once written, the backend can be used by setting the environment
+variable <code class="docutils literal notranslate"><span class="pre">MIDO_BACKEND</span></code> or by calling <code class="docutils literal notranslate"><span class="pre">mido.set_backend()</span></code>. In
+both cases, the path of the module is used.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Input</span></code></p>
+<blockquote>
+<div><p>And input class for <code class="docutils literal notranslate"><span class="pre">open_input()</span></code>. This is only required if the
+backend supports input.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">Output</span></code></p>
+<blockquote>
+<div><p>And output class for <code class="docutils literal notranslate"><span class="pre">open_output()</span></code>. This is only required if the
+backend supports output.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">IOPort</span></code></p>
+<blockquote>
+<div><p>An I/O port class for <code class="docutils literal notranslate"><span class="pre">open_ioport()</span></code>. If this is not found,
+<code class="docutils literal notranslate"><span class="pre">open_ioport()</span></code> will return <code class="docutils literal notranslate"><span class="pre">mido.ports.IOPort(Input(),</span>
+<span class="pre">Output())</span></code>.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">get_devices(**kwargs)</span></code></p>
+<blockquote>
+<div><p>Returns a list of devices, where each device is dictionary with at
+least these three values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Some MIDI Input Port&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;is_input&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+  <span class="s1">&#39;is_output&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>These are used to build return values for <code class="docutils literal notranslate"><span class="pre">get_input_names()</span></code> etc..
+This function will also be available to the user directly.</p>
+</div></blockquote>
+<p>For examples, see <code class="docutils literal notranslate"><span class="pre">mido/backends/</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../messages/index.html" class="btn btn-neutral float-left" title="Messages" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rtmidi.html" class="btn btn-neutral float-right" title="RtMidi (Default, Recommended)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

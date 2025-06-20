@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction (Basic Concepts) &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Messages" href="messages/index.html" />
+    <link rel="prev" title="Installing" href="installing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Mido
+              <img src="_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction (Basic Concepts)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#messages">Messages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#type-and-value-checking">Type and Value Checking</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ports">Ports</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#all-ports-are-ports">All Ports are Ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#virtual-ports">Virtual Ports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#raw-midi-bytes-parser">Raw MIDI Bytes Parser</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/index.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ports/index.html">Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files/index.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="binaries.html">Included Programs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Introduction (Basic Concepts)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/intro.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="installing.html" class="btn btn-neutral float-left" title="Installing" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="messages/index.html" class="btn btn-neutral float-right" title="Messages" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction-basic-concepts">
+<h1>Introduction (Basic Concepts)<a class="headerlink" href="#introduction-basic-concepts" title="Permalink to this heading"></a></h1>
+<p>Mido is all about messages, ports and files.</p>
+<section id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this heading"></a></h2>
+<p>Mido allows you to work with MIDI messages as Python objects. To
+create a new message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mido</span> <span class="kn">import</span> <span class="n">Message</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="s1">&#39;note_on&#39;</span><span class="p">,</span> <span class="n">note</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span>
+<span class="go">Message(&#39;note_on&#39;, channel=0, note=60, velocity=64, time=0)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Mido numbers channels <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">15</span></code> instead of <code class="docutils literal notranslate"><span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">16</span></code>. This makes
+them easier to work with from Python but you may want to add and subtract
+<code class="docutils literal notranslate"><span class="pre">1</span></code> when communicating with the user.</p>
+</div>
+<p>A list of all supported message types and their parameters can be
+found in <a class="reference internal" href="message_types.html"><span class="doc">Message Types</span></a>.</p>
+<p>The values can now be accessed as attributes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">type</span>
+<span class="go">&#39;note_on&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">note</span>
+<span class="go">60</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">velocity</span>
+<span class="go">64</span>
+</pre></div>
+</div>
+<p>Attributes are also settable but this should be avoided. It’s better
+to use <code class="docutils literal notranslate"><span class="pre">msg.copy()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">note</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">127</span><span class="p">)</span>
+<span class="go">Message(&#39;note_on&#39;, channel=0, note=100, velocity=127, time=0)</span>
+</pre></div>
+</div>
+<p>Type and value checks are done when you pass parameters or assign to
+attributes, and the appropriate exceptions are raised. This ensures
+that the message is always valid.</p>
+<p>For more about messages, see <a class="reference internal" href="messages/index.html"><span class="doc">Messages</span></a>.</p>
+<section id="type-and-value-checking">
+<h3>Type and Value Checking<a class="headerlink" href="#type-and-value-checking" title="Permalink to this heading"></a></h3>
+<p>Mido messages come with type and value checking built in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mido</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mido</span><span class="o">.</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;note_on&#39;</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="mi">2092389483249829834</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">&quot;/home/olemb/src/mido/mido/messages/messages.py&quot;</span>, line <span class="m">89</span>, in <span class="n">__init__</span>
+<span class="w">    </span><span class="n">check_msgdict</span><span class="p">(</span><span class="n">msgdict</span><span class="p">)</span>
+  File <span class="nb">&quot;/home/olemb/src/mido/mido/messages/checks.py&quot;</span>, line <span class="m">100</span>, in <span class="n">check_msgdict</span>
+<span class="w">    </span><span class="n">check_value</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+  File <span class="nb">&quot;/home/olemb/src/mido/mido/messages/checks.py&quot;</span>, line <span class="m">87</span>, in <span class="n">check_value</span>
+<span class="w">    </span><span class="n">_CHECKS</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="n">value</span><span class="p">)</span>
+  File <span class="nb">&quot;/home/olemb/src/mido/mido/messages/checks.py&quot;</span>, line <span class="m">17</span>, in <span class="n">check_channel</span>
+<span class="w">    </span><span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;channel must be in range 0..15&#39;</span><span class="p">)</span>
+<span class="gr">ValueError</span>: <span class="n">channel must be in range 0..15</span>
+</pre></div>
+</div>
+<p>This means that the message object is always a valid MIDI message.</p>
+</section>
+</section>
+<section id="ports">
+<h2>Ports<a class="headerlink" href="#ports" title="Permalink to this heading"></a></h2>
+<p>To create an output port and send a message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outport</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_output</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">outport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To create an input port and receive a message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inport</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_input</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="n">inport</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Multiple threads can safely send and receive notes on the same
+port.</p>
+</div>
+<p>This will give you the default output and input ports. If you want to
+open a specific port, you will need its name. To get a list of all
+available input ports:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mido</span><span class="o">.</span><span class="n">get_input_names</span><span class="p">()</span>
+<span class="go">[&#39;Midi Through Port-0&#39;, &#39;SH-201&#39;, &#39;Integra-7&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inport</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_input</span><span class="p">(</span><span class="s1">&#39;SH-201&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All Mido ports can be used with the <code class="docutils literal notranslate"><span class="pre">with</span></code> statement, which will
+close the port for you:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_input</span><span class="p">(</span><span class="s1">&#39;SH-201&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inport</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>To iterate through all incoming messages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inport</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>You can also receive and iterate over messages in a non-blocking
+way.</p>
+<p>For more about ports, see <a class="reference internal" href="ports/index.html"><span class="doc">Ports</span></a>.</p>
+<section id="all-ports-are-ports">
+<h3>All Ports are Ports<a class="headerlink" href="#all-ports-are-ports" title="Permalink to this heading"></a></h3>
+<p>The input and output ports used above are device ports, which
+communicate with a physical or virtual MIDI device.</p>
+<p>Other port types include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MultiPort</span></code>, which wraps around a set of ports and allows you to send to
+all of them or receive from all of them as if they were one.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SocketPort</span></code>, which communicates with another port over a TCP/IP (network)
+connection.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IOPort</span></code>, which wraps around an input and an output port and allows you to
+send and receive messages as if the two were the same port.</p></li>
+</ul>
+<p>Ports of all types look and behave the same way, so they can be used
+interchangeably.</p>
+<p>It’s easy to write new port types. See <a class="reference internal" href="ports/custom.html"><span class="doc">Writing a New or Custom Port</span></a>.</p>
+</section>
+<section id="virtual-ports">
+<h3>Virtual Ports<a class="headerlink" href="#virtual-ports" title="Permalink to this heading"></a></h3>
+<p>Virtual ports allows you to create new ports that other applications
+can connect to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mido</span><span class="o">.</span><span class="n">open_input</span><span class="p">(</span><span class="s1">&#39;New Port&#39;</span><span class="p">,</span> <span class="n">virtual</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">inport</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">inport</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The port should now appear to other applications as “<code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Port</span></code>”.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Unfortunately virtual ports are not supported by PortMidi and Pygame
+so this only works with RtMidi.</p>
+<p>Furthermore, RtMidi’s virtual ports are not available under Microsoft
+Windows. See: <a class="reference internal" href="backends/rtmidi.html"><span class="doc">RtMidi (Default, Recommended)</span></a> for details.</p>
+</div>
+</section>
+</section>
+<section id="raw-midi-bytes-parser">
+<h2>Raw MIDI Bytes Parser<a class="headerlink" href="#raw-midi-bytes-parser" title="Permalink to this heading"></a></h2>
+<p>Mido comes with a parser that allows you to turn <code class="docutils literal notranslate"><span class="pre">bytes</span></code> into
+messages. You can create a new parser:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">Parser</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">feed</span><span class="p">([</span><span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">feed_byte</span><span class="p">(</span><span class="mh">0x60</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can then fetch messages out of the parser:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">pending</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">note_on channel=0 note=64 velocity=96 time=0</span>
+</pre></div>
+</div>
+<p>For more on parsers and parsing see <a class="reference internal" href="messages/parsing.html"><span class="doc">Parsing MIDI Bytes</span></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.2.</span></p>
+</div>
+<p>You can also create a message from <code class="docutils literal notranslate"><span class="pre">bytes</span></code> using class methods:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">msg1</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">([</span><span class="mh">0x90</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x60</span><span class="p">])</span>
+<span class="n">msg2</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">from_hex</span><span class="p">(</span><span class="s1">&#39;90, 40 60&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">bytes</span></code> must contain exactly one complete message. If not
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> is raised.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installing.html" class="btn btn-neutral float-left" title="Installing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="messages/index.html" class="btn btn-neutral float-right" title="Messages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Included Programs &mdash; Mido 1.3.4.dev15+g59821b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="SYX Files" href="files/syx.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Mido
+              <img src="_static/mido.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Mido - MIDI Objects for Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction (Basic Concepts)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="messages/index.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/index.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ports/index.html">Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files/index.html">Files</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Included Programs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mido-ports">mido-ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mido-play">mido-play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mido-serve">mido-serve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mido-connect">mido-connect</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Community</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about_midi.html">About MIDI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message_types.html">Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta_message_types.html">Meta Message Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="freezing_exe.html">Freezing to EXE File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Version Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Mido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Included Programs</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mido/mido/edit/main/docs/binaries.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="files/syx.html" class="btn btn-neutral float-left" title="SYX Files" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="included-programs">
+<h1>Included Programs<a class="headerlink" href="#included-programs" title="Permalink to this heading"></a></h1>
+<p>A few sample programs are installed with Mido and available directly from the
+<a class="reference internal" href="glossary.html#term-cli"><span class="xref std std-term">CLI</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These are intended to demonstrate the capabilities of Mido and used as a
+template for your own programs. These are not fully fledged and may miss
+crucial features.</p>
+</div>
+<section id="mido-ports">
+<h2>mido-ports<a class="headerlink" href="#mido-ports" title="Permalink to this heading"></a></h2>
+<p>Lists all available input and output ports, shows environment variables
+and the current backend module.</p>
+</section>
+<section id="mido-play">
+<h2>mido-play<a class="headerlink" href="#mido-play" title="Permalink to this heading"></a></h2>
+<p>Plays back one or more MIDI files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mido-play song1.mid [song2.mid]
+</pre></div>
+</div>
+</section>
+<section id="mido-serve">
+<h2>mido-serve<a class="headerlink" href="#mido-serve" title="Permalink to this heading"></a></h2>
+<p>Serves one or more ports over the network, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mido-serve :9080 &#39;Integra-7&#39;
+</pre></div>
+</div>
+<p>You can now connect to this port with <code class="docutils literal notranslate"><span class="pre">mido-forward</span></code> (or use
+<code class="docutils literal notranslate"><span class="pre">mido.sockets.connect()</span></code> and send messages to it. The messages will
+be forwarded to every port you listed (in this case ‘Integra-7’).</p>
+</section>
+<section id="mido-connect">
+<h2>mido-connect<a class="headerlink" href="#mido-connect" title="Permalink to this heading"></a></h2>
+<p>Forwards all messages that arrive on one or more ports to a server.</p>
+<p>For example, to use the SH-201 keyboard connected to this computer to
+play sounds on the Integra-7 on a computer named <code class="docutils literal notranslate"><span class="pre">mac.local</span></code> (which
+runs the server as above), you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mido-connect mac.local:9080 &#39;SH-201&#39;
+</pre></div>
+</div>
+<p>Note that you may experience latency and jitter, so this may not be
+very useful for live playing or for playing back songs.</p>
+<p>There is also no security built in, so you should only use this on a
+trusted network. (Anyone can connect and send anything, including
+harmful sysex messages.)</p>
+<p><code class="docutils literal notranslate"><span class="pre">mido-serve</span></code> and <code class="docutils literal notranslate"><span class="pre">mido-connect</span></code> are only included as fun programs
+to play with, but may in the future be expanded into something more
+usable.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="files/syx.html" class="btn btn-neutral float-left" title="SYX Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ole Martin Bjørndalen
+Raphaël Doursenaud.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
