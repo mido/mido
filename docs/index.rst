@@ -44,33 +44,35 @@ Mido is a :term:`Python` library for working with
 
 .. code-block:: python
 
-   >>> import mido
-   >>> msg = mido.Message('note_on', note=60)
-   >>> msg.type
-   'note_on'
-   >>> msg.note
-   60
-   >>> msg.bytes()
-   [144, 60, 64]
-   >>> msg.copy(channel=2)
-   Message('note_on', channel=2, note=60, velocity=64, time=0)
+ from mido import MidiFile, MidiTrack, Message
 
-.. code-block:: python
+# Create a new MIDI file
+mid = MidiFile()
+track = MidiTrack()
+mid.tracks.append(track)
 
-   port = mido.open_output('Port Name')
-   port.send(msg)
+# Set tempo (120 BPM)
+track.append(Message('program_change', program=0, time=0))
 
-.. code-block:: python
+# Generate a simple piano rap melody
+# Notes are in MIDI format (60 = Middle C), with time in ticks
+melody = [
+    (60, 480), (62, 240), (64, 240), # Phrase 1: C-D-E (quarter note + two eighth notes)
+    (65, 480), (64, 240), (62, 240), # Phrase 2: F-E-D (quarter note + two eighth notes)
+    (60, 960),                      # Phrase 3: C (half note)
+    (67, 480), (65, 240), (64, 240), # Phrase 4: G-F-E (quarter note + two eighth notes)
+    (62, 480), (60, 480)            # Phrase 5: D-C (two quarter notes)
+]
 
-    with mido.open_input() as inport:
-        for msg in inport:
-            print(msg)
+# Add notes to the MIDI track
+for note, duration in melody:
+    track.append(Message('note_on', note=note, velocity=64, time=0))  # Note on
+    track.append(Message('note_off', note=note, velocity=64, time=duration))  # Note off
 
-.. code-block:: python
-
-    mid = mido.MidiFile('song.mid')
-    for msg in mid.play():
-        port.send(msg)
+# Save the file
+file_path = '/mnt/data/Piano_Rap_Melody.mid'
+mid.save(file_path)
+file_path
 
 
 Mido is short for *MIDI objects*.
