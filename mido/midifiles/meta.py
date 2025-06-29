@@ -256,7 +256,9 @@ class MetaSpec_channel_prefix(MetaSpec):
     defaults = [0]
 
     def decode(self, message, data):
-        message.channel = data[0]
+        # Message with length 0 can occur in some files.
+        if len(data) > 0:
+            message.channel = data[0]
 
     def encode(self, message):
         return [message.channel]
@@ -271,11 +273,9 @@ class MetaSpec_midi_port(MetaSpec):
     defaults = [0]
 
     def decode(self, message, data):
-        if len(data) == 0:
-            # Message with length 0 can occur in some files.
-            # (See issues 42 and 93.)
-            message.port = 0
-        else:
+        # Message with length 0 can occur in some files.
+        # (See issues 42 and 93.)
+        if len(data) > 0:
             message.port = data[0]
 
     def encode(self, message):
