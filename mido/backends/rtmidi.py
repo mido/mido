@@ -147,9 +147,9 @@ class Input(PortCommon, ports.BaseInput):
 
     # We override receive() and poll() instead of _receive() and
     # _poll() to bypass locking.
-    def receive(self, block=True):
+    def receive(self, block=True, timeout=None):
         if block:
-            return self._queue.get()
+            return self._queue.get(timeout=timeout)
         else:
             return self._queue.poll()
 
