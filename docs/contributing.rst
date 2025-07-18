@@ -103,6 +103,15 @@ Or, alternatively, if you want to use ports::
 This will install all needed dependencies for
 linting, testing, documentation generation and publishing releases.
 
+Developing on GitHub Codespace
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+GitHub codespace is an online Linux environment with a vscode web UI. It is 
+useful for developers who don't have a Linux device but want to test and 
+debug their code on Linux.
+
+Log in to github. On `mido repo main page <https://github.com/mido/mido>`_, 
+click Code -> Codespaces -> Create codespace on main.
 
 Code Checks
 -----------
