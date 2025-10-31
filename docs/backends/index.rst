@@ -1,120 +1,78 @@
-.. SPDX-FileCopyrightText: 2017 Ole Martin Bjorndalen <ombdalen@gmail.com>
-..
-.. SPDX-License-Identifier: CC-BY-4.0
+# 🎵 Bailoteo – Beat de Reguetón (MIDI)
+# BPM: 96 | Estilo: Reggaetón comercial
+# Autor: ChatGPT (GPT-5)
 
-Backends
-========
+from mido import Message, MidiFile, MidiTrack, bpm2tempo
 
-A backend provides the interface between Mido and the operating system level
-MIDI stack.
+# Crear archivo MIDI y pista
+mid = MidiFile()
+track = MidiTrack()
+mid.tracks.append(track)
 
-Some Mido features are only available with select backends.
+# Configurar tempo
+bpm = 96
+track.append(Message('program_change', program=0, time=0))
+track.append(Message('control_change', control=7, value=100, time=0))  # volumen
 
-Mido's backend subsystem has been designed to be extensible so you can add
-your own backends if required. See :doc:`custom`.
+tempo = bpm2tempo(bpm)
+track.append(Message('program_change', program=32, time=0))  # Synth bass
 
-Providing platform specific Python-native backends is currently evaluated.
-See: https://github.com/mido/mido/issues/506
+# Función helper
+def note_on_off(note, velocity, duration, channel=0):
+    track.append(Message('note_on', note=note, velocity=velocity, time=0, channel=channel))
+    track.append(Message('note_off', note=note, velocity=0, time=int(duration), channel=channel))
 
-.. todo:: Insert a stack diagram to clear things up.
+# --- Estructura del beat (4 compases de reggaetón) ---
+# Dembow clásico: bombo, caja, bombo-bombo, caja
 
+# Nota: MIDI ticks -> ajustado para 480 ticks por beat (por defecto)
+beat = 480
 
-Choice
-------
+# Instrumentos MIDI channels
+kick_ch = 9    # canal 10 (percusión)
+snare_ch = 9
+bass_ch = 1
+chord_ch = 2
 
-Mido comes with five backends:
+# Dembow pattern (bombo y caja)
+def dembow_pattern():
+    # 1
+    track.append(Message('note_on', note=36, velocity=110, time=0, channel=kick_ch))  # Kick
+    track.append(Message('note_off', note=36, velocity=0, time=int(beat/2), channel=kick_ch))
+    # 2
+    track.append(Message('note_on', note=38, velocity=100, time=0, channel=snare_ch))  # Snare
+    track.append(Message('note_off', note=38, velocity=0, time=int(beat/2), channel=snare_ch))
+    # 3
+    track.append(Message('note_on', note=36, velocity=110, time=0, channel=kick_ch))
+    track.append(Message('note_off', note=36, velocity=0, time=int(beat/4), channel=kick_ch))
+    # 4
+    track.append(Message('note_on', note=36, velocity=100, time=0, channel=kick_ch))
+    track.append(Message('note_off', note=36, velocity=0, time=int(beat/4), channel=kick_ch))
+    # 5
+    track.append(Message('note_on', note=38, velocity=100, time=0, channel=snare_ch))
+    track.append(Message('note_off', note=38, velocity=0, time=int(beat/2), channel=snare_ch))
 
-* :doc:`RtMidi <rtmidi>` is the *default* and *recommended* backend. It has all
-  the features of the other ones and more plus it is usually easier to install.
+# Bajo (A1 -> G1)
+def bass_pattern():
+    note_on_off(33, 100, beat//2, bass_ch)  # A1
+    note_on_off(33, 90, beat//2, bass_ch)
+    note_on_off(31, 100, beat//2, bass_ch)  # G1
+    note_on_off(31, 100, beat//2, bass_ch)
 
-* :doc:`PortMidi <portmidi>` was the default backend up until version 1.2. It
-  uses the ``portmidi`` shared library and can be difficult to install on some
-  systems.
+# Acordes (Amin -> Gmin)
+def chords_pattern():
+    for note in [57, 60, 64]:  # A minor chord
+        note_on_off(note, 70, beat//2, chord_ch)
+    for note in [55, 58, 62]:  # G minor chord
+        note_on_off(note, 70, beat//2, chord_ch)
 
-* :doc:`Pygame <pygame>` uses the ``pygame.midi`` module.
+# Construir 8 compases (~loop principal)
+for i in range(8):
+    dembow_pattern()
+    bass_pattern()
+    chords_pattern()
 
-* :doc:`rtmidi-python <rtmidi_python>` uses the ``rtmidi_python`` package, an
-  alternative wrapper for PortMidi. It is currently very basic but
-  easier to install on some Windows systems.
+# Guardar archivo
+mid.save("bailoteo_beat.mid")
 
-* :doc:`Amidi <amidi>` is an experimental backend for Linux/ALSA
-  that uses the command ``amidi`` to send and receive messages.
-
-You can set the backend using an environment variable: See :ref:`env_vars`.
-
-Alternatively, you can set the backend from within your program::
-
-    >>> mido.set_backend('mido.backends.portmidi')
-    >>> mido.backend
-    <backend mido.backends.portmidi (not loaded)>
-
-.. note::
-
-    This will override the environment variable.
-
-If you want to use more than one backend at a time, you can do::
-
-    rtmidi = mido.Backend('mido.backends.rtmidi')
-    portmidi = mido.Backend('mido.backends.portmidi')
-
-    input = rtmidi.open_input()
-    output = portmidi.open_output()
-    for message in input:
-        output.send(message)
-
-The backend will not be loaded until you call one of the ``open_`` or
-``get_`` methods. You can pass ``load=True`` to have it loaded right
-away.
-
-If you pass ``use_environ=True``, the module will use the environment
-variables ``MIDO_DEFAULT_INPUT`` etc. for default ports.
-
-
-.. _env_vars:
-
-Environment Variables
----------------------
-
-
-Select Backend
-^^^^^^^^^^^^^^
-
-If you want to use a backend other than RtMidi you can override this with
-the ``MIDO_BACKEND`` environment variable, for example::
-
-    $ MIDO_BACKEND=mido.backends.portmidi ./program.py
-
-
-Set Default ports
-^^^^^^^^^^^^^^^^^
-
-You can override the backend's choice of default ports with these
-three environment variables::
-
-    MIDO_DEFAULT_INPUT
-    MIDO_DEFAULT_OUTPUT
-    MIDO_DEFAULT_IOPORT
-
-For example::
-
-    $ MIDO_DEFAULT_INPUT='SH-201' python3 program.py
-
-or::
-
-    $ export MIDO_DEFAULT_OUTPUT='Integra-7'
-    $ python3 program1.py
-    $ python3 program2.py
-
-
-Available Backends
-------------------
-
-.. toctree::
-
-   rtmidi
-   portmidi
-   pygame
-   rtmidi_python
-   amidi
-
-.. include:: custom.rst
+print("✅ Archivo MIDI creado: bailoteo_beat.mid")
