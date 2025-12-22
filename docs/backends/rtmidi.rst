@@ -10,7 +10,7 @@ Name: ``mido.backends.rtmidi``
 Resources:
 
 * `python-rtmidi Python Library <https://pypi.org/project/python-rtmidi/>`_
-* `RtMidi C Library <https://www.music.mcgill.ca/~gary/rtmidi/>`_
+* `RtMidi C Library <https://caml.music.mcgill.ca/~gary/rtmidi/>`_
 
 The RtMidi backend is a thin wrapper around `python-rtmidi
 <https://pypi.org/project/python-rtmidi/>`_.

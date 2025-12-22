@@ -97,7 +97,7 @@ You can also create a message from ``bytes`` using class methods:
 .. code-block:: python
 
    msg1 = mido.Message.from_bytes([0x90, 0x40, 0x60])
-   msg2 = mido.Message.from_hex('90, 40 60')
+   msg2 = mido.Message.from_hex('90 40 60')
 
 The ``bytes`` must contain exactly one complete message. If not
 ``ValueError`` is raised.
