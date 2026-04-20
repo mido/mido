@@ -69,7 +69,7 @@ ports-pygame = ['PyGame~=2.5',]
 ports-rtmidi = ['python-rtmidi~=1.5.4',]
 ports-rtmidi-python = ['rtmidi-python~=0.2.2',]
 release = ['twine~=4.0.2',]
-test-code = ['pytest~=7.4.0',]
+test-code = ['pytest>=7.4,<8.1',]
 
 # Convenience groups for human interaction
 dev = [
