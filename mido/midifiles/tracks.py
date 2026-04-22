@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from .meta import MetaMessage
+from ..messages import Message
 from typing import (
     Iterator,
     Iterable,
@@ -12,9 +13,6 @@ from typing import (
     Union,
     TYPE_CHECKING,
 )
-
-if TYPE_CHECKING:
-    from ..messages import Message
 
 class MidiTrack(list):
     @property
