@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .messages import Message
+from typing import Optional
+
+from .messages import BaseMessage, Message
 from .midifiles import MetaMessage, UnknownMetaMessage
 
 
@@ -27,7 +29,7 @@ class FrozenUnknownMetaMessage(Frozen, UnknownMetaMessage):
         return 'Frozen' + UnknownMetaMessage.__repr__(self)
 
 
-def is_frozen(msg):
+def is_frozen(msg: Optional[BaseMessage]):
     """Return True if message is frozen, otherwise False."""
     return isinstance(msg, Frozen)
 
@@ -35,7 +37,7 @@ def is_frozen(msg):
 # TODO: these two functions are almost the same except inverted. There
 # should be a way to refactor them to lessen code duplication.
 
-def freeze_message(msg):
+def freeze_message(msg: Optional[BaseMessage]):
     """Freeze message.
 
     Returns a frozen version of the message. Frozen messages are
@@ -65,7 +67,7 @@ def freeze_message(msg):
     return frozen
 
 
-def thaw_message(msg):
+def thaw_message(msg: Optional[BaseMessage]):
     """Thaw message.
 
     Returns a mutable version of a frozen message.
@@ -73,6 +75,8 @@ def thaw_message(msg):
     Will return None if called with None.
     """
     if not isinstance(msg, Frozen):
+        if msg is None:
+            return None
         # Already thawed, just return a copy.
         return msg.copy()
     elif isinstance(msg, FrozenMessage):
@@ -81,8 +85,6 @@ def thaw_message(msg):
         class_ = UnknownMetaMessage
     elif isinstance(msg, FrozenMetaMessage):
         class_ = MetaMessage
-    elif msg is None:
-        return None
     else:
         raise ValueError('first argument must be a message or None')
 

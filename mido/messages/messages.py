@@ -17,7 +17,7 @@ class BaseMessage:
     time:float
     type:str
 
-    def copy(self):
+    def copy(self) -> 'BaseMessage':
         raise NotImplementedError
 
     def bytes(self):
