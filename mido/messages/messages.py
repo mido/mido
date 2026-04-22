@@ -13,7 +13,9 @@ from .strings import msg2str, str2msg
 
 class BaseMessage:
     """Abstract base class for messages."""
-    is_meta = False
+    is_meta:bool = False
+    time:float
+    type:str
 
     def copy(self):
         raise NotImplementedError
@@ -111,7 +113,7 @@ class SysexData(tuple):
 
 
 class Message(BaseMessage):
-    def __init__(self, type, skip_checks=False, **args):
+    def __init__(self, type, skip_checks=False, **args) -> None:
         msgdict = make_msgdict(type, args)
         if type == 'sysex':
             msgdict['data'] = SysexData(msgdict['data'])
