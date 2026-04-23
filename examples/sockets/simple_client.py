@@ -32,16 +32,18 @@ base = random.randrange(12)
 
 print(f'Connecting to {address}')
 
-with mido.sockets.connect(host, port) as server_port:
+with mido.sockets.connect(host, port) as server:
     try:
         message = mido.Message('program_change')
+        server.send(message)
+
         for note in notes:
             on.note = off.note = base + note
 
-            server_port.send(on)
+            server.send(on)
             time.sleep(0.05)
 
-            server_port.send(off)
+            server.send(off)
             time.sleep(0.1)
     finally:
-        server_port.reset()
+        server.reset()

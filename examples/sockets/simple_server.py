@@ -18,11 +18,16 @@ if sys.argv[1:]:
 else:
     address = 'localhost:9080'
 
-try:
-    (hostname, portno) = sockets.parse_address(address)
-    print(f'Serving on {address}')
-    with sockets.PortServer(hostname, portno) as server:
-        for message in server:
-            print(message)
-except KeyboardInterrupt:
-    pass
+print(f'Serving on {address}')
+
+host, port = sockets.parse_address(address)
+
+with sockets.PortServer(host, port) as server:
+    while True:
+        try:
+            client = server.accept(block=False)
+            if client:
+                for message in client:
+                    print(message)
+        except KeyboardInterrupt:
+            break

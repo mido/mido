@@ -15,7 +15,7 @@ class BaseMessage:
     """Abstract base class for messages."""
     is_meta = False
 
-    def copy(self):
+    def copy(self) -> 'BaseMessage':
         raise NotImplementedError
 
     def bytes(self):
