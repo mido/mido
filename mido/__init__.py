@@ -93,10 +93,17 @@ Getting started:
     ['MPK mini MIDI 1', 'SH-201']
 """
 
-from typing import TYPE_CHECKING
-
 from . import ports, sockets
-from .backends.backend import Backend
+from .backends.backend import (
+    Backend,
+    get_input_names,
+    get_ioport_names,
+    get_output_names,
+    open_input,
+    open_ioport,
+    open_output,
+    set_backend,
+)
 from .messages import (
     MAX_PITCHWHEEL,
     MAX_SONGPOS,
@@ -122,9 +129,6 @@ from .midifiles import (
 from .parser import Parser, parse, parse_all
 from .syx import read_syx_file, write_syx_file
 from .version import version_info
-
-if TYPE_CHECKING:
-    from .backends.backend import get_input_names, get_ioport_names, get_output_names
 
 __all__ = [
     "KeySignatureError",
@@ -153,32 +157,21 @@ __all__ = [
     "tick2second",
     "version_info",
     "write_syx_file",
+    "get_input_names",
+    "get_ioport_names",
+    "get_output_names",
+    "open_input",
+    "open_output",
+    "open_ioport",
 ]
 
-
-def set_backend(name=None, load=False):
-    """Set current backend.
-
-    name can be a module name like 'mido.backends.rtmidi' or
-    a Backend object.
-
-    If no name is passed, the default backend will be used.
-
-    This will replace all the open_*() and get_*_name() functions
-    in top level mido module. The module will be loaded the first
-    time one of those functions is called."""
-
-    glob = globals()
-
-    if isinstance(name, Backend):
-        backend = name
-    else:
-        backend = Backend(name, load=load, use_environ=True)
-    glob['backend'] = backend
-
-    for name in dir(backend):
-        if name.split('_')[0] in ['open', 'get']:
-            glob[name] = getattr(backend, name)
-
+def __getattr__(name: str):
+    """Expose the backend variable and Backend class to keep retro-compatibility"""
+    if name == "backend":
+        from .backends.backend import get_current_backend
+        return get_current_backend()
+    if name == "Backend":
+        return Backend
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 set_backend()
