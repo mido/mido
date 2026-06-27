@@ -18,6 +18,18 @@ import math
 import struct
 from contextlib import contextmanager
 from numbers import Integral
+from typing import (
+    Type,
+    List,
+    Tuple,
+    Set,
+    Dict,
+    Union,
+    Optional,
+    ClassVar,
+    Any,
+)
+from abc import ABC, abstractmethod
 
 from ..messages import BaseMessage, check_time
 
@@ -77,13 +89,13 @@ _smpte_framerate_decode = {0: 24,
 _smpte_framerate_encode = _reverse_table(_smpte_framerate_decode)
 
 
-def signed(to_type, n):
-    formats = {'byte': 'Bb',
-               'short': 'Hh',
-               'long': 'Ll',
-               'ubyte': 'bB',
-               'ushort': 'hH',
-               'ulong': 'lL'
+def signed(to_type: str, n: int) -> int:
+    formats = {'byte': ('B', 'b'),
+               'short': ('H', 'h'),
+               'long': ('L', 'l'),
+               'ubyte': ('b', 'B'),
+               'ushort': ('h', 'H'),
+               'ulong': ('l', 'L'),
                }
 
     try:
@@ -98,11 +110,11 @@ def signed(to_type, n):
         raise ValueError(*err.args) from err
 
 
-def unsigned(to_type, n):
+def unsigned(to_type: str, n: int) -> int:
     return signed(f'u{to_type}', n)
 
 
-def encode_variable_int(value):
+def encode_variable_int(value: int) -> List[int]:
     """Encode variable length integer.
 
     Returns the integer as a list of bytes,
@@ -130,7 +142,7 @@ def encode_variable_int(value):
         return [0]
 
 
-def decode_variable_int(value):
+def decode_variable_int(value: List[int]) -> int:
     """Decode a list to a variable length integer.
 
     Does the opposite of encode_variable_int(value)
@@ -144,11 +156,11 @@ def decode_variable_int(value):
     return val
 
 
-def encode_string(string):
+def encode_string(string: str) -> List[int]:
     return list(bytearray(string.encode(_charset)))
 
 
-def decode_string(data):
+def decode_string(data: List[int]) -> str:
     return bytearray(data).decode(_charset)
 
 
@@ -161,21 +173,43 @@ def meta_charset(tmp_charset):
     _charset = old
 
 
-def check_int(value, low, high):
+def check_int(value: int, low: int, high: int) -> None:
     if not isinstance(value, Integral):
         raise TypeError('attribute must be an integer')
     elif not low <= value <= high:
         raise ValueError(f'attribute must be in range {low}..{high}')
 
 
-def check_str(value):
+def check_str(value: str) -> None:
     if not isinstance(value, str):
         raise TypeError('attribute must be a string')
 
 
-class MetaSpec:
+class MetaSpec(ABC):
+    type_byte: ClassVar[int]
+    attributes: ClassVar[List[str]]
+    defaults: ClassVar[List[Any]]
+    type: str
+    settable_attributes: Set[str]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not hasattr(self, 'type'):
+            self.type = type(self).__name__.replace('MetaSpec_', '')
+        if not hasattr(self, 'settable_attributes'):
+            self.settable_attributes = set(self.attributes) | {'time'}
+        
+    
     # The default is to do no checks.
     def check(self, name, value):
+        pass
+
+    @abstractmethod
+    def decode(self, message: "MetaMessage", data: List[int]) -> None:
+        pass
+
+    @abstractmethod
+    def encode(self, message: "MetaMessage") -> List[int]:
         pass
 
 
@@ -432,21 +466,17 @@ class MetaSpec_sequencer_specific(MetaSpec):
         return list(message.data)
 
 
-def add_meta_spec(klass):
+def add_meta_spec(klass: Type[MetaSpec]) -> None:
     spec = klass()
-    if not hasattr(spec, 'type'):
-        name = klass.__name__.replace('MetaSpec_', '')
-        spec.type = name
 
     # This is used by copy().
-    spec.settable_attributes = set(spec.attributes) | {'time'}
     _META_SPECS[spec.type_byte] = spec
     _META_SPECS[spec.type] = spec
     _META_SPEC_BY_TYPE[spec.type] = spec
 
 
-_META_SPECS = {}
-_META_SPEC_BY_TYPE = {}
+_META_SPECS: Dict[Union[int, str], MetaSpec] = {}
+_META_SPEC_BY_TYPE: Dict[str, MetaSpec] = {}
 
 
 def _add_builtin_meta_specs():
@@ -458,7 +488,7 @@ def _add_builtin_meta_specs():
 _add_builtin_meta_specs()
 
 
-def build_meta_message(meta_type, data, delta=0):
+def build_meta_message(meta_type:Union[int, str], data:List[int], delta=0):
     # TODO: handle unknown type.
     try:
         spec = _META_SPECS[meta_type]
@@ -476,7 +506,7 @@ def build_meta_message(meta_type, data, delta=0):
 class MetaMessage(BaseMessage):
     is_meta = True
 
-    def __init__(self, type, skip_checks=False, **kwargs):
+    def __init__(self, type, skip_checks:bool=False, **kwargs) -> None:
         # TODO: handle unknown type?
 
         spec = _META_SPEC_BY_TYPE[type]

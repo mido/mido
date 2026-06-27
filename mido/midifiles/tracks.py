@@ -3,7 +3,16 @@
 # SPDX-License-Identifier: MIT
 
 from .meta import MetaMessage
-
+from ..messages import Message
+from typing import (
+    Iterator,
+    Iterable,
+    List,
+    Dict,
+    Tuple,
+    Union,
+    TYPE_CHECKING,
+)
 
 class MidiTrack(list):
     @property
@@ -81,13 +90,16 @@ def _to_reltime(messages, skip_checks=False):
         now = msg.time
 
 
-def fix_end_of_track(messages, skip_checks=False):
+def fix_end_of_track(
+    messages: Iterable[Union[MetaMessage, Message]],
+    skip_checks: bool=False
+) -> Iterator[Union[MetaMessage, Message]]:
     """Remove all end_of_track messages and add one at the end.
 
     This is used by merge_tracks() and MidiFile.save()."""
     # Accumulated delta time from removed end of track messages.
     # This is added to the next message.
-    accum = 0
+    accum: float = 0
 
     for msg in messages:
         if msg.type == 'end_of_track':

@@ -28,6 +28,20 @@ from ..messages import SPEC_BY_STATUS, Message
 from .meta import MetaMessage, build_meta_message, encode_variable_int, meta_charset
 from .tracks import MidiTrack, fix_end_of_track, merge_tracks
 from .units import tick2second
+from typing import (
+    Optional,
+    Union,
+    IO,
+    List,
+    Tuple,
+    Dict,
+    BinaryIO,
+    Protocol,
+    TYPE_CHECKING,
+    Callable,
+    Iterator,
+)
+import os
 
 # The default tempo is 120 BPM.
 # (500000 microseconds per beat (quarter note).)
@@ -38,19 +52,23 @@ DEFAULT_TICKS_PER_BEAT = 480
 MAX_MESSAGE_LENGTH = 1000000
 
 
-def print_byte(byte, pos=0):
+def print_byte(byte: int, pos: int=0) -> None:
     char = chr(byte)
     if char.isspace() or char not in string.printable:
         char = '.'
 
     print(f'  {pos:06x}: {byte:02x}  {char}')  # noqa: T201
 
+class SupportsBinaryReadAndTell(Protocol):
+    def read(self, size: int) -> bytes: ...
+
+    def tell(self) -> int: ...
 
 class DebugFileWrapper:
-    def __init__(self, file):
+    def __init__(self, file: SupportsBinaryReadAndTell):
         self.file = file
 
-    def read(self, size):
+    def read(self, size: int) -> bytes:
         data = self.file.read(size)
 
         for byte in data:
@@ -58,11 +76,11 @@ class DebugFileWrapper:
 
         return data
 
-    def tell(self):
+    def tell(self) -> int:
         return self.file.tell()
 
 
-def read_byte(self):
+def read_byte(self: SupportsBinaryReadAndTell) -> int:
     byte = self.read(1)
     if byte == b'':
         raise EOFError
@@ -70,14 +88,14 @@ def read_byte(self):
         return ord(byte)
 
 
-def read_bytes(infile, size):
+def read_bytes(infile: SupportsBinaryReadAndTell, size: int) -> List[int]:
     if size > MAX_MESSAGE_LENGTH:
         raise OSError('Message length {} exceeds maximum length {}'.format(
             size, MAX_MESSAGE_LENGTH))
     return [read_byte(infile) for _ in range(size)]
 
 
-def _dbg(text=''):
+def _dbg(text: str='') -> None:
     print(text)  # noqa: T201
 
 
@@ -89,7 +107,7 @@ def _dbg(text=''):
 # 2. the chunk module assumes that chunks are padded to the nearest
 # multiple of 2. This is not true of MIDI files.
 
-def read_chunk_header(infile):
+def read_chunk_header(infile: SupportsBinaryReadAndTell) -> Tuple[bytes, int]:
     header = infile.read(8)
     if len(header) < 8:
         raise EOFError
@@ -99,7 +117,7 @@ def read_chunk_header(infile):
     return struct.unpack('>4sL', header)
 
 
-def read_file_header(infile):
+def read_file_header(infile: SupportsBinaryReadAndTell) -> Tuple[int, int, int]:
     name, size = read_chunk_header(infile)
 
     if name != b'MThd':
@@ -113,7 +131,13 @@ def read_file_header(infile):
         return struct.unpack('>hhh', data[:6])
 
 
-def read_message(infile, status_byte, peek_data, delta, clip=False):
+def read_message(
+    infile: SupportsBinaryReadAndTell,
+    status_byte: int,
+    peek_data:List[int],
+    delta,
+    clip=False
+) -> Message:
     try:
         spec = SPEC_BY_STATUS[status_byte]
     except LookupError as le:
@@ -133,7 +157,7 @@ def read_message(infile, status_byte, peek_data, delta, clip=False):
     return Message.from_bytes([status_byte] + data_bytes, time=delta)
 
 
-def read_sysex(infile, delta, clip=False):
+def read_sysex(infile: SupportsBinaryReadAndTell, delta, clip=False):
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
 
@@ -150,7 +174,7 @@ def read_sysex(infile, delta, clip=False):
     return Message('sysex', data=data, time=delta)
 
 
-def read_variable_int(infile):
+def read_variable_int(infile: SupportsBinaryReadAndTell) -> int:
     delta = 0
 
     while True:
@@ -160,14 +184,18 @@ def read_variable_int(infile):
             return delta
 
 
-def read_meta_message(infile, delta):
+def read_meta_message(infile: SupportsBinaryReadAndTell, delta: int) -> MetaMessage:
     meta_type = read_byte(infile)
     length = read_variable_int(infile)
     data = read_bytes(infile, length)
     return build_meta_message(meta_type, data, delta)
 
 
-def read_track(infile, debug=False, clip=False):
+def read_track(
+    infile: SupportsBinaryReadAndTell,
+    debug: bool=False,
+    clip: bool=False
+) -> MidiTrack:
     track = MidiTrack()
 
     name, size = read_chunk_header(infile)
@@ -200,7 +228,7 @@ def read_track(infile, debug=False, clip=False):
         if status_byte < 0x80:
             if last_status is None:
                 raise OSError('running status without last_status')
-            peek_data = [status_byte]
+            peek_data: List[int] = [status_byte]
             status_byte = last_status
         else:
             if status_byte != 0xff:
@@ -209,7 +237,7 @@ def read_track(infile, debug=False, clip=False):
             peek_data = []
 
         if status_byte == 0xff:
-            msg = read_meta_message(infile, delta)
+            msg: Union[Message, MetaMessage] = read_meta_message(infile, delta)
         elif status_byte in [0xf0, 0xf7]:
             # TODO: I'm not quite clear on the difference between
             # f0 and f7 events.
@@ -226,7 +254,7 @@ def read_track(infile, debug=False, clip=False):
     return track
 
 
-def write_chunk(outfile, name, data):
+def write_chunk(outfile: BinaryIO, name: bytes, data: bytes) -> None:
     """Write an IFF chunk to the file.
 
     `name` must be a bytestring."""
@@ -235,7 +263,7 @@ def write_chunk(outfile, name, data):
     outfile.write(data)
 
 
-def write_track(outfile, track):
+def write_track(outfile: BinaryIO, track: MidiTrack) -> None:
     data = bytearray()
 
     running_status_byte = None
@@ -277,7 +305,7 @@ def write_track(outfile, track):
     write_chunk(outfile, b'MTrk', data)
 
 
-def get_seconds_per_tick(tempo, ticks_per_beat):
+def get_seconds_per_tick(tempo: int, ticks_per_beat: int) -> float:
     # Tempo is given in microseconds per beat (default 500000).
     # At this tempo there are (500000 / 1000000) == 0.5 seconds
     # per beat. At the default resolution of 480 ticks per beat
@@ -320,7 +348,7 @@ class MidiFile:
                 self._load(file)
 
     @property
-    def merged_track(self):
+    def merged_track(self) -> MidiTrack:
         # The tracks of type 2 files are not in sync, so they can
         # not be played back like this.
         if self.type == 2:
@@ -374,7 +402,7 @@ class MidiFile:
                 # TODO: used to ignore EOFError. I hope things still work.
 
     @property
-    def length(self):
+    def length(self) -> float:
         """Playback time in seconds.
 
         This will be computed by going through every message in every
@@ -386,7 +414,7 @@ class MidiFile:
 
         return sum(msg.time for msg in self)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Union[Message, MetaMessage]]:
         tempo = DEFAULT_TEMPO
         for msg in self.merged_track:
             # Convert message time from absolute time
@@ -401,7 +429,10 @@ class MidiFile:
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
 
-    def play(self, meta_messages=False, now=time.time):
+    def play(self, 
+        meta_messages:bool=False, 
+        now:Callable[[], float]=time.time
+    ) -> Iterator[Union[Message, MetaMessage]]:
         """Play back all tracks.
 
         The generator will sleep between each message by
@@ -437,7 +468,10 @@ class MidiFile:
             else:
                 yield msg
 
-    def save(self, filename=None, file=None):
+    def save(self, 
+        filename:Union[str, bytes, os.PathLike, None]=None, 
+        file:Optional[BinaryIO]=None
+    ) -> None:
         """Save to a file.
 
         If file is passed the data will be saved to that file. This is
@@ -459,7 +493,7 @@ class MidiFile:
         else:
             raise ValueError('requires filename or file')
 
-    def _save(self, outfile):
+    def _save(self, outfile:BinaryIO) -> None:
         with meta_charset(self.charset):
             header = struct.pack('>hhh', self.type,
                                  len(self.tracks),
@@ -485,7 +519,7 @@ class MidiFile:
                 if isinstance(msg, MetaMessage) or not meta_only:
                     print(f'{msg!r}')  # noqa: T201
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.tracks:
             tracks_str = ',\n'.join(repr(track) for track in self.tracks)
             tracks_str = '  ' + tracks_str.replace('\n', '\n  ')
