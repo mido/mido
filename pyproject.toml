@@ -70,12 +70,14 @@ ports-rtmidi = ['python-rtmidi~=1.5.4',]
 ports-rtmidi-python = ['rtmidi-python~=0.2.2',]
 release = ['twine~=4.0.2',]
 test-code = ['pytest~=7.4.0',]
+test-coverage = ['coverage~=7.13.5']
 
 # Convenience groups for human interaction
 dev = [
     'mido[check-manifest]',
     'mido[lint-code]',
     'mido[test-code]',
+    'mido[test-coverage]',
     'mido[lint-reuse]',
     'mido[build-docs]',
     'mido[release]',
@@ -129,6 +131,13 @@ norecursedirs = [
     "dist",
     "examples",
 ]
+
+[tool.coverage.run]
+source = ["mido"]
+branch = false
+
+[tool.coverage.report]
+show_missing = true
 
 [tool.ruff]
 ignore = [

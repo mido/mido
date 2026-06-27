@@ -20,3 +20,6 @@ __pycache__
 mido/_version.py
 # Documentation built by Sphinx
 docs/_build
+# Coverage output
+coverage.xml
+htmlcov/

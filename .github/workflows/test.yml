@@ -134,3 +134,37 @@ jobs:
         run: python3 -m pip install --quiet .[test-code]
       - name: Test with pytest
         run: pytest
+
+  coverage:
+    needs:
+      - docs
+      - manifest
+      - reuse
+      - style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip setuptools wheel
+      - name: Install mido in dev mode
+        run: python3 -m pip install --quiet .[test-coverage]
+      - name: Run coverage with pytest suite
+        run: coverage run -m pytest
+      - name: Run coverage report (terminal)
+        run: coverage report -m
+      - name: Run coverage XML report
+        run: coverage xml
+      - name: Run coverage HTML report
+        run: coverage html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            htmlcov/
