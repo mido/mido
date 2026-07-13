@@ -297,7 +297,6 @@ class MidiFile:
                  tracks=None
                  ):
 
-        self.filename = filename
         self.type = type
         self.ticks_per_beat = ticks_per_beat
         self.charset = charset
@@ -315,7 +314,7 @@ class MidiFile:
             self.tracks = tracks
         elif file is not None:
             self._load(file)
-        elif self.filename is not None:
+        elif filename is not None:
             with open(filename, 'rb') as file:
                 self._load(file)
 
