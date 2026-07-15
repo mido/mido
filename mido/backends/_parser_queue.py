@@ -39,8 +39,11 @@ class ParserQueue:
                 self.put(msg)
 
     # TODO: add timeout?
-    def get(self):
-        return self._queue.get()
+    def get(self, timeout=None):
+        try:
+            return self._queue.get(timeout=timeout)
+        except queue.Empty:
+            return None
 
     def poll(self):
         try:
