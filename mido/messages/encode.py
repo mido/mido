@@ -62,11 +62,11 @@ def encode_message(msg):
         return encode(msg)
     else:
         spec = SPEC_BY_TYPE[msg['type']]
-        status_byte = spec['status_byte']
+        status_byte = spec.status_byte
 
         if status_byte in CHANNEL_MESSAGES:
             status_byte |= msg['channel']
 
-        data = [msg[name] for name in spec['value_names'] if name != 'channel']
+        data = [msg[name] for name in spec.value_names if name != 'channel']
 
         return [status_byte] + data

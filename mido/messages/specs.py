@@ -9,6 +9,9 @@ TODO:
     * add lookup functions for messages definitions by type and status
       byte.
 """
+
+from typing import Dict, List, Tuple, Union
+
 # TODO: these include undefined messages.
 CHANNEL_MESSAGES = set(range(0x80, 0xf0))
 COMMON_MESSAGES = set(range(0xf0, 0xf8))
@@ -25,53 +28,54 @@ MAX_PITCHWHEEL = 8191
 MIN_SONGPOS = 0
 MAX_SONGPOS = 16383
 
-
-def _defmsg(status_byte, type_, value_names, length):
-    return {
-        'status_byte': status_byte,
-        'type': type_,
-        'value_names': value_names,
-        'attribute_names': set(value_names) | {'type', 'time'},
-        'length': length,
-    }
-
+class Spec:
+    def __init__(
+        self, status_byte: int, type_: str, value_names: Tuple[str, ...], length: int
+    ):
+        self.status_byte = status_byte
+        self.type = type_
+        self.value_names = value_names
+        self.attribute_names = set(value_names) | {'type', 'time'}
+        self.length = length
 
 SPECS = [
-    _defmsg(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
-    _defmsg(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
-    _defmsg(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
-    _defmsg(0xb0, 'control_change', ('channel', 'control', 'value'), 3),
-    _defmsg(0xc0, 'program_change', ('channel', 'program',), 2),
-    _defmsg(0xd0, 'aftertouch', ('channel', 'value',), 2),
-    _defmsg(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
+    Spec(0x80, 'note_off', ('channel', 'note', 'velocity'), 3),
+    Spec(0x90, 'note_on', ('channel', 'note', 'velocity'), 3),
+    Spec(0xa0, 'polytouch', ('channel', 'note', 'value'), 3),
+    Spec(0xb0, 'control_change', ('channel', 'control', 'value'), 3),
+    Spec(0xc0, 'program_change', ('channel', 'program',), 2),
+    Spec(0xd0, 'aftertouch', ('channel', 'value',), 2),
+    Spec(0xe0, 'pitchwheel', ('channel', 'pitch',), 3),
 
     # System common messages.
     # 0xf4 and 0xf5 are undefined.
-    _defmsg(0xf0, 'sysex', ('data',), float('inf')),
-    _defmsg(0xf1, 'quarter_frame', ('frame_type', 'frame_value'), 2),
-    _defmsg(0xf2, 'songpos', ('pos',), 3),
-    _defmsg(0xf3, 'song_select', ('song',), 2),
-    _defmsg(0xf6, 'tune_request', (), 1),
+    Spec(0xf0, 'sysex', ('data',), float('inf')),
+    Spec(0xf1, 'quarter_frame', ('frame_type', 'frame_value'), 2),
+    Spec(0xf2, 'songpos', ('pos',), 3),
+    Spec(0xf3, 'song_select', ('song',), 2),
+    Spec(0xf6, 'tune_request', (), 1),
 
     # System real time messages.
     # 0xf9 and 0xfd are undefined.
-    _defmsg(0xf8, 'clock', (), 1),
-    _defmsg(0xfa, 'start', (), 1),
-    _defmsg(0xfb, 'continue', (), 1),
-    _defmsg(0xfc, 'stop', (), 1),
-    _defmsg(0xfe, 'active_sensing', (), 1),
-    _defmsg(0xff, 'reset', (), 1),
+    Spec(0xf8, 'clock', (), 1),
+    Spec(0xfa, 'start', (), 1),
+    Spec(0xfb, 'continue', (), 1),
+    Spec(0xfc, 'stop', (), 1),
+    Spec(0xfe, 'active_sensing', (), 1),
+    Spec(0xff, 'reset', (), 1),
 ]
 
 
-def _make_spec_lookups(specs):
+def _make_spec_lookups(
+    specs: List[Spec],
+) -> Tuple[Dict[Union[int, str], Spec], Dict[int, Spec], Dict[str, Spec]]:
     lookup = {}
     by_status = {}
     by_type = {}
 
     for spec in specs:
-        type_ = spec['type']
-        status_byte = spec['status_byte']
+        type_ = spec.type
+        status_byte = spec.status_byte
 
         by_type[type_] = spec
 
@@ -128,7 +132,7 @@ def make_msgdict(type_, overrides):
 
     msg = {'type': type_, 'time': DEFAULT_VALUES['time']}
 
-    for name in spec['value_names']:
+    for name in spec.value_names:
         msg[name] = DEFAULT_VALUES[name]
 
     msg.update(overrides)

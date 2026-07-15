@@ -27,13 +27,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Python 3.7 is no longer available in ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version-file: 'pyproject.toml'
           cache: 'pip'
@@ -45,7 +45,7 @@ jobs:
       - name: Build mido
         run: python3 -m build
       # Store build artifacts
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: mido-build
           path: dist/
@@ -55,7 +55,7 @@ jobs:
     needs: build
     steps:
       # Retrieve build artifacts
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: mido-build
           path: dist/
@@ -81,7 +81,7 @@ jobs:
       - build
       - publish-test
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: mido-build
           path: dist/

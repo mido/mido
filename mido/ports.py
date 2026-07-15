@@ -379,7 +379,7 @@ class MultiPort(BaseIOPort):
 def multi_receive(ports, yield_ports=False, block=True):
     """Receive messages from multiple ports.
 
-    Generates messages from ever input port. The ports are polled in
+    Generates messages from every input port. The ports are polled in
     random order for fairness, and all messages from each port are
     yielded before moving on to the next port.
 

@@ -11,7 +11,7 @@ def msg2str(msg, include_time=True):
 
     words = [type_]
 
-    for name in spec['value_names']:
+    for name in spec.value_names:
         value = msg[name]
 
         if name == 'data':
@@ -40,11 +40,14 @@ def _parse_time(value):
 
 
 def _parse_data(value):
-    if not value.startswith('(') and value.endswith(')'):
+    if not (value.startswith('(') and value.endswith(')')):
         raise ValueError('missing parentheses in data message')
 
+    inner = value[1:-1]
+    if not inner:
+        return []
     try:
-        return [int(byte) for byte in value[1:-1].split(',')]
+        return [int(byte) for byte in inner.split(',')]
     except ValueError as ve:
         raise ValueError('unable to parse data bytes') from ve
 

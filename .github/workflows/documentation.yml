@@ -18,11 +18,14 @@ permissions:
 
 jobs:
   build-github-pages:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Python 3.7 is no longer available in ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for automatic version resolving
+          fetch-tags: true
+      - uses: actions/setup-python@v5
         with:
           python-version-file: 'pyproject.toml'
           cache: 'pip'
@@ -33,7 +36,7 @@ jobs:
       - name: Sphinx build
         run: sphinx-build -j auto docs docs/_build
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           publish_branch: gh-pages
