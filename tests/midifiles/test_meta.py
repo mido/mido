@@ -9,6 +9,7 @@ from mido.midifiles.meta import (
     MetaMessage,
     MetaSpec_key_signature,
     UnknownMetaMessage,
+    build_meta_message,
 )
 
 
@@ -83,6 +84,17 @@ def test_meta_from_bytes_data_too_long():
     ]
     with pytest.raises(ValueError):
         MetaMessage.from_bytes(test_bytes)
+
+
+def test_build_meta_message_data_too_short():
+    # A known meta type whose data is shorter than its spec expects (here a
+    # time_signature, 0x58, which needs four bytes) used to raise a bare
+    # IndexError while reading a file. The raw bytes should be preserved as an
+    # unknown meta message instead.
+    msg = build_meta_message(0x58, [4])
+    assert isinstance(msg, UnknownMetaMessage)
+    assert msg.type_byte == 0x58
+    assert msg.data == (4,)
 
 
 def test_meta_from_bytes_text():

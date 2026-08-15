@@ -467,8 +467,15 @@ def build_meta_message(meta_type, data, delta=0):
     else:
         msg = MetaMessage(spec.type, time=delta)
 
-        # This adds attributes to msg:
-        spec.decode(msg, data)
+        try:
+            # This adds attributes to msg:
+            spec.decode(msg, data)
+        except IndexError:
+            # A meta message whose data is shorter than its spec expects (e.g.
+            # a truncated time_signature) would otherwise raise a bare
+            # IndexError while reading the file. Keep the raw bytes as an
+            # unknown meta message instead of crashing.
+            return UnknownMetaMessage(meta_type, data, time=delta)
 
         return msg
 
