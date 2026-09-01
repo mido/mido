@@ -185,3 +185,25 @@ def test_midifile_repr():
     for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
         for m1, m2 in zip(track, track_eval):
             assert m1 == m2
+
+
+def test_realtime_message_in_track():
+    # 0xFE and 0xFF are System Real Time, and inside an MTrk chunk 0xFF is
+    # the meta event prefix, so writing one produces an unreadable file.
+    for type_ in ['clock', 'start', 'continue', 'stop', 'active_sensing',
+                  'reset']:
+        mid = MidiFile()
+        mid.tracks.append(MidiTrack([Message(type_)]))
+        with raises(ValueError):
+            mid.save(file=io.BytesIO())
+
+
+def test_system_common_message_in_track():
+    # tune_request is System Common, not System Real Time, and is written
+    # like the other System Common messages the writer already accepts.
+    mid = MidiFile()
+    mid.tracks.append(MidiTrack([Message('tune_request')]))
+    outfile = io.BytesIO()
+    mid.save(file=outfile)
+    outfile.seek(0)
+    assert MidiFile(file=outfile).tracks[0][0] == Message('tune_request')
