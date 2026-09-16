@@ -146,6 +146,26 @@ the payload of the message::
     >>> msg.hex()
     'F0 01 02 03 F7'
 
+The ``data`` attribute contains only the payload, not the ``F0`` (start of
+SysEx) and ``F7`` (end of SysEx) status bytes. Mido adds these automatically
+when encoding or sending the message. Do not include them in ``data``;
+they are outside the allowed range of ``0`` to ``127`` and will raise
+``ValueError``.
+
+If you already have a complete message including ``F0`` and ``F7``, use
+``Message.from_bytes()`` or ``Message.from_hex()`` instead::
+
+    >>> Message.from_bytes([0xF0, 0x01, 0x02, 0x03, 0xF7])
+    Message('sysex', data=(1, 2, 3), time=0)
+    >>> Message.from_hex('F0 01 02 03 F7')
+    Message('sysex', data=(1, 2, 3), time=0)
+
+For a file containing SysEx messages, see :doc:`../files/syx`.
+
+Values larger than ``127`` in the payload must be encoded according to the
+receiving device's MIDI implementation documentation. Mido does not apply a
+device-specific encoding automatically.
+
 You can also extend the existing data::
 
    >>> msg = Message('sysex', data=[1, 2, 3])
