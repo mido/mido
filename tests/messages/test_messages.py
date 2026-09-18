@@ -119,3 +119,13 @@ def test_repr():
     msg = Message('note_on', channel=1, note=2, time=3)
     msg_eval = eval(repr(msg))  # noqa: S307
     assert msg == msg_eval
+
+
+def test_is_realtime():
+    # MIDI 1.0 Detailed Specification, Table I: System Real Time is 0xF8..0xFF.
+    # tune_request (0xF6) is System Common.
+    realtime = {'clock', 'start', 'continue', 'stop', 'active_sensing', 'reset'}
+    for type_ in ['clock', 'start', 'continue', 'stop', 'active_sensing',
+                  'reset', 'tune_request', 'quarter_frame', 'songpos',
+                  'song_select', 'sysex', 'note_on']:
+        assert Message(type_).is_realtime == (type_ in realtime), type_
