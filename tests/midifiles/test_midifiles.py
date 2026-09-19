@@ -3,10 +3,13 @@
 # SPDX-License-Identifier: MIT
 
 import io
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
 
-from pytest import raises
+from pytest import mark, raises
 
 from mido.messages import Message
+from mido.midifiles import midifiles
 from mido.midifiles.meta import KeySignatureError, MetaMessage
 from mido.midifiles.midifiles import MidiFile, MidiTrack
 
@@ -28,6 +31,42 @@ def parse_hexdump(hexdump):
 
 def read_file(hexdump, clip=False):
     return MidiFile(file=io.BytesIO(parse_hexdump(hexdump)), clip=clip)
+
+
+@mark.parametrize('operation', ['read_track', 'write_track'])
+def test_concurrent_file_charsets(monkeypatch, operation):
+    charsets = ['latin1', 'utf-8']
+    files = [MidiFile(charset=charset, tracks=[MidiTrack([
+        MetaMessage('text', text='café'), MetaMessage('end_of_track')
+    ])]) for charset in charsets]
+
+    def save(mid):
+        output = io.BytesIO()
+        mid.save(file=output)
+        return output.getvalue()
+
+    encoded = [save(mid) for mid in files]
+    barrier = Barrier(2, timeout=5)
+    original = getattr(midifiles, operation)
+
+    def synchronized(*args, **kwargs):
+        # Force both file operations to hold their charset contexts at once.
+        barrier.wait()
+        try:
+            return original(*args, **kwargs)
+        finally:
+            barrier.wait()
+
+    monkeypatch.setattr(midifiles, operation, synchronized)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        if operation == 'write_track':
+            assert list(pool.map(save, files)) == encoded
+        else:
+            futures = [pool.submit(MidiFile, file=io.BytesIO(data),
+                                   charset=charset)
+                       for data, charset in zip(encoded, charsets)]
+            for future, mid in zip(futures, files):
+                assert future.result().tracks == mid.tracks
 
 
 def test_no_tracks():
