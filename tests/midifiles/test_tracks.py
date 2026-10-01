@@ -5,6 +5,8 @@
 import itertools
 import time
 
+import pytest
+
 import mido
 from mido.messages import Message
 from mido.midifiles.meta import MetaMessage, UnknownMetaMessage
@@ -18,6 +20,43 @@ def test_track_slice():
 
     # Slice should return MidiTrack object.
     assert isinstance(track[::], MidiTrack)
+
+
+class Index:
+    def __init__(self, value):
+        self.value = value
+
+    def __index__(self):
+        return self.value
+
+
+@pytest.mark.parametrize('index', [0, 1, -1])
+@pytest.mark.parametrize('index_type', [int, Index])
+def test_track_index(index, index_type):
+    messages = [Message('note_on'), Message('note_off')]
+    track = MidiTrack(messages)
+
+    assert track[index_type(index)] is messages[index]
+
+
+@pytest.mark.parametrize('index', [2, -3])
+def test_track_index_out_of_range(index):
+    track = MidiTrack([Message('note_on'), Message('note_off')])
+
+    with pytest.raises(IndexError):
+        track[Index(index)]
+
+
+@pytest.mark.parametrize('selection', [
+    slice(None), slice(1, None), slice(None, None, -1),
+])
+def test_populated_track_slice(selection):
+    messages = [Message('note_on'), Message('note_off')]
+    track = MidiTrack(messages)
+
+    result = track[selection]
+    assert isinstance(result, MidiTrack)
+    assert result == messages[selection]
 
 
 def test_track_name():
