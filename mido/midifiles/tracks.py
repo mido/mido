@@ -40,7 +40,7 @@ class MidiTrack(list):
     def __getitem__(self, index_or_slice):
         # Retrieve item from the MidiTrack
         lst = list.__getitem__(self, index_or_slice)
-        if isinstance(index_or_slice, int):
+        if not isinstance(index_or_slice, slice):
             # If an index was provided, return the list element
             return lst
         else:
