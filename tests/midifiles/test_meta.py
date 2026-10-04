@@ -9,6 +9,7 @@ from mido.midifiles.meta import (
     MetaMessage,
     MetaSpec_key_signature,
     UnknownMetaMessage,
+    build_meta_message,
 )
 
 
@@ -52,6 +53,13 @@ def test_unknown_meta_message_repr():
     msg = UnknownMetaMessage(type_byte=99, data=[1, 2], time=10)
     msg_eval = eval(repr(msg))  # noqa: S307
     assert msg == msg_eval
+
+
+@pytest.mark.parametrize('delta', [0, 120, 240])
+@pytest.mark.parametrize('data', [[], [0, 127, 128, 255]])
+def test_build_unknown_meta_message_preserves_delta(delta, data):
+    msg = build_meta_message(0x50, data, delta)
+    assert msg == UnknownMetaMessage(0x50, data=data, time=delta)
 
 
 def test_meta_from_bytes_invalid():
