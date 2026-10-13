@@ -420,10 +420,14 @@ class MidiFile:
         an audio stream), pass now=time_fn where time_fn is a zero
         argument function that yields the current time in seconds.
         """
-        start_time = now()
+        start_time = None
         input_time = 0.0
 
         for msg in self:
+            if start_time is None:
+                # Prepare the first message (including lazy track merging)
+                # before starting the playback clock.
+                start_time = now()
             input_time += msg.time
 
             playback_time = now() - start_time

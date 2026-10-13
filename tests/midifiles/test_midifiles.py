@@ -4,9 +4,10 @@
 
 import io
 
-from pytest import raises
+from pytest import approx, fixture, mark, raises
 
 from mido.messages import Message
+from mido.midifiles import midifiles
 from mido.midifiles.meta import KeySignatureError, MetaMessage
 from mido.midifiles.midifiles import MidiFile, MidiTrack
 
@@ -185,3 +186,136 @@ def test_midifile_repr():
     for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
         for m1, m2 in zip(track, track_eval):
             assert m1 == m2
+
+
+class PlaybackClock:
+    def __init__(self):
+        self.time = 100.0
+        self.sleeps = []
+
+    def now(self):
+        return self.time
+
+    def sleep(self, duration):
+        self.sleeps.append(duration)
+        self.time += duration
+
+
+@fixture
+def playback_clock(monkeypatch):
+    clock = PlaybackClock()
+    monkeypatch.setattr(midifiles.time, 'sleep', clock.sleep)
+    return clock
+
+
+@mark.parametrize('cached', [False, True])
+@mark.parametrize('first_ticks', [0, 480])
+def test_play_excludes_merge_time(
+    monkeypatch, playback_clock, cached, first_ticks,
+):
+    merge_tracks = midifiles.merge_tracks
+    merge_calls = []
+
+    def slow_merge(*args, **kwargs):
+        merge_calls.append(playback_clock.now())
+        playback_clock.time += 2.0
+        return merge_tracks(*args, **kwargs)
+
+    monkeypatch.setattr(midifiles, 'merge_tracks', slow_merge)
+    mid = MidiFile(ticks_per_beat=480, tracks=[
+        MidiTrack([Message('note_on', note=60, time=first_ticks)]),
+        MidiTrack([Message('note_on', note=64, time=first_ticks + 480)]),
+    ])
+    assert merge_calls == []
+    if cached:
+        _ = mid.merged_track
+    player = mid.play(now=playback_clock.now)
+    assert len(merge_calls) == int(cached)
+
+    # Waiting before advancing the generator must not consume MIDI time.
+    playback_clock.time += 3.0
+    first_delay = first_ticks / 960.0
+    messages = []
+    times = []
+    for msg in player:
+        messages.append(msg)
+        times.append(playback_clock.now())
+
+    assert len(merge_calls) == 1
+    assert messages == [
+        Message('note_on', note=60, time=first_delay),
+        Message('note_on', note=64, time=0.5),
+    ]
+    assert times == approx([105.0 + first_delay, 105.5 + first_delay])
+    expected_sleeps = [first_delay, 0.5] if first_ticks else [0.5]
+    assert playback_clock.sleeps == approx(expected_sleeps)
+
+
+@mark.parametrize('meta_messages', [False, True])
+def test_play_tempo_and_meta_messages(playback_clock, meta_messages):
+    mid = MidiFile(ticks_per_beat=480, tracks=[MidiTrack([
+        MetaMessage('track_name', name='Test', time=480),
+        MetaMessage('set_tempo', tempo=1000000, time=480),
+        Message('note_on', note=60, time=480),
+        Message('note_off', note=60, time=480),
+        MetaMessage('end_of_track', time=240),
+    ])])
+    messages = []
+    times = []
+    for msg in mid.play(meta_messages=meta_messages, now=playback_clock.now):
+        messages.append(msg)
+        times.append(playback_clock.now())
+
+    expected = [
+        Message('note_on', note=60, time=1.0),
+        Message('note_off', note=60, time=1.0),
+    ]
+    expected_times = [102.0, 103.0]
+    if meta_messages:
+        expected = [
+            MetaMessage('track_name', name='Test', time=0.5),
+            MetaMessage('set_tempo', tempo=1000000, time=0.5),
+        ] + expected + [MetaMessage('end_of_track', time=0.5)]
+        expected_times = [100.5, 101.0, 102.0, 103.0, 103.5]
+    assert messages == expected
+    assert times == approx(expected_times)
+    assert playback_clock.sleeps == approx([0.5, 0.5, 1.0, 1.0, 0.5])
+    assert playback_clock.now() == approx(103.5)
+
+
+@mark.parametrize('consumer_delay', [0.25, 0.75])
+def test_play_compensates_for_consumer_delay(playback_clock, consumer_delay):
+    mid = MidiFile(ticks_per_beat=480, tracks=[MidiTrack([
+        Message('note_on', note=60, time=480),
+        Message('note_on', note=62, time=480),
+        Message('note_on', note=64, time=480),
+    ])])
+    player = mid.play(now=playback_clock.now)
+    assert next(player) == Message('note_on', note=60, time=0.5)
+    assert playback_clock.now() == approx(100.5)
+    playback_clock.time += consumer_delay
+    assert next(player) == Message('note_on', note=62, time=0.5)
+    assert playback_clock.now() == approx(max(101.0, 100.5 + consumer_delay))
+    assert next(player) == Message('note_on', note=64, time=0.5)
+    assert playback_clock.now() == approx(101.5)
+    assert list(player) == []
+    expected_sleeps = ([0.5, 0.25, 0.5] if consumer_delay == 0.25
+                       else [0.5, 0.25])
+    assert playback_clock.sleeps == approx(expected_sleeps)
+
+
+@mark.parametrize('tracks', [[], [MidiTrack()]])
+@mark.parametrize('meta_messages', [False, True])
+def test_play_empty(playback_clock, tracks, meta_messages):
+    mid = MidiFile(tracks=tracks)
+    player = mid.play(meta_messages=meta_messages, now=playback_clock.now)
+    assert list(player) == (
+        [MetaMessage('end_of_track')] if meta_messages else [])
+    assert playback_clock.sleeps == []
+
+
+def test_play_type_2(playback_clock):
+    mid = MidiFile(type=2)
+    with raises(TypeError, match="can't merge tracks in type 2"):
+        list(mid.play(now=playback_clock.now))
+    assert playback_clock.sleeps == []
