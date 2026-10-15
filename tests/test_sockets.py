@@ -2,9 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
+import time
+
 import pytest
 
-from mido.sockets import parse_address
+from mido import Message, ports
+from mido.sockets import PortServer, connect, parse_address
 
 
 class TestParseAddress:
@@ -42,3 +45,22 @@ class TestParseAddress:
     def test_out_of_range_port_raises_value_error(self):
         with pytest.raises(ValueError):
             parse_address(':65536')
+
+
+def test_port_server_receives_message_from_connected_port(monkeypatch):
+    message = Message('note_on', note=60)
+    original_sleep = ports.sleep
+    deadline = time.monotonic() + 1
+
+    def sleep_until_deadline():
+        if time.monotonic() >= deadline:
+            pytest.fail('PortServer did not receive a message before the deadline')
+        original_sleep()
+
+    monkeypatch.setattr(ports, 'sleep', sleep_until_deadline)
+
+    with PortServer('localhost', 0) as server:
+        portno = server._socket.getsockname()[1]
+        with connect('localhost', portno) as client:
+            client.send(message)
+            assert server.receive() == message
