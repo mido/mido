@@ -93,7 +93,10 @@ def _make_spec_lookups(
 
 SPEC_LOOKUP, SPEC_BY_STATUS, SPEC_BY_TYPE = _make_spec_lookups(SPECS)
 
-REALTIME_TYPES = {'tune_request', 'clock', 'start', 'continue', 'stop'}
+# System real time is exactly the status byte range 0xf8..0xff, so derive the
+# names rather than repeating them.
+REALTIME_TYPES = {spec.type for spec in SPECS
+                  if spec.status_byte in REALTIME_MESSAGES}
 
 DEFAULT_VALUES = {
     'channel': 0,
