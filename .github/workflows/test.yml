@@ -87,7 +87,7 @@ jobs:
 
   test:
     needs:
-      - docs
+      # - docs
       - manifest
       - reuse
       - style
@@ -137,7 +137,7 @@ jobs:
 
   coverage:
     needs:
-      - docs
+      # - docs
       - manifest
       - reuse
       - style
