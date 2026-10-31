@@ -82,6 +82,12 @@ education, or socio-economic status.
 -  Continued one-on-one communication after requests to cease
 -  Other conduct that is inappropriate for a professional audience
    including people of many different backgrounds
+-  Submitting issues, pull requests, or comments produced by an
+   autonomous agent that no human has reviewed, understood, or agreed to
+   be accountable for
+-  Operating automation that interacts with the community (opening or
+   replying to issues and pull requests, tagging maintainers) without a
+   human directly owning each interaction
 
 Community members asked to stop any inappropriate behavior are expected
 to comply immediately.
