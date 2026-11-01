@@ -41,6 +41,31 @@ and messages and save the file back by calling the ``save()``
 method. (More on this below.)
 
 
+Clipping Invalid Data Bytes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, ``MidiFile`` uses ``clip=False`` and rejects MIDI message data
+bytes outside the valid range of 0 to 127. For example, a note-on message
+with a note value of 255 raises ``OSError: data byte must be in range 0..127``.
+
+To load a file with out-of-range data bytes, you can enable clipping::
+
+    from mido import MidiFile
+
+    mid = MidiFile('song.mid', clip=True)
+
+Data bytes above 127 are replaced with 127; values from 0 to 127 are left
+unchanged. This also applies to :term:`SysEx` payload data, but not to meta
+messages. Clipping is not a general repair option for malformed MIDI files;
+other errors, such as missing file headers, can still prevent loading.
+
+.. warning::
+
+    Clipping changes the message data and may change how the file sounds.
+    Saving the loaded file writes the clipped values, not the original
+    out-of-range bytes. Keep the original file if you need to preserve them.
+
+
 Iterating Over Messages
 -----------------------
 
