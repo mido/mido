@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
+
 import pytest
 
 from mido.midifiles.meta import (
@@ -9,7 +12,46 @@ from mido.midifiles.meta import (
     MetaMessage,
     MetaSpec_key_signature,
     UnknownMetaMessage,
+    decode_string,
+    encode_string,
+    meta_charset,
 )
+
+
+def test_meta_charset_nested():
+    with meta_charset('utf-8'):
+        assert encode_string('é') == [0xc3, 0xa9]
+        with meta_charset('utf-16-le'):
+            assert encode_string('é') == [0xe9, 0]
+        assert decode_string([0xc3, 0xa9]) == 'é'
+    assert encode_string('é') == [0xe9]
+
+
+def test_meta_charset_restored_after_error():
+    with meta_charset('latin1'):
+        with pytest.raises(UnicodeEncodeError), meta_charset('ascii'):
+            encode_string('é')
+        assert encode_string('é') == [0xe9]
+
+
+def test_meta_charset_isolated_between_threads():
+    barrier = Barrier(2, timeout=5)
+
+    def convert(charset, data):
+        with meta_charset(charset):
+            barrier.wait()
+            try:
+                result = encode_string('é'), decode_string(data)
+            finally:
+                # Keep both contexts active until both conversions finish.
+                barrier.wait()
+        return result
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        latin1 = pool.submit(convert, 'latin1', [0xe9])
+        utf8 = pool.submit(convert, 'utf-8', [0xc3, 0xa9])
+        assert latin1.result() == ([0xe9], 'é')
+        assert utf8.result() == ([0xc3, 0xa9], 'é')
 
 
 def test_copy_invalid_argument():
