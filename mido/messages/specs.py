@@ -69,7 +69,7 @@ SPECS = [
 def _make_spec_lookups(
     specs: List[Spec],
 ) -> Tuple[Dict[Union[int, str], Spec], Dict[int, Spec], Dict[str, Spec]]:
-    lookup = {}
+    lookup: Dict[Union[int, str], Spec] = {}
     by_status = {}
     by_type = {}
 
