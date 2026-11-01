@@ -16,10 +16,9 @@ TODO:
 """
 import select
 import subprocess
-import threading
 
 from ..messages import Message
-from ._common import InputMethods, OutputMethods, PortMethods
+from ..ports import BaseInput, BaseOutput
 
 """
 Dir Device    Name
@@ -56,14 +55,18 @@ def _get_device(name, mode):
         raise OSError(f'unknown port {name!r}')
 
 
-class Input(PortMethods, InputMethods):
-    def __init__(self, name=None, **kwargs):
-        self.name = name
-        self.closed = False
+class PortCommon:
+    def _close(self):
+        proc = getattr(self, '_proc', None)
+        if proc is not None:
+            proc.kill()
+            self._proc = None
 
+
+class Input(PortCommon, BaseInput):
+    def _open(self, **kwargs):
         self._proc = None
         self._poller = select.poll()
-        self._lock = threading.RLock()
 
         dev = _get_device(self.name, 'is_input')
         self._proc = subprocess.Popen(['amidi', '-d',
@@ -80,49 +83,23 @@ class Input(PortMethods, InputMethods):
             # The first line is sometimes blank.
             return None
 
-    def receive(self, block=True):
-        if not block:
-            return self.poll()
-
-        while True:
-            msg = self.poll()
-            if msg:
+    def _receive(self, block=True):
+        while self._poller.poll(None if block else 0):
+            msg = self._read_message()
+            if msg is not None:
                 return msg
 
-            # Wait for message.
-            self._poller.poll()
+            if not block:
+                return None
 
-    def poll(self):
-        with self._lock:
-            while self._poller.poll(0):
-                msg = self._read_message()
-                if msg is not None:
-                    return msg
-
-    def close(self):
-        if not self.closed:
-            if self._proc:
-                self._proc.kill()
-                self._proc = None
-            self.closed = True
+        return None
 
 
-class Output(PortMethods, OutputMethods):
-    def __init__(self, name=None, autoreset=False, **kwargs):
-        self.name = name
-        self.autoreset = autoreset
-        self.closed = False
-
+class Output(PortCommon, BaseOutput):
+    def _open(self, **kwargs):
         self._dev = _get_device(self.name, 'is_output')
 
-    def send(self, msg):
+    def _send(self, msg):
         proc = subprocess.Popen(['amidi', '--send-hex', msg.hex(),
                                  '-p', self._dev['device']])
         proc.wait()
-
-    def close(self):
-        if not self.closed:
-            if self.autoreset:
-                self.reset()
-
-            self.closed = True
