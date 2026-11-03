@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+from pytest import mark
+
 from mido.tokenizer import Tokenizer
 
 
@@ -29,18 +31,22 @@ def test_double_realtime():
     assert tokenize([0xf8, 0xf8]) == [[0xf8], [0xf8]]
 
 
-def test_realtime_inside_message():
-    """Realtime message inside message should reset the parser."""
-    assert tokenize([0x90, 1, 0xf8, 2]) == [[0xf8]]
+@mark.parametrize('message', [
+    [0x80, 60, 64], [0x90, 60, 64], [0xa0, 60, 64],
+    [0xb0, 1, 64], [0xc0, 5], [0xd0, 64], [0xe0, 0, 64],
+    [0xf1, 0], [0xf2, 0, 64], [0xf3, 5],
+])
+@mark.parametrize('realtime', range(0xf8, 0x100))
+def test_realtime_inside_message(message, realtime):
+    """Realtime bytes must not discard an interrupted channel/common message."""
+    for split in range(1, len(message)):
+        interrupted = message[:split] + [realtime] + message[split:]
+        expected = [] if realtime in (0xf9, 0xfd) else [[realtime]]
+        assert tokenize(interrupted) == expected + [message]
 
 
 def test_realtime_inside_sysex():
-    """Realtime messages are allowed inside sysex.
-
-    The sysex messages should be delivered first.
-
-    This is the only case where a message is allowed inside another message.
-    """
+    """Deliver realtime before completing the interrupted sysex message."""
     assert tokenize([0xf0, 1, 0xf8, 2, 0xf7]) == [[0xf8], [0xf0, 1, 2, 0xf7]]
     assert tokenize([0xf0, 0xf8, 0xf7]) == [[0xf8], [0xf0, 0xf7]]
 

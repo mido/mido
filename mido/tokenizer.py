@@ -32,11 +32,8 @@ class Tokenizer:
             self._status = 0
 
         elif 0xf8 <= status <= 0xff:
-            if self._status != SYSEX_START:
-                # Realtime messages are only allowed inside sysex
-                # messages. Reset parser.
-                self._status = 0
-
+            # Realtime bytes can interrupt any message without changing its
+            # status or accumulated data, not only a sysex message.
             if status in SPEC_BY_STATUS:
                 self._messages.append([status])
 

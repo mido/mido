@@ -65,4 +65,15 @@ it::
     note_on channel=2 note=16 velocity=32 time=0
     note_off channel=2 note=16 velocity=32 time=0
 
+System real-time bytes can appear between the bytes of another message.
+They are delivered immediately, and parsing of the interrupted message
+continues when its remaining data arrives::
+
+    >>> mido.parse_all([0x90, 60, 0xf8, 64])
+    [Message('clock', time=0),
+     Message('note_on', channel=0, note=60, velocity=64, time=0)]
+
+Undefined real-time status bytes are ignored without discarding an incomplete
+message.
+
 The messages are available in ``p.messages`` (a ``collections.deque``).
