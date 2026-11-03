@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+from .checks import check_type
 from .specs import SPEC_BY_TYPE, make_msgdict
 
 
@@ -59,7 +60,10 @@ def str2msg(text):
     calling check_msgdict().
     """
     words = text.split()
+    if not words:
+        raise ValueError('message string is empty')
     type_ = words[0]
+    check_type(type_)
     args = words[1:]
 
     msg = {}
