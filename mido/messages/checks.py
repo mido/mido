@@ -68,8 +68,10 @@ def check_data_byte(value):
 
 
 def check_time(time):
-    if not isinstance(time, Real):
+    if not isinstance(time, Real) or isinstance(time, bool):
         raise TypeError('time must be int or float')
+    elif time < 0:
+        raise ValueError('time cannot be negative')
 
 
 _CHECKS = {
