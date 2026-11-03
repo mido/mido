@@ -5,6 +5,8 @@
 import itertools
 import time
 
+import pytest
+
 import mido
 from mido.messages import Message
 from mido.midifiles.meta import MetaMessage, UnknownMetaMessage
@@ -29,14 +31,26 @@ def test_track_name():
     assert track.name == name1.name
 
 
-def test_track_repr():
-    track = MidiTrack([
-        Message('note_on', channel=1, note=2, time=3),
-        Message('note_off', channel=1, note=2, time=3),
-    ])
+@pytest.mark.parametrize('messages', [
+    [],
+    [Message('note_on', channel=1, note=2, velocity=73, time=3)],
+    [Message('sysex', data=(1, 2, 3), time=7)],
+    [MetaMessage('track_name', name='Track "one"', time=4)],
+    [UnknownMetaMessage(0x50, b'\x01\x02', time=9)],
+    [Message('note_on', channel=1, note=2, time=3),
+     Message('note_off', channel=1, note=2, time=3)],
+])
+def test_track_repr(messages):
+    track = MidiTrack(messages)
     track_eval = eval(repr(track))  # noqa: S307
-    for m1, m2 in zip(track, track_eval):
-        assert m1 == m2
+    assert isinstance(track_eval, MidiTrack)
+    assert track_eval == track
+
+    mid = mido.MidiFile(type=1, ticks_per_beat=123, tracks=[track])
+    mid_eval = eval(repr(mid), vars(mido))  # noqa: S307
+    assert mid_eval.type == mid.type
+    assert mid_eval.ticks_per_beat == mid.ticks_per_beat
+    assert mid_eval.tracks == mid.tracks
 
 
 def test_merge_large_midifile():
