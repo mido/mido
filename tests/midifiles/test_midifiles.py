@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: MIT
 
 import io
+import os
 
-from pytest import raises
+from pytest import mark, raises
 
 from mido.messages import Message
 from mido.midifiles.meta import KeySignatureError, MetaMessage
@@ -185,3 +186,68 @@ def test_midifile_repr():
     for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
         for m1, m2 in zip(track, track_eval):
             assert m1 == m2
+
+
+class ReadOnlyStream:
+    """A forward-only input supporting read(), but not tell() or seek()."""
+
+    def __init__(self, data):
+        self.stream = io.BytesIO(data)
+
+    def read(self, size):
+        assert size >= 0  # Do not buffer the entire input.
+        return self.stream.read(size)
+
+
+STREAMING_FILE = """
+4d54 6864 0000 0006 0001 0003 0078  # Three tracks
+4d54 726b 0000 0000                 # Empty track
+4d54 726b 0000 0014                 # Track with premature/repeated EOT
+00 ff 2f 00                        # Premature end_of_track
+20 90 40 40                        # note_on
+00 41 20                           # Running status note_on
+00 f0 02 01 f7                     # sysex
+00 ff 2f 00                        # end_of_track
+4d54 726b 0000 0004                 # Track without an end_of_track
+10 80 40 00                        # note_off
+"""
+
+
+@mark.parametrize('debug', [False, True])
+@mark.parametrize('stream_type', [io.BytesIO, ReadOnlyStream])
+def test_read_forward_only_stream(stream_type, debug):
+    trailer = b'not part of the MIDI file'
+    stream = stream_type(bytes(parse_hexdump(STREAMING_FILE)) + trailer)
+    midi = MidiFile(file=stream, debug=debug)
+
+    assert midi.ticks_per_beat == 120
+    assert midi.tracks == [
+        [],
+        [MetaMessage('end_of_track'),
+         Message('note_on', note=64, velocity=64, time=32),
+         Message('note_on', note=65, velocity=32),
+         Message('sysex', data=[1]),
+         MetaMessage('end_of_track')],
+        [Message('note_off', note=64, velocity=0, time=16)],
+    ]
+    assert stream.read(len(trailer)) == trailer
+
+
+@mark.parametrize('debug', [False, True])
+def test_read_midi_pipe(debug):
+    data = bytes(parse_hexdump(STREAMING_FILE))
+    read_fd, write_fd = os.pipe()
+    with os.fdopen(read_fd, 'rb') as source:
+        with os.fdopen(write_fd, 'wb') as destination:
+            destination.write(data)
+        assert not source.seekable()
+        midi = MidiFile(file=source, debug=debug)
+        assert midi.tracks == MidiFile(file=io.BytesIO(data)).tracks
+        assert not source.closed
+
+
+@mark.parametrize('debug', [False, True])
+def test_truncated_forward_only_stream(debug):
+    data = bytes(parse_hexdump(STREAMING_FILE))
+    with raises(EOFError):
+        MidiFile(file=ReadOnlyStream(data[:-1]), debug=debug)
