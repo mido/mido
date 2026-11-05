@@ -54,6 +54,8 @@ class MidiTrack(list):
     def __mul__(self, other):
         return self.__class__(list.__mul__(self, other))
 
+    __rmul__ = __mul__
+
     def __repr__(self):
         if len(self) == 0:
             messages = ''

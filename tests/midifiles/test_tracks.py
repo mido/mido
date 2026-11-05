@@ -5,6 +5,8 @@
 import itertools
 import time
 
+import pytest
+
 import mido
 from mido.messages import Message
 from mido.midifiles.meta import MetaMessage, UnknownMetaMessage
@@ -72,3 +74,22 @@ def test_merge_large_midifile():
         sum(msg.time for msg in t) for t in mid.tracks)
     assert merged_duration_ticks == max_track_duration_ticks
     assert (finish - start) < 5.0
+
+
+@pytest.mark.parametrize('count', [-1, 0, 1, 3])
+def test_left_repetition_preserves_track_type(count):
+    class CustomTrack(MidiTrack):
+        pass
+
+    for track_type in (MidiTrack, CustomTrack):
+        track = track_type([
+            MetaMessage('track_name', name='loop'),
+            Message('note_on', note=60),
+            Message('note_off', note=60, time=120),
+        ])
+        repeated = count * track
+        assert type(repeated) is track_type
+        assert repeated == track * count == list(track) * count
+        assert repeated is not track
+        assert repeated.name == ('loop' if count > 0 else '')
+        assert len(track) == 3
