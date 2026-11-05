@@ -185,3 +185,26 @@ def test_midifile_repr():
     for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
         for m1, m2 in zip(track, track_eval):
             assert m1 == m2
+
+
+import io
+
+from mido import Message, MetaMessage, MidiFile
+
+
+def test_save_load_roundtrip():
+    mid = MidiFile(ticks_per_beat=480)
+    track = mid.add_track('Lead')
+    track.append(Message('note_on', note=60, velocity=64, time=0))
+    track.append(Message('note_off', note=60, velocity=64, time=480))
+    track.append(MetaMessage('end_of_track', time=0))
+
+    data = io.BytesIO()
+    mid.save(file=data)
+    data.seek(0)
+
+    loaded = MidiFile(file=data)
+    assert loaded.type == 1
+    assert loaded.ticks_per_beat == 480
+    assert len(loaded.tracks) == 1
+    assert list(loaded.tracks[0]) == list(mid.tracks[0])
