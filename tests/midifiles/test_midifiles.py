@@ -171,6 +171,15 @@ def test_meta_messages_with_length_0():
     ]
 
 
+def test_midifile_invalid_type_error_message():
+    # https://github.com/mido/mido/issues/673
+    # the error used to interpolate the builtin format function instead of
+    # the value that was rejected
+    with raises(ValueError) as e:
+        MidiFile(type=3)
+    assert 'invalid format 3 (must be 0, 1 or 2)' in str(e.value)
+
+
 def test_midifile_repr():
     midifile = MidiFile(type=1, ticks_per_beat=123, tracks=[
         MidiTrack([
