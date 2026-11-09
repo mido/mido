@@ -309,7 +309,7 @@ class MidiFile:
 
         if type not in range(3):
             raise ValueError(
-                f'invalid format {format} (must be 0, 1 or 2)')
+                f'invalid format {type} (must be 0, 1 or 2)')
 
         if tracks is not None:
             self.tracks = tracks
