@@ -52,7 +52,7 @@ def parse_args():
 def play_file(output, filename, print_messages):
     midi_file = MidiFile(filename)
 
-    print(f'Playing {midi_file.filename}.')
+    print(f'Playing {filename}.')
     length = midi_file.length
     print('Song length: {} minutes, {} seconds.'.format(
         int(length / 60),
