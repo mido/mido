@@ -185,9 +185,9 @@ class MetaSpec_sequence_number(MetaSpec):
     defaults = [0]
 
     def decode(self, message, data):
-        if len(data) == 0:
-            # Message with length 0 can occur in some files.
-            # (See issues 42 and 93.)
+        if len(data) < 2:
+            # Truncated meta events occur in real files.
+            # (See issues 42, 93 and 358.)
             message.number = 0
         else:
             message.number = (data[0] << 8) | data[1]
@@ -256,7 +256,12 @@ class MetaSpec_channel_prefix(MetaSpec):
     defaults = [0]
 
     def decode(self, message, data):
-        message.channel = data[0]
+        if len(data) == 0:
+            # Truncated meta events occur in real files.
+            # (See issues 42, 93 and 358.)
+            message.channel = 0
+        else:
+            message.channel = data[0]
 
     def encode(self, message):
         return [message.channel]
@@ -272,8 +277,8 @@ class MetaSpec_midi_port(MetaSpec):
 
     def decode(self, message, data):
         if len(data) == 0:
-            # Message with length 0 can occur in some files.
-            # (See issues 42 and 93.)
+            # Truncated meta events occur in real files.
+            # (See issues 42, 93 and 358.)
             message.port = 0
         else:
             message.port = data[0]
@@ -303,7 +308,11 @@ class MetaSpec_set_tempo(MetaSpec):
     defaults = [500000]
 
     def decode(self, message, data):
-        message.tempo = (data[0] << 16) | (data[1] << 8) | (data[2])
+        if len(data) < 3:
+            # Truncated meta events occur in real files. (See issue 358.)
+            message.tempo = 500000
+        else:
+            message.tempo = (data[0] << 16) | (data[1] << 8) | (data[2])
 
     def encode(self, message):
         tempo = message.tempo
@@ -326,12 +335,21 @@ class MetaSpec_smpte_offset(MetaSpec):
     defaults = [24, 0, 0, 0, 0, 0]
 
     def decode(self, message, data):
-        message.frame_rate = _smpte_framerate_decode[(data[0] >> 5)]
-        message.hours = (data[0] & 0b0001_1111)
-        message.minutes = data[1]
-        message.seconds = data[2]
-        message.frames = data[3]
-        message.sub_frames = data[4]
+        if len(data) < 5:
+            # Truncated meta events occur in real files. (See issue 358.)
+            message.frame_rate = 24
+            message.hours = 0
+            message.minutes = 0
+            message.seconds = 0
+            message.frames = 0
+            message.sub_frames = 0
+        else:
+            message.frame_rate = _smpte_framerate_decode[(data[0] >> 5)]
+            message.hours = (data[0] & 0b0001_1111)
+            message.minutes = data[1]
+            message.seconds = data[2]
+            message.frames = data[3]
+            message.sub_frames = data[4]
 
     def encode(self, message):
         frame_rate_lookup = _smpte_framerate_encode[message.frame_rate] << 5
@@ -366,10 +384,17 @@ class MetaSpec_time_signature(MetaSpec):
     defaults = [4, 4, 24, 8]
 
     def decode(self, message, data):
-        message.numerator = data[0]
-        message.denominator = 2 ** data[1]
-        message.clocks_per_click = data[2]
-        message.notated_32nd_notes_per_beat = data[3]
+        if len(data) < 4:
+            # Truncated meta events occur in real files. (See issue 358.)
+            message.numerator = 4
+            message.denominator = 4
+            message.clocks_per_click = 24
+            message.notated_32nd_notes_per_beat = 8
+        else:
+            message.numerator = data[0]
+            message.denominator = 2 ** data[1]
+            message.clocks_per_click = data[2]
+            message.notated_32nd_notes_per_beat = data[3]
 
     def encode(self, message):
         return [message.numerator,
@@ -398,6 +423,10 @@ class MetaSpec_key_signature(MetaSpec):
     defaults = ['C']
 
     def decode(self, message, data):
+        if len(data) < 2:
+            # Truncated meta events occur in real files. (See issue 358.)
+            message.key = 'C'
+            return
         key = signed('byte', data[0])
         mode = data[1]
         try:
