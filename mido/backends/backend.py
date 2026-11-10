@@ -4,7 +4,7 @@
 
 import importlib
 import os
-from typing import TYPE_CHECKING, List
+from typing import List
 
 from .. import ports
 
@@ -74,121 +74,11 @@ class Backend:
             kwargs['api'] = self.api
         return kwargs
 
-    def open_input(self, name=None, virtual=False, callback=None, **kwargs):
-        """Open an input port.
-
-        If the environment variable MIDO_DEFAULT_INPUT is set,
-        it will override the default port.
-
-        virtual=False
-          Passing True opens a new port that other applications can
-          connect to. Raises IOError if not supported by the backend.
-
-        callback=None
-          A callback function to be called when a new message arrives.
-          The function should take one argument (the message).
-          Raises IOError if not supported by the backend.
-        """
-        kwargs.update(dict(virtual=virtual, callback=callback))
-
-        if name is None:
-            name = self._env('MIDO_DEFAULT_INPUT')
-
-        return self.module.Input(name, **self._add_api(kwargs))
-
-    def open_output(self, name=None, virtual=False, autoreset=False, **kwargs):
-        """Open an output port.
-
-        If the environment variable MIDO_DEFAULT_OUTPUT is set,
-        it will override the default port.
-
-        virtual=False
-          Passing True opens a new port that other applications can
-          connect to. Raises IOError if not supported by the backend.
-
-        autoreset=False
-          Automatically send all_notes_off and reset_all_controllers
-          on all channels. This is the same as calling `port.reset()`.
-        """
-        kwargs.update(dict(virtual=virtual, autoreset=autoreset))
-
-        if name is None:
-            name = self._env('MIDO_DEFAULT_OUTPUT')
-
-        return self.module.Output(name, **self._add_api(kwargs))
-
-    def open_ioport(self, name=None, virtual=False,
-                    callback=None, autoreset=False, **kwargs):
-        """Open a port for input and output.
-
-        If the environment variable MIDO_DEFAULT_IOPORT is set,
-        it will override the default port.
-
-        virtual=False
-          Passing True opens a new port that other applications can
-          connect to. Raises IOError if not supported by the backend.
-
-        callback=None
-          A callback function to be called when a new message arrives.
-          The function should take one argument (the message).
-          Raises IOError if not supported by the backend.
-
-        autoreset=False
-          Automatically send all_notes_off and reset_all_controllers
-          on all channels. This is the same as calling `port.reset()`.
-        """
-        kwargs.update(dict(virtual=virtual, callback=callback,
-                           autoreset=autoreset))
-
-        if name is None:
-            name = self._env('MIDO_DEFAULT_IOPORT') or None
-
-        if hasattr(self.module, 'IOPort'):
-            # Backend has a native IOPort. Use it.
-            return self.module.IOPort(name, **self._add_api(kwargs))
-        else:
-            # Backend has no native IOPort. Use the IOPort wrapper
-            # in midi.ports.
-            #
-            # We need an input and an output name.
-
-            # MIDO_DEFAULT_IOPORT overrides the other two variables.
-            if name:
-                input_name = output_name = name
-            else:
-                input_name = self._env('MIDO_DEFAULT_INPUT')
-                output_name = self._env('MIDO_DEFAULT_OUTPUT')
-
-            kwargs = self._add_api(kwargs)
-
-            return ports.IOPort(self.module.Input(input_name, **kwargs),
-                                self.module.Output(output_name, **kwargs))
-
     def _get_devices(self, **kwargs):
         if hasattr(self.module, 'get_devices'):
             return self.module.get_devices(**self._add_api(kwargs))
         else:
             return []
-
-    def get_input_names(self, **kwargs) -> List[str]:
-        """Return a list of all input port names."""
-        devices = self._get_devices(**self._add_api(kwargs))
-        names = [device['name'] for device in devices if device['is_input']]
-        return names
-
-    def get_output_names(self, **kwargs) -> List[str]:
-        """Return a list of all output port names."""
-        devices = self._get_devices(**self._add_api(kwargs))
-        names = [device['name'] for device in devices if device['is_output']]
-        return names
-
-    def get_ioport_names(self, **kwargs) -> List[str]:
-        """Return a list of all I/O port names."""
-        devices = self._get_devices(**self._add_api(kwargs))
-        inputs = [device['name'] for device in devices if device['is_input']]
-        outputs = {
-            device['name'] for device in devices if device['is_output']}
-        return [name for name in inputs if name in outputs]
 
     def __repr__(self):
         if self.loaded:
@@ -203,9 +93,150 @@ class Backend:
 
         return f'<backend {name} ({status})>'
 
-if TYPE_CHECKING:
-    _backend = Backend()
-    get_input_names = _backend.get_input_names
-    get_output_names = _backend.get_output_names
-    get_ioport_names = _backend.get_ioport_names
-    open_input = _backend.open_input
+def set_backend(name=None, load=False):
+    """Set current backend.
+
+    name can be a module name like 'mido.backends.rtmidi' or
+    a Backend object.
+
+    If no name is passed, the default backend will be used.
+
+    This will replace all the open_*() and get_*_name() functions
+    in top level mido module. The module will be loaded the first
+    time one of those functions is called.
+    """
+    glob = globals()
+
+    if isinstance(name, Backend):
+        backend = name
+    else:
+        backend = Backend(name, load=load, use_environ=True)
+    glob['backend'] = backend
+
+def get_current_backend() -> Backend:
+    """Get actual backend.
+
+    initiate it to default if not defined (should not be called
+    because there is set_backend() in __init__.py)
+    """
+    glob = globals()
+    _current_backend = glob['backend']
+    if _current_backend is None:
+        _current_backend = Backend(use_environ=True)
+    return _current_backend
+
+def open_input(name=None, virtual=False, callback=None, **kwargs):
+    """Open an input port.
+
+    If the environment variable MIDO_DEFAULT_INPUT is set,
+    it will override the default port.
+
+    virtual=False
+        Passing True opens a new port that other applications can
+        connect to. Raises IOError if not supported by the backend.
+
+    callback=None
+        A callback function to be called when a new message arrives.
+        The function should take one argument (the message).
+        Raises IOError if not supported by the backend.
+    """
+    backend = get_current_backend()
+    kwargs.update(dict(virtual=virtual, callback=callback))
+
+    if name is None:
+        name = backend._env('MIDO_DEFAULT_INPUT')
+
+    return backend.module.Input(name, **backend._add_api(kwargs))
+
+def open_output(name=None, virtual=False, autoreset=False, **kwargs):
+    """Open an output port.
+
+    If the environment variable MIDO_DEFAULT_OUTPUT is set,
+    it will override the default port.
+
+    virtual=False
+        Passing True opens a new port that other applications can
+        connect to. Raises IOError if not supported by the backend.
+
+    autoreset=False
+        Automatically send all_notes_off and reset_all_controllers
+        on all channels. This is the same as calling `port.reset()`.
+    """
+    backend = get_current_backend()
+    kwargs.update(dict(virtual=virtual, autoreset=autoreset))
+
+    if name is None:
+        name = backend._env('MIDO_DEFAULT_OUTPUT')
+
+    return backend.module.Output(name, **backend._add_api(kwargs))
+
+def open_ioport(name=None, virtual=False,
+                callback=None, autoreset=False, **kwargs):
+    """Open a port for input and output.
+
+    If the environment variable MIDO_DEFAULT_IOPORT is set,
+    it will override the default port.
+
+    virtual=False
+        Passing True opens a new port that other applications can
+        connect to. Raises IOError if not supported by the backend.
+
+    callback=None
+        A callback function to be called when a new message arrives.
+        The function should take one argument (the message).
+        Raises IOError if not supported by the backend.
+
+    autoreset=False
+        Automatically send all_notes_off and reset_all_controllers
+        on all channels. This is the same as calling `port.reset()`.
+    """
+    backend = get_current_backend()
+    kwargs.update(dict(virtual=virtual, callback=callback,
+                        autoreset=autoreset))
+
+    if name is None:
+        name = backend._env('MIDO_DEFAULT_IOPORT') or None
+
+    if hasattr(backend.module, 'IOPort'):
+        # Backend has a native IOPort. Use it.
+        return backend.module.IOPort(name, **backend._add_api(kwargs))
+    else:
+        # Backend has no native IOPort. Use the IOPort wrapper
+        # in midi.ports.
+        #
+        # We need an input and an output name.
+
+        # MIDO_DEFAULT_IOPORT overrides the other two variables.
+        if name:
+            input_name = output_name = name
+        else:
+            input_name = backend._env('MIDO_DEFAULT_INPUT')
+            output_name = backend._env('MIDO_DEFAULT_OUTPUT')
+
+        kwargs = backend._add_api(kwargs)
+
+        return ports.IOPort(backend.module.Input(input_name, **kwargs),
+                            backend.module.Output(output_name, **kwargs))
+
+def get_input_names(**kwargs) -> List[str]:
+    """Return a list of all input port names."""
+    backend = get_current_backend()
+    devices = backend._get_devices(**backend._add_api(kwargs))
+    names = [device['name'] for device in devices if device['is_input']]
+    return names
+
+def get_output_names(**kwargs) -> List[str]:
+    """Return a list of all output port names."""
+    backend = get_current_backend()
+    devices = backend._get_devices(**backend._add_api(kwargs))
+    names = [device['name'] for device in devices if device['is_output']]
+    return names
+
+def get_ioport_names(**kwargs) -> List[str]:
+    """Return a list of all I/O port names."""
+    backend = get_current_backend()
+    devices = backend._get_devices(**backend._add_api(kwargs))
+    inputs = [device['name'] for device in devices if device['is_input']]
+    outputs = {
+        device['name'] for device in devices if device['is_output']}
+    return [name for name in inputs if name in outputs]
