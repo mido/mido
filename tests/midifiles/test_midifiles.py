@@ -198,7 +198,8 @@ def test_midifile_zero_division_word_rejected():
         (0).to_bytes(2, "big")     # division word of 0
     )
     with raises(ValueError) as e:
-        MidiFile(file=io.BytesIO(data + b"MTrk" + (4).to_bytes(4, "big") + b"\x00\xff\x2f\x00"))
+        track_data = b"MTrk" + (4).to_bytes(4, "big") + b"\x00\xff\x2f\x00"
+        MidiFile(file=io.BytesIO(data + track_data))
     assert 'ticks_per_beat must be positive (got 0)' in str(e.value)
 
 
@@ -213,7 +214,8 @@ def test_midifile_smpte_division_rejected():
         (-7272).to_bytes(2, "big", signed=True)  # 25 fps, 40 ticks per frame
     )
     with raises(ValueError) as e:
-        MidiFile(file=io.BytesIO(data + b"MTrk" + (4).to_bytes(4, "big") + b"\x00\xff\x2f\x00"))
+        track_data = b"MTrk" + (4).to_bytes(4, "big") + b"\x00\xff\x2f\x00"
+        MidiFile(file=io.BytesIO(data + track_data))
     assert 'SMPTE time division is not supported' in str(e.value)
 
 
