@@ -180,6 +180,45 @@ def test_midifile_invalid_type_error_message():
     assert 'invalid format 3 (must be 0, 1 or 2)' in str(e.value)
 
 
+def test_midifile_zero_ticks_per_beat_rejected():
+    # https://github.com/mido/mido/issues/675
+    # a division word of 0 is invalid and used to crash with
+    # ZeroDivisionError when length or play() divided by it
+    with raises(ValueError) as e:
+        MidiFile(ticks_per_beat=0)
+    assert 'ticks_per_beat must be positive (got 0)' in str(e.value)
+
+
+def test_midifile_zero_division_word_rejected():
+    # https://github.com/mido/mido/issues/675
+    data = (
+        b"MThd" + (6).to_bytes(4, "big") +
+        (0).to_bytes(2, "big") +   # format
+        (1).to_bytes(2, "big") +   # number of tracks
+        (0).to_bytes(2, "big")     # division word of 0
+    )
+    with raises(ValueError) as e:
+        track_data = b"MTrk" + (4).to_bytes(4, "big") + b"\x00\xff\x2f\x00"
+        MidiFile(file=io.BytesIO(data + track_data))
+    assert 'ticks_per_beat must be positive (got 0)' in str(e.value)
+
+
+def test_midifile_smpte_division_rejected():
+    # https://github.com/mido/mido/issues/675
+    # SMPTE time division (negative division word) used to load as a
+    # negative ticks_per_beat and yield negative times
+    data = (
+        b"MThd" + (6).to_bytes(4, "big") +
+        (0).to_bytes(2, "big") +
+        (1).to_bytes(2, "big") +
+        (-7272).to_bytes(2, "big", signed=True)  # 25 fps, 40 ticks per frame
+    )
+    with raises(ValueError) as e:
+        track_data = b"MTrk" + (4).to_bytes(4, "big") + b"\x00\xff\x2f\x00"
+        MidiFile(file=io.BytesIO(data + track_data))
+    assert 'SMPTE time division is not supported' in str(e.value)
+
+
 def test_midifile_repr():
     midifile = MidiFile(type=1, ticks_per_beat=123, tracks=[
         MidiTrack([

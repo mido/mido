@@ -319,6 +319,16 @@ class MidiFile:
             with open(filename, 'rb') as file:
                 self._load(file)
 
+        # This runs after _load() so it covers both the constructor
+        # argument and the division word parsed from the file header.
+        if self.ticks_per_beat <= 0:
+            if self.ticks_per_beat < 0:
+                raise ValueError(
+                    'SMPTE time division is not supported'
+                    f' (division word was {self.ticks_per_beat});'
+                    ' only metrical (positive) time division is supported')
+            raise ValueError('ticks_per_beat must be positive (got 0)')
+
     @property
     def merged_track(self):
         # The tracks of type 2 files are not in sync, so they can
