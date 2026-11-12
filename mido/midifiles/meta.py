@@ -326,7 +326,14 @@ class MetaSpec_smpte_offset(MetaSpec):
     defaults = [24, 0, 0, 0, 0, 0]
 
     def decode(self, message, data):
-        message.frame_rate = _smpte_framerate_decode[(data[0] >> 5)]
+        frame_rate_bits = data[0] >> 5
+        try:
+            message.frame_rate = _smpte_framerate_decode[frame_rate_bits]
+        except KeyError as ke:
+            raise ValueError(
+                f'Invalid SMPTE framerate bits {frame_rate_bits}: '
+                'expected 0-3 (24, 25, 29.97 or 30 fps)'
+            ) from ke
         message.hours = (data[0] & 0b0001_1111)
         message.minutes = data[1]
         message.seconds = data[2]

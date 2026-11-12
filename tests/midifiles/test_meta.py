@@ -8,6 +8,7 @@ from mido.midifiles.meta import (
     KeySignatureError,
     MetaMessage,
     MetaSpec_key_signature,
+    MetaSpec_smpte_offset,
     UnknownMetaMessage,
 )
 
@@ -40,6 +41,25 @@ class TestKeySignature:
         msg = MetaMessage('key_signature')
         MetaSpec_key_signature().decode(msg, input_bytes)
         assert msg.key == expect_sig
+
+
+class TestSmpteOffset:
+    @pytest.mark.parametrize('frame_rate_bits', [4, 5, 6, 7])
+    def test_reserved_framerate_bits_raise_value_error(self, frame_rate_bits):
+        # Issue #678: the reserved framerate values must not leak a KeyError.
+        data = [(frame_rate_bits << 5) | 3, 0, 0, 0, 0]
+        with pytest.raises(ValueError) as excinfo:
+            MetaSpec_smpte_offset().decode(MetaMessage('smpte_offset'), data)
+        assert str(frame_rate_bits) in str(excinfo.value)
+
+    @pytest.mark.parametrize('frame_rate_bits,expect_fps', [(0, 24), (1, 25),
+                                                            (2, 29.97), (3, 30)])
+    def test_defined_framerate_bits_decode(self, frame_rate_bits, expect_fps):
+        data = [(frame_rate_bits << 5) | 3, 0, 0, 0, 0]
+        msg = MetaMessage('smpte_offset')
+        MetaSpec_smpte_offset().decode(msg, data)
+        assert msg.frame_rate == expect_fps
+        assert msg.hours == 3
 
 
 def test_meta_message_repr():
