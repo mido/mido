@@ -114,6 +114,20 @@ def test_undefined_realtime_inside_sysex():
     assert messages[0].type == 'sysex'
 
 
+def test_interleaved_realtime_across_feed_calls():
+    """Deliver realtime immediately, then resume the incomplete note."""
+    parser = Parser()
+    parser.feed([0x90, 60])
+    assert parser.pending() == 0
+    parser.feed([0xf8, 0xfa])
+    assert list(parser) == [Message('clock'), Message('start')]
+    parser.feed_byte(0xf9)
+    parser.feed_byte(0xfd)
+    assert parser.pending() == 0
+    parser.feed_byte(64)
+    assert list(parser) == [Message('note_on', note=60, velocity=64)]
+
+
 def test_encode_and_parse_all():
     """Encode and then parse all message types.
 
