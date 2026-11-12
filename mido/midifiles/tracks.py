@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+import operator
+
 from .meta import MetaMessage
 
 
@@ -113,15 +115,29 @@ def merge_tracks(tracks, skip_checks=False):
     This should ONLY be used when the messages in tracks have already
     been validated by mido.checks.
     """
+    # Collect (absolute time, message) pairs instead of copying each message
+    # to absolute time first and to relative time after sorting (#603): the
+    # two copy passes dominate the runtime for large files. Each message is
+    # copied once, straight to its output delta time. The stable sort keeps
+    # ties in track order, like the previous sort over the chained tracks.
     messages = []
     for track in tracks:
-        messages.extend(_to_abstime(track, skip_checks=skip_checks))
+        now = 0
+        for msg in track:
+            now += msg.time
+            messages.append((now, msg))
 
-    messages.sort(key=lambda msg: msg.time)
+    messages.sort(key=operator.itemgetter(0))
+
+    def _to_reltime_messages():
+        now = 0
+        for time_, msg in messages:
+            yield msg.copy(skip_checks=skip_checks, time=time_ - now)
+            now = time_
 
     return MidiTrack(
         fix_end_of_track(
-            _to_reltime(messages, skip_checks=skip_checks),
+            _to_reltime_messages(),
             skip_checks=skip_checks,
         )
     )
