@@ -46,6 +46,22 @@ def print_byte(byte, pos=0):
     print(f'  {pos:06x}: {byte:02x}  {char}')  # noqa: T201
 
 
+class _CountingReader:
+    """Track bytes read without requiring a seekable input stream."""
+
+    def __init__(self, file):
+        self.file = file
+        self.pos = 0
+
+    def read(self, size):
+        data = self.file.read(size)
+        self.pos += len(data)
+        return data
+
+    def tell(self):
+        return self.pos
+
+
 class DebugFileWrapper:
     def __init__(self, file):
         self.file = file
@@ -348,6 +364,7 @@ class MidiFile:
         return track
 
     def _load(self, infile):
+        infile = _CountingReader(infile)
         if self.debug:
             infile = DebugFileWrapper(infile)
 
