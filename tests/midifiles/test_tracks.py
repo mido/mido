@@ -72,3 +72,30 @@ def test_merge_large_midifile():
         sum(msg.time for msg in t) for t in mid.tracks)
     assert merged_duration_ticks == max_track_duration_ticks
     assert (finish - start) < 5.0
+
+
+from mido import Message, MetaMessage, MidiTrack, merge_tracks
+
+
+def test_merge_interleaves_by_absolute_time():
+    track1 = MidiTrack([
+        Message('note_on', note=60, velocity=64, time=0),
+        Message('note_off', note=60, velocity=64, time=100),
+        MetaMessage('end_of_track', time=0),
+    ])
+    track2 = MidiTrack([
+        Message('note_on', note=62, velocity=64, time=50),
+        Message('note_off', note=62, velocity=64, time=60),
+        MetaMessage('end_of_track', time=0),
+    ])
+
+    merged = merge_tracks([track1, track2])
+
+    assert isinstance(merged, MidiTrack)
+    assert [(m.type, getattr(m, 'note', None), m.time) for m in merged] == [
+        ('note_on', 60, 0),
+        ('note_on', 62, 50),
+        ('note_off', 60, 50),
+        ('note_off', 62, 10),
+        ('end_of_track', None, 0),
+    ]

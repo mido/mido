@@ -68,3 +68,14 @@ def test_second2tick():
     assert second2tick(0.005, ticks_per_beat=100, tempo=500000) == 1
     assert second2tick(0.0015, ticks_per_beat=100, tempo=100000) == 2
     assert second2tick(0.0025, ticks_per_beat=100, tempo=100000) == 2
+
+
+from mido.midifiles.units import second2tick, tick2second
+
+
+def test_tick_second_roundtrip_includes_zero_and_large_values():
+    assert tick2second(0, ticks_per_beat=480, tempo=500000) == 0.0
+    assert second2tick(0, ticks_per_beat=480, tempo=500000) == 0
+    for tick in [0, 1, 96, 480, 12345]:
+        seconds = tick2second(tick, ticks_per_beat=480, tempo=500000)
+        assert second2tick(seconds, ticks_per_beat=480, tempo=500000) == tick

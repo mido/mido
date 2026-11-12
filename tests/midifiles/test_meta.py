@@ -95,3 +95,16 @@ def test_meta_from_bytes_text():
     msg = MetaMessage.from_bytes(test_bytes)
     assert msg.type == 'text'
     assert msg.text == 'TEST'
+
+
+from mido import MetaMessage
+
+
+def test_time_signature_denominator_is_stored_as_log2():
+    msg = MetaMessage('time_signature', numerator=3, denominator=4)
+    assert msg.bytes() == [0xFF, 0x58, 4, 3, 2, 24, 8]
+    assert MetaMessage.from_bytes(msg.bytes()) == msg
+
+    msg = MetaMessage('time_signature', numerator=6, denominator=8)
+    assert msg.bytes() == [0xFF, 0x58, 4, 6, 3, 24, 8]
+    assert MetaMessage.from_bytes(msg.bytes()).denominator == 8

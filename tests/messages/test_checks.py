@@ -22,3 +22,22 @@ def test_check_time():
 
     with raises(TypeError):
         check_time('abc')
+
+
+import pytest
+
+from mido import Message
+
+
+def test_message_rejects_values_outside_midi_spec_ranges():
+    assert Message('note_on', channel=15, note=127, velocity=127).channel == 15
+    assert Message('pitchwheel', pitch=-8192).pitch == -8192
+    assert Message('pitchwheel', pitch=8191).pitch == 8191
+    with pytest.raises(ValueError):
+        Message('note_on', channel=16)
+    with pytest.raises(ValueError):
+        Message('note_on', note=128)
+    with pytest.raises(ValueError):
+        Message('pitchwheel', pitch=8192)
+    with pytest.raises(ValueError):
+        Message('pitchwheel', pitch=-8193)

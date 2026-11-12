@@ -41,3 +41,15 @@ def test_decode_sysex_missing_parens():
 def test_decode_sysex_missing_open_paren():
     with raises(ValueError, match='missing parentheses'):
         Message.from_str('sysex data=1,2,3) time=0')
+
+
+from mido.messages.strings import str2msg
+
+
+def test_str2msg_preserves_int_and_float_time_types():
+    assert str2msg('note_on note=60 velocity=64 time=3')['time'] == 3
+    assert isinstance(
+        str2msg('note_on note=60 velocity=64 time=3')['time'], int)
+    assert str2msg('note_on note=60 velocity=64 time=0.5')['time'] == 0.5
+    assert isinstance(
+        str2msg('note_on note=60 velocity=64 time=0.5')['time'], float)
