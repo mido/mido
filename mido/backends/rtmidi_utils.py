@@ -10,6 +10,25 @@ the `python-rtmidi` package.
 """
 
 
+def get_port_index(port_names, name):
+    """Return the index for a port name without linear list scans.
+
+    This keeps the port lookup in O(1) with a dictionary mapping instead of
+    repeatedly calling ``list.index()`` across potentially large port lists.
+    """
+    if name is None:
+        return 0
+
+    port_name_to_index = {
+        port_name: index for index, port_name in enumerate(port_names)
+    }
+
+    try:
+        return port_name_to_index[name]
+    except KeyError as exc:
+        raise ValueError(f'unknown port {name!r}') from exc
+
+
 def expand_alsa_port_name(port_names, name):
     """Expand ALSA port name.
 

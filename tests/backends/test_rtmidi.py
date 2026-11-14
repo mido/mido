@@ -2,7 +2,19 @@
 #
 # SPDX-License-Identifier: MIT
 
-from mido.backends.rtmidi_utils import expand_alsa_port_name
+import pytest
+
+from mido.backends.rtmidi_utils import expand_alsa_port_name, get_port_index
+
+
+def test_get_port_index():
+    port_names = ['A:port 128:0', 'B:port 129:0', 'Z:port 130:0']
+
+    assert get_port_index(port_names, 'A:port 128:0') == 0
+    assert get_port_index(port_names, 'B:port 129:0') == 1
+
+    with pytest.raises(ValueError, match="unknown port 'missing'"):
+        get_port_index(port_names, 'missing')
 
 
 def test_expand_alsa_port_name():
