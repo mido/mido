@@ -58,13 +58,12 @@ def get_devices(api=None, **kwargs):
     input_names = mi.get_ports()
     output_names = mo.get_ports()
 
-    for name in input_names + output_names:
-        if name not in devices:
-            devices[name] = {
-                'name': name,
-                'is_input': name in input_names,
-                'is_output': name in output_names,
-            }
+    for name in dict.fromkeys(input_names + output_names):
+        devices[name] = {
+            'name': name,
+            'is_input': name in input_names,
+            'is_output': name in output_names,
+        }
 
     mi.delete()
     mo.delete()

@@ -32,8 +32,9 @@ class Parser:
             self.feed(data)
 
     def _decode(self):
+        append = self.messages.append
         for midi_bytes in self._tok:
-            self.messages.append(Message.from_bytes(midi_bytes))
+            append(Message.from_bytes(midi_bytes))
 
     def feed(self, data):
         """Feed MIDI data to the parser.

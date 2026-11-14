@@ -29,6 +29,28 @@ def get_port_index(port_names, name):
         raise ValueError(f'unknown port {name!r}') from exc
 
 
+def _port_name_alias_map(port_names):
+    """Build a quick alias lookup for ALSA port names.
+
+    The same port can often be referred to by the full name, the client name,
+    or a shortened variant without the client/port suffix, so we precompute the
+    aliases once and reuse them instead of parsing the list on every lookup.
+    """
+    aliases = {}
+
+    for port_name in port_names:
+        aliases[port_name] = port_name
+
+        without_numbers = port_name.rsplit(None, 1)[0]
+        aliases.setdefault(without_numbers, port_name)
+
+        if ':' in without_numbers:
+            without_client = without_numbers.split(':', 1)[1]
+            aliases.setdefault(without_client, port_name)
+
+    return aliases
+
+
 def expand_alsa_port_name(port_names, name):
     """Expand ALSA port name.
 
@@ -52,19 +74,8 @@ def expand_alsa_port_name(port_names, name):
     if name is None:
         return None
 
-    for port_name in port_names:
-        if name == port_name:
-            return name
-
-        # Try without client and port number (for example 128:0).
-        without_numbers = port_name.rsplit(None, 1)[0]
-        if name == without_numbers:
-            return port_name
-
-        if ':' in without_numbers:
-            without_client = without_numbers.split(':', 1)[1]
-            if name == without_client:
-                return port_name
-    else:
+    try:
+        return _port_name_alias_map(port_names)[name]
+    except KeyError:
         # Let caller deal with it.
         return name
