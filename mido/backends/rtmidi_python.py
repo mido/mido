@@ -28,6 +28,7 @@ import rtmidi_python as rtmidi
 # TODO: change this to a relative import if the backend is included in
 # the package.
 from ..ports import BaseInput, BaseOutput
+from .rtmidi_utils import get_port_index
 
 
 def get_devices(api=None, **kwargs):
@@ -36,13 +37,12 @@ def get_devices(api=None, **kwargs):
     input_names = rtmidi.MidiIn().ports
     output_names = rtmidi.MidiOut().ports
 
-    for name in input_names + output_names:
-        if name not in devices:
-            devices[name] = {
-                'name': name,
-                'is_input': name in input_names,
-                'is_output': name in output_names,
-            }
+    for name in dict.fromkeys(input_names + output_names):
+        devices[name] = {
+            'name': name,
+            'is_input': name in input_names,
+            'is_output': name in output_names,
+        }
 
     return list(devices.values())
 
@@ -80,7 +80,7 @@ class PortCommon:
                     raise OSError('no ports available') from ie
 
             try:
-                port_id = ports.index(self.name)
+                port_id = get_port_index(ports, self.name)
             except ValueError as ve:
                 raise OSError(f'unknown port {self.name!r}') from ve
 

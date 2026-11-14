@@ -13,7 +13,7 @@ import rtmidi
 from .. import ports
 from ..messages import Message
 from ._parser_queue import ParserQueue
-from .rtmidi_utils import expand_alsa_port_name
+from .rtmidi_utils import expand_alsa_port_name, get_port_index
 
 
 def _get_api_lookup():
@@ -58,13 +58,12 @@ def get_devices(api=None, **kwargs):
     input_names = mi.get_ports()
     output_names = mo.get_ports()
 
-    for name in input_names + output_names:
-        if name not in devices:
-            devices[name] = {
-                'name': name,
-                'is_input': name in input_names,
-                'is_output': name in output_names,
-            }
+    for name in dict.fromkeys(input_names + output_names):
+        devices[name] = {
+            'name': name,
+            'is_input': name in input_names,
+            'is_output': name in output_names,
+        }
 
     mi.delete()
     mo.delete()
@@ -96,10 +95,11 @@ def _open_port(rt, name=None, client_name=None, virtual=False, api=None):
     if name is None:
         name = port_names[0]
         port_id = 0
-    elif name in port_names:
-        port_id = port_names.index(name)
     else:
-        raise OSError(f'unknown port {name!r}')
+        try:
+            port_id = get_port_index(port_names, name)
+        except ValueError as err:
+            raise OSError(f'unknown port {name!r}') from err
 
     try:
         rt.open_port(port_id)
