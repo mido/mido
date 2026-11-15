@@ -41,6 +41,35 @@ and messages and save the file back by calling the ``save()``
 method. (More on this below.)
 
 
+Hardened Parsing
+----------------
+
+By default mido parses according to the MIDI specification, and a file
+that violates it may raise any of a number of low-level exceptions
+(``IndexError``, ``KeyError``, ``ValueError``, ``EOFError``,
+``ZeroDivisionError``, ``TypeError`` and so on) from deep inside the
+parser. This default behaviour is unchanged.
+
+If you only need to know whether a file could be parsed, pass
+``hardened=True``::
+
+    from mido import MidiFile, ParseError
+
+    try:
+        mid = MidiFile('maybe_broken.mid', hardened=True)
+        for msg in mid:
+            ...
+    except ParseError:
+        ...  # the file is malformed
+
+In hardened mode those stray exceptions, raised while reading or
+iterating over the file, are caught at the parse boundary and re-raised
+as a single :class:`~mido.ParseError` (chained to the original via
+``__cause__``). Deliberate errors such as the ``OSError`` for a missing
+``MThd`` header are left untouched. The mode is opt-in; with the default
+``hardened=False`` nothing changes.
+
+
 Iterating Over Messages
 -----------------------
 

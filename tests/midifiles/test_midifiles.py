@@ -8,7 +8,7 @@ from pytest import raises
 
 from mido.messages import Message
 from mido.midifiles.meta import KeySignatureError, MetaMessage
-from mido.midifiles.midifiles import MidiFile, MidiTrack
+from mido.midifiles.midifiles import MidiFile, MidiTrack, ParseError
 
 HEADER_ONE_TRACK = """
 4d 54 68 64  # MThd
@@ -194,3 +194,121 @@ def test_midifile_repr():
     for track, track_eval in zip(midifile.tracks, midifile_eval.tracks):
         for m1, m2 in zip(track, track_eval):
             assert m1 == m2
+
+
+# Hardened (opt-in) parse mode.
+#
+# Each malformed input below crashes the default parser with a different
+# low-level exception. With hardened=True that exception must be collapsed
+# into a single mido.ParseError; with the default hardened=False the
+# original exception and all other behaviour must be unchanged.
+
+# ticks_per_beat = 0 -> ZeroDivisionError in the tick/second conversion
+# while iterating.
+HARDENED_TICKS_PER_BEAT_ZERO = """
+4d 54 68 64  # MThd
+00 00 00 06
+      00 01  # type 1
+      00 01  # 1 track
+      00 00  # 0 ticks per beat
+4d 54 72 6b  # MTrk
+00 00 00 04
+20 90 40 40  # note_on, delta 32
+"""
+
+# set_tempo meta declares length 1 but decode indexes data[1], data[2]
+# -> IndexError.
+HARDENED_TRUNCATED_SET_TEMPO = HEADER_ONE_TRACK + """
+4d 54 72 6b
+00 00 00 05
+00 ff 51 01 07  # set_tempo, declared length 1
+"""
+
+# smpte_offset with frame_rate bits (data[0] >> 5) == 7, not in the
+# lookup table -> KeyError.
+HARDENED_BAD_SMPTE = HEADER_ONE_TRACK + """
+4d 54 72 6b
+00 00 00 09
+00 ff 54 05 e0 00 00 00 00  # smpte_offset, bad frame_rate bits
+"""
+
+# Meta message declares more payload bytes than the stream holds
+# -> EOFError.
+HARDENED_TRUNCATED_STREAM = HEADER_ONE_TRACK + """
+4d 54 72 6b
+00 00 00 05
+00 ff 51 03 07  # set_tempo declares length 3, stream ends early
+"""
+
+# A type 2 (asynchronous) file cannot merge its tracks; iterating it
+# raises TypeError.
+HARDENED_TYPE_2 = """
+4d 54 68 64
+00 00 00 06
+      00 02  # type 2
+      00 01
+      00 78
+4d 54 72 6b
+00 00 00 04
+20 90 40 40
+"""
+
+HARDENED_CASES = [
+    (HARDENED_TICKS_PER_BEAT_ZERO, ZeroDivisionError),
+    (HARDENED_TRUNCATED_SET_TEMPO, IndexError),
+    (HARDENED_BAD_SMPTE, KeyError),
+    (HARDENED_TRUNCATED_STREAM, EOFError),
+    (HARDENED_TYPE_2, TypeError),
+]
+
+
+def _consume(hexdump, hardened):
+    # list() forces both the load-time and the iterate-time parse paths.
+    return list(MidiFile(file=io.BytesIO(parse_hexdump(hexdump)),
+                         hardened=hardened))
+
+
+def test_hardened_defaults_to_off():
+    assert MidiFile(type=1).hardened is False
+
+
+def test_hardened_off_keeps_original_exceptions():
+    for hexdump, exc_type in HARDENED_CASES:
+        with raises(exc_type):
+            _consume(hexdump, hardened=False)
+
+
+def test_hardened_on_collapses_into_parse_error():
+    for hexdump, exc_type in HARDENED_CASES:
+        with raises(ParseError) as excinfo:
+            _consume(hexdump, hardened=True)
+        # The original exception is preserved as the cause.
+        assert isinstance(excinfo.value.__cause__, exc_type)
+
+
+def test_hardened_on_does_not_change_valid_file():
+    # A well-formed file parses and iterates identically with hardened on.
+    plain = read_file(HEADER_ONE_TRACK + """
+    4d 54 72 6b
+    00 00 00 04
+    20 90 40 40  # note_on
+    """)
+    hardened = MidiFile(
+        file=io.BytesIO(parse_hexdump(HEADER_ONE_TRACK + """
+        4d 54 72 6b
+        00 00 00 04
+        20 90 40 40  # note_on
+        """)),
+        hardened=True,
+    )
+    assert hardened.hardened is True
+    assert hardened.tracks == plain.tracks
+    assert list(hardened) == list(plain)
+
+
+def test_hardened_leaves_deliberate_oserror_alone():
+    # mido raises OSError on purpose for a missing MThd header. Hardened
+    # mode must not swallow that into ParseError.
+    not_a_midi = "00 00 00 00 00 00 00 00"
+    with raises(OSError):
+        MidiFile(file=io.BytesIO(parse_hexdump(not_a_midi)), hardened=True)
