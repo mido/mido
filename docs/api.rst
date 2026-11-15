@@ -179,6 +179,8 @@ Standard MIDI Files
    :inherited-members:
    :undoc-members:
 
+.. autoexception:: ParseError
+
 .. autofunction:: tick2second
 
 .. autofunction:: second2tick

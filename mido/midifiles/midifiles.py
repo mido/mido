@@ -22,6 +22,7 @@ http://www.sonicspot.com/guide/midifiles.html
 import string
 import struct
 import time
+from contextlib import contextmanager
 from numbers import Integral
 
 from ..messages import SPEC_BY_STATUS, Message
@@ -36,6 +37,43 @@ DEFAULT_TICKS_PER_BEAT = 480
 
 # Maximum message length to attempt to read.
 MAX_MESSAGE_LENGTH = 1000000
+
+
+class ParseError(Exception):
+    """Raised for a malformed MIDI file when hardened mode is enabled.
+
+    A standard MIDI file that violates the specification can make the
+    parser raise a variety of low-level exceptions (``IndexError`` and
+    ``KeyError`` from decoding truncated meta messages, ``ValueError``
+    from validators, ``ZeroDivisionError`` from tempo/tick math,
+    ``EOFError`` from a cut-off stream, ``TypeError`` from playback of a
+    type 2 file, and so on). These are not part of any documented
+    contract and are inconvenient to catch individually.
+
+    When a :class:`MidiFile` is created with ``hardened=True`` such stray
+    exceptions raised while reading or iterating over the file are caught
+    at the parse boundary and re-raised as ``ParseError`` (chained to the
+    original via ``__cause__``), so callers that only need to know "this
+    file could not be parsed" can catch a single type.
+
+    Hardened mode is opt-in. With the default ``hardened=False`` the
+    original exceptions propagate unchanged.
+    """
+    pass
+
+
+# Stray, undocumented exceptions that hardened mode collapses into
+# ParseError. OSError is deliberately excluded: mido raises it on purpose
+# for recognised problems (missing MThd header, undefined status byte,
+# out-of-range data byte, over-long message) and it stays as-is.
+_HARDENED_PARSE_EXCEPTIONS = (
+    EOFError,
+    IndexError,
+    KeyError,
+    TypeError,
+    ValueError,
+    ZeroDivisionError,
+)
 
 
 def print_byte(byte, pos=0):
@@ -294,8 +332,17 @@ class MidiFile:
                  charset='latin1',
                  debug=False,
                  clip=False,
-                 tracks=None
+                 tracks=None,
+                 hardened=False
                  ):
+        """Create a MidiFile object.
+
+        If ``hardened`` is True, the assorted low-level exceptions that a
+        malformed file can trigger while reading or iterating over it are
+        re-raised as a single :class:`ParseError` (chained to the
+        original). The default ``hardened=False`` leaves the original
+        exceptions and all other behaviour unchanged.
+        """
 
         self.filename = filename
         self.type = type
@@ -303,6 +350,7 @@ class MidiFile:
         self.charset = charset
         self.debug = debug
         self.clip = clip
+        self.hardened = hardened
 
         self.tracks = []
         self._merged_track = None
@@ -347,11 +395,32 @@ class MidiFile:
         del self.merged_track  # uncache merged track
         return track
 
+    @contextmanager
+    def _harden_errors(self):
+        """Collapse stray parse exceptions into ParseError when hardened.
+
+        A no-op unless ``self.hardened`` is True. This wraps the parse
+        and iteration boundaries rather than individual decode sites, so
+        it keeps working if those sites are refactored.
+        """
+        if not self.hardened:
+            yield
+            return
+
+        try:
+            yield
+        except ParseError:
+            raise
+        except _HARDENED_PARSE_EXCEPTIONS as exc:
+            raise ParseError(
+                f'could not parse MIDI file: {type(exc).__name__}: {exc}'
+            ) from exc
+
     def _load(self, infile):
         if self.debug:
             infile = DebugFileWrapper(infile)
 
-        with meta_charset(self.charset):
+        with self._harden_errors(), meta_charset(self.charset):
             if self.debug:
                 _dbg('Header:')
 
@@ -387,19 +456,20 @@ class MidiFile:
         return sum(msg.time for msg in self)
 
     def __iter__(self):
-        tempo = DEFAULT_TEMPO
-        for msg in self.merged_track:
-            # Convert message time from absolute time
-            # in ticks to relative time in seconds.
-            if msg.time > 0:
-                delta = tick2second(msg.time, self.ticks_per_beat, tempo)
-            else:
-                delta = 0
+        with self._harden_errors():
+            tempo = DEFAULT_TEMPO
+            for msg in self.merged_track:
+                # Convert message time from absolute time
+                # in ticks to relative time in seconds.
+                if msg.time > 0:
+                    delta = tick2second(msg.time, self.ticks_per_beat, tempo)
+                else:
+                    delta = 0
 
-            yield msg.copy(skip_checks=True, time=delta)
+                yield msg.copy(skip_checks=True, time=delta)
 
-            if msg.type == 'set_tempo':
-                tempo = msg.tempo
+                if msg.type == 'set_tempo':
+                    tempo = msg.tempo
 
     def play(self, meta_messages=False, now=time.time):
         """Play back all tracks.
