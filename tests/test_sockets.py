@@ -4,7 +4,34 @@
 
 import pytest
 
-from mido.sockets import parse_address
+from mido.sockets import PortServer, connect, format_address, parse_address
+
+
+class TestSocketPortNames:
+    """Socket ports are named after their address.
+
+    See issues #683 (format_address() drops the ':' between host and
+    port, and PortServer never applies the formatted address as its
+    name).
+    """
+
+    def test_format_address(self):
+        assert format_address('localhost', 8080) == 'localhost:8080'
+
+    def test_format_address_round_trip(self):
+        assert parse_address(format_address('localhost', 8080)) == \
+            ('localhost', 8080)
+
+    def test_port_server_name(self):
+        with PortServer('localhost', 0) as server:
+            assert server.name == 'localhost:0'
+
+    def test_client_name(self):
+        with PortServer('localhost', 0) as server:
+            portno = server._socket.getsockname()[1]
+            with connect('localhost', portno) as client:
+                assert client.name == f'localhost:{portno}'
+
 
 
 class TestParseAddress:
