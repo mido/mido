@@ -26,8 +26,8 @@ class PortServer(MultiPort):
     # TODO: queue size.
 
     def __init__(self, host, portno, backlog=1):
-        MultiPort.__init__(self, format_address(host, portno))
-        self.ports = []
+        MultiPort.__init__(self, [])
+        self.name = format_address(host, portno)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self._socket.setblocking(True)
@@ -160,4 +160,4 @@ def parse_address(address):
 
 
 def format_address(host, portno):
-    return f'{host}{portno:d}'
+    return f'{host}:{portno:d}'
