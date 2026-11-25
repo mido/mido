@@ -7,7 +7,7 @@ import io
 from pytest import raises
 
 from mido.messages import Message
-from mido.midifiles.meta import KeySignatureError, MetaMessage
+from mido.midifiles.meta import KeySignatureError, MetaMessage, UnknownMetaMessage
 from mido.midifiles.midifiles import MidiFile, MidiTrack
 
 HEADER_ONE_TRACK = """
@@ -113,6 +113,28 @@ def test_meta_messages():
 
     assert track[0] == MetaMessage('track_name', name='Test')
     assert track[1] == MetaMessage('end_of_track')
+
+
+def test_unknown_meta_message_preserves_timing_on_roundtrip():
+    data = parse_hexdump(HEADER_ONE_TRACK + """
+    4d 54 72 6b  # MTrk
+    00 00 00 0f  # Chunk size
+    81 70 ff 50 02 01 02  # Unknown meta event after 240 ticks.
+    3c 90 40 40  # note_on after another 60 ticks.
+    00 ff 2f 00  # end_of_track
+    """)
+    mid = MidiFile(file=io.BytesIO(data))
+
+    assert mid.tracks[0] == [
+        UnknownMetaMessage(0x50, data=[1, 2], time=240),
+        Message('note_on', note=64, velocity=64, time=60),
+        MetaMessage('end_of_track'),
+    ]
+    assert mid.length == 1.25
+
+    saved = io.BytesIO()
+    mid.save(file=saved)
+    assert saved.getvalue() == data
 
 
 def test_meta_message_bad_key_sig_throws_key_signature_error_sharps():
