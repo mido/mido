@@ -2,9 +2,32 @@
 #
 # SPDX-License-Identifier: MIT
 
-from pytest import raises
+from pytest import mark, raises
 
-from mido.messages import Message
+from mido.messages import Message, parse_string, parse_string_stream
+
+
+@mark.parametrize('text', ['', ' \t\n ', 'not_a_message'])
+def test_invalid_message_string(text):
+    with raises(ValueError):
+        Message.from_str(text)
+    with raises(ValueError):
+        parse_string(text)
+
+
+def test_string_stream_recovers_from_unknown_message_type():
+    results = list(parse_string_stream([
+        'note_on note=60',
+        '# comment',
+        'not_a_message',
+        '',
+        'note_off note=60',
+    ]))
+    assert results[0] == (Message('note_on', note=60), None)
+    assert results[1][0] is None
+    assert results[1][1].startswith('line 3: ')
+    assert 'not_a_message' in results[1][1]
+    assert results[2] == (Message('note_off', note=60), None)
 
 
 def test_decode_sysex():
