@@ -95,3 +95,17 @@ def test_meta_from_bytes_text():
     msg = MetaMessage.from_bytes(test_bytes)
     assert msg.type == 'text'
     assert msg.text == 'TEST'
+
+
+def test_sequencer_specific_default_data_is_not_shared():
+    # https://github.com/mido/mido/issues/686
+    # the default data used to be a list shared between all messages
+    m1 = MetaMessage('sequencer_specific')
+    m2 = MetaMessage('sequencer_specific')
+    assert m1.data == ()
+    assert m2.data == ()
+
+    # Assigning new data to one message must not leak into other messages.
+    m1.data = [1, 2, 3]
+    assert MetaMessage('sequencer_specific').data == ()
+    assert m2.data == ()
