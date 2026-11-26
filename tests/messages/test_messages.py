@@ -14,6 +14,21 @@ def test_msg_time_equality():
     assert Message('clock', time=0) != Message('clock', time=1)
 
 
+def test_is_realtime():
+    # https://github.com/mido/mido/issues/685
+    for type_ in ['clock', 'start', 'continue', 'stop',
+                  'active_sensing', 'reset']:
+        assert Message(type_).is_realtime
+
+    # System common messages are not realtime.
+    for type_ in ['sysex', 'quarter_frame', 'songpos', 'song_select',
+                  'tune_request']:
+        assert not Message(type_).is_realtime
+
+    # Channel messages are not realtime.
+    assert not Message('note_on').is_realtime
+
+
 def test_set_type():
     """Can't change the type of a message."""
     with raises(AttributeError):

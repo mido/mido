@@ -180,6 +180,36 @@ def test_midifile_invalid_type_error_message():
     assert 'invalid format 3 (must be 0, 1 or 2)' in str(e.value)
 
 
+def test_save_rejects_all_realtime_messages():
+    # https://github.com/mido/mido/issues/685
+    # active_sensing and reset used to slip through this check because
+    # is_realtime was wrong for them, which produced unreadable files.
+    for type_ in ['clock', 'start', 'continue', 'stop',
+                  'active_sensing', 'reset']:
+        midifile = MidiFile(type=0)
+        midifile.tracks.append(MidiTrack([Message(type_)]))
+        with raises(ValueError):
+            midifile.save(file=io.BytesIO())
+
+
+def test_save_reload_tune_request():
+    # https://github.com/mido/mido/issues/685
+    # tune_request (0xf6) is a system common message, so it is allowed
+    # in files just like the other system common messages.
+    midifile = MidiFile(type=0)
+    midifile.tracks.append(MidiTrack([
+        Message('tune_request'),
+        Message('note_on', note=64),
+    ]))
+    file = io.BytesIO()
+    midifile.save(file=file)
+    file.seek(0)
+    assert MidiFile(file=file).tracks[0][:2] == [
+        Message('tune_request'),
+        Message('note_on', note=64),
+    ]
+
+
 def test_midifile_repr():
     midifile = MidiFile(type=1, ticks_per_beat=123, tracks=[
         MidiTrack([
