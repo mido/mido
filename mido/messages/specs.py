@@ -93,7 +93,11 @@ def _make_spec_lookups(
 
 SPEC_LOOKUP, SPEC_BY_STATUS, SPEC_BY_TYPE = _make_spec_lookups(SPECS)
 
-REALTIME_TYPES = {'tune_request', 'clock', 'start', 'continue', 'stop'}
+# System realtime messages (0xf8, 0xfa-0xfc, 0xfe, 0xff).
+# 0xf9 and 0xfd are undefined. tune_request (0xf6) is a system
+# common message and thus not realtime.
+REALTIME_TYPES = {'clock', 'start', 'continue', 'stop',
+                  'active_sensing', 'reset'}
 
 DEFAULT_VALUES = {
     'channel': 0,
