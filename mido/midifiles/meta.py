@@ -423,7 +423,7 @@ class MetaSpec_key_signature(MetaSpec):
 class MetaSpec_sequencer_specific(MetaSpec):
     type_byte = 0x7f
     attributes = ['data']
-    defaults = [[]]
+    defaults = [()]
 
     def decode(self, message, data):
         message.data = tuple(data)
